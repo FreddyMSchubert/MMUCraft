@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, Query } from '@nestjs/common';
 import { AuthSessionService } from '../auth/auth-session.service';
+import { ServerClaimAreaInput } from './claim-area';
 import { ClaimAdministrationService } from './claim-administration.service';
 import { ClaimPurchasingService, CreateClaimInput } from './claim-purchasing.service';
 import { ClaimAppearanceInput, ClaimSettingsInput, ClaimsService } from './claims.service';
@@ -182,12 +183,22 @@ export class AdminServerClaimsController {
 	@Post()
 	create(
 		@Headers('cookie') cookieHeader: string | undefined,
-		@Body() body: CreateClaimInput | undefined,
+		@Body() body: ServerClaimAreaInput | undefined,
 	) {
 		return this.claimPurchasing.createServerClaim(
 			this.auth.requireCommitteeSession(cookieHeader),
 			body ?? {},
 		);
+	}
+
+	@Patch(':claimId/area')
+	updateArea(
+		@Headers('cookie') cookieHeader: string | undefined,
+		@Param('claimId') claimId: string,
+		@Body() body: ServerClaimAreaInput | undefined,
+	) {
+		this.auth.requireCommitteeSession(cookieHeader);
+		return this.claimAdministration.updateServerArea(claimId, body ?? {});
 	}
 
 	@Patch(':claimId/appearance')

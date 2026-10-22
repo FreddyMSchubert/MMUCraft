@@ -1,8 +1,14 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+	BadRequestException,
+	ConflictException,
+	Injectable,
+	NotFoundException,
+} from '@nestjs/common';
 import { and, asc, eq } from 'drizzle-orm';
 import { claims, DatabaseService, playerProfiles, users } from '../database/database.service';
 import { effectivePlayerColor } from '../players/player-color';
 import { customPlayerEmojis } from '../players/player-emojis';
+import { type ServerClaimAreaInput, overlappingClaim, serverClaimArea } from './claim-area';
 import { ClaimMinecraftSynchronizationService } from './claim-minecraft-synchronization.service';
 
 const ADMIN_PAGE_SIZE = 42;
@@ -81,6 +87,8 @@ export class ClaimAdministrationService {
 					dimension: claims.dimension,
 					chunkX: claims.chunk_x,
 					chunkZ: claims.chunk_z,
+					chunkXEnd: claims.chunk_x_end,
+					chunkZEnd: claims.chunk_z_end,
 					customColor: claims.color_hex,
 					permissions: claims.outsider_permissions,
 					minecraftUuid: users.minecraft_uuid,
@@ -103,6 +111,8 @@ export class ClaimAdministrationService {
 						dimension: claim.dimension,
 						chunkX: claim.chunkX,
 						chunkZ: claim.chunkZ,
+						chunkXEnd: claim.chunkXEnd,
+						chunkZEnd: claim.chunkZEnd,
 						color: claim.customColor ?? defaultColor,
 						defaultColor,
 						customColor: claim.customColor,
@@ -110,6 +120,39 @@ export class ClaimAdministrationService {
 					};
 				}),
 		};
+	}
+
+	async updateServerArea(claimId: string, input: ServerClaimAreaInput) {
+		const area = serverClaimArea(input);
+		this.database.connection.transaction((tx) => {
+			const existing = tx
+				.select({ id: claims.id })
+				.from(claims)
+				.where(and(eq(claims.id, claimId), eq(claims.is_server, 1)))
+				.get();
+			if (!existing) throw new NotFoundException('Server claim not found.');
+			if (
+				tx
+					.select({ id: claims.id })
+					.from(claims)
+					.where(overlappingClaim(area, claimId))
+					.get()
+			) {
+				throw new ConflictException('The selected area overlaps an existing claim.');
+			}
+			tx.update(claims)
+				.set({
+					dimension: area.dimension,
+					chunk_x: area.chunkX,
+					chunk_z: area.chunkZ,
+					chunk_x_end: area.chunkXEnd,
+					chunk_z_end: area.chunkZEnd,
+				})
+				.where(eq(claims.id, claimId))
+				.run();
+		});
+		await this.minecraftSynchronization.synchronize();
+		return { ok: true };
 	}
 
 	async removeServerClaim(claimId: string) {

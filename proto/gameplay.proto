@@ -291,6 +291,8 @@ message ClaimData {
   bool has_custom_color = 11;
   bool is_server_claim = 12;
   uint32 outsider_permissions = 13;
+  sint32 chunk_x_end = 14;
+  sint32 chunk_z_end = 15;
 }
 
 message ClaimsSnapshot {

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
 	ClaimEditorCard,
+	formatClaimArea,
 	formatDimension,
 	type EditableClaim,
 	type ClaimSettingsChange,
@@ -15,6 +16,11 @@ interface CurrentChunk {
 	dimension: string;
 	chunkX: number;
 	chunkZ: number;
+}
+
+interface AreaInput extends CurrentChunk {
+	oppositeChunkX: number;
+	oppositeChunkZ: number;
 }
 
 export function ServerClaimAdministrationSection({
@@ -65,23 +71,40 @@ export function ServerClaimAdministrationSection({
 		}
 	}
 
-	async function addClaim() {
-		await run(async () => {
-			const current = await request<CurrentChunk>('/api/admin/server-claims/current');
-			if (
-				!(await confirm({
-					title: 'Add this server claim?',
-					message: `Chunk ${current.chunkX}, ${current.chunkZ} in ${formatDimension(current.dimension)} will be protected for committee use only.`,
-					confirmLabel: 'Add server claim',
-				}))
-			)
-				return;
+	async function addClaim(area: AreaInput) {
+		if (
+			!(await confirm({
+				title: 'Add this server claim?',
+				message: `${describeArea(area)} will be one server claim. MMU_Admin has full access.`,
+				confirmLabel: 'Add server claim',
+			}))
+		)
+			return false;
+		return run(async () => {
 			await request('/api/admin/server-claims', {
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify(current),
+				body: JSON.stringify(area),
 			});
 		}, 'Could not add the server claim');
+	}
+
+	async function updateArea(claim: EditableClaim, area: AreaInput) {
+		if (
+			!(await confirm({
+				title: 'Change this server claim area?',
+				message: `${describeArea(area)} will replace the current area. Chunks outside it will lose this claim's protection.`,
+				confirmLabel: 'Save area',
+			}))
+		)
+			return false;
+		return run(async () => {
+			await request(`/api/admin/server-claims/${claim.id}/area`, {
+				method: 'PATCH',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify(area),
+			});
+		}, 'Could not change the server claim area');
 	}
 
 	async function updateAppearance(claim: EditableClaim, name: string, color: string | null) {
@@ -108,7 +131,7 @@ export function ServerClaimAdministrationSection({
 		if (
 			!(await confirm({
 				title: 'Delete this server claim?',
-				message: `“${claim.name}” at ${formatDimension(claim.dimension)} (${claim.chunkX}, ${claim.chunkZ}) will lose all protection.`,
+				message: `“${claim.name}” at ${formatClaimArea(claim)} in ${formatDimension(claim.dimension)} will lose all protection.`,
 				confirmLabel: 'Delete claim',
 				confirmTone: 'danger',
 				tone: 'danger',
@@ -131,13 +154,12 @@ export function ServerClaimAdministrationSection({
 						other players can take in each claim.
 					</p>
 				</div>
-				<button type="button" disabled={busy} onClick={() => void addClaim()}>
-					Add server claim
-				</button>
 			</div>
 			<p className="tabNote">
-				Stand in the target chunk in Minecraft, then select Add server claim.
+				Stand in one corner chunk and capture it. Then stand in the opposite corner chunk
+				and capture it. Capture the same chunk twice for a one-chunk claim.
 			</p>
+			<ServerClaimAreaPicker busy={busy} onSave={addClaim} saveLabel="Add server claim" />
 			{error && <p className="authError">{error}</p>}
 			{claims.length === 0 ? (
 				<p className="claimsEmpty">There are no server claims.</p>
@@ -152,12 +174,150 @@ export function ServerClaimAdministrationSection({
 							onSave={(name, color) => updateAppearance(claim, name, color)}
 							onSettings={(change) => updateSettings(claim, change)}
 							copySources={claims}
+							areaEditor={
+								<ServerClaimAreaPicker
+									key={`${claim.id}:${claim.dimension}:${claim.chunkX}:${claim.chunkZ}:${claim.chunkXEnd}:${claim.chunkZEnd}`}
+									initial={claim}
+									busy={busy}
+									onSave={(area) => updateArea(claim, area)}
+									saveLabel="Save area"
+								/>
+							}
 						/>
 					))}
 				</div>
 			)}
 		</section>
 	);
+}
+
+function ServerClaimAreaPicker({
+	initial,
+	busy,
+	onSave,
+	saveLabel,
+}: {
+	initial?: EditableClaim;
+	busy: boolean;
+	onSave: (area: AreaInput) => Promise<boolean>;
+	saveLabel: string;
+}) {
+	const { showAlert } = useSiteAlert();
+	const [first, setFirst] = useState<CurrentChunk | null>(
+		initial
+			? {
+					dimension: initial.dimension,
+					chunkX: initial.chunkX,
+					chunkZ: initial.chunkZ,
+				}
+			: null,
+	);
+	const [second, setSecond] = useState<CurrentChunk | null>(
+		initial
+			? {
+					dimension: initial.dimension,
+					chunkX: initial.chunkXEnd ?? initial.chunkX,
+					chunkZ: initial.chunkZEnd ?? initial.chunkZ,
+				}
+			: null,
+	);
+	const [capturing, setCapturing] = useState(false);
+	const selected = first !== null && second !== null && first.dimension === second.dimension;
+	const chunkCount = selected
+		? (Math.abs(first.chunkX - second.chunkX) + 1) *
+			(Math.abs(first.chunkZ - second.chunkZ) + 1)
+		: 0;
+
+	async function capture(which: 'first' | 'second') {
+		setCapturing(true);
+		try {
+			const current = await request<CurrentChunk>('/api/admin/server-claims/current');
+			if (which === 'first') {
+				setFirst(current);
+				if (second?.dimension !== current.dimension) setSecond(null);
+			} else {
+				setSecond(current);
+				if (first?.dimension !== current.dimension) setFirst(null);
+			}
+		} catch (caught) {
+			await showAlert({
+				title: 'Could not capture the current chunk',
+				message: readError(caught),
+				tone: 'danger',
+			});
+		} finally {
+			setCapturing(false);
+		}
+	}
+
+	return (
+		<div className="serverClaimAreaPicker">
+			<div className="serverClaimCorners">
+				{(
+					[
+						['First corner', first, 'first'],
+						['Opposite corner', second, 'second'],
+					] as const
+				).map(([label, corner, which]) => (
+					<div className="serverClaimCorner" key={which}>
+						<strong>{label}</strong>
+						<span>
+							{corner
+								? `${corner.chunkX}, ${corner.chunkZ} in ${formatDimension(corner.dimension)}`
+								: 'Not selected'}
+						</span>
+						<button
+							type="button"
+							disabled={busy || capturing}
+							onClick={() => void capture(which)}
+						>
+							Use current chunk
+						</button>
+					</div>
+				))}
+			</div>
+			{selected && (
+				<p>
+					{describeArea({
+						...first,
+						oppositeChunkX: second.chunkX,
+						oppositeChunkZ: second.chunkZ,
+					})}
+				</p>
+			)}
+			{chunkCount > 4096 && (
+				<p className="authError">A server claim can cover at most 4096 chunks.</p>
+			)}
+			<button
+				type="button"
+				disabled={busy || capturing || !selected || chunkCount > 4096}
+				onClick={() => {
+					if (!selected) return;
+					void onSave({
+						...first,
+						oppositeChunkX: second.chunkX,
+						oppositeChunkZ: second.chunkZ,
+					}).then((saved) => {
+						if (saved && !initial) {
+							setFirst(null);
+							setSecond(null);
+						}
+					});
+				}}
+			>
+				{saveLabel}
+			</button>
+		</div>
+	);
+}
+
+function describeArea(area: AreaInput) {
+	const x1 = Math.min(area.chunkX, area.oppositeChunkX);
+	const z1 = Math.min(area.chunkZ, area.oppositeChunkZ);
+	const x2 = Math.max(area.chunkX, area.oppositeChunkX);
+	const z2 = Math.max(area.chunkZ, area.oppositeChunkZ);
+	const count = (x2 - x1 + 1) * (z2 - z1 + 1);
+	return `${formatClaimArea({ chunkX: x1, chunkZ: z1, chunkXEnd: x2, chunkZEnd: z2 })} in ${formatDimension(area.dimension)} (${count} ${count === 1 ? 'chunk' : 'chunks'})`;
 }
 
 async function request<T = Record<string, unknown>>(url: string, init?: RequestInit): Promise<T> {

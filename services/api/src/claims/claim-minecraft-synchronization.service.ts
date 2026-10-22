@@ -16,6 +16,8 @@ interface ClaimData {
 	dimension: string;
 	chunk_x: number;
 	chunk_z: number;
+	chunk_x_end: number;
+	chunk_z_end: number;
 	owner_uuid: string;
 	owner_name: string;
 	name: string;
@@ -90,6 +92,8 @@ export class ClaimMinecraftSynchronizationService implements OnModuleDestroy {
 							dimension: claim.dimension,
 							chunk_x: claim.chunk_x,
 							chunk_z: claim.chunk_z,
+							chunk_x_end: claim.chunk_x_end,
+							chunk_z_end: claim.chunk_z_end,
 							owner_uuid: owner.minecraft_uuid,
 							owner_name: owner.minecraft_username,
 							name: claim.claim_name,

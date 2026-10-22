@@ -112,6 +112,8 @@ export const claims = sqliteTable(
 		dimension: text('dimension').notNull(),
 		chunk_x: integer('chunk_x').notNull(),
 		chunk_z: integer('chunk_z').notNull(),
+		chunk_x_end: integer('chunk_x_end').notNull().default(0),
+		chunk_z_end: integer('chunk_z_end').notNull().default(0),
 		claim_name: text('claim_name').notNull().default('My claim'),
 		color_hex: text('color_hex'),
 		is_server: integer('is_server').notNull().default(0),

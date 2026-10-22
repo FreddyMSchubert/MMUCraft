@@ -52,6 +52,41 @@
 	gap: 8px;
 }
 
+.serverClaimAreaPicker,
+.serverClaimCorner {
+	display: grid;
+	gap: 8px;
+}
+
+.serverClaimAreaPicker {
+	padding: 12px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 8px;
+}
+
+.serverClaimCorners {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+	gap: 12px;
+}
+
+.serverClaimAreaPicker p {
+	margin: 0;
+}
+
+.serverClaimAreaPicker button {
+	justify-self: start;
+	padding: 7px 10px;
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.08);
+	color: #fff;
+}
+
+.serverClaimAreaPicker button:disabled {
+	opacity: 0.55;
+}
+
 .claimsSection > h3 {
 	margin: 0;
 }

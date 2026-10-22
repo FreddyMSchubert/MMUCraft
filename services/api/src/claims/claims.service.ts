@@ -82,6 +82,7 @@ export class ClaimsService {
 				.map((claim) => ({
 					id: claim.id,
 					name: claim.claim_name,
+					dimension: claim.dimension,
 					chunkX: claim.chunk_x,
 					chunkZ: claim.chunk_z,
 				})),
@@ -132,6 +133,7 @@ export class ClaimsService {
 				.map((source) => ({
 					id: source.id,
 					name: source.claim_name,
+					dimension: source.dimension,
 					chunkX: source.chunk_x,
 					chunkZ: source.chunk_z,
 				})),

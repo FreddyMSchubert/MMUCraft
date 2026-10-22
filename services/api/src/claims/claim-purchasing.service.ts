@@ -4,19 +4,21 @@ import { and, count, eq } from 'drizzle-orm';
 import { AuthenticatedUser } from '../auth/auth-session.service';
 import { claims, DatabaseService } from '../database/database.service';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
+import {
+	type ClaimArea,
+	type ClaimCornerInput,
+	type ServerClaimAreaInput,
+	overlappingClaim,
+	pointArea,
+	serverClaimArea,
+} from './claim-area';
 import { ClaimMinecraftSynchronizationService } from './claim-minecraft-synchronization.service';
 
 const CLAIM_BASE_PRICE_DABLOONS = 50;
 const MEMBER_CLAIM_PRICE_GROWTH = 1.5;
 const NORMAL_PLAYER_CLAIM_PRICE_GROWTH = 1.7;
 const MAX_CLAIM_PRICE_DABLOONS = 2_000_000_000;
-const MAX_CHUNK_COORDINATE = 1_875_000;
-
-export interface CreateClaimInput {
-	dimension?: string;
-	chunkX?: number;
-	chunkZ?: number;
-}
+export type CreateClaimInput = ClaimCornerInput;
 
 interface CurrentChunkResponse {
 	online: boolean;
@@ -68,7 +70,7 @@ export class ClaimPurchasingService {
 		const { priceDabloons, nextClaimNumber } = this.getNextClaimPricing(user);
 		const claim = this.insertClaim(
 			user,
-			input,
+			pointArea(input),
 			false,
 			`My ${formatOrdinal(nextClaimNumber)} Claim`,
 		);
@@ -84,6 +86,7 @@ export class ClaimPurchasingService {
 			});
 		} catch {
 			this.database.connection.delete(claims).where(eq(claims.id, claim.id)).run();
+			await this.minecraftSynchronization.synchronize();
 			throw new BadRequestException(
 				'You have to stay online in that chunk while buying the claim.',
 			);
@@ -91,6 +94,7 @@ export class ClaimPurchasingService {
 
 		if (!purchase.purchased) {
 			this.database.connection.delete(claims).where(eq(claims.id, claim.id)).run();
+			await this.minecraftSynchronization.synchronize();
 			throw new BadRequestException(purchase.message || 'The claim could not be purchased.');
 		}
 
@@ -110,8 +114,8 @@ export class ClaimPurchasingService {
 		};
 	}
 
-	async createServerClaim(user: AuthenticatedUser, input: CreateClaimInput) {
-		const claim = this.insertClaim(user, input, true, 'Server claim');
+	async createServerClaim(user: AuthenticatedUser, input: ServerClaimAreaInput) {
+		const claim = this.insertClaim(user, serverClaimArea(input), true, 'Server claim');
 		await this.minecraftSynchronization.synchronize();
 		return { created: true, claimId: claim.id };
 	}
@@ -140,33 +144,38 @@ export class ClaimPurchasingService {
 
 	private insertClaim(
 		user: AuthenticatedUser,
-		input: CreateClaimInput,
+		area: ClaimArea,
 		isServer: boolean,
 		claimName: string,
 	) {
 		const claim = {
 			id: randomUUID(),
-			dimension: normalizeDimension(input.dimension),
-			chunkX: normalizeChunkCoordinate(input.chunkX),
-			chunkZ: normalizeChunkCoordinate(input.chunkZ),
+			...area,
 		};
-		const inserted = this.database.connection
-			.insert(claims)
-			.values({
-				id: claim.id,
-				owner_user_id: user.id,
-				dimension: claim.dimension,
-				chunk_x: claim.chunkX,
-				chunk_z: claim.chunkZ,
-				claim_name: claimName,
-				is_server: isServer ? 1 : 0,
-				created_at_unix_ms: Date.now(),
-			})
-			.onConflictDoNothing()
-			.run();
-		if (inserted.changes !== 1) {
-			throw new ConflictException('That chunk has already been claimed.');
-		}
+		this.database.connection.transaction((tx) => {
+			if (tx.select({ id: claims.id }).from(claims).where(overlappingClaim(area)).get()) {
+				throw new ConflictException('The selected area overlaps an existing claim.');
+			}
+			const inserted = tx
+				.insert(claims)
+				.values({
+					id: claim.id,
+					owner_user_id: user.id,
+					dimension: claim.dimension,
+					chunk_x: claim.chunkX,
+					chunk_z: claim.chunkZ,
+					chunk_x_end: claim.chunkXEnd,
+					chunk_z_end: claim.chunkZEnd,
+					claim_name: claimName,
+					is_server: isServer ? 1 : 0,
+					created_at_unix_ms: Date.now(),
+				})
+				.onConflictDoNothing()
+				.run();
+			if (inserted.changes !== 1) {
+				throw new ConflictException('The selected area overlaps an existing claim.');
+			}
+		});
 		return claim;
 	}
 }
@@ -185,22 +194,4 @@ function formatOrdinal(value: number) {
 			? 'th'
 			: (['th', 'st', 'nd', 'rd'][value % 10] ?? 'th');
 	return `${value}${suffix}`;
-}
-
-function normalizeDimension(value: string | undefined) {
-	if (typeof value !== 'string' || !/^[a-z0-9_.-]+:[a-z0-9_./-]+$/.test(value)) {
-		throw new BadRequestException('Invalid Minecraft dimension.');
-	}
-	return value;
-}
-
-function normalizeChunkCoordinate(value: number | undefined) {
-	if (
-		typeof value !== 'number' ||
-		!Number.isInteger(value) ||
-		Math.abs(value) > MAX_CHUNK_COORDINATE
-	) {
-		throw new BadRequestException('Invalid chunk coordinate.');
-	}
-	return value;
 }

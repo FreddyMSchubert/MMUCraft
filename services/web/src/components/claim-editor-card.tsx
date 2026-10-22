@@ -23,6 +23,8 @@ export interface EditableClaim {
 	dimension: string;
 	chunkX: number;
 	chunkZ: number;
+	chunkXEnd?: number;
+	chunkZEnd?: number;
 	name: string;
 	color: string;
 	defaultColor: string;
@@ -33,8 +35,11 @@ export interface EditableClaim {
 export interface ClaimCopySource {
 	id: string;
 	name: string;
+	dimension: string;
 	chunkX: number;
 	chunkZ: number;
+	chunkXEnd?: number;
+	chunkZEnd?: number;
 }
 
 export interface ClaimSettingsChange {
@@ -71,6 +76,7 @@ export function ClaimEditorCard({
 	copySources = [],
 	summary,
 	children,
+	areaEditor,
 	initiallyEditing = false,
 }: {
 	claim: EditableClaim;
@@ -81,6 +87,7 @@ export function ClaimEditorCard({
 	copySources?: ClaimCopySource[];
 	summary?: ReactNode;
 	children?: ReactNode;
+	areaEditor?: ReactNode;
 	initiallyEditing?: boolean;
 }) {
 	const [editing, setEditing] = useState(initiallyEditing);
@@ -96,7 +103,7 @@ export function ClaimEditorCard({
 						{claim.name}
 					</h4>
 					<span>
-						Chunk {claim.chunkX}, {claim.chunkZ} - {formatDimension(claim.dimension)}
+						{formatClaimArea(claim)} - {formatDimension(claim.dimension)}
 					</span>
 				</div>
 				{!editing && summary}
@@ -128,6 +135,12 @@ export function ClaimEditorCard({
 							if (await onSave(name, color)) setEditing(false);
 						}}
 					/>
+					{areaEditor && (
+						<details className="claimEditorSection">
+							<summary>Area</summary>
+							{areaEditor}
+						</details>
+					)}
 					{onSettings && (
 						<details className="claimEditorSection">
 							<summary>Settings</summary>
@@ -182,7 +195,8 @@ function ClaimSettingsEditor({
 						.filter((candidate) => candidate.id !== claim.id)
 						.map((candidate) => (
 							<option key={candidate.id} value={candidate.id}>
-								{candidate.name} ({candidate.chunkX}, {candidate.chunkZ})
+								{candidate.name} ({formatClaimArea(candidate)} in{' '}
+								{formatDimension(candidate.dimension)})
 							</option>
 						))}
 				</select>
@@ -427,4 +441,14 @@ function ClaimAppearanceForm({
 
 export function formatDimension(dimension: string) {
 	return dimension.replace('minecraft:', '').replaceAll('_', ' ');
+}
+
+export function formatClaimArea(
+	claim: Pick<EditableClaim, 'chunkX' | 'chunkZ' | 'chunkXEnd' | 'chunkZEnd'>,
+) {
+	const endX = claim.chunkXEnd ?? claim.chunkX;
+	const endZ = claim.chunkZEnd ?? claim.chunkZ;
+	return endX === claim.chunkX && endZ === claim.chunkZ
+		? `Chunk ${claim.chunkX}, ${claim.chunkZ}`
+		: `Chunks ${claim.chunkX}, ${claim.chunkZ} to ${endX}, ${endZ}`;
 }

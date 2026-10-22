@@ -139,6 +139,17 @@ public final class ClaimsManager {
         Map<ClaimKey, Claim> next = new HashMap<>();
         for (ClaimData data : snapshot.getClaimsList()) {
             try {
+                long width = (long) data.getChunkXEnd() - data.getChunkX() + 1;
+                long height = (long) data.getChunkZEnd() - data.getChunkZ() + 1;
+                if (width < 1 || height < 1 || width > 4096 || height > 4096 || width * height > 4096
+                        || (!data.getIsServerClaim() && (width != 1 || height != 1))
+                        || Math.abs((long) data.getChunkX()) > 1_875_000
+                        || Math.abs((long) data.getChunkZ()) > 1_875_000
+                        || Math.abs((long) data.getChunkXEnd()) > 1_875_000
+                        || Math.abs((long) data.getChunkZEnd()) > 1_875_000) {
+                    MainMod.LOGGER.warn("Ignored claim {} because its chunk area is invalid", data.getId());
+                    continue;
+                }
                 UUID ownerUuid = parseUuid(data.getOwnerUuid());
                 Set<UUID> members = new HashSet<>();
                 if (!data.getIsServerClaim()) members.add(ownerUuid);
@@ -148,15 +159,17 @@ public final class ClaimsManager {
                 String name = data.getName().strip();
                 if (name.isEmpty()) name = "My claim";
                 if (name.length() > 50) name = name.substring(0, 50);
-                next.put(
-                        new ClaimKey(data.getDimension(), ChunkPos.pack(data.getChunkX(), data.getChunkZ())),
-                        new Claim(
-                                data.getId(), ownerUuid, data.getOwnerName(), name,
-                                parseColor(data.getColorHex()), parseColor(data.getOwnerColorHex()),
-                                data.getHasCustomColor(), data.getIsServerClaim(), Set.copyOf(members),
-                                data.getOutsiderPermissions()
-                        )
+                Claim claim = new Claim(
+                        data.getId(), ownerUuid, data.getOwnerName(), name,
+                        parseColor(data.getColorHex()), parseColor(data.getOwnerColorHex()),
+                        data.getHasCustomColor(), data.getIsServerClaim(), Set.copyOf(members),
+                        data.getOutsiderPermissions()
                 );
+                for (int x = data.getChunkX(); x <= data.getChunkXEnd(); x++) {
+                    for (int z = data.getChunkZ(); z <= data.getChunkZEnd(); z++) {
+                        next.put(new ClaimKey(data.getDimension(), ChunkPos.pack(x, z)), claim);
+                    }
+                }
             } catch (IllegalArgumentException ignored) {
                 MainMod.LOGGER.warn("Ignored claim {} because it has an invalid Minecraft UUID", data.getId());
             }

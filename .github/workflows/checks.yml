@@ -271,6 +271,13 @@ jobs:
                   if-no-files-found: ignore
                   retention-days: 7
 
+            - name: Reclaim test image and build cache space
+              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
+              run: |
+                  docker image prune --all --force
+                  docker buildx prune --all --force
+                  df -h .
+
             - name: Set up Gradle
               if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               uses: gradle/actions/setup-gradle@v6
@@ -332,6 +339,12 @@ jobs:
                   provenance: mode=max
                   sbom: true
 
+            - name: Reclaim Minecraft build cache space
+              if: ${{ steps.back_images.outputs.mc_exists != 'true' || steps.back_images.outputs.velocity_exists != 'true' }}
+              run: |
+                  docker buildx prune --all --force
+                  df -h .
+
             - name: Build and push waiting room
               if: ${{ steps.back_images.outputs.waiting_room_exists != 'true' }}
               uses: docker/build-push-action@v7
@@ -346,6 +359,12 @@ jobs:
                   cache-to: type=gha,mode=max,scope=waiting-room
                   provenance: mode=max
                   sbom: true
+
+            - name: Reclaim waiting-room build cache space
+              if: ${{ steps.back_images.outputs.waiting_room_exists != 'true' }}
+              run: |
+                  docker buildx prune --all --force
+                  df -h .
 
             - name: Build and push Surprising Saturday
               if: ${{ steps.back_images.outputs.event_exists != 'true' }}

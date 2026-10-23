@@ -100,6 +100,7 @@ export interface ShopItemCatalog {
 	mtimeMs: number;
 	items: CatalogItem[];
 	assets: Map<string, ItemRenderAsset>;
+	titles: Map<string, string>;
 	searchDocuments: ShopSearchDocument[];
 }
 

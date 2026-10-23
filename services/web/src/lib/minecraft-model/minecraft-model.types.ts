@@ -1,5 +1,5 @@
 export type FaceName = 'north' | 'east' | 'south' | 'west' | 'up' | 'down';
-export type PreviewView = 'basic3d' | 'cosmetic' | 'icon' | 'item-frame' | 'player';
+export type PreviewView = 'basic3d' | 'cosmetic' | 'duck' | 'icon' | 'item-frame' | 'player';
 
 export interface TextureAnimationOptions {
 	frameDelayMs: number;

@@ -5,6 +5,7 @@ import io.grpc.ManagedChannel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.MinecraftServer;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
@@ -153,6 +154,8 @@ final class GameplayEventsClient {
                 .setBalanceDabloons(Math.max(0, MoneyHelper.GetBalance(player)))
                 .setIncludeSurprisingSaturdayRewards(includeRewards)
                 .setDuckLogin(duckLogin)
+                .addAllCommitteeKillAdvancements(duckLogin
+                        ? MasteryAdvancements.completedCommitteeKillUsernames(player) : List.of())
                 .addAllStats(stats)
                 .build();
         return call(client -> client.withDeadlineAfter(5, TimeUnit.SECONDS).syncPlayerStats(request));

@@ -70,6 +70,7 @@ export class MinecraftModelRenderer {
 		this.fallbackTextureSource = options.textureSource;
 		this.skinSource = options.skinSource;
 		if (this.view === 'cosmetic' || this.view === 'player') this.spinRoot.rotation.y = Math.PI;
+		if (this.view === 'duck') this.spinRoot.rotation.y = Math.PI * 0.75;
 		if (this.view === 'item-frame') this.spinRoot.rotation.y = Math.PI + 0.35;
 		this.modelObject = new MinecraftModelObject(
 			options.frameSequence ?? null,
@@ -310,7 +311,7 @@ export class MinecraftModelRenderer {
 		const displayMode =
 			this.view === 'player' ? 'head' : this.view === 'item-frame' ? 'fixed' : mode;
 		const transform =
-			this.view === 'cosmetic'
+			this.view === 'cosmetic' || this.view === 'duck'
 				? {}
 				: (this.currentResolvedModel?.display?.[displayMode] ?? {});
 		const isIconBlock =
@@ -431,9 +432,11 @@ export class MinecraftModelRenderer {
 		const offset =
 			this.view === 'cosmetic'
 				? new THREE.Vector3(0, distance * 0.28, distance * 1.12)
-				: this.view === 'item-frame'
-					? new THREE.Vector3(0, distance * 0.42, distance * 1.16)
-					: new THREE.Vector3(0, 0, distance * (this.view === 'icon' ? 1 : 1.28));
+				: this.view === 'duck'
+					? new THREE.Vector3(0, distance * 0.4, distance * 1.16)
+					: this.view === 'item-frame'
+						? new THREE.Vector3(0, distance * 0.42, distance * 1.16)
+						: new THREE.Vector3(0, 0, distance * (this.view === 'icon' ? 1 : 1.28));
 
 		this.camera.position.copy(center.clone().add(offset));
 		this.camera.lookAt(center);

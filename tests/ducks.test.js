@@ -11,6 +11,17 @@ const {
 } = require('../services/api/dist/database/minecraft-identity.service');
 const { DucksService } = require('../services/api/dist/ducks/ducks.service');
 const { GameplayGrpcService } = require('../services/api/dist/gameplay/gameplay-grpc.service');
+const {
+	ShopItemCatalogService,
+} = require('../services/api/dist/gameplay/shop/shop-item-catalog.service');
+const { DUCKS } = require('../services/api/dist/ducks/duck-catalog');
+
+test('duck titles come from item definitions', () => {
+	const catalog = new ShopItemCatalogService();
+	for (const duck of DUCKS) assert.match(catalog.itemTitle(duck.itemId), /^The /);
+	assert.equal(catalog.itemTitle('duck-mythical-cosmetic'), 'The Shop Completion Duck');
+	assert.equal(catalog.itemTitle('duck-playtime'), 'The 168 Hours Duck');
+});
 
 test('Discord join webhook completes before queued duck announcements', async () => {
 	const order = [];
@@ -52,6 +63,7 @@ test('Hellish toggle blocks duck access and awards before the drop', async () =>
 	netherOpen = true;
 	assert.equal(service.isOpen(), true);
 	await assert.rejects(() => service.recordEvent('uuid', 'Player', 12));
+	await assert.rejects(() => service.recordEvent('uuid', 'Player', 6));
 });
 
 test('duck awards, delivery, revocation and final completion stay consistent', async () => {
@@ -88,12 +100,12 @@ test('duck awards, delivery, revocation and final completion stay consistent', a
 				return true;
 			},
 		},
-		{ itemAsset: () => null },
+		{ itemAsset: () => null, itemTitle: (id) => id },
 		{ enabledKeys: () => new Set(netherOpen ? ['nether'] : []) },
 	);
 	try {
 		assert.equal(service.isOpen(), false);
-		assert.deepEqual(service.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, true, true), {
+		assert.deepEqual(service.onPlayerSync(uuid, 'DuckTester', 168 * 60 * 60 * 20, true, true), {
 			count: 0,
 			newAwards: [],
 			pending: [],
@@ -105,12 +117,17 @@ test('duck awards, delivery, revocation and final completion stay consistent', a
 		assert.equal(pushes.length, 0);
 		netherOpen = true;
 		assert.equal(service.isOpen(), true);
-		const online = service.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, false, false);
+		assert.deepEqual(
+			service.onPlayerSync(uuid, 'DuckTester', 168 * 60 * 60 * 20 - 1, false, false)
+				.newAwards,
+			[],
+		);
+		const online = service.onPlayerSync(uuid, 'DuckTester', 168 * 60 * 60 * 20, false, false);
 		assert.deepEqual(
 			online.newAwards.map((award) => award.duck_id),
 			[7],
 		);
-		const login = service.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, true, true);
+		const login = service.onPlayerSync(uuid, 'DuckTester', 168 * 60 * 60 * 20, true, true);
 		assert.deepEqual(
 			login.newAwards.map((award) => award.duck_id),
 			[1, 2],
@@ -118,7 +135,7 @@ test('duck awards, delivery, revocation and final completion stay consistent', a
 		assert.equal(login.count, 3);
 		assert.equal(login.pending.length, 3);
 		assert.equal(
-			service.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, false, false).newAwards
+			service.onPlayerSync(uuid, 'DuckTester', 168 * 60 * 60 * 20, false, false).newAwards
 				.length,
 			0,
 		);
@@ -129,13 +146,13 @@ test('duck awards, delivery, revocation and final completion stay consistent', a
 		assert.equal(service.getForUser(player.id).count, 3);
 		await service.setAward(player.id, 1, false);
 		assert.equal(
-			service.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, false, false).newAwards
+			service.onPlayerSync(uuid, 'DuckTester', 168 * 60 * 60 * 20, false, false).newAwards
 				.length,
 			0,
 		);
 		assert.deepEqual(
 			service
-				.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, true, false)
+				.onPlayerSync(uuid, 'DuckTester', 168 * 60 * 60 * 20, true, false)
 				.newAwards.map((award) => award.duck_id),
 			[1],
 		);
@@ -164,7 +181,7 @@ test('duck awards, delivery, revocation and final completion stay consistent', a
 		assert.equal(service.getForUser(player.id).count, 13);
 		netherOpen = false;
 		assert.equal(
-			service.onPlayerSync(uuid, 'DuckTester', 100 * 60 * 60 * 20, true, false).count,
+			service.onPlayerSync(uuid, 'DuckTester', 168 * 60 * 60 * 20, true, false).count,
 			0,
 		);
 		assert.equal((await service.recordEvent(uuid, 'DuckTester', 4)).count, 0);
@@ -173,7 +190,7 @@ test('duck awards, delivery, revocation and final completion stay consistent', a
 	}
 });
 
-test('login awards wait for the Discord join, committee kills need every distinct member, and fish cannot award yet', async () => {
+test('login credits past committee advancements and awards only after every distinct kill', async () => {
 	const database = new DatabaseService();
 	const players = [
 		{
@@ -219,11 +236,16 @@ test('login awards wait for the Discord join, committee kills need every distinc
 				return true;
 			},
 		},
-		{ itemAsset: () => null },
+		{
+			itemAsset: (id) => ({ modelUrl: id, textureUrl: id }),
+			itemTitle: (id) => id,
+		},
 		{ enabledKeys: () => new Set(['nether']) },
 	);
 	try {
-		const login = service.onPlayerSync(players[0].uuid, players[0].name, 0, true, false);
+		const login = service.onPlayerSync(players[0].uuid, players[0].name, 0, true, false, [
+			players[1].name,
+		]);
 		assert.deepEqual(
 			login.newAwards.map((award) => award.duck_id),
 			[1],
@@ -232,6 +254,10 @@ test('login awards wait for the Discord join, committee kills need every distinc
 		discordEvents.push('join');
 		await service.afterDiscordJoin(players[0].uuid);
 		assert.deepEqual(discordEvents, ['join', 'duck']);
+		assert.equal(
+			service.getForUser(database.connection.select().from(users).get().id).ducks[3].modelUrl,
+			'duck-rubber',
+		);
 
 		assert.deepEqual(
 			(await service.recordEvent(players[0].uuid, players[0].name, 4, players[1].uuid))
@@ -255,6 +281,7 @@ test('login awards wait for the Discord join, committee kills need every distinc
 		);
 		assert.equal(finalKill.count, 2);
 		await assert.rejects(() => service.recordEvent(players[0].uuid, players[0].name, 12));
+		await assert.rejects(() => service.recordEvent(players[0].uuid, players[0].name, 6));
 	} finally {
 		database.onModuleDestroy();
 	}

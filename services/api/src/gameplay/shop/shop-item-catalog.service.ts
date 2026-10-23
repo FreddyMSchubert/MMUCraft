@@ -48,13 +48,13 @@ export class ShopItemCatalogService implements OnModuleInit {
 		if (!existsSync(root)) return (this.cache = emptyCatalog(root));
 
 		const mtimeMs = treeMtime(root);
-		const { items, assets, searchDocuments } = readCatalog(root);
+		const { items, assets, titles, searchDocuments } = readCatalog(root);
 		items.sort(
 			(left, right) =>
 				left.type.localeCompare(right.type, 'en') ||
 				left.title.localeCompare(right.title, 'en'),
 		);
-		return (this.cache = { root, mtimeMs, items, assets, searchDocuments });
+		return (this.cache = { root, mtimeMs, items, assets, titles, searchDocuments });
 	}
 
 	search(query: string): string[] {
@@ -64,6 +64,10 @@ export class ShopItemCatalogService implements OnModuleInit {
 
 	itemAsset(itemId: string): ItemRenderAsset | null {
 		return this.load().assets.get(itemId) ?? null;
+	}
+
+	itemTitle(itemId: string): string | null {
+		return this.load().titles.get(itemId) ?? null;
 	}
 
 	gameItemAsset(itemId: string): ItemRenderAsset | null {
@@ -77,9 +81,12 @@ function readCatalog(root: string) {
 	const drops = loadDrops();
 	const items: CatalogItem[] = [];
 	const assets = new Map<string, ItemRenderAsset>();
+	const titles = new Map<string, string>();
 	const searchDocuments: ShopSearchDocument[] = [];
 	for (const filePath of findItemDefinitionFiles(root)) {
 		const json = JSON.parse(readFileSync(filePath, 'utf8')) as RawItemDefinition;
+		if (typeof json.id === 'string' && typeof json.title === 'string')
+			titles.set(json.id, json.title);
 		const directory = dirname(filePath);
 		const item = parseShopItemDefinition(json, directory, root, drops);
 		if (item) {
@@ -146,11 +153,18 @@ function readCatalog(root: string) {
 		const texture = join(blockTextures, filename);
 		if (existsSync(texture)) assets.set(id, itemRenderAsset(id, null, texture));
 	}
-	return { items, assets, searchDocuments };
+	return { items, assets, titles, searchDocuments };
 }
 
 function emptyCatalog(root: string): ShopItemCatalog {
-	return { root, mtimeMs: 0, items: [], assets: new Map(), searchDocuments: [] };
+	return {
+		root,
+		mtimeMs: 0,
+		items: [],
+		assets: new Map(),
+		titles: new Map(),
+		searchDocuments: [],
+	};
 }
 
 function treeMtime(path: string): number {

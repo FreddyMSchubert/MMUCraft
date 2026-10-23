@@ -1,15 +1,14 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.mixin;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -33,11 +32,24 @@ public abstract class KittyPajamaScareCreeper extends Monster
         this.goalSelector.addGoal(1, goal);
     }
 
+    @Inject(at = @At("HEAD"), method = "setTarget", cancellable = true)
+    private void avoidTargetingCharmWearer(LivingEntity target, CallbackInfo info) {
+        if (shouldFleeFromPlayer(target)) info.cancel();
+    }
+
+    @Inject(at = @At("HEAD"), method = "tick")
+    private void stopTargetingNewCharmWearer(CallbackInfo info) {
+        if (this.level().isClientSide()) return;
+        if (!shouldFleeFromPlayer(this.getTarget())) return;
+        this.setTarget(null);
+        Creeper creeper = (Creeper) (Object) this;
+        if (!creeper.isIgnited()) creeper.setSwellDir(-1);
+    }
+
     @Unique
     private boolean shouldFleeFromPlayer(LivingEntity livingEntity)
     {
-        if (!(livingEntity instanceof Player player)) return true;
-        ItemStack stack = player.getItemBySlot(EquipmentSlot.LEGS);
-        return (CharmsManager.hasAbility(stack, KittyPajamasCharm.class));
+        return livingEntity instanceof ServerPlayer player
+                && CharmsManager.getPlayerCharmLevel(player, KittyPajamasCharm.class) > 0;
     }
 }

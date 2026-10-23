@@ -9,7 +9,7 @@ on:
                 default: ''
                 type: string
             source_ref:
-                description: Code to build for dev (branch, tag, or commit); defaults to main. Ignored for releases.
+                description: Code to build (branch, tag, or commit); overrides release_tag on manual runs. Blank uses the release tag, or main for dev.
                 required: false
                 default: ''
                 type: string
@@ -52,7 +52,7 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v6
               with:
-                  ref: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.release_tag || inputs.source_ref || 'main' }}
+                  ref: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.source_ref || inputs.release_tag || 'main' }}
                   persist-credentials: false
 
             - name: Resolve source revision

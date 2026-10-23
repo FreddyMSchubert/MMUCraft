@@ -54,7 +54,9 @@ export function DucksTab() {
 			const response = await fetch(`/api/ducks/${duck.id}/purchase`, { method: 'POST' });
 			const body = (await response.json().catch(() => null)) as { message?: string } | null;
 			if (!response.ok) throw new Error(body?.message ?? 'Could not buy another duck.');
-			setNotice(`Another ${duck.name} is yours. Find it in your Minecraft inventory.`);
+			setNotice(
+				`Another copy of ${duck.name} is yours. Find it in your Minecraft inventory.`,
+			);
 		} catch (caught) {
 			setNotice(caught instanceof Error ? caught.message : 'Could not buy another duck.');
 		} finally {
@@ -153,7 +155,7 @@ function DuckCard({ duck, buying, onBuy }: { duck: Duck; buying: boolean; onBuy:
 			>
 				<div className="duckModel">
 					{duck.modelUrl && duck.textureUrl ? (
-						<ShopPreview item={model} hovered={hovered} interactive />
+						<ShopPreview item={model} hovered={hovered} interactive view="duck" />
 					) : (
 						<div className="duckMissingModel" aria-hidden="true" />
 					)}
@@ -167,7 +169,7 @@ function DuckCard({ duck, buying, onBuy }: { duck: Duck; buying: boolean; onBuy:
 					onClick={onBuy}
 					title={
 						duck.unlocked
-							? `Buy another ${duck.name} for ${duck.priceDabloons} Dabloons`
+							? `Buy another copy of ${duck.name} for ${duck.priceDabloons} Dabloons`
 							: 'Earn this duck first'
 					}
 				>

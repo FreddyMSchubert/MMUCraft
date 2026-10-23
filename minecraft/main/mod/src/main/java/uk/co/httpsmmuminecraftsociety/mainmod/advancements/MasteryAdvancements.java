@@ -28,6 +28,7 @@ import java.time.ZonedDateTime;
 import java.time.ZoneId;
 import java.time.DayOfWeek;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public final class MasteryAdvancements {
@@ -110,6 +111,14 @@ public final class MasteryAdvancements {
                     CommitteeMembers.ALL.stream().map(CommitteeMembers.Member::advancementPath).toArray(String[]::new));
             return;
         }
+    }
+
+    public static List<String> completedCommitteeKillUsernames(ServerPlayer player) {
+        return CommitteeMembers.ALL.stream().filter(member -> {
+            AdvancementHolder holder = player.level().getServer().getAdvancements().get(
+                    Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "mastery/" + member.advancementPath()));
+            return holder != null && player.getAdvancements().getOrStartProgress(holder).isDone();
+        }).map(CommitteeMembers.Member::username).toList();
     }
 
     public static void recordCharmUpgrade(ServerPlayer player) {

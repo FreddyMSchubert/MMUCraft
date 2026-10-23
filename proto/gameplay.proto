@@ -518,6 +518,7 @@ message SyncPlayerStatsRequest {
   string minecraft_uuid = 5;
   bool include_surprising_saturday_rewards = 6;
   bool duck_login = 7;
+  repeated string committee_kill_advancements = 8;
 }
 
 message SyncPlayerStatsResponse {

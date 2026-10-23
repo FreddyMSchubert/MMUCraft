@@ -58,9 +58,10 @@ export class DucksService {
 			rank: duckRank(count),
 			ducks: DUCKS.map((duck) => {
 				const award = awards.find((row) => row.duck_id === duck.id);
-				const asset = this.shopItems.itemAsset(duck.itemId);
+				const asset = this.shopItems.itemAsset(award ? duck.itemId : 'duck-rubber');
 				return {
 					...duck,
+					name: this.duckName(duck.itemId),
 					priceDabloons: duck.id === 13 ? 10 : 5,
 					unlocked: Boolean(award),
 					awardedAtUnixMs: award?.awarded_at_unix_ms ?? null,
@@ -87,7 +88,7 @@ export class DucksService {
 			price_dabloons: duck.id === 13 ? 10 : 5,
 			delivery_kind: 'fake_item',
 			unix_ms: Date.now(),
-			display_name: duck.name,
+			display_name: this.duckName(duck.itemId),
 			item_type: 'Duck',
 			rarity: duck.id === 13 ? 'mythical' : 'rare',
 			duck_awarded_to: user.minecraftUsername,
@@ -192,6 +193,7 @@ export class DucksService {
 		playTimeTicks: number,
 		isLogin: boolean,
 		firstJoin: boolean,
+		committeeKillAdvancements: string[] = [],
 	) {
 		if (!this.isOpen()) return { count: 0, newAwards: [], pending: [] };
 		const user = this.identities.resolveAndRefresh(minecraftUuid, minecraftUsername);
@@ -200,9 +202,12 @@ export class DucksService {
 			this.waitingForDiscordJoin.set(user.id, []);
 		const earned = [
 			...(isLogin ? [1, ...(user.is_member === 1 ? [2] : [])] : []),
-			...(playTimeTicks >= 100 * 60 * 60 * 20 ? [7] : []),
+			...(playTimeTicks >= 168 * 60 * 60 * 20 ? [7] : []),
 		];
-		const fresh = this.grant(user, earned);
+		const fresh = [
+			...this.grant(user, earned),
+			...this.creditCommitteeAdvancements(user, committeeKillAdvancements),
+		];
 		void this.publishDiscord(
 			user,
 			firstJoin ? fresh.filter((award) => award.duck_id !== 1 && award.duck_id !== 2) : fresh,
@@ -221,8 +226,8 @@ export class DucksService {
 		victimMinecraftUuid = '',
 	) {
 		if (!this.isOpen()) return { accountLinked: false, count: 0, newAwards: [] };
-		// Duck 12 has no automatic trigger until the complete fish roster, including End fish, exists.
-		if (![4, 5, 6, 7, 8, 9].includes(duckId))
+		// Ducks 6 and 12 wait for their full collections to exist.
+		if (![4, 5, 7, 8, 9].includes(duckId))
 			throw new BadRequestException('Invalid automatic duck event.');
 		const user = this.identities.resolveAndRefresh(minecraftUuid, minecraftUsername);
 		if (!user) return { accountLinked: false, count: 0, newAwards: [] };
@@ -251,17 +256,7 @@ export class DucksService {
 			})
 			.onConflictDoNothing()
 			.run();
-		const committee = this.database.connection
-			.select({ id: users.id })
-			.from(users)
-			.where(
-				and(
-					or(eq(users.is_committee, 1), eq(users.is_super_admin, 1)),
-					isNotNull(users.minecraft_uuid),
-					ne(users.email, ADMIN_SIGNUP_EMAIL),
-				),
-			)
-			.all();
+		const committee = this.committeeMembers();
 		const killed = new Set(
 			this.database.connection
 				.select({ id: duckCommitteeKills.victim_user_id })
@@ -273,6 +268,30 @@ export class DucksService {
 		return committee.length > 0 && committee.every(({ id }) => killed.has(id))
 			? this.grant(killer, [4])
 			: [];
+	}
+
+	private creditCommitteeAdvancements(killer: UserRow, usernames: string[]) {
+		if (!usernames.length) return [];
+		const completed = new Set(usernames.map((name) => name.toLowerCase()));
+		return this.committeeMembers().flatMap((member) =>
+			member.minecraft_uuid && completed.has(member.minecraft_username.toLowerCase())
+				? this.recordCommitteeKill(killer, member.minecraft_uuid)
+				: [],
+		);
+	}
+
+	private committeeMembers() {
+		return this.database.connection
+			.select()
+			.from(users)
+			.where(
+				and(
+					or(eq(users.is_committee, 1), eq(users.is_super_admin, 1)),
+					isNotNull(users.minecraft_uuid),
+					ne(users.email, ADMIN_SIGNUP_EMAIL),
+				),
+			)
+			.all();
 	}
 
 	markDelivered(
@@ -361,7 +380,7 @@ export class DucksService {
 		}
 		for (const award of fresh) {
 			if (!this.isOpen()) return;
-			const content = `earned the ${award.name} for ${award.announcement_reason}! 🎉 (${award.count}/${DUCKS.length} ducks collected)`;
+			const content = `earned ${award.name} for ${award.announcement_reason}! 🎉 (${award.count}/${DUCKS.length} ducks collected)`;
 			try {
 				await this.discord.publish({
 					type: award.duck_id === 13 ? 'duck_final' : 'duck',
@@ -418,7 +437,7 @@ export class DucksService {
 		return {
 			duck_id: duck.id,
 			item_id: duck.itemId,
-			name: duck.name,
+			name: this.duckName(duck.itemId),
 			condition: duck.condition,
 			announcement_reason: duck.announcementReason,
 			awarded_to: user.minecraft_username,
@@ -435,6 +454,10 @@ export class DucksService {
 			.where(eq(playerProfiles.user_id, user.id))
 			.get()?.color;
 		return effectivePlayerColor(user.minecraft_uuid, customColor);
+	}
+
+	private duckName(itemId: string) {
+		return this.shopItems.itemTitle(itemId) ?? itemId;
 	}
 
 	private awards(userId: number) {

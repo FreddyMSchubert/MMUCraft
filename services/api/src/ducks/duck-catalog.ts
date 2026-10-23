@@ -2,7 +2,6 @@ export const DUCKS = [
 	{
 		id: 1,
 		itemId: 'duck-rubber',
-		name: 'Rubber Duck',
 		condition: 'Join the server.',
 		announcementReason: 'joining the server',
 		manual: false,
@@ -10,7 +9,6 @@ export const DUCKS = [
 	{
 		id: 2,
 		itemId: 'duck-minequack',
-		name: 'MineQuack',
 		condition: 'Become a member.',
 		announcementReason: 'becoming a member',
 		manual: false,
@@ -18,7 +16,6 @@ export const DUCKS = [
 	{
 		id: 3,
 		itemId: 'duck-socials',
-		name: 'Socials Duck',
 		condition: 'Attend five in-person socials.',
 		announcementReason: 'attending five socials',
 		manual: true,
@@ -26,15 +23,13 @@ export const DUCKS = [
 	{
 		id: 4,
 		itemId: 'duck-committee-kill',
-		name: 'Committee Kill Duck',
-		condition: 'Kill every current committee member at least once.',
+		condition: 'Kill every committee member at least once.',
 		announcementReason: 'taking down every committee member',
 		manual: false,
 	},
 	{
 		id: 5,
 		itemId: 'duck-aristoquack',
-		name: 'AristoQuack',
 		condition:
 			'Fill every inventory slot, hotbar slot, and offhand with full stacks of 1-dabloon coins.',
 		announcementReason: 'being rich AF',
@@ -43,47 +38,44 @@ export const DUCKS = [
 	{
 		id: 6,
 		itemId: 'duck-mythical-cosmetic',
-		name: 'Mythical Cosmetic Duck',
-		condition: 'Wear a mythical cosmetic.',
-		announcementReason: 'wearing a mythical cosmetic',
+		condition: 'Unlock every cosmetic and charm in the shop.',
+		announcementReason: 'unlocking the entire shop',
 		manual: false,
 	},
 	{
 		id: 7,
 		itemId: 'duck-playtime',
-		name: '100 Hours Duck',
-		condition: 'Play on the server for 100 hours.',
-		announcementReason: 'playing for 100 hours',
+		condition: 'Play on the server for 168 hours.',
+		announcementReason: 'playing for a full week',
 		manual: false,
 	},
 	{
 		id: 8,
 		itemId: 'duck-hearts',
-		name: '20 Hearts Duck',
-		condition: 'Have 20 full red hearts at once.',
-		announcementReason: 'reaching 20 full hearts',
+		condition:
+			'Have 20 full red hearts, full hunger and saturation, and Regeneration I from a beacon at once.',
+		announcementReason: 'maxing out hearts, hunger, saturation and regeneration',
 		manual: false,
 	},
 	{
 		id: 9,
 		itemId: 'duck-enderite',
-		name: 'Enderite Duck',
-		condition: 'Wear a full set of Enderite armour.',
-		announcementReason: 'suiting up in Enderite',
+		condition:
+			'Wear a full set of Enderite armour with every compatible enchantment at its maximum Enderite level, excluding curses.',
+		announcementReason: 'wearing fully max-enchanted Enderite armour',
 		manual: false,
 	},
 	{
 		id: 10,
 		itemId: 'duck-joke',
-		name: 'Joke Duck',
-		condition: 'Get a new joke from your Discord suggestion added in-game.',
+		condition:
+			'Post a genuinely good and new joke into the Discord suggestions channel, resulting in your joke being added in-game.',
 		announcementReason: 'getting a joke into the game',
 		manual: true,
 	},
 	{
 		id: 11,
 		itemId: 'duck-bugger',
-		name: 'Bugger Duck',
 		condition: 'Find and report a bug. Thanks!',
 		announcementReason: 'finding and reporting a bug',
 		manual: true,
@@ -91,7 +83,6 @@ export const DUCKS = [
 	{
 		id: 12,
 		itemId: 'duck-mythical-fish',
-		name: 'Every Fish Duck',
 		condition: 'Catch every fish.',
 		announcementReason: 'catching every fish',
 		manual: false,
@@ -99,7 +90,6 @@ export const DUCKS = [
 	{
 		id: 13,
 		itemId: 'duck-every-duck',
-		name: 'Every Duck Duck',
 		condition: 'Find every other duck.',
 		announcementReason: 'finding every other duck',
 		manual: false,

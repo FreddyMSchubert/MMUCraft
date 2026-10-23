@@ -11,7 +11,7 @@
 		"description": "Gives you permanent night vision.",
 		"unlockWeight": 10,
 		"unlockMessage": "Unlocked charm: Candle of the Deep Charm. It gives permanent night vision.",
-		"gameplayToggle": "beach-party"
+		"gameplayToggle": "void"
 	},
 	"charm": {
 		"charmId": 8,
@@ -22,7 +22,7 @@
 				"level": 1,
 				"abilityStatusCurrent": "Gives you permanent night vision.",
 				"abilityStatusRelative": "",
-				"dabloons": 299,
+				"dabloons": 567,
 				"upgradeIngredients": [
 					"minecraft:torchflower",
 					"minecraft:pearlescent_froglight",

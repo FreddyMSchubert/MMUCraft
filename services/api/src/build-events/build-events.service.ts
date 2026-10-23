@@ -20,7 +20,7 @@ import {
 	users,
 } from '../database/database.service';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
-import { effectivePlayerColor } from '../players/player-color';
+import { effectivePlayerColor, playerAvatarUrl } from '../players/player-color';
 import { customPlayerEmojis } from '../players/player-emojis';
 import {
 	buildScore,
@@ -319,6 +319,8 @@ export class BuildEventsService {
 					id: userId,
 					name: 'Unknown player',
 					color: '#ffffff',
+					avatarUrl: null,
+					pronouns: '',
 					isCommittee: false,
 					customEmojis: [],
 				};
@@ -327,6 +329,8 @@ export class BuildEventsService {
 				id: userId,
 				name: user.minecraft_username,
 				color: effectivePlayerColor(user.minecraft_uuid, profile?.color_hex),
+				avatarUrl: playerAvatarUrl(user.minecraft_uuid),
+				pronouns: profile?.pronouns ?? '',
 				isCommittee: user.is_committee === 1 || user.is_super_admin === 1,
 				customEmojis: customPlayerEmojis(profile?.custom_emojis_json),
 			};
@@ -378,7 +382,11 @@ export class BuildEventsService {
 				memberUserIds: team.map((member) => member.user_id),
 				own,
 				voted,
-				canWarp: stage === 'visiting' || (stage === 'voting' && !own && !voted),
+				canWarp:
+					(stage === 'visiting' &&
+						(admin || submission.post_voting_warp_enabled === 1)) ||
+					(stage === 'voting' && !own && !voted),
+				postVotingWarpEnabled: submission.post_voting_warp_enabled === 1,
 				voteCount: counted.length,
 				score,
 				rank: null as number | null,
@@ -428,6 +436,7 @@ export class BuildEventsService {
 			stage === 'voting'
 				? [...ranked].sort(
 						(a, b) =>
+							Number(a.voted) - Number(b.voted) ||
 							a.voteCount - b.voteCount ||
 							(randomOrder.get(a.id) ?? 0) - (randomOrder.get(b.id) ?? 0),
 					)
@@ -456,6 +465,7 @@ export class BuildEventsService {
 				own: submission.own,
 				voted: submission.voted,
 				canWarp: submission.canWarp,
+				postVotingWarpEnabled: admin ? submission.postVotingWarpEnabled : undefined,
 				score: showResults ? submission.score : undefined,
 				rank: showResults ? submission.rank : undefined,
 				voteCount: admin ? submission.voteCount : undefined,
@@ -797,12 +807,16 @@ export class BuildEventsService {
 		);
 		const visit = await this.visit(userId);
 		const stage = buildStage(event);
+		const committee = user.is_committee === 1 || user.is_super_admin === 1;
 		return {
 			inside,
 			own,
 			voted,
 			canVote: stage === 'voting' && inside && !own && !voted,
-			canWarp: stage === 'visiting' || (stage === 'voting' && !own && !voted),
+			canWarp:
+				(stage === 'visiting' &&
+					(committee || submission.post_voting_warp_enabled === 1)) ||
+				(stage === 'voting' && !own && !voted),
 			canReturn: visit?.submission.id === submission.id,
 		};
 	}
@@ -856,6 +870,19 @@ export class BuildEventsService {
 		return { excluded };
 	}
 
+	setPostVotingWarp(eventIdInput: string, submissionIdInput: string, enabled: unknown) {
+		const event = this.event(eventIdInput);
+		const submission = this.submission(event.id, submissionIdInput);
+		if (typeof enabled !== 'boolean')
+			throw new BadRequestException('Choose whether this build can be visited after voting');
+		this.database.connection
+			.update(buildSubmissions)
+			.set({ post_voting_warp_enabled: enabled ? 1 : 0 })
+			.where(eq(buildSubmissions.id, submission.id))
+			.run();
+		return { enabled };
+	}
+
 	private async visit(userId: number) {
 		const visit = this.database.connection
 			.select()
@@ -903,6 +930,13 @@ export class BuildEventsService {
 			throw new ConflictException('Build warps are not open');
 		const submission = this.submission(event.id, submissionIdInput);
 		const user = this.linkedUser(userId);
+		if (
+			stage === 'visiting' &&
+			submission.post_voting_warp_enabled !== 1 &&
+			user.is_committee !== 1 &&
+			user.is_super_admin !== 1
+		)
+			throw new ForbiddenException('Visits are not enabled for this build');
 		if (stage === 'voting') {
 			if (
 				this.database.connection

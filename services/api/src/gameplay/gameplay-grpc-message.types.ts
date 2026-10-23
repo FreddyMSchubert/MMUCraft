@@ -112,6 +112,7 @@ export interface PlayerStatisticsSyncRequest {
 	stats?: MinecraftStatInput[];
 	include_surprising_saturday_rewards?: boolean;
 	duck_login?: boolean;
+	committee_kill_advancements?: string[];
 }
 
 export interface PlayerStatisticsSyncResponse {

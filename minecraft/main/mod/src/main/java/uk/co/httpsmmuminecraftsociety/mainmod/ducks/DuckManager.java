@@ -1,9 +1,12 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.ducks;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.item.v1.EnchantingContext;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -15,16 +18,18 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
+import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.WalletCharm;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableCosmeticItemFeature;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.ApplyDuckUpdateRequest;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.ApplyDuckUpdateResponse;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.DuckAward;
@@ -45,10 +50,14 @@ import java.util.Set;
 import java.util.UUID;
 
 public final class DuckManager {
-    private static final long HUNDRED_HOURS_TICKS = 100L * 60L * 60L * 20L;
+    private static final long WEEK_OF_PLAYTIME_TICKS = 168L * 60L * 60L * 20L;
+    private static final EquipmentSlot[] ARMOR_SLOTS = {
+            EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET
+    };
     private static final DateTimeFormatter AWARD_DATE = DateTimeFormatter.ofPattern("dd MMM uuuu")
             .withZone(ZoneId.of("Europe/London"));
     private static final Map<UUID, Integer> lastSensorMask = new HashMap<>();
+    private static final Map<UUID, EnderiteSnapshot> enderiteSnapshots = new HashMap<>();
     private static final Map<UUID, List<Runnable>> joinMessages = new HashMap<>();
     private static final Set<String> deliveredThisSession = new HashSet<>();
     private static final Set<String> announcedThisSession = new HashSet<>();
@@ -62,6 +71,7 @@ public final class DuckManager {
         });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             lastSensorMask.remove(handler.player.getUUID());
+            enderiteSnapshots.remove(handler.player.getUUID());
             joinMessages.remove(handler.player.getUUID());
             deliveredThisSession.removeIf(key -> key.startsWith(handler.player.getUUID() + ":"));
             announcedThisSession.removeIf(key -> key.startsWith(handler.player.getUUID() + ":"));
@@ -73,7 +83,7 @@ public final class DuckManager {
                 Integer previous = lastSensorMask.put(player.getUUID(), current);
                 if (previous == null || !FeatureToggles.isEnabled(FeatureToggles.NETHER)) continue;
                 int gained = current & ~previous;
-                for (int id : new int[] {5, 6, 7, 8, 9}) {
+                for (int id : new int[] {5, 7, 8, 9}) {
                     if ((gained & (1 << id)) == 0) continue;
                     record(player, id).exceptionally(error -> {
                         server.execute(() -> lastSensorMask.computeIfPresent(player.getUUID(),
@@ -151,12 +161,16 @@ public final class DuckManager {
 
     private static int sensorMask(ServerPlayer player) {
         int mask = 0;
+        var regeneration = player.getEffect(MobEffects.REGENERATION);
         if (fullCoinInventory(player)) mask |= 1 << 5;
-        if (wearingMythicalCosmetic(player)) mask |= 1 << 6;
-        if (player.getStats().getValue(Stats.CUSTOM.get(Stats.PLAY_TIME)) >= HUNDRED_HOURS_TICKS)
+        if (player.getStats().getValue(Stats.CUSTOM.get(Stats.PLAY_TIME)) >= WEEK_OF_PLAYTIME_TICKS)
             mask |= 1 << 7;
-        if (player.getMaxHealth() == 40.0F && player.getHealth() >= 40.0F) mask |= 1 << 8;
-        if (fullEnderite(player)) mask |= 1 << 9;
+        if (player.getMaxHealth() == 40.0F && player.getHealth() >= 40.0F
+                && player.getFoodData().getFoodLevel() == 20
+                && player.getFoodData().getSaturationLevel() >= 20.0F
+                && regeneration != null && regeneration.getAmplifier() == 0
+                && regeneration.isAmbient()) mask |= 1 << 8;
+        if (maxedEnderite(player)) mask |= 1 << 9;
         return mask;
     }
 
@@ -172,32 +186,83 @@ public final class DuckManager {
                 && stack.getCount() == stack.getMaxStackSize();
     }
 
-    private static boolean wearingMythicalCosmetic(ServerPlayer player) {
-        for (EquipmentSlot slot : List.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST,
-                EquipmentSlot.LEGS, EquipmentSlot.FEET)) {
-            ItemStack armor = player.getItemBySlot(slot);
-            if (mythicalCosmetic(armor) || mythicalCosmetic(CosmeticsManager.cosmeticFromHelmetReplica(armor)))
-                return true;
+    private static boolean maxedEnderite(ServerPlayer player) {
+        UUID uuid = player.getUUID();
+        EnderiteSnapshot previous = enderiteSnapshots.get(uuid);
+        boolean changed = previous == null;
+        for (int i = 0; !changed && i < ARMOR_SLOTS.length; i++) {
+            changed = !ItemStack.matches(previous.stacks()[i], player.getItemBySlot(ARMOR_SLOTS[i]));
         }
-        return false;
+        if (!changed) return previous.complete();
+
+        ItemStack[] stacks = new ItemStack[ARMOR_SLOTS.length];
+        for (int i = 0; i < ARMOR_SLOTS.length; i++) {
+            stacks[i] = player.getItemBySlot(ARMOR_SLOTS[i]).copy();
+        }
+        boolean complete = true;
+        for (ItemStack stack : stacks) {
+            if (!CharmorManager.isEnderite(stack)) {
+                complete = false;
+                break;
+            }
+        }
+        if (complete) {
+            var enchantments = player.registryAccess().lookupOrThrow(Registries.ENCHANTMENT)
+                    .listElements().filter(DuckManager::countsForEnderite).toList();
+            for (ItemStack stack : stacks) {
+                if (!maxedEnchantments(stack, enchantments)) {
+                    complete = false;
+                    break;
+                }
+            }
+        }
+        enderiteSnapshots.put(uuid, new EnderiteSnapshot(stacks, complete));
+        return complete;
     }
 
-    private static boolean mythicalCosmetic(ItemStack stack) {
-        FakeItem item = FakeItems.getFakeItemFromStack(stack);
-        return item != null && "mythical".equals(item.rarityKey())
-                && item.getFeature(EquippableCosmeticItemFeature.class) != null;
+    private static boolean maxedEnchantments(ItemStack stack,
+                                               List<? extends Holder<Enchantment>> candidates) {
+        ItemStack gear = CosmeticsManager.determineCosmeticType(stack).isHelmet()
+                ? CosmeticsManager.pumpkinReplicaToHelmet(stack) : stack;
+        if (gear.isEmpty()) gear = stack;
+        var applied = stack.getEnchantments();
+        var relevant = applied.keySet().stream().filter(DuckManager::countsForEnderite).toList();
+        for (var entry : applied.entrySet()) {
+            Holder<Enchantment> enchantment = entry.getKey();
+            if (!countsForEnderite(enchantment)) continue;
+            if (!gear.canBeEnchantedWith(enchantment, EnchantingContext.ACCEPTABLE)
+                    || entry.getIntValue() != EnchantmentSettingsManager.getMaxAnvilLevel(enchantment, stack))
+                return false;
+        }
+        for (int i = 0; i < relevant.size(); i++) {
+            for (int j = i + 1; j < relevant.size(); j++) {
+                if (!Enchantment.areCompatible(relevant.get(i), relevant.get(j))) return false;
+            }
+        }
+        for (Holder<Enchantment> candidate : candidates) {
+            if (applied.getLevel(candidate) > 0
+                    || !gear.canBeEnchantedWith(candidate, EnchantingContext.ACCEPTABLE)) continue;
+            boolean compatible = relevant.stream()
+                    .allMatch(existing -> Enchantment.areCompatible(existing, candidate));
+            if (compatible) return false;
+        }
+        return true;
     }
 
-    private static boolean fullEnderite(ServerPlayer player) {
-        return CharmorManager.isEnderite(player.getItemBySlot(EquipmentSlot.HEAD))
-                && CharmorManager.isEnderite(player.getItemBySlot(EquipmentSlot.CHEST))
-                && CharmorManager.isEnderite(player.getItemBySlot(EquipmentSlot.LEGS))
-                && CharmorManager.isEnderite(player.getItemBySlot(EquipmentSlot.FEET));
+    private static boolean countsForEnderite(Holder<Enchantment> enchantment) {
+        if (enchantment.is(Enchantments.BINDING_CURSE) || enchantment.is(Enchantments.VANISHING_CURSE))
+            return false;
+        return enchantment.unwrapKey().map(key -> {
+            String namespace = key.identifier().getNamespace();
+            return namespace.equals("minecraft") || namespace.equals(MainMod.MOD_ID);
+        }).orElse(false);
     }
+
+    private record EnderiteSnapshot(ItemStack[] stacks, boolean complete) {}
 
     private static void announce(MinecraftServer server, ServerPlayer player, DuckAward award) {
         boolean finalDuck = award.getDuckId() == 13;
-        String reason = "earned the " + award.getName() + " for " + award.getAnnouncementReason()
+        String reason = "earned " + award.getName() + " for " + award.getAnnouncementReason()
                 + "! ✦ (" + award.getCount() + "/13 ducks collected)";
         Component prefix = Component.literal(finalDuck ? "[FINAL DUCK] " : "[DUCK] ")
                 .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
@@ -247,7 +312,7 @@ public final class DuckManager {
         personalize(stack, award.getAwardedTo(), award.getAwardedAtUnixMs(), award.getCondition());
         player.getInventory().add(stack);
         if (!stack.isEmpty()) {
-            player.sendSystemMessage(Component.literal("Make one empty inventory slot to receive your free "
+            player.sendSystemMessage(Component.literal("Make one empty inventory slot to receive your free copy of "
                     + award.getName() + ". It will be retried automatically.").withStyle(ChatFormatting.YELLOW));
             return;
         }
@@ -261,7 +326,7 @@ public final class DuckManager {
                             .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
                     .append(Component.literal(finalDuck
                             ? "While you were away, you completed the pond! Your free final duck is in your inventory. ✦"
-                            : "While you were away, you earned the " + award.getName() + " for "
+                            : "While you were away, you earned " + award.getName() + " for "
                                     + award.getAnnouncementReason() + "! Your free duck is in your inventory. ✦")
                             .withStyle(ChatFormatting.YELLOW)));
             if (finalDuck) celebrate(player);

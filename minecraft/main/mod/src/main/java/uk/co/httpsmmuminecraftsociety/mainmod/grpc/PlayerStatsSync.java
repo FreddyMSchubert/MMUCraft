@@ -498,7 +498,7 @@ public final class PlayerStatsSync {
         String dangerText = showDeathCounter ? dangerCount + "☠" : "";
         String profileText = prefix + (prefix.isEmpty() || dangerText.isEmpty() ? "" : " - ") + dangerText;
         String duckText = FeatureToggles.isEnabled(FeatureToggles.NETHER)
-                ? presentation.getDuckCount() + " ducks" : "";
+                ? presentation.getDuckCount() + "🦆" : "";
         String text = profileText + (profileText.isEmpty() || duckText.isEmpty() ? "" : " - ") + duckText;
         if (text.equals(renderedProfileByPlayer.put(player.getUUID(), text))) return;
 

@@ -1,10 +1,3 @@
-.eventTypeNavigation {
-	display: flex;
-	gap: 8px;
-	flex-wrap: wrap;
-	margin-bottom: 14px;
-}
-.eventTypeNavigation a,
 .buildAdminAdd {
 	display: inline-flex;
 	padding: 9px 14px;
@@ -13,7 +6,6 @@
 	color: #f5f2ff;
 	text-decoration: none;
 }
-.eventTypeNavigation a.active,
 .buildAdminAdd {
 	background: #916ad645;
 	border-color: #c7a9ff80;
@@ -26,8 +18,23 @@
 	background: #ad8ee93d;
 	font-size: 0.75rem;
 }
-.buildEventPage .eventTop h3::before {
-	content: '🧱';
+.allEventsPage {
+	display: grid;
+	gap: 22px;
+	padding-bottom: 24px;
+}
+.eventCombinedHistory {
+	margin-top: 4px;
+}
+.eventCombinedHistory .eventHistory > a {
+	align-items: start;
+}
+.eventCombinedHistory .eventHistoryType {
+	justify-self: end;
+}
+.eventCombinedHistory .eventHistory time {
+	grid-column: 2;
+	justify-self: end;
 }
 .buildEventPage .eventFeature {
 	min-width: 0;
@@ -61,6 +68,7 @@
 .buildCards {
 	display: grid;
 	gap: 18px;
+	container-type: inline-size;
 }
 .buildCard {
 	display: flex;
@@ -85,17 +93,19 @@
 	aspect-ratio: 16 / 9;
 }
 .buildCardText {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	gap: 14px;
+	display: grid;
+	grid-template-rows: minmax(0, 1fr) auto;
+	gap: 10px;
 	padding: 18px;
 	max-height: 100%;
-	overflow: auto;
+	overflow: hidden;
+}
+.buildCardText > div:first-child {
+	min-height: 0;
+	overflow: hidden;
 }
 .buildCard:nth-child(even) .buildCardText {
 	text-align: right;
-	align-items: flex-end;
 }
 .buildCard:nth-child(even) .buildTeam {
 	justify-content: flex-end;
@@ -104,6 +114,10 @@
 	margin: 0 0 9px;
 	font-size: clamp(1.15rem, 2vw, 1.65rem);
 	overflow-wrap: anywhere;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
 }
 .buildCardDescription,
 .buildPlainDescription {
@@ -114,7 +128,7 @@
 	margin: 14px 0 0;
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 6;
+	-webkit-line-clamp: 3;
 	overflow: hidden;
 }
 .buildTeam {
@@ -128,6 +142,7 @@
 	align-items: center;
 	flex-wrap: wrap;
 	gap: 10px;
+	min-height: 40px;
 }
 .buildCard:nth-child(even) .buildCardFooter {
 	justify-content: flex-end;
@@ -164,16 +179,57 @@
 	object-fit: contain;
 	background: #000;
 }
+.buildGallery img.buildGalleryImageLoading {
+	opacity: 0;
+}
+.buildGallery img.buildGalleryImageLoaded {
+	opacity: 1;
+}
+.buildGalleryLoading {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	color: #fff;
+	background: #000;
+	font-size: 0.9rem;
+}
+.buildGallerySpinner {
+	width: 20px;
+	height: 20px;
+	border: 2px solid #fff6;
+	border-top-color: #fff;
+	border-radius: 50%;
+	animation: buildSpinner 0.8s linear infinite;
+}
+@keyframes buildSpinner {
+	to {
+		transform: rotate(360deg);
+	}
+}
 .buildGalleryArrow {
 	position: absolute;
 	top: 50%;
 	transform: translateY(-50%);
-	z-index: 1;
-	width: 36px;
+	z-index: 2;
+	width: 42px;
 	height: 42px;
 	padding: 0;
-	background: #000a;
-	font-size: 28px;
+	border: 1px solid #ffffffa8;
+	border-radius: 50%;
+	background: #fffdf1ed;
+	color: #111827;
+	box-shadow: 0 2px 14px #0009;
+	font-size: 32px;
+	line-height: 1;
+}
+.buildGalleryArrow:hover,
+.buildGalleryArrow:focus-visible {
+	background: #fff;
+	transform: translateY(-50%) scale(1.08);
+	outline: 2px solid #ffd166;
 }
 .buildGalleryPrevious {
 	left: 8px;
@@ -191,11 +247,13 @@
 	padding: 5px 8px;
 	border-radius: 20px;
 	background: #000a;
+	z-index: 2;
 }
 .buildGalleryDots button {
 	width: 9px;
 	height: 9px;
 	padding: 0;
+	border: 0;
 	border-radius: 50%;
 	background: #777;
 }
@@ -220,6 +278,12 @@
 	border-radius: 14px;
 	background: #171b2b;
 	box-shadow: 0 24px 80px #000b;
+	color: #fff;
+	font-family: 'Dabloon Symbol Noto Sans', 'Noto Sans', Arial, sans-serif;
+}
+.buildDialog h3,
+.buildDialog h4 {
+	font-family: 'Dabloon Symbol Minecraft UI', 'Minecraft UI', 'Noto Sans', sans-serif;
 }
 .buildDialog > .buildGallery {
 	width: 100%;
@@ -230,9 +294,21 @@
 	float: right;
 	z-index: 3;
 	margin: 8px 8px -55px 0;
-	padding: 3px 12px;
-	background: #171b2b;
-	font-size: 26px;
+	width: 42px;
+	height: 42px;
+	padding: 0;
+	border: 1px solid #ffffffa8;
+	border-radius: 50%;
+	background: #fffdf1;
+	color: #111827;
+	box-shadow: 0 2px 14px #0009;
+	font-size: 29px;
+	line-height: 1;
+}
+.buildDialogClose:hover,
+.buildDialogClose:focus-visible {
+	background: #fff;
+	outline: 2px solid #ffd166;
 }
 .buildDialogContent {
 	padding: 24px;
@@ -249,8 +325,9 @@
 	overflow-wrap: anywhere;
 }
 .buildRank {
-	margin-right: 10px;
 	color: #f9d779;
+	font-size: 1.25em;
+	font-weight: 900;
 }
 .buildPublicScores {
 	display: flex;
@@ -285,6 +362,48 @@
 .buildVoteThanks {
 	color: #79eaa6;
 	font-weight: 700;
+}
+.buildVisitWarning {
+	color: #ff9292;
+	font-weight: 700;
+}
+.buildVoteConfirmation ul {
+	margin: 8px 0;
+	padding-left: 22px;
+}
+.buildVoteConfirmation li {
+	margin: 5px 0;
+}
+.buildCardFooter button,
+.buildVisitActions button,
+.buildVoteForm button,
+.buildAdminActions button {
+	padding: 8px 14px;
+	border: 1px solid #d8b8ff9c;
+	border-radius: 8px;
+	background: #8253c855;
+	color: #fff;
+	font: inherit;
+	font-weight: 700;
+	cursor: pointer;
+}
+.buildCardFooter button:hover,
+.buildVisitActions button:hover,
+.buildVoteForm button:hover,
+.buildAdminActions button:hover,
+.buildCardFooter button:focus-visible,
+.buildVisitActions button:focus-visible,
+.buildVoteForm button:focus-visible,
+.buildAdminActions button:focus-visible {
+	background: #9668d2a8;
+	border-color: #f0ddff;
+}
+.buildCardFooter button:disabled,
+.buildVisitActions button:disabled,
+.buildVoteForm button:disabled,
+.buildAdminActions button:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
 }
 .buildAdmin {
 	display: grid;
@@ -409,7 +528,7 @@
 .buildAdminImageRow input {
 	flex: 1 1 270px;
 }
-@media (max-width: 850px) {
+@container (max-width: 900px) {
 	.buildCard,
 	.buildCard:nth-child(even) {
 		display: grid;
@@ -422,7 +541,17 @@
 	}
 	.buildCardText {
 		max-height: none;
+		grid-template-rows: auto auto;
 	}
+	.buildCardText > div:first-child {
+		overflow: visible;
+	}
+	.buildCardText h5 {
+		display: block;
+		overflow: visible;
+	}
+}
+@media (max-width: 850px) {
 	.buildAdminHeading,
 	.buildAdminSubmissionSummary {
 		flex-direction: column;

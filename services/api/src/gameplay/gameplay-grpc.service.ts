@@ -314,6 +314,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			playTimeTicks,
 			call.request.duck_login === true,
 			result.previousLastPlayedAtUnixMs === 0,
+			call.request.committee_kill_advancements ?? [],
 		);
 
 		callback(null, {

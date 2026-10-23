@@ -207,6 +207,7 @@ public final class SmallMaps {
             for (int logicalZ = 0; logicalZ < size; logicalZ++) {
                 int worldZ = centerZ - size / 2 + logicalZ;
                 Sample sample = sampleColor(level, worldX, worldZ, pos, below, invisibleBlock);
+                if (logicalZ == 0) previousHeight = sample.height();
                 MapColor.Brightness brightness = brightness(sample, previousHeight, logicalX + logicalZ);
                 previousHeight = sample.height();
                 byte color = sample.color().getPackedId(brightness);

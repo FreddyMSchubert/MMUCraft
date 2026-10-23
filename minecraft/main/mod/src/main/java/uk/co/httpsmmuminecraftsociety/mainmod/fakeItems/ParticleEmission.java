@@ -115,11 +115,11 @@ public final class ParticleEmission {
     }
 
     private static Vec3 placedPosition(ItemFrame frame, ParticleEmissionItemFeature.DisplayTransform transform, Vec3 point) {
-        // ItemFrameRenderer scales the displayed item by 0.5 and moves it out from the frame.
+        // ItemFrameRenderer scales the item by 0.5; its final Z translation points into the frame.
         Vec3 local = displayPoint(point, transform).scale(0.5);
         Direction direction = frame.getDirection();
         Vec3 normal = Vec3.atLowerCornerOf(direction.getUnitVec3i());
-        Vec3 origin = frame.position().add(normal.scale(0.46875 + (frame.isInvisible() ? 0.5 : 0.4375)));
+        Vec3 origin = frame.position().add(normal.scale(0.46875 - (frame.isInvisible() ? 0.5 : 0.4375)));
         double angle = Math.toRadians(frame.getRotation() * 45.0);
         double cosine = Math.cos(angle);
         double sine = Math.sin(angle);

@@ -87,10 +87,34 @@ export function ClaimEditorCard({
 	copySources?: ClaimCopySource[];
 	summary?: ReactNode;
 	children?: ReactNode;
-	areaEditor?: ReactNode;
+	areaEditor?: (onDirtyChange: (dirty: boolean) => void) => ReactNode;
 	initiallyEditing?: boolean;
 }) {
+	const { confirm } = useSiteAlert();
 	const [editing, setEditing] = useState(initiallyEditing);
+	const [name, setName] = useState(claim.name);
+	const [color, setColor] = useState<string | null>(claim.customColor);
+	const [settingsDirty, setSettingsDirty] = useState(false);
+	const [areaDirty, setAreaDirty] = useState(false);
+	const appearanceDirty = name !== claim.name || color !== claim.customColor;
+
+	async function cancelEditing() {
+		if (
+			(appearanceDirty || settingsDirty || areaDirty) &&
+			!(await confirm({
+				title: 'Discard claim edits?',
+				message: 'Your unsaved changes to this claim will be lost.',
+				confirmLabel: "Yes, don't save",
+				confirmTone: 'danger',
+			}))
+		)
+			return;
+		setEditing(false);
+		setName(claim.name);
+		setColor(claim.customColor);
+		setSettingsDirty(false);
+		setAreaDirty(false);
+	}
 
 	return (
 		<section className={`claimCard${editing ? '' : ' claimCardCollapsed'}`}>
@@ -107,10 +131,20 @@ export function ClaimEditorCard({
 					</span>
 				</div>
 				{!editing && summary}
-				{editing && onDelete && (
-					<button type="button" disabled={busy} onClick={onDelete}>
-						Delete claim
-					</button>
+				{editing && onSave && (
+					<div className="claimHeaderActions">
+						<button type="submit" form={`claim-appearance-${claim.id}`} disabled={busy}>
+							Save
+						</button>
+						<button type="button" disabled={busy} onClick={() => void cancelEditing()}>
+							Cancel edit
+						</button>
+						{onDelete && (
+							<button type="button" disabled={busy} onClick={onDelete}>
+								Delete claim
+							</button>
+						)}
+					</div>
 				)}
 				{!editing && onSave && (
 					<button
@@ -118,6 +152,8 @@ export function ClaimEditorCard({
 						disabled={busy}
 						aria-expanded={false}
 						onClick={() => {
+							setName(claim.name);
+							setColor(claim.customColor);
 							setEditing(true);
 						}}
 					>
@@ -129,16 +165,22 @@ export function ClaimEditorCard({
 			{editing && onSave && (
 				<>
 					<ClaimAppearanceForm
+						formId={`claim-appearance-${claim.id}`}
 						claim={claim}
 						busy={busy}
+						name={name}
+						color={color}
+						onNameChange={setName}
+						onColorChange={setColor}
 						onSave={async (name, color) => {
-							if (await onSave(name, color)) setEditing(false);
+							if ((await onSave(name, color)) && !settingsDirty && !areaDirty)
+								setEditing(false);
 						}}
 					/>
 					{areaEditor && (
 						<details className="claimEditorSection">
 							<summary>Area</summary>
-							{areaEditor}
+							{areaEditor(setAreaDirty)}
 						</details>
 					)}
 					{onSettings && (
@@ -150,11 +192,12 @@ export function ClaimEditorCard({
 								busy={busy}
 								copySources={copySources}
 								onSave={onSettings}
+								onDirtyChange={setSettingsDirty}
 							/>
 						</details>
 					)}
 					{children && (
-						<details className="claimEditorSection">
+						<details className="claimEditorSection claimMembersSection">
 							<summary>Members</summary>
 							{children}
 						</details>
@@ -170,11 +213,13 @@ function ClaimSettingsEditor({
 	busy,
 	copySources,
 	onSave,
+	onDirtyChange,
 }: {
 	claim: EditableClaim;
 	busy: boolean;
 	copySources: ClaimCopySource[];
 	onSave: (change: ClaimSettingsChange) => Promise<boolean>;
+	onDirtyChange: (dirty: boolean) => void;
 }) {
 	const [permissions, setPermissions] = useState(claim.permissions);
 	const [source, setSource] = useState('');
@@ -205,7 +250,10 @@ function ClaimSettingsEditor({
 					disabled={busy || !source}
 					onClick={() => {
 						void onSave({ copyFromClaimId: source }).then((saved) => {
-							if (saved) setPermissions(claim.permissions);
+							if (saved) {
+								setPermissions(claim.permissions);
+								onDirtyChange(false);
+							}
 						});
 					}}
 				>
@@ -224,9 +272,11 @@ function ClaimSettingsEditor({
 							checked={(permissions & bit) !== 0}
 							disabled={busy}
 							onChange={(event) => {
-								setPermissions((current) =>
-									event.target.checked ? current | bit : current & ~bit,
-								);
+								const next = event.target.checked
+									? permissions | bit
+									: permissions & ~bit;
+								setPermissions(next);
+								onDirtyChange(next !== claim.permissions);
 							}}
 						/>
 						{label}
@@ -236,7 +286,11 @@ function ClaimSettingsEditor({
 			<button
 				type="button"
 				disabled={busy || permissions === claim.permissions}
-				onClick={() => void onSave({ permissions })}
+				onClick={() =>
+					void onSave({ permissions }).then((saved) => {
+						if (saved) onDirtyChange(false);
+					})
+				}
 			>
 				Save settings
 			</button>
@@ -384,29 +438,41 @@ function PlayerHead({ person }: { person: ClaimPerson }) {
 }
 
 function ClaimAppearanceForm({
+	formId,
 	claim,
 	busy,
+	name,
+	color,
+	onNameChange,
+	onColorChange,
 	onSave,
 }: {
+	formId: string;
 	claim: EditableClaim;
 	busy: boolean;
+	name: string;
+	color: string | null;
+	onNameChange: (name: string) => void;
+	onColorChange: (color: string | null) => void;
 	onSave: (name: string, color: string | null) => Promise<void>;
 }) {
-	const [color, setColor] = useState<string | null>(claim.customColor);
 	return (
 		<form
+			id={formId}
 			className="claimAppearanceForm"
 			onSubmit={(event) => {
 				event.preventDefault();
-				const name = new FormData(event.currentTarget).get('name');
-				void onSave(typeof name === 'string' ? name : '', color);
+				void onSave(name, color);
 			}}
 		>
 			<label>
 				<span>Claim name (50 characters maximum)</span>
 				<input
 					name="name"
-					defaultValue={claim.name}
+					value={name}
+					onChange={(event) => {
+						onNameChange(event.target.value);
+					}}
 					maxLength={50}
 					required
 					disabled={busy}
@@ -418,7 +484,7 @@ function ClaimAppearanceForm({
 					type="color"
 					value={color ?? claim.defaultColor}
 					onChange={(event) => {
-						setColor(event.target.value);
+						onColorChange(event.target.value);
 					}}
 					disabled={busy}
 				/>
@@ -427,13 +493,10 @@ function ClaimAppearanceForm({
 				type="button"
 				disabled={busy || color === null}
 				onClick={() => {
-					setColor(null);
+					onColorChange(null);
 				}}
 			>
 				Reset color
-			</button>
-			<button type="submit" disabled={busy}>
-				Save
 			</button>
 		</form>
 	);

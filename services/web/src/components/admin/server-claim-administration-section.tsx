@@ -174,15 +174,16 @@ export function ServerClaimAdministrationSection({
 							onSave={(name, color) => updateAppearance(claim, name, color)}
 							onSettings={(change) => updateSettings(claim, change)}
 							copySources={claims}
-							areaEditor={
+							areaEditor={(onDirtyChange) => (
 								<ServerClaimAreaPicker
 									key={`${claim.id}:${claim.dimension}:${claim.chunkX}:${claim.chunkZ}:${claim.chunkXEnd}:${claim.chunkZEnd}`}
 									initial={claim}
 									busy={busy}
 									onSave={(area) => updateArea(claim, area)}
+									onDirtyChange={onDirtyChange}
 									saveLabel="Save area"
 								/>
-							}
+							)}
 						/>
 					))}
 				</div>
@@ -195,11 +196,13 @@ function ServerClaimAreaPicker({
 	initial,
 	busy,
 	onSave,
+	onDirtyChange,
 	saveLabel,
 }: {
 	initial?: EditableClaim;
 	busy: boolean;
 	onSave: (area: AreaInput) => Promise<boolean>;
+	onDirtyChange?: (dirty: boolean) => void;
 	saveLabel: string;
 }) {
 	const { showAlert } = useSiteAlert();
@@ -232,13 +235,26 @@ function ServerClaimAreaPicker({
 		setCapturing(true);
 		try {
 			const current = await request<CurrentChunk>('/api/admin/server-claims/current');
-			if (which === 'first') {
-				setFirst(current);
-				if (second?.dimension !== current.dimension) setSecond(null);
-			} else {
-				setSecond(current);
-				if (first?.dimension !== current.dimension) setFirst(null);
-			}
+			const nextFirst =
+				which === 'first' ? current : first?.dimension === current.dimension ? first : null;
+			const nextSecond =
+				which === 'second'
+					? current
+					: second?.dimension === current.dimension
+						? second
+						: null;
+			setFirst(nextFirst);
+			setSecond(nextSecond);
+			if (initial)
+				onDirtyChange?.(
+					!sameChunk(nextFirst, initial.dimension, initial.chunkX, initial.chunkZ) ||
+						!sameChunk(
+							nextSecond,
+							initial.dimension,
+							initial.chunkXEnd ?? initial.chunkX,
+							initial.chunkZEnd ?? initial.chunkZ,
+						),
+				);
 		} catch (caught) {
 			await showAlert({
 				title: 'Could not capture the current chunk',
@@ -302,6 +318,7 @@ function ServerClaimAreaPicker({
 							setFirst(null);
 							setSecond(null);
 						}
+						if (saved) onDirtyChange?.(false);
 					});
 				}}
 			>
@@ -309,6 +326,10 @@ function ServerClaimAreaPicker({
 			</button>
 		</div>
 	);
+}
+
+function sameChunk(chunk: CurrentChunk | null, dimension: string, x: number, z: number) {
+	return chunk?.dimension === dimension && chunk.chunkX === x && chunk.chunkZ === z;
 }
 
 function describeArea(area: AreaInput) {

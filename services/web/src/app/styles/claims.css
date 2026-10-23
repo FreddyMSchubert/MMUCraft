@@ -16,6 +16,10 @@
 	padding-top: 12px;
 }
 
+.claimMembersSection {
+	border-top: 0;
+}
+
 .claimEditorSection > summary {
 	cursor: pointer;
 	font-weight: 700;
@@ -214,8 +218,15 @@
 }
 
 .claimHeader {
+	flex-wrap: wrap;
 	padding-bottom: 12px;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.claimHeaderActions {
+	display: flex;
+	gap: 8px;
+	margin-left: auto;
 }
 
 .claimHeader button,
@@ -230,7 +241,7 @@
 
 .claimAppearanceForm {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto auto auto;
+	grid-template-columns: minmax(0, 1fr) auto auto;
 	align-items: end;
 	gap: 8px;
 	padding-top: 12px;

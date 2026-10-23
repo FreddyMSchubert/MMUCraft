@@ -4,14 +4,14 @@ on:
     workflow_dispatch:
         inputs:
             release_tag:
-                description: Published release tag to rebuild; blank publishes dev and commit-SHA image tags.
+                description: Published release tag to publish images under; blank publishes dev and commit-SHA image tags.
                 required: false
                 default: ''
                 type: string
             source_ref:
-                description: Code to build (branch, tag, or commit); overrides release_tag on manual runs. Blank uses the release tag, or main for dev.
-                required: false
-                default: ''
+                description: Code to build (branch, tag, or commit); defaults to main.
+                required: true
+                default: main
                 type: string
     release:
         types: [published]
@@ -52,7 +52,7 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v6
               with:
-                  ref: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.source_ref || inputs.release_tag || 'main' }}
+                  ref: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.source_ref || 'main' }}
                   persist-credentials: false
 
             - name: Resolve source revision

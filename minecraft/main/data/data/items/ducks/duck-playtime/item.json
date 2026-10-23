@@ -4,5 +4,11 @@
 	"modelType": "basic-3d",
 	"rarity": "rare",
 	"maxStackSize": 1,
-	"tooltips": ["A duck earned through a feat on the server."]
+	"tooltips": ["A duck earned through a feat on the server."],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"lightLevel": 3
+	}
 }

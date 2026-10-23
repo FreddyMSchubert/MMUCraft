@@ -1,0 +1,1 @@
+ALTER TABLE `build_submissions` ADD `post_voting_warp_enabled` integer DEFAULT 0 NOT NULL;

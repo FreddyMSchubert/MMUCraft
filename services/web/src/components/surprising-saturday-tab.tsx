@@ -148,10 +148,12 @@ export function SurprisingSaturdayTab({
 	events,
 	selectedId,
 	showHistory = true,
+	showBackLink,
 }: {
 	events: EventSummary[];
 	selectedId?: string;
 	showHistory?: boolean;
+	showBackLink?: boolean;
 }) {
 	const isDetailPage = selectedId !== undefined;
 	const upcoming = events.filter((event) => event.status === 'upcoming');
@@ -286,13 +288,13 @@ export function SurprisingSaturdayTab({
 
 	return (
 		<div className="eventPage">
-			{isDetailPage && (
+			{(showBackLink ?? isDetailPage) && (
 				<Link className="eventBack" href="/play/event">
 					← All events
 				</Link>
 			)}
 			<header className="eventTop">
-				<h3>Surprising Saturday</h3>
+				<h3>Events</h3>
 				{selectedStatus === 'live' && now !== null && (
 					<div
 						className="eventEndCountdown"
@@ -311,8 +313,17 @@ export function SurprisingSaturdayTab({
 
 			{selected && (
 				<section className="adminSection eventFeature">
+					<h4 className="eventTitle">
+						{currentDetail?.title ?? selected.title ?? (
+							<ObfuscatedEventName wordLengths={selected.titleWordLengths} />
+						)}
+					</h4>
+					<EventDescription
+						description={currentDetail?.description ?? selected.description ?? ''}
+					/>
 					<div className="eventFeatureMeta">
 						<span className={`eventStatus eventStatus-${selectedStatus}`}>
+							Surprising Saturday ·{' '}
 							{selectedStatus === 'live'
 								? 'Live now'
 								: selectedStatus === 'upcoming'
@@ -324,14 +335,6 @@ export function SurprisingSaturdayTab({
 							{formatManchesterDateTime(selected.endsAtUnixMs)}
 						</time>
 					</div>
-					<h4 className="eventTitle">
-						{currentDetail?.title ?? selected.title ?? (
-							<ObfuscatedEventName wordLengths={selected.titleWordLengths} />
-						)}
-					</h4>
-					<EventDescription
-						description={currentDetail?.description ?? selected.description ?? ''}
-					/>
 					{selectedStatus === 'live' && hasEventServer && (
 						<div className="eventJoin">
 							<button

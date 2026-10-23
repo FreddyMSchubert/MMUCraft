@@ -890,6 +890,32 @@ export function BuildEventsAdminSection({ subroute }: { subroute: string[] }) {
 											<div className="buildAdminActions">
 												<button
 													type="button"
+													aria-pressed={Boolean(
+														submission.postVotingWarpEnabled,
+													)}
+													disabled={busy}
+													onClick={() =>
+														void change(
+															API +
+																'/' +
+																String(selected.id) +
+																'/submissions/' +
+																String(submission.id) +
+																'/post-voting-warp',
+															'PATCH',
+															{
+																enabled:
+																	!submission.postVotingWarpEnabled,
+															},
+														)
+													}
+												>
+													{submission.postVotingWarpEnabled
+														? 'Disable visits after voting'
+														: 'Enable visits after voting'}
+												</button>
+												<button
+													type="button"
 													onClick={() => {
 														setViewingSubmission(submission);
 													}}

@@ -95,6 +95,29 @@ test('migration enforces one team per player and one final vote per build', () =
 		db.exec(
 			"INSERT INTO build_submissions (id, event_id, title, description, images_json, dimension, block_x, block_y, block_z, min_chunk_x, max_chunk_x, min_chunk_z, max_chunk_z) VALUES (1, 1, 'One', '', '[]', 'minecraft:overworld', 0, 64, 0, 0, 0, 0, 0), (2, 1, 'Two', '', '[]', 'minecraft:overworld', 0, 64, 0, 0, 0, 0, 0)",
 		);
+		const warpMigration = readFileSync(
+			join(__dirname, '../services/api/drizzle/0054_many_sunset_bain.sql'),
+			'utf8',
+		);
+		db.exec(warpMigration);
+		assert.deepEqual(
+			db
+				.prepare(
+					'SELECT post_voting_warp_enabled AS enabled FROM build_submissions ORDER BY id',
+				)
+				.all()
+				.map((row) => row.enabled),
+			[0, 0],
+		);
+		db.exec('UPDATE build_submissions SET post_voting_warp_enabled = 1 WHERE id = 1');
+		assert.equal(
+			db
+				.prepare(
+					'SELECT post_voting_warp_enabled AS enabled FROM build_submissions WHERE id = 1',
+				)
+				.get().enabled,
+			1,
+		);
 		db.exec(
 			'INSERT INTO build_submission_members (event_id, submission_id, user_id) VALUES (1, 1, 1)',
 		);

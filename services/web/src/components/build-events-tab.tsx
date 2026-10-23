@@ -3,8 +3,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCallback, useEffect, useState, type SyntheticEvent } from 'react';
+import { createPortal } from 'react-dom';
 import { formatManchesterDateTime } from '@/lib/date-time';
 import { PlayerName, type PlayerEmoji } from './player-name';
+import { useSiteAlert } from './site-alert';
 import { EventDescription, ObfuscatedEventName } from './surprising-saturday-tab';
 
 export type BuildStage = 'upcoming' | 'building' | 'preparing' | 'voting' | 'visiting' | 'ended';
@@ -37,6 +39,8 @@ export interface BuildMember {
 	id: number;
 	name: string;
 	color: string;
+	avatarUrl: string | null;
+	pronouns: string;
 	isCommittee: boolean;
 	customEmojis: PlayerEmoji[];
 }
@@ -61,6 +65,7 @@ export interface BuildSubmission {
 	own: boolean;
 	voted: boolean;
 	canWarp: boolean;
+	postVotingWarpEnabled?: boolean;
 	score?: { averages: { id: string; average: number }[]; total: number } | null;
 	rank?: number | null;
 	voteCount?: number;
@@ -111,12 +116,20 @@ export function BuildTeam({ members }: { members: BuildMember[] }) {
 					key={member.id}
 					href={'/play/players/' + encodeURIComponent(member.name)}
 				>
+					{member.avatarUrl ? (
+						<Image unoptimized src={member.avatarUrl} alt="" width={28} height={28} />
+					) : (
+						<span className="eventEarningHeadFallback">{member.name.charAt(0)}</span>
+					)}
 					<PlayerName
 						name={member.name}
 						color={member.color}
 						isCommittee={member.isCommittee}
 						customEmojis={member.customEmojis}
 					/>
+					{member.pronouns && (
+						<span className="eventPlayerPronouns"> ({member.pronouns})</span>
+					)}
 				</Link>
 			))}
 		</div>
@@ -133,6 +146,28 @@ export function BuildGallery({
 	paused?: boolean;
 }) {
 	const [index, setIndex] = useState(0);
+	const [imageStatus, setImageStatus] = useState<Record<string, 'loaded' | 'error'>>({});
+	const imageUrls = images.map((image) => image.imageUrl).join('\n');
+	useEffect(() => {
+		const urls = imageUrls.split('\n').filter(Boolean);
+		const preloaders = urls.map((url) => {
+			const preload = new window.Image();
+			preload.onload = () => {
+				setImageStatus((current) => ({ ...current, [url]: 'loaded' }));
+			};
+			preload.onerror = () => {
+				setImageStatus((current) => ({ ...current, [url]: 'error' }));
+			};
+			preload.src = url;
+			return preload;
+		});
+		return () => {
+			for (const preload of preloaders) {
+				preload.onload = null;
+				preload.onerror = null;
+			}
+		};
+	}, [imageUrls]);
 	useEffect(() => {
 		if (
 			images.length < 2 ||
@@ -151,13 +186,27 @@ export function BuildGallery({
 		};
 	}, [images.length, index, paused]);
 	const visibleIndex = images.length > 0 ? index % images.length : 0;
-	const current = images[visibleIndex];
+	const current = images.at(visibleIndex);
+	const currentStatus = current ? imageStatus[current.imageUrl] : null;
 	return (
 		<div className="buildGallery" aria-label={'Screenshots for ' + title}>
-			{images.length > 0 ? (
+			{current ? (
 				<Image
+					key={current.imageUrl}
 					unoptimized
 					fill
+					loading="eager"
+					className={
+						currentStatus === 'loaded'
+							? 'buildGalleryImageLoaded'
+							: 'buildGalleryImageLoading'
+					}
+					onLoad={() => {
+						setImageStatus((state) => ({ ...state, [current.imageUrl]: 'loaded' }));
+					}}
+					onError={() => {
+						setImageStatus((state) => ({ ...state, [current.imageUrl]: 'error' }));
+					}}
 					sizes="(max-width: 850px) 100vw, 50vw"
 					src={current.imageUrl}
 					alt={
@@ -171,6 +220,18 @@ export function BuildGallery({
 				/>
 			) : (
 				<div className="buildGalleryEmpty" aria-label="No screenshots yet" />
+			)}
+			{current && currentStatus !== 'loaded' && (
+				<div className="buildGalleryLoading" role="status">
+					{currentStatus === 'error' ? (
+						'Screenshot unavailable'
+					) : (
+						<>
+							<span className="buildGallerySpinner" aria-hidden="true" />
+							Loading screenshot…
+						</>
+					)}
+				</div>
 			)}
 			{images.length > 1 && (
 				<>
@@ -250,7 +311,15 @@ export function BuildSubmissionDialog({
 	onUpdated: () => Promise<void>;
 }) {
 	const [eligibility, setEligibility] = useState<Eligibility | null>(null);
-	const [scores, setScores] = useState<Record<string, number>>({});
+	const [scores, setScores] = useState<Record<string, number>>(() =>
+		Object.fromEntries(
+			categories.map((category) => [
+				category.id,
+				Math.floor((category.min + category.max) / 2),
+			]),
+		),
+	);
+	const { confirm } = useSiteAlert();
 	const [error, setError] = useState('');
 	const [busy, setBusy] = useState(false);
 	const [paused, setPaused] = useState(false);
@@ -307,7 +376,29 @@ export function BuildSubmissionDialog({
 
 	async function vote(event: SyntheticEvent<HTMLFormElement>) {
 		event.preventDefault();
-		if (categories.some((category) => !Object.hasOwn(scores, category.id))) return;
+		if (
+			!(await confirm({
+				title: 'Submit your final vote?',
+				message: (
+					<div className="buildVoteConfirmation">
+						<p>Your scores for {submission.title}:</p>
+						<ul>
+							{categories.map((category) => (
+								<li key={category.id}>
+									{category.name}:{' '}
+									<strong>
+										{scores[category.id]} / {category.max}
+									</strong>
+								</li>
+							))}
+						</ul>
+						<p>You cannot change this vote afterwards.</p>
+					</div>
+				),
+				confirmLabel: 'Submit final vote',
+			}))
+		)
+			return;
 		setBusy(true);
 		setError('');
 		try {
@@ -337,7 +428,7 @@ export function BuildSubmissionDialog({
 
 	const title = submission.title ?? 'Build submission';
 	const canVisit = stage === 'voting' || stage === 'visiting';
-	return (
+	return createPortal(
 		<div
 			className="buildDialogBackdrop"
 			onMouseDown={(event) => {
@@ -374,10 +465,12 @@ export function BuildSubmissionDialog({
 				<div className="buildDialogContent">
 					<div className="buildDialogHeading">
 						<div>
-							{submission.rank != null && (
-								<span className="buildRank">#{submission.rank}</span>
-							)}
-							<h3>{title}</h3>
+							<h3>
+								{submission.rank != null && (
+									<span className="buildRank">#{submission.rank} — </span>
+								)}
+								{title}
+							</h3>
 						</div>
 						{submission.score && (
 							<strong>{submission.score.total.toFixed(2)} pts</strong>
@@ -405,6 +498,12 @@ export function BuildSubmissionDialog({
 					)}
 					{canVisit && (
 						<div className="buildVisitActions">
+							{eligibility?.canReturn && (
+								<p className="buildVisitWarning" role="alert">
+									Please don&apos;t go away from the build, or you won&apos;t be
+									able to warp back again.
+								</p>
+							)}
 							{eligibility?.canReturn ? (
 								<button
 									type="button"
@@ -439,6 +538,8 @@ export function BuildSubmissionDialog({
 								<p>You cannot warp to your own build during voting.</p>
 							) : stage === 'voting' && submission.voted ? (
 								<p>You have already voted for this build.</p>
+							) : stage === 'visiting' && !submission.canWarp ? (
+								<p>Visits are not enabled for this build.</p>
 							) : null}
 						</div>
 					)}
@@ -462,11 +563,9 @@ export function BuildSubmissionDialog({
 									<span>
 										<strong>{category.name}</strong>
 										<em>
-											{!Object.hasOwn(scores, category.id)
-												? 'Choose a score'
-												: String(scores[category.id]) +
-													' / ' +
-													String(category.max)}
+											{String(scores[category.id]) +
+												' / ' +
+												String(category.max)}
 										</em>
 									</span>
 									{category.description && <small>{category.description}</small>}
@@ -491,15 +590,7 @@ export function BuildSubmissionDialog({
 									</small>
 								</label>
 							))}
-							<button
-								type="submit"
-								disabled={
-									busy ||
-									categories.some(
-										(category) => !Object.hasOwn(scores, category.id),
-									)
-								}
-							>
+							<button type="submit" disabled={busy}>
 								Submit final vote
 							</button>
 						</form>
@@ -511,7 +602,8 @@ export function BuildSubmissionDialog({
 					)}
 				</div>
 			</section>
-		</div>
+		</div>,
+		document.body,
 	);
 }
 
@@ -565,10 +657,12 @@ function BuildCard({
 								/>
 							</h5>
 						) : (
-							<h5>{submission.title}</h5>
-						)}
-						{submission.rank != null && (
-							<span className="buildRank">#{submission.rank}</span>
+							<h5>
+								{submission.rank != null && (
+									<span className="buildRank">#{submission.rank} — </span>
+								)}
+								{submission.title}
+							</h5>
 						)}
 						<BuildTeam members={submission.team} />
 						{!hidden && (
@@ -612,9 +706,11 @@ function BuildCard({
 export function BuildEventsTab({
 	events,
 	selectedId,
+	detailPage = false,
 }: {
 	events: BuildEventSummary[];
 	selectedId?: string;
+	detailPage?: boolean;
 }) {
 	const event = selectedId
 		? events.find((item) => String(item.id) === selectedId)
@@ -674,26 +770,19 @@ export function BuildEventsTab({
 	const countdownTarget =
 		status === 'building'
 			? event.buildEndsAtUnixMs
-			: status === 'preparing'
-				? event.votingStartsAtUnixMs
-				: status === 'voting'
-					? event.votingEndsAtUnixMs
-					: null;
-	const countdownLabel =
-		status === 'building'
-			? 'Until building closes'
-			: status === 'preparing'
-				? 'Until voting opens'
-				: 'Until voting closes';
+			: status === 'voting'
+				? event.votingEndsAtUnixMs
+				: null;
+	const countdownLabel = status === 'building' ? 'Until building closes' : 'Until voting closes';
 	return (
 		<div className="eventPage buildEventPage">
-			{selectedId && (
+			{detailPage && (
 				<Link className="eventBack" href="/play/event">
 					← All events
 				</Link>
 			)}
 			<header className="eventTop">
-				<h3>Build competition</h3>
+				<h3>Events</h3>
 				{countdownTarget && now !== null && (
 					<div
 						className="eventEndCountdown"
@@ -706,27 +795,33 @@ export function BuildEventsTab({
 				)}
 			</header>
 			<section className="adminSection eventFeature">
-				<div className="eventFeatureMeta">
-					<span className={'eventStatus eventStatus-' + status}>{status}</span>
-					<time>
-						{formatManchesterDateTime(event.startsAtUnixMs)} to{' '}
-						{formatManchesterDateTime(event.buildEndsAtUnixMs)}
-					</time>
-				</div>
 				<h4 className="eventTitle">{event.title}</h4>
 				<EventDescription description={event.description} />
+				<div className="eventFeatureMeta">
+					<span className={'eventStatus eventStatus-' + status}>
+						Build event ·{' '}
+						{status === 'building'
+							? 'Building open'
+							: status === 'preparing'
+								? 'Preparing for voting'
+								: status === 'voting'
+									? 'Voting open'
+									: status === 'upcoming'
+										? 'Coming up'
+										: 'Voting closed'}
+					</span>
+				</div>
 				<dl className="buildSchedule">
 					<dt>Building</dt>
 					<dd>
 						{formatManchesterDateTime(event.startsAtUnixMs)} to{' '}
 						{formatManchesterDateTime(event.buildEndsAtUnixMs)}
 					</dd>
-					<dt>Voting opens</dt>
-					<dd>{formatManchesterDateTime(event.votingStartsAtUnixMs)}</dd>
-					<dt>Voting closes</dt>
-					<dd>{formatManchesterDateTime(event.votingEndsAtUnixMs)}</dd>
-					<dt>Warping closes</dt>
-					<dd>{formatManchesterDateTime(event.warpEndsAtUnixMs)}</dd>
+					<dt>Voting</dt>
+					<dd>
+						{formatManchesterDateTime(event.votingStartsAtUnixMs)} to{' '}
+						{formatManchesterDateTime(event.votingEndsAtUnixMs)}
+					</dd>
 				</dl>
 			</section>
 			{current && status !== 'upcoming' && (

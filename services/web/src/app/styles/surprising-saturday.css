@@ -58,12 +58,15 @@
 }
 
 .buildEventBanner {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
 	align-items: center;
-	border-color: #8cb5bd88;
-	background: linear-gradient(115deg, #122c38, #1a2b3d 65%, #23313d);
+	border-color: #ffffff61;
+	background: #080d1a24;
 	box-shadow:
-		0 10px 30px #0005,
-		inset 0 1px #ffffff17;
+		0 10px 30px #0004,
+		inset 0 1px #ffffff2b;
+	backdrop-filter: blur(12px);
 	text-shadow: none;
 	animation: none;
 }
@@ -81,7 +84,22 @@
 }
 
 .buildEventBanner .eventBannerContent {
-	flex: 1;
+	justify-items: center;
+	text-align: center;
+}
+.buildEventBanner .eventBannerAction {
+	justify-self: end;
+	margin-left: 0;
+}
+@media (max-width: 680px) {
+	.buildEventBanner {
+		grid-template-columns: 1fr;
+		justify-items: center;
+		text-align: center;
+	}
+	.buildEventBanner .eventBannerAction {
+		justify-self: center;
+	}
 }
 
 @keyframes eventPulse {

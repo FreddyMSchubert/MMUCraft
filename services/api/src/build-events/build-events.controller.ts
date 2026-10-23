@@ -154,6 +154,17 @@ export class BuildEventsAdminController {
 		return this.events.removeSubmission(id, submissionId);
 	}
 
+	@Patch(':id/submissions/:submissionId/post-voting-warp')
+	setPostVotingWarp(
+		@Headers('cookie') cookie: string | undefined,
+		@Param('id') id: string,
+		@Param('submissionId') submissionId: string,
+		@Body() body: { enabled?: unknown } | undefined,
+	) {
+		this.auth.requireCommitteeSession(cookie);
+		return this.events.setPostVotingWarp(id, submissionId, body?.enabled);
+	}
+
 	@Patch(':id/submissions/:submissionId/votes/:voterId')
 	excludeVote(
 		@Headers('cookie') cookie: string | undefined,

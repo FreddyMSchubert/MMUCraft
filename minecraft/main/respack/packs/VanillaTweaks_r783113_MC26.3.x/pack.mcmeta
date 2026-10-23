@@ -1,0 +1,56 @@
+{
+    "pack": {
+    "min_format": 84,
+    "max_format": 97,
+        "description": "\u00a76Vanilla Tweaks 26.1 - 26.3\n\u00a7evanillatweaks.net"
+    },
+    "overlays": {
+        "entries": [
+            {
+                "directory": "darkui_compat_overlay",
+                "min_format": 84,
+                "max_format": 97
+            },
+            {
+                "directory": "wavy_leaves_compat_overlay",
+                "min_format": 84,
+                "max_format": 97
+            },
+            {
+                "directory": "wavy_plants_compat_overlay",
+                "min_format": 84,
+                "max_format": 97
+            },
+            {
+                "directory": "wavy_water_compat_overlay",
+                "min_format": 84,
+                "max_format": 97
+            },
+            {
+                "directory": "lce_panorama_gamma_compat_overlay",
+                "min_format": 84,
+                "max_format": 97
+            },
+            {
+                "directory": "overlay_84",
+                "min_format": 84,
+                "max_format": 84
+            },
+            {
+                "directory": "overlay_84_88",
+                "min_format": 84,
+                "max_format": 88
+            },
+            {
+                "directory": "overlay_88",
+                "min_format": 88,
+                "max_format": 97
+            },
+            {
+                "directory": "overlay_96",
+                "min_format": 96,
+                "max_format": 97
+            }
+        ]
+    }
+}

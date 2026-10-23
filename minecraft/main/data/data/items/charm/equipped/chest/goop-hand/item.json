@@ -9,7 +9,7 @@
 		"membersOnly": false,
 		"priceDabloons": 100,
 		"description": "Increases attack knockback.",
-		"gameplayToggle": "inventors",
+		"gameplayToggle": "beach-party",
 		"unlockWeight": 150,
 		"unlockMessage": "Unlocked charm: Goop Hand Charm. Increases attack knockback."
 	},

@@ -11,7 +11,7 @@
 		"description": "Makes a Happy Ghast fly faster while its controlling rider wears this charm.",
 		"unlockWeight": 75,
 		"unlockMessage": "Unlocked charm: Cloud Splitter Charm. Makes your happy ghast faster.",
-		"gameplayToggle": "circus"
+		"gameplayToggle": "nether"
 	},
 	"charm": {
 		"charmId": 56,

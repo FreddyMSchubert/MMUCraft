@@ -91,7 +91,7 @@
 				"level": 11,
 				"abilityStatusCurrent": "Veinminer capped at 30 extra mined blocks.",
 				"abilityStatusRelative": "Mines 20 more ore blocks for you. (Veinminer)",
-				"dabloons": 250,
+				"dabloons": 333,
 				"upgradeIngredients": [
 					"minecraft:test_instance_block[minecraft:damage_resistant={types:\"#minecraft:is_fire\"}]=Enderite Block"
 				]

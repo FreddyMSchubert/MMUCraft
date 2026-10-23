@@ -90,7 +90,7 @@ export function ObfuscatedEventName({
 	);
 }
 
-function EventDescription({ description }: { description: string }) {
+export function EventDescription({ description }: { description: string }) {
 	const html = useMemo(
 		() =>
 			sanitizeHtml(knowledgeMarkdown.parse(description, { async: false }), {
@@ -147,9 +147,11 @@ function EventPlayerLink({
 export function SurprisingSaturdayTab({
 	events,
 	selectedId,
+	showHistory = true,
 }: {
 	events: EventSummary[];
 	selectedId?: string;
+	showHistory?: boolean;
 }) {
 	const isDetailPage = selectedId !== undefined;
 	const upcoming = events.filter((event) => event.status === 'upcoming');
@@ -517,7 +519,7 @@ export function SurprisingSaturdayTab({
 			)}
 			{error && <p className="authError">{error}</p>}
 
-			{otherUpcoming.length > 0 && !isDetailPage && (
+			{otherUpcoming.length > 0 && !isDetailPage && showHistory && (
 				<section className="adminSection eventListSection">
 					<h4>Also coming up</h4>
 					<div className="eventHistory">
@@ -532,7 +534,7 @@ export function SurprisingSaturdayTab({
 					</div>
 				</section>
 			)}
-			{history.length > 0 && !isDetailPage && (
+			{history.length > 0 && !isDetailPage && showHistory && (
 				<section className="adminSection eventListSection">
 					<h4>Past events</h4>
 					<div className="eventHistory">

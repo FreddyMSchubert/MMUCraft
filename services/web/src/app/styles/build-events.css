@@ -1,0 +1,430 @@
+.eventTypeNavigation {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+	margin-bottom: 14px;
+}
+.eventTypeNavigation a,
+.buildAdminAdd {
+	display: inline-flex;
+	padding: 9px 14px;
+	border: 1px solid #ffffff33;
+	border-radius: 9px;
+	color: #f5f2ff;
+	text-decoration: none;
+}
+.eventTypeNavigation a.active,
+.buildAdminAdd {
+	background: #916ad645;
+	border-color: #c7a9ff80;
+}
+.eventHistoryType {
+	display: inline-block;
+	width: fit-content;
+	padding: 2px 7px;
+	border-radius: 6px;
+	background: #ad8ee93d;
+	font-size: 0.75rem;
+}
+.buildEventPage .eventTop h3::before {
+	content: '🧱';
+}
+.buildEventPage .eventFeature {
+	min-width: 0;
+}
+.buildEventPage .eventFeature .eventTitle {
+	overflow-wrap: anywhere;
+}
+.buildSchedule {
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	gap: 6px 16px;
+	margin: 16px 0 0;
+	font-size: 0.9rem;
+}
+.buildSchedule dt {
+	font-weight: 700;
+}
+.buildSchedule dd {
+	margin: 0;
+}
+.buildVoteProgress {
+	display: grid;
+	gap: 5px;
+	margin: 12px 0;
+}
+.buildVoteProgress progress {
+	width: 100%;
+	height: 16px;
+	accent-color: #71dba0;
+}
+.buildCards {
+	display: grid;
+	gap: 18px;
+}
+.buildCard {
+	display: flex;
+	min-width: 0;
+	overflow: hidden;
+	border: 1px solid #ffffff29;
+	border-radius: 12px;
+	background: #0c10218f;
+}
+.buildCard:not(.buildCardHidden) {
+	aspect-ratio: 32 / 9;
+}
+.buildCard:nth-child(even) {
+	flex-direction: row-reverse;
+}
+.buildCard > .buildGallery,
+.buildCardText {
+	flex: 0 0 50%;
+	min-width: 0;
+}
+.buildCard > .buildGallery {
+	aspect-ratio: 16 / 9;
+}
+.buildCardText {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 14px;
+	padding: 18px;
+	max-height: 100%;
+	overflow: auto;
+}
+.buildCard:nth-child(even) .buildCardText {
+	text-align: right;
+	align-items: flex-end;
+}
+.buildCard:nth-child(even) .buildTeam {
+	justify-content: flex-end;
+}
+.buildCardText h5 {
+	margin: 0 0 9px;
+	font-size: clamp(1.15rem, 2vw, 1.65rem);
+	overflow-wrap: anywhere;
+}
+.buildCardDescription,
+.buildPlainDescription {
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+.buildCardDescription {
+	margin: 14px 0 0;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 6;
+	overflow: hidden;
+}
+.buildTeam {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+}
+.buildCardFooter {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+.buildCard:nth-child(even) .buildCardFooter {
+	justify-content: flex-end;
+}
+.buildCardFooter button {
+	margin-left: auto;
+}
+.buildVoted {
+	color: #78e9a6;
+	font-weight: 700;
+}
+.buildCardHidden {
+	padding: 16px 20px;
+}
+.buildCardHidden .buildCardText {
+	flex: 1;
+	padding: 0;
+	max-height: none;
+}
+.buildCardHidden h5 {
+	font-size: 1.2rem;
+}
+.buildGallery {
+	position: relative;
+	overflow: hidden;
+	background: #000;
+	aspect-ratio: 16 / 9;
+}
+.buildGallery img,
+.buildGalleryEmpty {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	background: #000;
+}
+.buildGalleryArrow {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 1;
+	width: 36px;
+	height: 42px;
+	padding: 0;
+	background: #000a;
+	font-size: 28px;
+}
+.buildGalleryPrevious {
+	left: 8px;
+}
+.buildGalleryNext {
+	right: 8px;
+}
+.buildGalleryDots {
+	position: absolute;
+	bottom: 8px;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	gap: 6px;
+	padding: 5px 8px;
+	border-radius: 20px;
+	background: #000a;
+}
+.buildGalleryDots button {
+	width: 9px;
+	height: 9px;
+	padding: 0;
+	border-radius: 50%;
+	background: #777;
+}
+.buildGalleryDots button.active {
+	background: #fff;
+}
+.buildDialogBackdrop {
+	position: fixed;
+	inset: 0;
+	z-index: 1000;
+	display: grid;
+	place-items: center;
+	padding: 20px;
+	background: #000c;
+}
+.buildDialog {
+	position: relative;
+	width: min(1100px, 100%);
+	max-height: min(94vh, 1100px);
+	overflow-y: auto;
+	border: 1px solid #ffffff40;
+	border-radius: 14px;
+	background: #171b2b;
+	box-shadow: 0 24px 80px #000b;
+}
+.buildDialog > .buildGallery {
+	width: 100%;
+}
+.buildDialogClose {
+	position: sticky;
+	top: 8px;
+	float: right;
+	z-index: 3;
+	margin: 8px 8px -55px 0;
+	padding: 3px 12px;
+	background: #171b2b;
+	font-size: 26px;
+}
+.buildDialogContent {
+	padding: 24px;
+}
+.buildDialogHeading {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 12px;
+}
+.buildDialogHeading h3 {
+	display: inline;
+	margin: 0;
+	overflow-wrap: anywhere;
+}
+.buildRank {
+	margin-right: 10px;
+	color: #f9d779;
+}
+.buildPublicScores {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 18px;
+	margin-top: 14px;
+	color: #e9dfad;
+}
+.buildVisitActions,
+.buildVoteForm {
+	margin-top: 22px;
+}
+.buildVoteForm {
+	display: grid;
+	gap: 15px;
+}
+.buildVoteForm label {
+	display: grid;
+	gap: 5px;
+}
+.buildVoteForm label > span {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+}
+.buildVoteForm small {
+	opacity: 0.8;
+}
+.buildVoteForm input[type='range'] {
+	width: 100%;
+}
+.buildVoteThanks {
+	color: #79eaa6;
+	font-weight: 700;
+}
+.buildAdmin {
+	display: grid;
+	gap: 14px;
+}
+.buildAdminList h3,
+.buildAdminCompetition h3 {
+	margin-top: 0;
+}
+.buildAdminEventList {
+	display: grid;
+	gap: 4px;
+	margin-bottom: 12px;
+	max-height: 340px;
+	overflow-y: auto;
+}
+.buildAdminEventList a {
+	display: flex;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 10px;
+	border-radius: 7px;
+	color: inherit;
+	text-decoration: none;
+}
+.buildAdminEventList a:hover,
+.buildAdminEventList a.active {
+	background: #916ad638;
+}
+.buildAdminEventList span {
+	opacity: 0.7;
+}
+.buildAdminHeading,
+.buildAdminSubmissionSummary {
+	display: flex;
+	justify-content: space-between;
+	gap: 14px;
+	align-items: flex-start;
+}
+.buildAdminActions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin: 10px 0;
+}
+.buildAdminActions a {
+	color: #d9c4ff;
+}
+.buildAdminSubmissionList {
+	display: grid;
+	gap: 8px;
+	margin-top: 16px;
+}
+.buildAdminSubmission {
+	padding: 12px;
+	border: 1px solid #ffffff2e;
+	border-radius: 9px;
+}
+.buildAdminSubmissionSummary > div:first-child {
+	display: grid;
+	gap: 6px;
+}
+.buildAdminSubmissionSummary strong {
+	font-size: 1.1rem;
+}
+.buildAdminVotes {
+	margin-top: 12px;
+}
+.buildAdminVotes summary {
+	cursor: pointer;
+}
+.buildAdminVote {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 10px;
+	padding: 7px 0;
+	border-top: 1px solid #ffffff1f;
+}
+.buildAdminVote label {
+	white-space: nowrap;
+}
+.buildAdminSettings form,
+.buildAdminEditor form {
+	display: grid;
+	gap: 14px;
+}
+.buildAdminSettings label,
+.buildAdminEditor label {
+	display: grid;
+	gap: 5px;
+}
+.buildAdminSettings input,
+.buildAdminSettings textarea,
+.buildAdminEditor input,
+.buildAdminEditor textarea {
+	width: 100%;
+}
+.buildAdminGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+	gap: 12px;
+}
+.buildCategoryEditor {
+	display: grid;
+	gap: 10px;
+	border: 1px solid #ffffff33;
+	border-radius: 8px;
+}
+.buildAdminEditor {
+	padding: 24px;
+}
+.buildAdminTeam,
+.buildAdminAddPlayer,
+.buildAdminImageRow {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+.buildAdminAddPlayer input,
+.buildAdminImageRow input {
+	flex: 1 1 270px;
+}
+@media (max-width: 850px) {
+	.buildCard,
+	.buildCard:nth-child(even) {
+		display: grid;
+	}
+	.buildCard:not(.buildCardHidden) {
+		aspect-ratio: auto;
+	}
+	.buildCard > .buildGallery {
+		width: 100%;
+	}
+	.buildCardText {
+		max-height: none;
+	}
+	.buildAdminHeading,
+	.buildAdminSubmissionSummary {
+		flex-direction: column;
+	}
+}

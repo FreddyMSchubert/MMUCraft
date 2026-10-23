@@ -24,6 +24,7 @@ const ADMIN_SECTIONS: { section: AdminSection; label: string }[] = [
 	{ section: 'bans', label: 'Ban / timeout' },
 	{ section: 'servers', label: 'Servers' },
 	{ section: 'events', label: 'Surprising Saturday' },
+	{ section: 'build-events', label: 'Build events' },
 	{ section: 'maintenance', label: 'Maintenance' },
 ];
 

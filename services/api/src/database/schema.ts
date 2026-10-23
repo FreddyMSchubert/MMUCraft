@@ -734,6 +734,123 @@ export const surprisingSaturdayParticipants = sqliteTable(
 	(table) => [primaryKey({ columns: [table.event_id, table.player_uuid] })],
 );
 
+export const buildEvents = sqliteTable(
+	'build_events',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		title: text('title').notNull(),
+		short_description: text('short_description').notNull().default(''),
+		description: text('description').notNull(),
+		starts_at_unix_ms: integer('starts_at_unix_ms').notNull(),
+		build_ends_at_unix_ms: integer('build_ends_at_unix_ms').notNull(),
+		voting_starts_at_unix_ms: integer('voting_starts_at_unix_ms').notNull(),
+		voting_ends_at_unix_ms: integer('voting_ends_at_unix_ms').notNull(),
+		warp_ends_at_unix_ms: integer('warp_ends_at_unix_ms').notNull(),
+		min_team_size: integer('min_team_size').notNull(),
+		max_team_size: integer('max_team_size').notNull(),
+		categories_json: text('categories_json').notNull(),
+		results_revealed: integer('results_revealed').notNull().default(0),
+	},
+	(table) => [
+		index('build_events_starts_idx').on(table.starts_at_unix_ms),
+		check(
+			'build_events_dates_check',
+			sql`${table.starts_at_unix_ms} < ${table.build_ends_at_unix_ms} and ${table.build_ends_at_unix_ms} <= ${table.voting_starts_at_unix_ms} and ${table.voting_starts_at_unix_ms} < ${table.voting_ends_at_unix_ms} and ${table.voting_ends_at_unix_ms} <= ${table.warp_ends_at_unix_ms}`,
+		),
+		check(
+			'build_events_team_size_check',
+			sql`${table.min_team_size} >= 1 and ${table.min_team_size} <= ${table.max_team_size}`,
+		),
+	],
+);
+
+export const buildSubmissions = sqliteTable(
+	'build_submissions',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		event_id: integer('event_id')
+			.notNull()
+			.references(() => buildEvents.id, { onDelete: 'cascade' }),
+		title: text('title').notNull(),
+		description: text('description').notNull(),
+		images_json: text('images_json').notNull(),
+		dimension: text('dimension').notNull(),
+		block_x: integer('block_x').notNull(),
+		block_y: integer('block_y').notNull(),
+		block_z: integer('block_z').notNull(),
+		yaw: real('yaw').notNull().default(0),
+		pitch: real('pitch').notNull().default(0),
+		min_chunk_x: integer('min_chunk_x').notNull(),
+		max_chunk_x: integer('max_chunk_x').notNull(),
+		min_chunk_z: integer('min_chunk_z').notNull(),
+		max_chunk_z: integer('max_chunk_z').notNull(),
+	},
+	(table) => [index('build_submissions_event_idx').on(table.event_id)],
+);
+
+export const buildSubmissionMembers = sqliteTable(
+	'build_submission_members',
+	{
+		event_id: integer('event_id')
+			.notNull()
+			.references(() => buildEvents.id, { onDelete: 'cascade' }),
+		submission_id: integer('submission_id')
+			.notNull()
+			.references(() => buildSubmissions.id, { onDelete: 'cascade' }),
+		user_id: integer('user_id')
+			.notNull()
+			.references(() => users.id),
+	},
+	(table) => [
+		primaryKey({ columns: [table.event_id, table.user_id] }),
+		index('build_submission_members_submission_idx').on(table.submission_id),
+	],
+);
+
+export const buildVotes = sqliteTable(
+	'build_votes',
+	{
+		submission_id: integer('submission_id')
+			.notNull()
+			.references(() => buildSubmissions.id, { onDelete: 'cascade' }),
+		voter_user_id: integer('voter_user_id')
+			.notNull()
+			.references(() => users.id),
+		scores_json: text('scores_json').notNull(),
+		cast_at_unix_ms: integer('cast_at_unix_ms').notNull(),
+		excluded: integer('excluded').notNull().default(0),
+	},
+	(table) => [primaryKey({ columns: [table.submission_id, table.voter_user_id] })],
+);
+
+export const buildVoterExclusions = sqliteTable(
+	'build_voter_exclusions',
+	{
+		event_id: integer('event_id')
+			.notNull()
+			.references(() => buildEvents.id, { onDelete: 'cascade' }),
+		voter_user_id: integer('voter_user_id')
+			.notNull()
+			.references(() => users.id),
+	},
+	(table) => [primaryKey({ columns: [table.event_id, table.voter_user_id] })],
+);
+
+export const buildVisits = sqliteTable('build_visits', {
+	user_id: integer('user_id')
+		.primaryKey()
+		.references(() => users.id, { onDelete: 'cascade' }),
+	submission_id: integer('submission_id')
+		.notNull()
+		.references(() => buildSubmissions.id, { onDelete: 'cascade' }),
+	origin_dimension: text('origin_dimension').notNull(),
+	origin_x: real('origin_x').notNull(),
+	origin_y: real('origin_y').notNull(),
+	origin_z: real('origin_z').notNull(),
+	origin_yaw: real('origin_yaw').notNull(),
+	origin_pitch: real('origin_pitch').notNull(),
+});
+
 export type UserRow = typeof users.$inferSelect;
 export type SessionRow = typeof sessions.$inferSelect;
 export type PlayerBanRow = typeof playerBans.$inferSelect;
@@ -808,4 +925,10 @@ export const schema = {
 	surprisingSaturdayEvents,
 	surprisingSaturdayCompletions,
 	surprisingSaturdayParticipants,
+	buildEvents,
+	buildSubmissions,
+	buildSubmissionMembers,
+	buildVotes,
+	buildVoterExclusions,
+	buildVisits,
 };

@@ -31,6 +31,8 @@ final class GameplayClaimOperations {
                 .setBlockX(position.getX())
                 .setBlockY(position.getY())
                 .setBlockZ(position.getZ())
+                .setYaw(player.getYRot())
+                .setPitch(player.getXRot())
                 .setMessage("Current chunk loaded.")
                 .build();
     }

@@ -233,6 +233,15 @@ private final class GameplayControlEndpoint extends GameplayControlGrpc.Gameplay
         }
 
         @Override
+        public void teleportBuildVisitor(
+                TeleportBuildVisitorRequest request,
+                StreamObserver<TeleportBuildVisitorResponse> responseObserver
+        ) {
+            callOnMainThread(() -> GameplayBuildEventOperations.teleportOnMainThread(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
         public void purchaseClaim(
                 PurchaseClaimRequest request,
                 StreamObserver<PurchaseClaimResponse> responseObserver

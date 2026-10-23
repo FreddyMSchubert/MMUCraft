@@ -14,6 +14,7 @@ import { VelocityModule } from './velocity/velocity.module';
 import { FeatureTogglesModule } from './toggles/feature-toggles.module';
 import { AnnouncementsModule } from './announcements/announcements.module';
 import { LaunchModule } from './launch/launch.module';
+import { BuildEventsModule } from './build-events/build-events.module';
 
 @Module({
 	imports: [
@@ -30,6 +31,7 @@ import { LaunchModule } from './launch/launch.module';
 		FeatureTogglesModule,
 		AnnouncementsModule,
 		LaunchModule,
+		BuildEventsModule,
 	],
 	controllers: [HealthController, MinecraftCacheAdminController],
 })

@@ -38,6 +38,7 @@ service GameplayControl {
   rpc PurchaseShopItem(PurchaseShopItemRequest) returns (PurchaseShopItemResponse);
   rpc PurchaseExternalPlayerInvite(PurchaseExternalPlayerInviteRequest) returns (PurchaseExternalPlayerInviteResponse);
   rpc GetCurrentClaimChunk(GetCurrentClaimChunkRequest) returns (GetCurrentClaimChunkResponse);
+  rpc TeleportBuildVisitor(TeleportBuildVisitorRequest) returns (TeleportBuildVisitorResponse);
   rpc PurchaseClaim(PurchaseClaimRequest) returns (PurchaseClaimResponse);
   rpc ApplyClaimsSnapshot(ClaimsSnapshot) returns (ApplyClaimsSnapshotResponse);
   rpc RefreshApiCaches(RefreshApiCachesRequest) returns (RefreshApiCachesResponse);
@@ -315,6 +316,37 @@ message GetCurrentClaimChunkResponse {
   sint32 block_x = 7;
   sint32 block_y = 8;
   sint32 block_z = 9;
+  float yaw = 10;
+  float pitch = 11;
+}
+
+message TeleportBuildVisitorRequest {
+  string minecraft_username = 1;
+  string dimension = 2;
+  double x = 3;
+  double y = 4;
+  double z = 5;
+  float yaw = 6;
+  float pitch = 7;
+  bool check_current_area = 8;
+  string current_dimension = 9;
+  sint32 min_chunk_x = 10;
+  sint32 max_chunk_x = 11;
+  sint32 min_chunk_z = 12;
+  sint32 max_chunk_z = 13;
+}
+
+message TeleportBuildVisitorResponse {
+  bool online = 1;
+  bool moved = 2;
+  string message = 3;
+  string origin_dimension = 4;
+  double origin_x = 5;
+  double origin_y = 6;
+  double origin_z = 7;
+  float origin_yaw = 8;
+  float origin_pitch = 9;
+  bool left_area = 10;
 }
 
 message PurchaseClaimRequest {

@@ -17,7 +17,9 @@ import { DucksTab } from '@/components/ducks-tab';
 import { CharmsTab } from '@/components/charms-tab';
 import { PlayerName, type PlayerEmoji } from '@/components/player-name';
 import { DynamicCountdowns } from '@/components/dynamic-countdowns';
-import { SurprisingSaturdayTab, type EventSummary } from '@/components/surprising-saturday-tab';
+import { type EventSummary } from '@/components/surprising-saturday-tab';
+import { EventsTab } from '@/components/events-tab';
+import { type BuildEventSummary } from '@/components/build-events-tab';
 import { normalizeAdminSection } from '@/components/admin/admin-data.types';
 
 interface SessionUser {
@@ -122,6 +124,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 		}[];
 	} | null>(null);
 	const [events, setEvents] = useState<EventSummary[]>([]);
+	const [buildEvents, setBuildEvents] = useState<BuildEventSummary[]>([]);
 	const [copyLabel, setCopyLabel] = useState('Copy IP');
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [headerHidden, setHeaderHidden] = useState(false);
@@ -129,7 +132,10 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	const activeTab = TAB_IDS.has(route[0] as TabId) ? (route[0] as TabId) : 'knowledge';
 	const routeDetail = route.at(1);
 	const liveEvent = events.find((event) => event.status === 'live');
-	const hasLiveEvent = Boolean(liveEvent);
+	const activeBuildEvents = buildEvents.filter((event) =>
+		['building', 'preparing', 'voting'].includes(event.status),
+	);
+	const hasLiveEvent = Boolean(liveEvent) || activeBuildEvents.length > 0;
 	const isCommittee = user?.isCommittee;
 	const tabs = useMemo(
 		() =>
@@ -179,6 +185,27 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 			}
 		}
 		void refreshEvents();
+		return () => {
+			cancelled = true;
+			window.clearTimeout(timer);
+		};
+	}, []);
+
+	useEffect(() => {
+		let cancelled = false;
+		let timer: number | undefined;
+		async function refreshBuildEvents() {
+			try {
+				const response = await fetch('/api/build-events', { cache: 'no-store' });
+				if (response.ok && !cancelled)
+					setBuildEvents((await response.json()) as BuildEventSummary[]);
+			} catch {
+				// The next poll retries when the API is unavailable.
+			} finally {
+				if (!cancelled) timer = window.setTimeout(refreshBuildEvents, 15_000);
+			}
+		}
+		void refreshBuildEvents();
 		return () => {
 			cancelled = true;
 			window.clearTimeout(timer);
@@ -300,7 +327,12 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 
 		let canonicalPath: string | null = null;
 		if (activeTab === 'admin')
-			canonicalPath = `/play/admin/${normalizeAdminSection(routeDetail)}`;
+			canonicalPath =
+				routeDetail === 'build-events' && route.length <= 4
+					? '/play/admin/build-events' +
+						(route[2] ? '/' + encodeURIComponent(route[2]) : '') +
+						(route[3] ? '/' + encodeURIComponent(route[3]) : '')
+					: `/play/admin/${normalizeAdminSection(routeDetail)}`;
 		else if (activeTab === 'misc')
 			canonicalPath = `/play/misc/${MISC_SECTIONS.has(routeDetail ?? '') ? routeDetail : 'settings'}`;
 		else if (
@@ -311,7 +343,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 			activeTab === 'fishing'
 		)
 			canonicalPath = `/play/${activeTab}`;
-		else if (route.length > 2)
+		else if (route.length > 2 && !(activeTab === 'event' && routeDetail === 'build'))
 			canonicalPath = routeDetail
 				? `/play/${activeTab}/${encodeURIComponent(routeDetail)}`
 				: `/play/${activeTab}`;
@@ -411,6 +443,28 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 					<span className="eventBannerAction">Open event →</span>
 				</a>
 			)}
+			{user &&
+				activeBuildEvents.map((event) => (
+					<Link
+						className="eventBanner buildEventBanner"
+						key={event.id}
+						href={`/play/event/build/${event.id}`}
+					>
+						<span className="buildEventBannerLabel">
+							Build competition ·{' '}
+							{event.status === 'building'
+								? 'Building open'
+								: event.status === 'preparing'
+									? 'Voting opens soon'
+									: 'Voting open'}
+						</span>
+						<span className="eventBannerContent">
+							<strong>{event.title}</strong>
+							{event.shortDescription && <span>{event.shortDescription}</span>}
+						</span>
+						<span className="eventBannerAction">View competition →</span>
+					</Link>
+				))}
 			{user === undefined && (
 				<section className="authCard">
 					<div className="authForm">
@@ -590,10 +644,11 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 					<div className="dashboardPanel">
 						{activeTab === 'dailies' && <DailiesTab />}
 						{activeTab === 'event' && (
-							<SurprisingSaturdayTab
+							<EventsTab
 								key={routeDetail ?? 'overview'}
-								events={events}
-								selectedId={routeDetail}
+								saturdayEvents={events}
+								buildEvents={buildEvents}
+								path={route.slice(1)}
 							/>
 						)}
 						{activeTab === 'knowledge' && (
@@ -621,6 +676,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 							<AdminTab
 								isSuperAdmin={user.isSuperAdmin}
 								section={routeDetail}
+								subroute={route.slice(2)}
 								ducksEnabled={ducksEnabled === true}
 							/>
 						)}

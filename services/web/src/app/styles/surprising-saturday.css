@@ -57,6 +57,33 @@
 	white-space: nowrap;
 }
 
+.buildEventBanner {
+	align-items: center;
+	border-color: #8cb5bd88;
+	background: linear-gradient(115deg, #122c38, #1a2b3d 65%, #23313d);
+	box-shadow:
+		0 10px 30px #0005,
+		inset 0 1px #ffffff17;
+	text-shadow: none;
+	animation: none;
+}
+
+.buildEventBannerLabel {
+	flex: none;
+	padding: 5px 8px;
+	border: 1px solid #9bc7bf77;
+	border-radius: 6px;
+	color: #b7e7d7;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.buildEventBanner .eventBannerContent {
+	flex: 1;
+}
+
 @keyframes eventPulse {
 	50% {
 		opacity: 0.45;
@@ -518,6 +545,10 @@
 	.eventBanner,
 	.eventTop {
 		flex-direction: column;
+	}
+
+	.buildEventBanner {
+		align-items: flex-start;
 	}
 
 	.eventBannerAction {

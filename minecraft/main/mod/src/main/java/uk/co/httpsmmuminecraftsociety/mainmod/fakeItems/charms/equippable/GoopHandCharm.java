@@ -15,7 +15,7 @@ public class GoopHandCharm implements Charm, BaseItemChangeCallbackCharm
     @Override
     public void enableEffectForItem(ItemStack stack, int charmLevel)
     {
-        Utils.applyItemAttrModifier(stack, GOOP_HAND_ATTACK_KNOCKBACK_ATTRIBUTE_MODIFIER_ID, Attributes.ATTACK_KNOCKBACK, getBlockInteractionRangeAdditionPerLevel(charmLevel), AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.CHEST);
+        Utils.applyItemAttrModifier(stack, GOOP_HAND_ATTACK_KNOCKBACK_ATTRIBUTE_MODIFIER_ID, Attributes.ATTACK_KNOCKBACK, knockbackBonus(charmLevel), AttributeModifier.Operation.ADD_VALUE, EquipmentSlotGroup.CHEST);
     }
 
     @Override
@@ -24,7 +24,7 @@ public class GoopHandCharm implements Charm, BaseItemChangeCallbackCharm
         Utils.removeItemAttrModifier(stack, GOOP_HAND_ATTACK_KNOCKBACK_ATTRIBUTE_MODIFIER_ID, Attributes.ATTACK_KNOCKBACK);
     }
 
-    private static float getBlockInteractionRangeAdditionPerLevel(int level) {
+    public static float knockbackBonus(int level) {
         return level * 0.4f;
     }
 }

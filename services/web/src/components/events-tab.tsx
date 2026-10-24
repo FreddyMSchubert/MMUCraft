@@ -71,13 +71,7 @@ export function EventsTab({
 					? a.date - b.date
 					: b.date - a.date),
 	);
-	const featured = detailPage
-		? null
-		: explicitBuild
-			? entries.find((entry) => entry.type === 'Build event')
-			: path[0] === 'saturday'
-				? entries.find((entry) => entry.type === 'Surprising Saturday')
-				: entries[0];
+	const featured = detailPage ? null : entries.find((entry) => entry.status === 'active');
 	const selected = detailPage
 		? explicitBuild
 			? { type: 'Build event' as const, id: buildId }
@@ -106,12 +100,16 @@ export function EventsTab({
 					<header className="eventTop">
 						<h3>Events</h3>
 					</header>
-					<p>No events have been scheduled yet.</p>
+					{entries.length === 0 && <p>No events have been scheduled yet.</p>}
 				</div>
 			)}
 			{others.length > 0 && (
 				<section className="adminSection eventListSection eventCombinedHistory">
-					<h4>All events</h4>
+					<h4>
+						{entries.every((entry) => entry.status === 'past')
+							? 'Event history'
+							: 'All events'}
+					</h4>
 					<div className="eventHistory">
 						{others.map((event) => (
 							<Link href={event.href} key={event.id}>

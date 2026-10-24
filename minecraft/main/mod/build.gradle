@@ -168,6 +168,7 @@ tasks.register('checkDailyCatalog', JavaExec) {
     description = 'Check daily task JSON structure, weights, identifiers, and generated definitions.'
     classpath = sourceSets.minecraftCheck.runtimeClasspath
     mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskCatalogCheck'
+    enableAssertions = true
     args projectDir.absolutePath
     workingDir = layout.buildDirectory.dir('dailyCatalogCheck').get().asFile
     doFirst { workingDir.mkdirs() }

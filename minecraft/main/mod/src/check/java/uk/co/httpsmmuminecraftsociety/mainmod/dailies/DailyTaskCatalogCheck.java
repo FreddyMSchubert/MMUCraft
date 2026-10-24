@@ -2,9 +2,18 @@ package uk.co.httpsmmuminecraftsociety.mainmod.dailies;
 
 import com.google.gson.JsonParser;
 import net.minecraft.SharedConstants;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.Bootstrap;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.Bees;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.FeatureToggle;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.FeatureTogglesSnapshot;
 import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
@@ -12,6 +21,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public final class DailyTaskCatalogCheck {
@@ -21,6 +31,22 @@ public final class DailyTaskCatalogCheck {
     public static void main(String[] args) throws Exception {
         SharedConstants.tryDetectVersion();
         Bootstrap.bootStrap();
+        var registries = VanillaRegistries.createWorldLookup();
+        BuiltInRegistries.DATA_COMPONENT_INITIALIZERS.build(registries).forEach(components -> components.apply());
+        var sharpness = registries.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.SHARPNESS);
+        var enchantments = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+        enchantments.set(sharpness, 2);
+        ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
+        book.set(DataComponents.STORED_ENCHANTMENTS, enchantments.toImmutable());
+        assert DailyTaskRegistry.hasEnchantment(book, sharpness, 2);
+        assert !DailyTaskRegistry.hasEnchantment(book, sharpness, 3);
+        ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+        sword.set(DataComponents.ENCHANTMENTS, enchantments.toImmutable());
+        assert DailyTaskRegistry.hasEnchantment(sword, sharpness, 2);
+        ItemStack beeNest = new ItemStack(Items.BEE_NEST);
+        assert !DailyTaskCatalog.hasBees(beeNest);
+        beeNest.set(DataComponents.BEES, new Bees(List.of(BeehiveBlockEntity.Occupant.create(0))));
+        assert DailyTaskCatalog.hasBees(beeNest);
         Path project = Path.of(args[0]);
         Path advancementPolicy = project.resolve("build/resources/main/data/mainmod")
                 .resolve(DailyAdvancementPolicy.RESOURCE_PATH);
@@ -39,7 +65,7 @@ public final class DailyTaskCatalogCheck {
 
         var catalog = DailyTaskCatalog.load(
                 project.resolve("src/main/resources").resolve(DailyTaskCatalog.RESOURCE_PATH),
-                VanillaRegistries.createWorldLookup(),
+                registries,
                 fakeItemIds,
                 DropCatalog.load(project.resolve("../data/drops.json"))
         );

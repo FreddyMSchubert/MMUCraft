@@ -22,6 +22,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.component.Bees;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
@@ -198,8 +199,7 @@ final class DailyTaskCatalog {
                     (player, stack) -> stack.getDamageValue() * 2 > stack.getMaxDamage());
             case "submit_bee_nest_with_bees" -> ItemSubmissionTask.matching(
                     "with-bees", item(json, "item", path),
-                    (player, stack) -> stack.has(DataComponents.BLOCK_ENTITY_DATA)
-                            && !stack.get(DataComponents.BLOCK_ENTITY_DATA).copyTagWithoutId().getListOrEmpty("Bees").isEmpty());
+                    (player, stack) -> hasBees(stack));
             case "submit_ominous_banner" -> ItemSubmissionTask.matching(
                     "ominous", item(json, "item", path),
                     (player, stack) -> ItemStack.isSameItemSameComponents(
@@ -265,6 +265,10 @@ final class DailyTaskCatalog {
 
     private static DailyTaskDefinition enchantItem(ItemTarget target) {
         return target.tag() == null ? new EnchantItemTask(target.item()) : new EnchantItemTask(target.tag());
+    }
+
+    static boolean hasBees(ItemStack stack) {
+        return !stack.getOrDefault(DataComponents.BEES, Bees.EMPTY).bees().isEmpty();
     }
 
     private static DailyTaskDefinition killWithItem(ItemTarget target) {

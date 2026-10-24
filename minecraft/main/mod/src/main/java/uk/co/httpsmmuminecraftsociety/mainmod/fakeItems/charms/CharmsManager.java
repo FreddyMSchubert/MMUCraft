@@ -340,7 +340,6 @@ public class CharmsManager
                 }
                 if (instance.charm() instanceof CraftingStaffCharm) MasteryAdvancements.grant((ServerPlayer) player, "utility/staff_crafting");
                 if (instance.charm() instanceof EnderChestStaffCharm) MasteryAdvancements.grant((ServerPlayer) player, "utility/staff_ender_chest");
-                if (instance.charm() instanceof WrenchCharm) MasteryAdvancements.grant((ServerPlayer) player, "utility/wrench");
                 MasteryAdvancements.grantIfAll((ServerPlayer) player, "utility/all_staves",
                         "utility/staff_crafting", "utility/staff_ender_chest", "utility/staff_brolly");
             }

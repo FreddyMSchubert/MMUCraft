@@ -13,10 +13,12 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DebugStickState;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.BlockHitResult;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.AttackBlockCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
@@ -95,11 +97,15 @@ public final class WrenchCharm implements Charm, UseOnBlockCallbackCharm, Attack
                 ? selectedProperty(stack, state, properties)
                 : properties.getFirst();
         BlockState changed = cycle(state, selected);
+        if (changed.getBlock() instanceof WallBlock && changed.getShape(level, pos).isEmpty()) {
+            changed = changed.setValue(WallBlock.UP, true);
+        }
         if (!level.setBlock(pos, changed, Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE)) {
             return InteractionResult.FAIL;
         }
 
         showProperties(player, changed, properties, selected);
+        MasteryAdvancements.grant(player, "utility/wrench");
         return InteractionResult.SUCCESS_SERVER;
     }
 
@@ -128,6 +134,7 @@ public final class WrenchCharm implements Charm, UseOnBlockCallbackCharm, Attack
         DebugStickState selection = stack.getOrDefault(DataComponents.DEBUG_STICK_STATE, DebugStickState.EMPTY);
         stack.set(DataComponents.DEBUG_STICK_STATE, selection.withProperty(state.typeHolder(), selected));
         showProperties(player, state, properties, selected);
+        MasteryAdvancements.grant(player, "utility/wrench");
         return InteractionResult.SUCCESS_SERVER;
     }
 

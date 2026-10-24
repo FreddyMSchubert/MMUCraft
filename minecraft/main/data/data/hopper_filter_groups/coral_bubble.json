@@ -1,0 +1,11 @@
+{
+	"name": "Bubble Coral",
+	"items": [
+		"minecraft:bubble_coral",
+		"minecraft:bubble_coral_block",
+		"minecraft:bubble_coral_fan",
+		"minecraft:dead_bubble_coral",
+		"minecraft:dead_bubble_coral_block",
+		"minecraft:dead_bubble_coral_fan"
+	]
+}

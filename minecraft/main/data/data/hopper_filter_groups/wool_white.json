@@ -1,0 +1,10 @@
+{
+	"name": "White Wool Set",
+	"items": [
+		"minecraft:white_carpet",
+		"minecraft:white_cushion",
+		"minecraft:white_wool",
+		"minecraft:white_wool_slab",
+		"minecraft:white_wool_stairs"
+	]
+}

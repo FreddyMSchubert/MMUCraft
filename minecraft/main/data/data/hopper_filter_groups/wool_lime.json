@@ -1,0 +1,10 @@
+{
+	"name": "Lime Wool Set",
+	"items": [
+		"minecraft:lime_carpet",
+		"minecraft:lime_cushion",
+		"minecraft:lime_wool",
+		"minecraft:lime_wool_slab",
+		"minecraft:lime_wool_stairs"
+	]
+}

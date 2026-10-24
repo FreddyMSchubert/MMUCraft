@@ -1,0 +1,9 @@
+{
+	"name": "Lime Concrete",
+	"items": [
+		"minecraft:lime_concrete",
+		"minecraft:lime_concrete_powder",
+		"minecraft:lime_concrete_slab",
+		"minecraft:lime_concrete_stairs"
+	]
+}

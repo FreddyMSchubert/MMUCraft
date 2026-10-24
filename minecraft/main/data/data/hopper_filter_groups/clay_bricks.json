@@ -1,0 +1,10 @@
+{
+	"name": "Clay Bricks",
+	"items": [
+		"minecraft:brick",
+		"minecraft:brick_slab",
+		"minecraft:brick_stairs",
+		"minecraft:brick_wall",
+		"minecraft:bricks"
+	]
+}

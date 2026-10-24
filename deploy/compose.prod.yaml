@@ -29,13 +29,13 @@ services:
         environment:
             MEMORY: 8G
             INIT_MEMORY: 2G
-        mem_limit: 9g
+        mem_limit: 10g
         mem_reservation: 6g
-        memswap_limit: 9g
+        memswap_limit: 12g
         deploy:
             resources:
                 limits:
-                    memory: 9g
+                    memory: 10g
                 reservations:
                     memory: 6g
 

@@ -1,0 +1,9 @@
+{
+	"name": "Pink Concrete",
+	"items": [
+		"minecraft:pink_concrete",
+		"minecraft:pink_concrete_powder",
+		"minecraft:pink_concrete_slab",
+		"minecraft:pink_concrete_stairs"
+	]
+}

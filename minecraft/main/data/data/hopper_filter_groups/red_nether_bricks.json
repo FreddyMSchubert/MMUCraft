@@ -1,0 +1,9 @@
+{
+	"name": "Red Nether Bricks",
+	"items": [
+		"minecraft:red_nether_brick_slab",
+		"minecraft:red_nether_brick_stairs",
+		"minecraft:red_nether_brick_wall",
+		"minecraft:red_nether_bricks"
+	]
+}

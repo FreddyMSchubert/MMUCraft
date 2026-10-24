@@ -19,6 +19,8 @@ import java.util.WeakHashMap;
 public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm, TickCallbackCharm
 {
     public static final double EXTRA_JUMP_VELOCITY = LivingEntity.BASE_JUMP_POWER;
+    private static final double HORIZONTAL_BOOST = 0.15D;
+    private static final double SPRINT_HORIZONTAL_BOOST = 0.28D;
     // Keep this tag until landing so swapping gear or reconnecting cannot grant more jumps.
     private static final String AIRBORNE_TAG = "mainmod.winged_shoes_jump";
 
@@ -86,7 +88,15 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm,
             if (!hasActiveJump(player) && !player.addTag(AIRBORNE_TAG)) return;
             Vec3 v = player.getDeltaMovement();
             double newY = Math.max(v.y, EXTRA_JUMP_VELOCITY);
-            player.setDeltaMovement(v.x, newY, v.z);
+            var input = player.getLastClientInput();
+            int forward = Boolean.compare(input.forward(), input.backward());
+            int left = Boolean.compare(input.left(), input.right());
+            double length = Math.hypot(forward, left);
+            double boost = length == 0.0D ? 0.0D
+                    : (player.isSprinting() ? SPRINT_HORIZONTAL_BOOST : HORIZONTAL_BOOST) / length;
+            double yaw = Math.toRadians(player.getYRot());
+            player.setDeltaMovement(v.x + (left * Math.cos(yaw) - forward * Math.sin(yaw)) * boost, newY,
+                    v.z + (forward * Math.cos(yaw) + left * Math.sin(yaw)) * boost);
             player.setOnGround(false);
             player.resetFallDistance();
             player.syncVelocity = true;

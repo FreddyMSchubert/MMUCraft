@@ -18,6 +18,7 @@ const CLAIM_BASE_PRICE_DABLOONS = 50;
 const MEMBER_CLAIM_PRICE_GROWTH = 1.5;
 const NORMAL_PLAYER_CLAIM_PRICE_GROWTH = 1.7;
 const MAX_CLAIM_PRICE_DABLOONS = 2_000_000_000;
+const DEFAULT_OUTSIDER_PERMISSIONS = (1 << 9) | (1 << 14) | (1 << 15) | (1 << 18);
 export type CreateClaimInput = ClaimCornerInput;
 
 interface CurrentChunkResponse {
@@ -168,6 +169,7 @@ export class ClaimPurchasingService {
 					chunk_z_end: claim.chunkZEnd,
 					claim_name: claimName,
 					is_server: isServer ? 1 : 0,
+					outsider_permissions: DEFAULT_OUTSIDER_PERMISSIONS,
 					created_at_unix_ms: Date.now(),
 				})
 				.onConflictDoNothing()

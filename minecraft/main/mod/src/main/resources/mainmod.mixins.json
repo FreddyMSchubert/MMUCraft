@@ -104,6 +104,7 @@
 		"serverSideBlocks.ServerSideBlockMiningMixin",
 		"serverSideBlocks.ServerSideBlockPlacementMixin",
 		"claims.PlayerActionContextMixin",
+		"claims.NetherPortalClaimMixin",
 		"claims.LevelMutationMixin",
 		"claims.BlockDropsMixin",
 		"claims.ServerLevelEntityMixin",

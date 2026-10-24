@@ -35,6 +35,7 @@ export interface EditableClaim {
 export interface ClaimCopySource {
 	id: string;
 	name: string;
+	permissions: number;
 	dimension: string;
 	chunkX: number;
 	chunkZ: number;
@@ -43,21 +44,21 @@ export interface ClaimCopySource {
 }
 
 export interface ClaimSettingsChange {
-	permissions?: number;
-	copyFromClaimId?: string;
+	permissions: number;
 }
 
 const SETTINGS = [
 	['Hit hostile mobs', 1 << 0],
 	['Hit neutral mobs', 1 << 1],
 	['Hit passive mobs', 1 << 2],
+	['Hit other entities (e.g. paintings, item frames)', 1 << 19],
 	['PvP', 1 << 3],
 	['Press buttons and flip levers', 1 << 4],
 	['Open doors, trapdoors, and fence gates', 1 << 5],
 	['Break blocks', 1 << 6],
 	['Place blocks', 1 << 7],
-	['Open containers', 1 << 8],
-	['Open other blocks', 1 << 9],
+	['Open container blocks (e.g. chests)', 1 << 8],
+	['Open other blocks (e.g. crafting tables)', 1 << 9],
 	['Sleep in beds and sit on cushions', 1 << 10],
 	['Trade with villagers', 1 << 11],
 	['Interact with mobs and entities', 1 << 12],
@@ -65,6 +66,8 @@ const SETTINGS = [
 	['Glide with a glider or elytra', 1 << 14],
 	['Pick up items', 1 << 15],
 	['Use projectiles', 1 << 16],
+	['Use Nether portals', 1 << 17],
+	['Use minecarts', 1 << 18],
 ] as const;
 
 export function ClaimEditorCard({
@@ -94,9 +97,10 @@ export function ClaimEditorCard({
 	const [editing, setEditing] = useState(initiallyEditing);
 	const [name, setName] = useState(claim.name);
 	const [color, setColor] = useState<string | null>(claim.customColor);
-	const [settingsDirty, setSettingsDirty] = useState(false);
+	const [permissions, setPermissions] = useState(claim.permissions);
 	const [areaDirty, setAreaDirty] = useState(false);
 	const appearanceDirty = name !== claim.name || color !== claim.customColor;
+	const settingsDirty = permissions !== claim.permissions;
 
 	async function cancelEditing() {
 		if (
@@ -112,8 +116,14 @@ export function ClaimEditorCard({
 		setEditing(false);
 		setName(claim.name);
 		setColor(claim.customColor);
-		setSettingsDirty(false);
+		setPermissions(claim.permissions);
 		setAreaDirty(false);
+	}
+
+	async function saveClaim() {
+		if (appearanceDirty && !(await onSave?.(name, color))) return;
+		if (settingsDirty && onSettings && !(await onSettings({ permissions }))) return;
+		if (!areaDirty) setEditing(false);
 	}
 
 	return (
@@ -154,6 +164,7 @@ export function ClaimEditorCard({
 						onClick={() => {
 							setName(claim.name);
 							setColor(claim.customColor);
+							setPermissions(claim.permissions);
 							setEditing(true);
 						}}
 					>
@@ -172,10 +183,7 @@ export function ClaimEditorCard({
 						color={color}
 						onNameChange={setName}
 						onColorChange={setColor}
-						onSave={async (name, color) => {
-							if ((await onSave(name, color)) && !settingsDirty && !areaDirty)
-								setEditing(false);
-						}}
+						onSave={saveClaim}
 					/>
 					{areaEditor && (
 						<details className="claimEditorSection">
@@ -183,23 +191,22 @@ export function ClaimEditorCard({
 							{areaEditor(setAreaDirty)}
 						</details>
 					)}
-					{onSettings && (
-						<details className="claimEditorSection">
-							<summary>Settings</summary>
-							<ClaimSettingsEditor
-								key={`${claim.id}:${claim.permissions}`}
-								claim={claim}
-								busy={busy}
-								copySources={copySources}
-								onSave={onSettings}
-								onDirtyChange={setSettingsDirty}
-							/>
-						</details>
-					)}
 					{children && (
 						<details className="claimEditorSection claimMembersSection">
 							<summary>Members</summary>
 							{children}
+						</details>
+					)}
+					{onSettings && (
+						<details className="claimEditorSection">
+							<summary>Settings</summary>
+							<ClaimSettingsEditor
+								claim={claim}
+								busy={busy}
+								copySources={copySources}
+								permissions={permissions}
+								onPermissionsChange={setPermissions}
+							/>
 						</details>
 					)}
 				</>
@@ -212,16 +219,15 @@ function ClaimSettingsEditor({
 	claim,
 	busy,
 	copySources,
-	onSave,
-	onDirtyChange,
+	permissions,
+	onPermissionsChange,
 }: {
 	claim: EditableClaim;
 	busy: boolean;
 	copySources: ClaimCopySource[];
-	onSave: (change: ClaimSettingsChange) => Promise<boolean>;
-	onDirtyChange: (dirty: boolean) => void;
+	permissions: number;
+	onPermissionsChange: (permissions: number) => void;
 }) {
-	const [permissions, setPermissions] = useState(claim.permissions);
 	const [source, setSource] = useState('');
 	return (
 		<div className="claimSettings">
@@ -249,21 +255,14 @@ function ClaimSettingsEditor({
 					type="button"
 					disabled={busy || !source}
 					onClick={() => {
-						void onSave({ copyFromClaimId: source }).then((saved) => {
-							if (saved) {
-								setPermissions(claim.permissions);
-								onDirtyChange(false);
-							}
-						});
+						const selected = copySources.find((candidate) => candidate.id === source);
+						if (selected) onPermissionsChange(selected.permissions);
 					}}
 				>
 					Copy
 				</button>
 			</div>
-			<p>
-				Checked actions are allowed for other players. Claim members, or MMU_Admin on server
-				claims, always have full access.
-			</p>
+			<p>Customize what players that aren&apos;t claim members can do in your claim.</p>
 			<div className="claimSettingsList">
 				{SETTINGS.map(([label, bit]) => (
 					<label key={bit}>
@@ -275,25 +274,13 @@ function ClaimSettingsEditor({
 								const next = event.target.checked
 									? permissions | bit
 									: permissions & ~bit;
-								setPermissions(next);
-								onDirtyChange(next !== claim.permissions);
+								onPermissionsChange(next);
 							}}
 						/>
 						{label}
 					</label>
 				))}
 			</div>
-			<button
-				type="button"
-				disabled={busy || permissions === claim.permissions}
-				onClick={() =>
-					void onSave({ permissions }).then((saved) => {
-						if (saved) onDirtyChange(false);
-					})
-				}
-			>
-				Save settings
-			</button>
 		</div>
 	);
 }
@@ -454,7 +441,7 @@ function ClaimAppearanceForm({
 	color: string | null;
 	onNameChange: (name: string) => void;
 	onColorChange: (color: string | null) => void;
-	onSave: (name: string, color: string | null) => Promise<void>;
+	onSave: () => Promise<void>;
 }) {
 	return (
 		<form
@@ -462,7 +449,7 @@ function ClaimAppearanceForm({
 			className="claimAppearanceForm"
 			onSubmit={(event) => {
 				event.preventDefault();
-				void onSave(name, color);
+				void onSave();
 			}}
 		>
 			<label>

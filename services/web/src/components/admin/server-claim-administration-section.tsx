@@ -75,7 +75,7 @@ export function ServerClaimAdministrationSection({
 		if (
 			!(await confirm({
 				title: 'Add this server claim?',
-				message: `${describeArea(area)} will be one server claim. MMU_Admin has full access.`,
+				message: `${describeArea(area)} will be one server claim.`,
 				confirmLabel: 'Add server claim',
 			}))
 		)
@@ -150,8 +150,8 @@ export function ServerClaimAdministrationSection({
 				<div className="adminSectionHeader">
 					<h3>Server claims</h3>
 					<p>
-						Protect shared server chunks. MMU_Admin has full access. Set which actions
-						other players can take in each claim.
+						Protect shared server chunks. Choose what other players can do in each
+						claim.
 					</p>
 				</div>
 			</div>

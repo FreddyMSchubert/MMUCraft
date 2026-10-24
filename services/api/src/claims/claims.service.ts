@@ -27,7 +27,7 @@ import { ClaimPurchasingService } from './claim-purchasing.service';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
 
 const CLAIM_NAME_MAX_LENGTH = 50;
-const ALL_OUTSIDER_PERMISSIONS = (1 << 17) - 1;
+const ALL_OUTSIDER_PERMISSIONS = (1 << 20) - 1;
 
 export interface ClaimAppearanceInput {
 	name?: string;
@@ -82,6 +82,7 @@ export class ClaimsService {
 				.map((claim) => ({
 					id: claim.id,
 					name: claim.claim_name,
+					permissions: claim.outsider_permissions,
 					dimension: claim.dimension,
 					chunkX: claim.chunk_x,
 					chunkZ: claim.chunk_z,
@@ -133,6 +134,7 @@ export class ClaimsService {
 				.map((source) => ({
 					id: source.id,
 					name: source.claim_name,
+					permissions: source.outsider_permissions,
 					dimension: source.dimension,
 					chunkX: source.chunk_x,
 					chunkZ: source.chunk_z,

@@ -167,6 +167,10 @@ public final class FishingCatches {
         ItemStack bentSword = new ItemStack(Items.GOLDEN_SWORD);
         bentSword.setDamageValue(bentSword.getMaxDamage() - 3);
         NETHER_TREASURE_LOOT.get(FishRarity.COMMON).add(bentSword);
+        NETHER_TREASURE_LOOT.get(FishRarity.COMMON).add(PotionContents.createItemStack(Items.POTION, Potions.LUCK));
+        NETHER_TREASURE_LOOT.get(FishRarity.COMMON).add(PotionContents.createItemStack(Items.SPLASH_POTION, Potions.LUCK));
+        NETHER_TREASURE_LOOT.get(FishRarity.COMMON).add(FakeItems.createFakeItemStack("worms", 1));
+        NETHER_TREASURE_LOOT.get(FishRarity.COMMON).add(FakeItems.createFakeItemStack("golden-worms", 1));
 
         addNetherTreasure(FishRarity.UNCOMMON, Items.QUARTZ, Items.GLOWSTONE_DUST,
                 Items.NETHER_WART, Items.FIRE_CHARGE, Items.MAGMA_CREAM, Items.BONE_BLOCK,
@@ -561,7 +565,7 @@ public final class FishingCatches {
                 entry.getKey().createItemStack(),
                 fish.personality(),
                 fish.length(),
-                fish.spawnTags().size() > 2 ? weight * 10 : weight
+                weight
         );
     }
 

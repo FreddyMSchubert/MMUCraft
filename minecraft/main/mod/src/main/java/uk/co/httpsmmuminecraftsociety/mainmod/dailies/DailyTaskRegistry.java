@@ -2,10 +2,8 @@ package uk.co.httpsmmuminecraftsociety.mainmod.dailies;
 
 import com.google.gson.JsonObject;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -198,10 +196,8 @@ public final class DailyTaskRegistry {
         return new Weighted<>(weight, value);
     }
 
-    static boolean hasEnchantment(ServerPlayer player, ItemStack stack, ResourceKey<Enchantment> enchantment, int level) {
-        return EnchantmentHelper.getItemEnchantmentLevel(
-                player.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(enchantment), stack
-        ) >= level;
+    static boolean hasEnchantment(ItemStack stack, Holder<Enchantment> enchantment, int level) {
+        return EnchantmentHelper.getEnchantmentsForCrafting(stack).getLevel(enchantment) >= level;
     }
 
     static Option option(

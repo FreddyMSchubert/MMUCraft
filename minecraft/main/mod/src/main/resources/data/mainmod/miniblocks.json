@@ -1798,5 +1798,179 @@
 		"input": "minecraft:iron_ingot",
 		"name": "Toaster",
 		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWVkNmZmNGQwZjJmZDkxODQ3YTgzNmU0NzZhY2Y4ZDRhZmJhZGY0ZDg0MWUwY2Q0ODc0NmY3MzQ3Y2Y0MiJ9fX0="
+	},
+	{
+		"id": "brainless_alex",
+		"input": "minecraft:beef",
+		"name": "Brainless Alex",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTVlMTM5OTg1YWEwMGQ0YjVmNWExMjNkYmM3OGE3NjYyMjM0ZWQzN2QwNDY3M2Y2OTJmNDNjZGNkODZlMDJhMSJ9fX0="
+	},
+	{
+		"id": "scary_clown_head",
+		"input": "minecraft:beef",
+		"name": "Scary Clown Head",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODZkYmMxZGViYzU3NDM4YTVkZTRiYTkxNTE1MTM4MmFiYzNkOGYxMzE4ZTJhMzVlNzhkZmIzMGYwNGJjNDY3In19fQ=="
+	},
+	{
+		"id": "forbidden_books",
+		"input": "minecraft:book",
+		"name": "Forbidden Books",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGM2ODU5MWI5MTE5OGU2ZTEzODQ4NjBjZjczMTZmMjllMDM4YjY5ZGVhOTg0YzczZjZjMWNiOTUwYTE0ZCJ9fX0="
+	},
+	{
+		"id": "witch_head",
+		"input": "minecraft:potion",
+		"name": "Witch Head",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjhjNDU2YzliZDg3OWVkMjIyYWJlOGRjYzhmMWIwNTkxZGY1YWJkZmU0YzIzNzg3NDk4MDUyM2ZkNjY0MDEzNSJ9fX0="
+	},
+	{
+		"id": "purple_witch_cauldron",
+		"input": "minecraft:cauldron",
+		"name": "Purple Witch Cauldron",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjI3NjkyZTM3OWFiMTI5OTgyYzZhNmQ3ZjU0MzRjNDAwYmM1OGVjYjhlMjUwNDczNWM2MTU3NDE5MDA5YmE2MCJ9fX0="
+	},
+	{
+		"id": "green_witch_cauldron",
+		"input": "minecraft:cauldron",
+		"name": "Green Witch Cauldron",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGRlMjU1M2VmMWI0MjRjMDJkNGVjZGYwZjY2ZTBlNjg1MjVmYjFkMjQ2MTYwYmE5NzUzZmEyOGJlNDk4OWY4OCJ9fX0="
+	},
+	{
+		"id": "fancy_jack_o_lantern",
+		"input": "minecraft:jack_o_lantern",
+		"name": "Fancy Jack o'Lantern",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk1ZmEzZmRmN2E0MWM5YjY4ODNkYTU5YmE2MzM0NTFlMWNiMTJkYWU1M2U1NWFkZDg1YTE3MzU5ZGQ0NTg0NiJ9fX0="
+	},
+	{
+		"id": "crow",
+		"input": "minecraft:feather",
+		"name": "Mini Crow",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzMxZTdlMWM2MTQ2MzliYmM5NWEwZDgxZmY3ZTVmN2Y2MDZkOWIzMzExNWNmMmJmMmE0MGNkY2JiYjUzMTMyNCJ9fX0="
+	},
+	{
+		"id": "friendly_mini_crow",
+		"input": "minecraft:feather",
+		"name": "Friendly Mini Crow",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDYwOGRlMWI4MTZjNTgxYmMxZDc3YTA4Zjg4MTgzYmY4NDc1YmQ2YWZhYTA1MWFkMjlkZTBmZTcwZWIwYTU1NyJ9fX0="
+	},
+	{
+		"id": "evil_mini_crow",
+		"input": "minecraft:feather",
+		"name": "Evil Mini Crow",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTQ1ZWQ4NDdkNTI5ZTdhYjA5N2EyNjQ3NGQ1MDhjYTUzOWY0Y2Y4YzRmOTM1NDRiZjE5ODhiNzBhMDFlN2E3OSJ9fX0="
+	},
+	{
+		"id": "trick_or_treat_basket",
+		"input": "minecraft:cookie",
+		"name": "Trick or Treat Basket",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2UwYmYxY2Y4MTg1ZTljZWU1ZmIzZjFkNmVlYzBiY2E5Nzg5NDRjMDRmYjVmNDAwMzcwYTgwNTNlN2M4ZWFkNyJ9fX0="
+	},
+	{
+		"id": "pumpkin_trick_or_treat_basket",
+		"input": "minecraft:cookie",
+		"name": "Pumpkin Trick or Treat Basket",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTgzMzVkOWFkOTllMDBkNjhmMWUyMTRlOWQwODYxZmNiZTBjZDM0MmQxYmE0MjMzMGJjMjJhODE1OGE4NDhlNiJ9fX0="
+	},
+	{
+		"id": "jack_o_lantern_books",
+		"input": "minecraft:book",
+		"name": "Jack o'Lantern Books",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGQ2NmNmZWJkN2RjMmFkNGQ4YWQ2MjI0NTIyYjcwNmNmYzIzYjkwZTViYTE3OGEzMGY1OWMzZGY0OGFhMmZhOSJ9fX0="
+	},
+	{
+		"id": "amogus",
+		"input": "minecraft:red_stained_glass",
+		"name": "AMOGUS",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTczNzY2ZjJhZjU1MmE4MWJlODU1ZGY0NjBlMjFjYjcwYzA3MmMzMTUzOTJmODkzNGMwOTEzNDU5YzQ0OTYyMCJ9fX0="
+	},
+	{
+		"id": "decapitated_man",
+		"input": "minecraft:beef",
+		"name": "Decapitated Man",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWIwNjk2ZjZkNWI5YjdmODQ2MjAwYWQ3NGNhYjE1NTQxMGYxZGYzYjNmM2UzODUxMzE1ODM1ODRjMjg0MmRkMSJ9fX0="
+	},
+	{
+		"id": "decapitated_woman",
+		"input": "minecraft:beef",
+		"name": "Decapitated Woman",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjQxYjhmMzA5Nzc0MGFiNmIzMTU4MjUzNDc5Njk2MDAzMTA1NzNlZWUzODEwOWZlZmUzMDUwNDUxMDc4Zjk4OSJ9fX0="
+	},
+	{
+		"id": "decapitated_girl",
+		"input": "minecraft:beef",
+		"name": "Decapitated Girl",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjI4YzM0YjdlNDIyYTY2NGMyNWJmYjhkYzIzODJkZjFjZjAwZjc2OGE2ODNhZGM3ZjdhNzdiZDM4YmZlNDBjZiJ9fX0="
+	},
+	{
+		"id": "decapitated_steve_with_wig",
+		"input": "minecraft:beef",
+		"name": "Decapitated Steve with Wig",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzBlYmVkNmVhOWRjYjViNGYwMGYzMmYzNTUzYTU2Y2MxMGVhZjQyNmY3MzliNjkxNTlkOTZlMDUyZmI4OTZkZiJ9fX0="
+	},
+	{
+		"id": "decapitated_zombie",
+		"input": "minecraft:beef",
+		"name": "Decapitated Zombie",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjJhMWZkMmQ3Y2ZiZGQyYThkOWIzZjgxZjczMTI3MDViODlhNDRkMzhiODQxMDExYTdlNzllYTZiOWJjODU4NCJ9fX0="
+	},
+	{
+		"id": "decapitated_herobrine",
+		"input": "minecraft:beef",
+		"name": "Decapitated Herobrine",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmQzNTc3NTE3Nzk4NWZhZDE5ZDVmMWE3ODg4YjM1NDlkNTU3Y2YwNTM2YjE2MDk3MmYzYmNkMzJmMzM3MzcifX19"
+	},
+	{
+		"id": "decapitated_villager",
+		"input": "minecraft:beef",
+		"name": "Decapitated Villager",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzlhYjg3MmFiZDZhOTVhN2RkZGRmM2JlOWNiZmJmNmVlYTUzMjlhZTcxZmJjMGYxODlmYzNiY2ZjYjg5MjNiYyJ9fX0="
+	},
+	{
+		"id": "decapitated_steve",
+		"input": "minecraft:beef",
+		"name": "Decapitated Steve",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjIyNDk5ZTIyMDhiNjYwNzEzNzc0MWFkMmNjMDk4OWEwYTZiMTQyZDIwMmUwY2E4M2YwYzI5MTZlNTI3MjRhMyJ9fX0="
+	},
+	{
+		"id": "decapitated_alex",
+		"input": "minecraft:beef",
+		"name": "Decapitated Alex",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTkxMDkwMTgzODE2YWJjZjAwMTM2ZmJiZGIxYTg2MWZlZGJmNzI1ZDI3OWQ2NDYxOTc5ZTlhMDcwYzc2NGJkOSJ9fX0="
+	},
+	{
+		"id": "decapitated_man_2",
+		"input": "minecraft:beef",
+		"name": "Decapitated Man 2",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzVjNGJiOTkxYjY1ZGVmM2M2OTgwZmZmMmU1Nzk2ZGNjNjE5MzlkZTg0ODlhNjkxOTU5ZjMwYjI4NGYwZDliZCJ9fX0="
+	},
+	{
+		"id": "decapitated_wandering_trader",
+		"input": "minecraft:beef",
+		"name": "Decapitated Wandering Trader",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTRiYjA2ZGU4ZmJmYWU5YjgxODlkOWI2MDdjZTFkMDkwNjRiNWQ1YWFjNmFmNzA0Y2E5MmQ4NWFjNmM1ZTI1MiJ9fX0="
+	},
+	{
+		"id": "herobrine",
+		"input": "minecraft:beef",
+		"name": "Herobrine",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjQ4ZDU1YjMzZWQ2ZmViNjE0ZTJjYTVkNGY1MGJiMzdmMTYxYWRhMzU4MmZjZmM2ZTQwMjg4YzZmYjA2ZjFmIn19fQ=="
+	},
+	{
+		"id": "frankensteins_monster_head",
+		"input": "minecraft:beef",
+		"name": "Frankensteins Monster Head",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjc5ZTUwMTQ2MDkwNzBmZjEyOTViYzNhNmRkYzQ0OTc2ZTIwMjAxYmIwZDVlOTJlNTJjNTE1NTViOGE3NDg2MSJ9fX0="
+	},
+	{
+		"id": "mummy_head",
+		"input": "minecraft:sand",
+		"name": "Mummy Head",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGMyZGRiNGM0OTg5Mzc2YzI4ZDE5NmZmODI0OWM5ZTc3MWI0YjJkMjkwN2RlOGUwZDMxMTVmNzU1MzNjNiJ9fX0="
+	},
+	{
+		"id": "dracula_head",
+		"input": "minecraft:beef",
+		"name": "Dracula Head",
+		"texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2JiNTU3ZGYyOTVkNTM2ZDVkZWU3N2ZiM2YzYThkMWZmYzQ0MzUzZTFlMjRmNWMyOGJhMjNhMTkyMzBjOTVhZiJ9fX0="
 	}
 ]

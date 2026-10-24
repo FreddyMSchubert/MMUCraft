@@ -180,12 +180,12 @@ final class DailyTaskCatalog {
             }
             case "submit_enchanted_item" -> {
                 Item item = item(json, "item", path);
-                ResourceKey<Enchantment> enchantment = registryKey(Registries.ENCHANTMENT, json, "enchantment", path);
-                registries.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(enchantment);
+                Holder<Enchantment> enchantment = holder(Registries.ENCHANTMENT, json, "enchantment", path);
                 int level = positiveInteger(json.get("minimumEnchantmentLevel"), path, "minimumEnchantmentLevel");
-                String suffix = enchantment.identifier().getPath().replace('_', '-') + (level == 1 ? "" : "-" + level);
+                String suffix = enchantment.unwrapKey().orElseThrow().identifier().getPath().replace('_', '-')
+                        + (level == 1 ? "" : "-" + level);
                 yield ItemSubmissionTask.matching(suffix, item,
-                        (player, stack) -> DailyTaskRegistry.hasEnchantment(player, stack, enchantment, level));
+                        (player, stack) -> DailyTaskRegistry.hasEnchantment(stack, enchantment, level));
             }
             case "submit_remaining_durability_item" -> {
                 Item item = item(json, "item", path);

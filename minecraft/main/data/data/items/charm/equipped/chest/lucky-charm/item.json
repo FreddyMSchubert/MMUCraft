@@ -4,9 +4,7 @@
 	"modelType": "charm",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Luck favours the prepared."
-	],
+	"tooltips": ["Luck favours the prepared."],
 	"shopPurchasable": {
 		"membersOnly": false,
 		"priceDabloons": 100,
@@ -69,6 +67,8 @@
 					"mainmod:fish-cloudy_crab",
 					"mainmod:fish-ghostjellyfish",
 					"mainmod:fish-angelfish",
+					"mainmod:fish-warped_coalfin",
+					"mainmod:fish-crimson_veilfin",
 					"minecraft:potion[minecraft:potion_contents=luck]=Potion of Luck"
 				]
 			},
@@ -84,6 +84,8 @@
 					"mainmod:fish-arowana",
 					"mainmod:fish-lil_guy",
 					"mainmod:fish-lil_dude",
+					"mainmod:fish-ghast_wisp",
+					"mainmod:fish-voidplate_flounder",
 					"minecraft:potion[minecraft:potion_contents=luck]=Potion of Luck"
 				]
 			}

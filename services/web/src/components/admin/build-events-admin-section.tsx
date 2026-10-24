@@ -470,7 +470,9 @@ function SubmissionEditor({
 					onClick={onClose}
 					aria-label="Close submission editor"
 				>
-					×
+					<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+						<path d="m6 6 12 12M18 6 6 18" />
+					</svg>
 				</button>
 				<h3>{submission ? 'Edit submission' : 'Add submission'}</h3>
 				<form onSubmit={(formEvent) => void save(formEvent)}>

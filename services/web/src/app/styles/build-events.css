@@ -42,19 +42,6 @@
 .buildEventPage .eventFeature .eventTitle {
 	overflow-wrap: anywhere;
 }
-.buildSchedule {
-	display: grid;
-	grid-template-columns: max-content 1fr;
-	gap: 6px 16px;
-	margin: 16px 0 0;
-	font-size: 0.9rem;
-}
-.buildSchedule dt {
-	font-weight: 700;
-}
-.buildSchedule dd {
-	margin: 0;
-}
 .buildVoteProgress {
 	display: grid;
 	gap: 5px;
@@ -209,27 +196,45 @@
 		transform: rotate(360deg);
 	}
 }
+.buildGalleryArrow,
+.buildDialogClose {
+	display: grid;
+	place-items: center;
+	width: 42px;
+	height: 42px;
+	padding: 0;
+	border: 1px solid #ffffff61;
+	border-radius: 50%;
+	background: #080d1a94;
+	color: #e4f5ef;
+	box-shadow:
+		0 6px 20px #0008,
+		inset 0 1px #ffffff2b;
+	-webkit-backdrop-filter: blur(12px);
+	backdrop-filter: blur(12px);
+	cursor: pointer;
+}
+.buildGalleryArrow svg,
+.buildDialogClose svg {
+	width: 22px;
+	height: 22px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 2.3;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
 .buildGalleryArrow {
 	position: absolute;
 	top: 50%;
 	transform: translateY(-50%);
 	z-index: 2;
-	width: 42px;
-	height: 42px;
-	padding: 0;
-	border: 1px solid #ffffffa8;
-	border-radius: 50%;
-	background: #fffdf1ed;
-	color: #111827;
-	box-shadow: 0 2px 14px #0009;
-	font-size: 32px;
-	line-height: 1;
 }
 .buildGalleryArrow:hover,
 .buildGalleryArrow:focus-visible {
-	background: #fff;
+	background: #29424ac9;
+	border-color: #b7e7d7;
 	transform: translateY(-50%) scale(1.08);
-	outline: 2px solid #ffd166;
 }
 .buildGalleryPrevious {
 	left: 8px;
@@ -294,21 +299,16 @@
 	float: right;
 	z-index: 3;
 	margin: 8px 8px -55px 0;
-	width: 42px;
-	height: 42px;
-	padding: 0;
-	border: 1px solid #ffffffa8;
-	border-radius: 50%;
-	background: #fffdf1;
-	color: #111827;
-	box-shadow: 0 2px 14px #0009;
-	font-size: 29px;
-	line-height: 1;
 }
 .buildDialogClose:hover,
 .buildDialogClose:focus-visible {
-	background: #fff;
-	outline: 2px solid #ffd166;
+	background: #29424ac9;
+	border-color: #b7e7d7;
+}
+.buildGalleryArrow:focus-visible,
+.buildDialogClose:focus-visible {
+	outline: 2px solid #b7e7d7;
+	outline-offset: 2px;
 }
 .buildDialogContent {
 	padding: 24px;

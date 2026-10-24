@@ -9,7 +9,6 @@ import {
 import { and, eq } from 'drizzle-orm';
 import {
 	DatabaseService,
-	SUPER_ADMIN_MINECRAFT_UUID,
 	buildEvents,
 	buildSubmissionMembers,
 	buildSubmissions,
@@ -648,17 +647,7 @@ export class BuildEventsService {
 	}
 
 	async adminPosition() {
-		const admin = this.database.connection
-			.select()
-			.from(users)
-			.all()
-			.find(
-				(user) =>
-					user.minecraft_uuid?.replaceAll('-', '').toLowerCase() ===
-					SUPER_ADMIN_MINECRAFT_UUID,
-			);
-		if (!admin) throw new NotFoundException('The MMU admin Minecraft account is not linked');
-		const position = await this.position(admin.minecraft_username);
+		const position = await this.position('MMU_Admin');
 		return {
 			dimension: position.dimension,
 			x: position.block_x,

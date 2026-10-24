@@ -4,7 +4,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useCallback, useEffect, useState, type SyntheticEvent } from 'react';
 import { createPortal } from 'react-dom';
-import { formatManchesterDateTime } from '@/lib/date-time';
 import { PlayerName, type PlayerEmoji } from './player-name';
 import { useSiteAlert } from './site-alert';
 import { EventDescription, ObfuscatedEventName } from './surprising-saturday-tab';
@@ -246,7 +245,9 @@ export function BuildGallery({
 							);
 						}}
 					>
-						‹
+						<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+							<path d="m15 5-7 7 7 7" />
+						</svg>
 					</button>
 					<button
 						className="buildGalleryArrow buildGalleryNext"
@@ -256,7 +257,9 @@ export function BuildGallery({
 							setIndex((currentIndex) => (currentIndex + 1) % images.length);
 						}}
 					>
-						›
+						<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+							<path d="m9 5 7 7-7 7" />
+						</svg>
 					</button>
 					<div
 						className="buildGalleryDots"
@@ -459,7 +462,9 @@ export function BuildSubmissionDialog({
 					onClick={onClose}
 					aria-label="Close build details"
 				>
-					×
+					<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+						<path d="m6 6 12 12M18 6 6 18" />
+					</svg>
 				</button>
 				<BuildGallery images={submission.images} title={title} paused={paused} />
 				<div className="buildDialogContent">
@@ -797,32 +802,6 @@ export function BuildEventsTab({
 			<section className="adminSection eventFeature">
 				<h4 className="eventTitle">{event.title}</h4>
 				<EventDescription description={event.description} />
-				<div className="eventFeatureMeta">
-					<span className={'eventStatus eventStatus-' + status}>
-						Build event ·{' '}
-						{status === 'building'
-							? 'Building open'
-							: status === 'preparing'
-								? 'Preparing for voting'
-								: status === 'voting'
-									? 'Voting open'
-									: status === 'upcoming'
-										? 'Coming up'
-										: 'Voting closed'}
-					</span>
-				</div>
-				<dl className="buildSchedule">
-					<dt>Building</dt>
-					<dd>
-						{formatManchesterDateTime(event.startsAtUnixMs)} to{' '}
-						{formatManchesterDateTime(event.buildEndsAtUnixMs)}
-					</dd>
-					<dt>Voting</dt>
-					<dd>
-						{formatManchesterDateTime(event.votingStartsAtUnixMs)} to{' '}
-						{formatManchesterDateTime(event.votingEndsAtUnixMs)}
-					</dd>
-				</dl>
 			</section>
 			{current && status !== 'upcoming' && (
 				<section className="adminSection eventScores">

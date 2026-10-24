@@ -92,6 +92,8 @@ public final class FishingCatches {
         addTreasure(FishRarity.COMMON, FakeItems.createFakeItemStack("fish-bones", 1));
         addTreasure(FishRarity.COMMON, FakeItems.createFakeItemStack("old-tire", 1));
         addTreasure(FishRarity.COMMON, FakeItems.createFakeItemStack("seaweed", 1));
+        addTreasure(FishRarity.COMMON, PotionContents.createItemStack(Items.POTION, Potions.LUCK));
+        addTreasure(FishRarity.COMMON, PotionContents.createItemStack(Items.SPLASH_POTION, Potions.LUCK));
 
         addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.BOWL));
         addTreasure(FishRarity.UNCOMMON, new ItemStack(Items.LEATHER_BOOTS));
@@ -134,8 +136,6 @@ public final class FishingCatches {
         addTreasure(FishRarity.RARE, FakeItems.createFakeItemStack("sushi", 1));
 
         addTreasure(FishRarity.EPIC, new ItemStack(Items.EXPERIENCE_BOTTLE).copyWithCount((int)Math.floor(Math.random() * 10)));
-        addTreasure(FishRarity.EPIC, PotionContents.createItemStack(Items.POTION, Potions.LUCK));
-        addTreasure(FishRarity.EPIC, PotionContents.createItemStack(Items.SPLASH_POTION, Potions.LUCK));
         addTreasure(FishRarity.EPIC, new ItemStack(Items.ANGLER_POTTERY_SHERD));
         addTreasure(FishRarity.EPIC, new ItemStack(Items.AMETHYST_SHARD));
         addTreasure(FishRarity.EPIC, new ItemStack(Items.PRISMARINE_SHARD));

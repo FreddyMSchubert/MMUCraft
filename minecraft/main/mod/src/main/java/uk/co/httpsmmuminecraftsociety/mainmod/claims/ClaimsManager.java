@@ -27,6 +27,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.decoration.Cushion;
 import net.minecraft.world.entity.npc.villager.AbstractVillager;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
@@ -84,9 +85,9 @@ public final class ClaimsManager {
     public static final int NETHER_PORTALS = 1 << 17;
     public static final int MINECARTS = 1 << 18;
     public static final int OTHER_ENTITY_DAMAGE = 1 << 19;
-    private static final UUID SERVER_ADMIN_UUID = UUID.fromString("8580f9f8-30c4-4b83-a66c-ac52ac6d5b0b");
+    private static final UUID MMU_ADMIN_UUID = UUID.fromString("cbdc84b9-53da-430b-9746-e176b16441fd");
     private static final double MINIMUM_HEADING_LIGHTNESS = 0.6;
-    private static final ThreadLocal<ArrayDeque<ServerPlayer>> ACTORS = ThreadLocal.withInitial(ArrayDeque::new);
+    private static final ThreadLocal<ArrayDeque<PlayerAction>> ACTORS = ThreadLocal.withInitial(ArrayDeque::new);
     private static final ThreadLocal<Integer> FIRE_TICKS = ThreadLocal.withInitial(() -> 0);
     private static final Map<UUID, ServerBossEvent> BOSS_BARS = new HashMap<>();
     private static final Map<UUID, String> BOSS_BAR_STATES = new HashMap<>();
@@ -103,12 +104,17 @@ public final class ClaimsManager {
                 checkDirect(player, level, pos, BREAK) ? InteractionResult.PASS : InteractionResult.FAIL);
         UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
             BlockPos pos = hit.getBlockPos();
+            int clickedPermission = blockPermission(level, pos);
             int permission = player.getItemInHand(hand).getItem() instanceof MinecartItem
                     && level.getBlockState(pos).is(BlockTags.RAILS) ? MINECARTS
                     : player.isShiftKeyDown() && player.getItemInHand(hand).getItem() instanceof BlockItem
-                    ? PLACE : blockPermission(level, pos);
+                    ? PLACE : clickedPermission;
             if (!checkDirect(player, level, pos, permission)) return InteractionResult.FAIL;
             if (player instanceof ServerPlayer serverPlayer) {
+                if (clickedPermission == CONTROLS
+                        && canPerform(serverPlayer, level, pos, CONTROLS)) {
+                    authorizeControlAction(serverPlayer, level, pos);
+                }
                 clearStaleOccupiedBed(serverPlayer, level, pos);
             }
             return InteractionResult.PASS;
@@ -207,13 +213,34 @@ public final class ClaimsManager {
     }
 
     public static void beginPlayerAction(ServerPlayer player) {
-        ACTORS.get().push(player);
+        ACTORS.get().push(new PlayerAction(player));
     }
 
     public static void endPlayerAction() {
-        ArrayDeque<ServerPlayer> actors = ACTORS.get();
+        ArrayDeque<PlayerAction> actors = ACTORS.get();
         if (!actors.isEmpty()) actors.pop();
         if (actors.isEmpty()) ACTORS.remove();
+    }
+
+    private static void authorizeControlAction(ServerPlayer player, Level level, BlockPos pos) {
+        PlayerAction action = ACTORS.get().peek();
+        if (action != null && action.player == player) {
+            action.controlLevel = level;
+            action.controlPos = pos.immutable();
+        }
+    }
+
+    public static boolean beginControlActivation(Player player, Level level, BlockPos pos) {
+        PlayerAction action = ACTORS.get().peek();
+        if (action == null || action.player != player || action.controlLevel != level
+                || !pos.equals(action.controlPos)) return false;
+        action.controlDepth++;
+        return true;
+    }
+
+    public static void endControlActivation() {
+        PlayerAction action = ACTORS.get().peek();
+        if (action != null && action.controlDepth > 0) action.controlDepth--;
     }
 
     public static void beginFireTick() {
@@ -227,13 +254,15 @@ public final class ClaimsManager {
     }
 
     public static boolean allowBlockMutation(Level level, BlockPos pos, BlockState newState) {
-        ArrayDeque<ServerPlayer> actors = ACTORS.get();
-        if (!actors.isEmpty()) {
-            int permission = level.getBlockState(pos).isAir() ? PLACE
+        PlayerAction action = ACTORS.get().peek();
+        // The click was checked already; its redstone updates are not separate player edits.
+        if (action != null && action.controlDepth == 0) {
+            BlockState currentState = level.getBlockState(pos);
+            int permission = currentState.isAir() ? PLACE
                     : newState.isAir() ? BREAK
-                    : level.getBlockState(pos).getBlock() == newState.getBlock()
-                    ? blockPermission(level, pos) : PLACE;
-            return canPerform(actors.peek(), level, pos, permission);
+                    : currentState.getBlock() != newState.getBlock() ? PLACE
+                    : blockPermission(level, pos);
+            return canPerform(action.player, level, pos, permission);
         }
 
         if (FIRE_TICKS.get() > 0 && (!ready || isClaimed(level, pos))) {
@@ -275,13 +304,15 @@ public final class ClaimsManager {
     }
 
     public static boolean canAccess(ServerPlayer player, Level level, BlockPos pos) {
-        if (!ready) return isOperator(player);
+        if (isServerAdmin(player)) return true;
+        if (!ready) return false;
         Claim claim = claimAt(level, pos);
         return claim == null || canAccessClaim(player, claim);
     }
 
     public static boolean canPerform(ServerPlayer player, Level level, BlockPos pos, int permission) {
-        if (!ready) return isOperator(player);
+        if (isServerAdmin(player)) return true;
+        if (!ready) return false;
         Claim claim = claimAt(level, pos);
         return claim == null || canAccessClaim(player, claim)
                 || (claim.outsiderPermissions() & permission) != 0;
@@ -420,19 +451,17 @@ public final class ClaimsManager {
     private static boolean canProjectileEnter(Projectile projectile, Level level, BlockPos pos) {
         Entity owner = projectile.getOwner();
         ServerPlayer player = owner instanceof ServerPlayer serverPlayer ? serverPlayer : null;
-        if (!ready) return player != null && isOperator(player);
+        if (!ready) return player != null && isServerAdmin(player);
         Claim claim = claimAt(level, pos);
         return claim == null || player != null && canPerform(player, level, pos, PROJECTILES);
     }
 
-    private static boolean isOperator(ServerPlayer player) {
-        MinecraftServer server = player.level().getServer();
-        return server != null && server.getPlayerList().isOp(player.nameAndId());
+    private static boolean isServerAdmin(ServerPlayer player) {
+        return MMU_ADMIN_UUID.equals(player.getUUID());
     }
 
     private static boolean canAccessClaim(ServerPlayer player, Claim claim) {
-        return claim.serverClaim() ? SERVER_ADMIN_UUID.equals(player.getUUID())
-                : claim.members().contains(player.getUUID()) || isOperator(player);
+        return isServerAdmin(player) || !claim.serverClaim() && claim.members().contains(player.getUUID());
     }
 
     private static int damagePermission(LivingEntity target) {
@@ -496,5 +525,16 @@ public final class ClaimsManager {
     private record Claim(String id, UUID ownerUuid, String ownerName, String name, int colorRgb,
                          int ownerColorRgb, boolean hasCustomColor, boolean serverClaim, Set<UUID> members,
                          int outsiderPermissions) {
+    }
+
+    private static final class PlayerAction {
+        private final ServerPlayer player;
+        private Level controlLevel;
+        private BlockPos controlPos;
+        private int controlDepth;
+
+        private PlayerAction(ServerPlayer player) {
+            this.player = player;
+        }
     }
 }

@@ -53,7 +53,7 @@ const SETTINGS = [
 	['Hit passive mobs', 1 << 2],
 	['Hit other entities (e.g. paintings, item frames)', 1 << 19],
 	['PvP', 1 << 3],
-	['Press buttons and flip levers', 1 << 4],
+	['Trigger redstone circuits with buttons and levers', 1 << 4],
 	['Open doors, trapdoors, and fence gates', 1 << 5],
 	['Break blocks', 1 << 6],
 	['Place blocks', 1 << 7],

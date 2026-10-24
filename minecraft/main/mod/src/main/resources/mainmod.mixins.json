@@ -105,6 +105,7 @@
 		"serverSideBlocks.ServerSideBlockMiningMixin",
 		"serverSideBlocks.ServerSideBlockPlacementMixin",
 		"claims.PlayerActionContextMixin",
+		"claims.RedstoneControlUseMixin",
 		"claims.NetherPortalClaimMixin",
 		"claims.LevelMutationMixin",
 		"claims.BlockDropsMixin",

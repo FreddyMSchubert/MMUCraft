@@ -34,7 +34,7 @@
 		"esbuild": "^0.25.12",
 		"fastify": "$fastify",
 		"find-my-way": "9.7.0",
-		"undici": "6.28.1"
+		"undici": "6.29.1"
 	},
 	"devDependencies": {
 		"@types/better-sqlite3": "^7.6.13",

@@ -24,9 +24,11 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.Giants
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.particleTrails.ParticleTrailData;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.ZoneId;
 import java.time.DayOfWeek;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -102,7 +104,7 @@ public final class MasteryAdvancements {
     }
 
     public static void recordCommitteeKill(ServerPlayer killer, ServerPlayer victim) {
-        if (ZonedDateTime.now(BRITISH_TIME).getDayOfWeek() != DayOfWeek.SUNDAY) return;
+        if (!isCommitteeKillSunday(System.currentTimeMillis())) return;
         for (CommitteeMembers.Member member : CommitteeMembers.ALL) {
             if (!member.username().equalsIgnoreCase(victim.getGameProfile().name())) continue;
             grant(killer, "social/committee_any");
@@ -113,12 +115,24 @@ public final class MasteryAdvancements {
         }
     }
 
-    public static List<String> completedCommitteeKillUsernames(ServerPlayer player) {
-        return CommitteeMembers.ALL.stream().filter(member -> {
+    public static boolean isCommitteeKillSunday(long unixMs) {
+        return Instant.ofEpochMilli(unixMs).atZone(BRITISH_TIME).getDayOfWeek() == DayOfWeek.SUNDAY;
+    }
+
+    public record CommitteeKillCompletion(String username, long obtainedAtUnixMs) {}
+
+    public static List<CommitteeKillCompletion> completedCommitteeKills(ServerPlayer player) {
+        List<CommitteeKillCompletion> completed = new ArrayList<>();
+        for (CommitteeMembers.Member member : CommitteeMembers.ALL) {
             AdvancementHolder holder = player.level().getServer().getAdvancements().get(
                     Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "mastery/" + member.advancementPath()));
-            return holder != null && player.getAdvancements().getOrStartProgress(holder).isDone();
-        }).map(CommitteeMembers.Member::username).toList();
+            if (holder == null) continue;
+            AdvancementProgress progress = player.getAdvancements().getOrStartProgress(holder);
+            Instant obtained = progress.getFirstProgressDate();
+            if (progress.isDone() && obtained != null && isCommitteeKillSunday(obtained.toEpochMilli()))
+                completed.add(new CommitteeKillCompletion(member.username(), obtained.toEpochMilli()));
+        }
+        return completed;
     }
 
     public static void recordCharmUpgrade(ServerPlayer player) {

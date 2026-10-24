@@ -23,8 +23,8 @@ export const DUCKS = [
 	{
 		id: 4,
 		itemId: 'duck-committee-kill',
-		condition: 'Kill every committee member at least once.',
-		announcementReason: 'taking down every committee member',
+		condition: 'Kill every committee member on a Sunday.',
+		announcementReason: 'taking down every committee member on Sundays',
 		manual: false,
 	},
 	{

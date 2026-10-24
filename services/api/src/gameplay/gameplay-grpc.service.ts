@@ -314,7 +314,10 @@ export class GameplayGrpcService implements OnModuleInit {
 			playTimeTicks,
 			call.request.duck_login === true,
 			result.previousLastPlayedAtUnixMs === 0,
-			call.request.committee_kill_advancements ?? [],
+			(call.request.committee_kill_progress ?? []).map((progress) => ({
+				username: progress.minecraft_username ?? '',
+				obtainedAtUnixMs: progress.obtained_at_unix_ms ?? 0,
+			})),
 		);
 
 		callback(null, {
@@ -361,6 +364,7 @@ export class GameplayGrpcService implements OnModuleInit {
 				call.request.minecraft_username ?? '',
 				call.request.duck_id ?? 0,
 				call.request.victim_minecraft_uuid ?? '',
+				call.request.event_unix_ms ?? 0,
 			)
 			.then(
 				(result) => {

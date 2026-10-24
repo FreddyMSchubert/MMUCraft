@@ -112,7 +112,10 @@ export interface PlayerStatisticsSyncRequest {
 	stats?: MinecraftStatInput[];
 	include_surprising_saturday_rewards?: boolean;
 	duck_login?: boolean;
-	committee_kill_advancements?: string[];
+	committee_kill_progress?: {
+		minecraft_username?: string;
+		obtained_at_unix_ms?: number;
+	}[];
 }
 
 export interface PlayerStatisticsSyncResponse {
@@ -157,6 +160,7 @@ export interface RecordDuckEventRequest {
 	minecraft_username?: string;
 	duck_id?: number;
 	victim_minecraft_uuid?: string;
+	event_unix_ms?: number;
 }
 
 export interface AckDuckDeliveryRequest {

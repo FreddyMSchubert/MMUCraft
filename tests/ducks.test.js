@@ -1,11 +1,16 @@
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
+const { readFileSync } = require('node:fs');
 const path = require('node:path');
 
 process.env.DATABASE_URL = ':memory:';
 process.env.DATABASE_MIGRATIONS_PATH = path.resolve(__dirname, '../services/api/drizzle');
 
-const { DatabaseService, users } = require('../services/api/dist/database/database.service');
+const {
+	DatabaseService,
+	duckCommitteeKills,
+	users,
+} = require('../services/api/dist/database/database.service');
 const {
 	MinecraftIdentityService,
 } = require('../services/api/dist/database/minecraft-identity.service');
@@ -18,9 +23,15 @@ const { DUCKS } = require('../services/api/dist/ducks/duck-catalog');
 
 test('duck titles come from item definitions', () => {
 	const catalog = new ShopItemCatalogService();
-	for (const duck of DUCKS) assert.match(catalog.itemTitle(duck.itemId), /^The /);
-	assert.equal(catalog.itemTitle('duck-mythical-cosmetic'), 'The Shop Completion Duck');
-	assert.equal(catalog.itemTitle('duck-playtime'), 'The 168 Hours Duck');
+	for (const duck of DUCKS) {
+		const file = path.resolve(
+			__dirname,
+			'../minecraft/main/data/data/items/ducks',
+			duck.itemId,
+			'item.json',
+		);
+		assert.equal(catalog.itemTitle(duck.itemId), JSON.parse(readFileSync(file, 'utf8')).title);
+	}
 });
 
 test('Discord join webhook completes before queued duck announcements', async () => {
@@ -190,8 +201,11 @@ test('duck awards, delivery, revocation and final completion stay consistent', a
 	}
 });
 
-test('login credits past committee advancements and awards only after every distinct kill', async () => {
+test('only Sunday committee kills count, including advancement backfill across Sundays', async () => {
 	const database = new DatabaseService();
+	const sunday = Date.parse('2026-07-04T23:30:00Z');
+	const monday = Date.parse('2026-07-05T23:30:00Z');
+	const nextSunday = Date.parse('2026-07-12T12:00:00Z');
 	const players = [
 		{
 			email: 'hunter@example.test',
@@ -225,6 +239,17 @@ test('login credits past committee advancements and awards only after every dist
 			})
 			.run();
 	}
+	const records = database.connection.select().from(users).all();
+	const hunter = records.find((row) => row.minecraft_username === players[0].name);
+	const committeeB = records.find((row) => row.minecraft_username === players[2].name);
+	database.connection
+		.insert(duckCommitteeKills)
+		.values({
+			killer_user_id: hunter.id,
+			victim_user_id: committeeB.id,
+			killed_at_unix_ms: monday,
+		})
+		.run();
 	const discordEvents = [];
 	const service = new DucksService(
 		database,
@@ -244,7 +269,8 @@ test('login credits past committee advancements and awards only after every dist
 	);
 	try {
 		const login = service.onPlayerSync(players[0].uuid, players[0].name, 0, true, false, [
-			players[1].name,
+			{ username: players[1].name, obtainedAtUnixMs: sunday },
+			{ username: players[2].name, obtainedAtUnixMs: monday },
 		]);
 		assert.deepEqual(
 			login.newAwards.map((award) => award.duck_id),
@@ -260,20 +286,38 @@ test('login credits past committee advancements and awards only after every dist
 		);
 
 		assert.deepEqual(
-			(await service.recordEvent(players[0].uuid, players[0].name, 4, players[1].uuid))
-				.newAwards,
+			(
+				await service.recordEvent(
+					players[0].uuid,
+					players[0].name,
+					4,
+					players[1].uuid,
+					sunday,
+				)
+			).newAwards,
 			[],
 		);
 		assert.deepEqual(
-			(await service.recordEvent(players[0].uuid, players[0].name, 4, players[1].uuid))
-				.newAwards,
+			(
+				await service.recordEvent(
+					players[0].uuid,
+					players[0].name,
+					4,
+					players[2].uuid,
+					monday,
+				)
+			).newAwards,
 			[],
+		);
+		await assert.rejects(() =>
+			service.recordEvent(players[0].uuid, players[0].name, 4, players[2].uuid),
 		);
 		const finalKill = await service.recordEvent(
 			players[0].uuid,
 			players[0].name,
 			4,
 			players[2].uuid,
+			nextSunday,
 		);
 		assert.deepEqual(
 			finalKill.newAwards.map((award) => award.duck_id),

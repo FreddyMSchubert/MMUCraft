@@ -72,6 +72,7 @@ message RecordDuckEventRequest {
   string minecraft_username = 2;
   int32 duck_id = 3;
   string victim_minecraft_uuid = 4;
+  int64 event_unix_ms = 5;
 }
 
 message RecordDuckEventResponse {
@@ -510,6 +511,11 @@ message MinecraftStatEntry {
   int64 total = 6;
 }
 
+message CommitteeKillProgress {
+  string minecraft_username = 1;
+  int64 obtained_at_unix_ms = 2;
+}
+
 message SyncPlayerStatsRequest {
   string minecraft_username = 1;
   int64 unix_ms = 2;
@@ -518,7 +524,8 @@ message SyncPlayerStatsRequest {
   string minecraft_uuid = 5;
   bool include_surprising_saturday_rewards = 6;
   bool duck_login = 7;
-  repeated string committee_kill_advancements = 8;
+  reserved 8;
+  repeated CommitteeKillProgress committee_kill_progress = 9;
 }
 
 message SyncPlayerStatsResponse {

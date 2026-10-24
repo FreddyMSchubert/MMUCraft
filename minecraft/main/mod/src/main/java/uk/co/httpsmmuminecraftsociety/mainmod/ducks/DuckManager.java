@@ -24,6 +24,7 @@ import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
@@ -94,23 +95,25 @@ public final class DuckManager {
             }
         });
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
+            long killedAtUnixMs = System.currentTimeMillis();
             if (entity instanceof ServerPlayer victim
                     && source.getEntity() instanceof ServerPlayer killer
-                    && FeatureToggles.isEnabled(FeatureToggles.NETHER)) {
-                record(killer, 4, victim.getUUID().toString());
+                    && FeatureToggles.isEnabled(FeatureToggles.NETHER)
+                    && MasteryAdvancements.isCommitteeKillSunday(killedAtUnixMs)) {
+                record(killer, 4, victim.getUUID().toString(), killedAtUnixMs);
             }
         });
     }
 
     public static java.util.concurrent.CompletableFuture<?> record(ServerPlayer player, int duckId) {
-        return record(player, duckId, "");
+        return record(player, duckId, "", System.currentTimeMillis());
     }
 
     private static java.util.concurrent.CompletableFuture<?> record(ServerPlayer player, int duckId,
-                                                                    String victimMinecraftUuid) {
+                                                                    String victimMinecraftUuid, long eventUnixMs) {
         if (!FeatureToggles.isEnabled(FeatureToggles.NETHER))
             return java.util.concurrent.CompletableFuture.completedFuture(null);
-        return GameplayGrpcService.recordDuckEvent(player, duckId, victimMinecraftUuid).exceptionally(error -> {
+        return GameplayGrpcService.recordDuckEvent(player, duckId, victimMinecraftUuid, eventUnixMs).exceptionally(error -> {
             MainMod.LOGGER.warn("Could not record duck {} for {}", duckId, player.getScoreboardName(), error);
             throw new RuntimeException(error);
         });

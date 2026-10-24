@@ -147,27 +147,33 @@ final class GameplayEventsClient {
             boolean includeRewards,
             boolean duckLogin
     ) {
-        SyncPlayerStatsRequest request = SyncPlayerStatsRequest.newBuilder()
+        SyncPlayerStatsRequest.Builder builder = SyncPlayerStatsRequest.newBuilder()
                 .setMinecraftUsername(player.getName().getString())
                 .setMinecraftUuid(player.getUUID().toString())
                 .setUnixMs(System.currentTimeMillis())
                 .setBalanceDabloons(Math.max(0, MoneyHelper.GetBalance(player)))
                 .setIncludeSurprisingSaturdayRewards(includeRewards)
                 .setDuckLogin(duckLogin)
-                .addAllCommitteeKillAdvancements(duckLogin
-                        ? MasteryAdvancements.completedCommitteeKillUsernames(player) : List.of())
-                .addAllStats(stats)
-                .build();
+                .addAllStats(stats);
+        if (duckLogin) {
+            for (var completed : MasteryAdvancements.completedCommitteeKills(player)) {
+                builder.addCommitteeKillProgress(CommitteeKillProgress.newBuilder()
+                        .setMinecraftUsername(completed.username())
+                        .setObtainedAtUnixMs(completed.obtainedAtUnixMs()));
+            }
+        }
+        SyncPlayerStatsRequest request = builder.build();
         return call(client -> client.withDeadlineAfter(5, TimeUnit.SECONDS).syncPlayerStats(request));
     }
 
     CompletableFuture<RecordDuckEventResponse> recordDuckEvent(ServerPlayer player, int duckId,
-                                                               String victimMinecraftUuid) {
+                                                               String victimMinecraftUuid, long eventUnixMs) {
         RecordDuckEventRequest request = RecordDuckEventRequest.newBuilder()
                 .setMinecraftUsername(player.getName().getString())
                 .setMinecraftUuid(player.getUUID().toString())
                 .setDuckId(duckId)
                 .setVictimMinecraftUuid(victimMinecraftUuid)
+                .setEventUnixMs(eventUnixMs)
                 .build();
         return call(client -> client.recordDuckEvent(request));
     }

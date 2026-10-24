@@ -22,6 +22,14 @@ import { DUCKS, duckById, duckRank } from './duck-catalog';
 
 type AwardRow = typeof duckAwards.$inferSelect;
 type UserRow = typeof users.$inferSelect;
+const londonWeekday = new Intl.DateTimeFormat('en-GB', {
+	timeZone: 'Europe/London',
+	weekday: 'long',
+});
+
+function isSundayInLondon(unixMs: number) {
+	return Number.isSafeInteger(unixMs) && unixMs > 0 && londonWeekday.format(unixMs) === 'Sunday';
+}
 
 @Injectable()
 export class DucksService {
@@ -193,7 +201,7 @@ export class DucksService {
 		playTimeTicks: number,
 		isLogin: boolean,
 		firstJoin: boolean,
-		committeeKillAdvancements: string[] = [],
+		committeeKillAdvancements: { username: string; obtainedAtUnixMs: number }[] = [],
 	) {
 		if (!this.isOpen()) return { count: 0, newAwards: [], pending: [] };
 		const user = this.identities.resolveAndRefresh(minecraftUuid, minecraftUsername);
@@ -224,6 +232,7 @@ export class DucksService {
 		minecraftUsername: string,
 		duckId: number,
 		victimMinecraftUuid = '',
+		eventUnixMs = 0,
 	) {
 		if (!this.isOpen()) return { accountLinked: false, count: 0, newAwards: [] };
 		// Ducks 6 and 12 wait for their full collections to exist.
@@ -231,15 +240,23 @@ export class DucksService {
 			throw new BadRequestException('Invalid automatic duck event.');
 		const user = this.identities.resolveAndRefresh(minecraftUuid, minecraftUsername);
 		if (!user) return { accountLinked: false, count: 0, newAwards: [] };
+		if (duckId === 4 && (!Number.isSafeInteger(eventUnixMs) || eventUnixMs <= 0))
+			throw new BadRequestException('Committee kill event time is required.');
+		if (duckId === 4 && !isSundayInLondon(eventUnixMs))
+			return { accountLinked: true, count: this.awards(user.id).length, newAwards: [] };
 		const fresh =
 			duckId === 4
-				? this.recordCommitteeKill(user, victimMinecraftUuid)
+				? this.recordCommitteeKill(user, victimMinecraftUuid, eventUnixMs)
 				: this.grant(user, [duckId]);
 		await this.notify(user, fresh);
 		return { accountLinked: true, count: this.awards(user.id).length, newAwards: fresh };
 	}
 
-	private recordCommitteeKill(killer: UserRow, victimMinecraftUuid: string) {
+	private recordCommitteeKill(
+		killer: UserRow,
+		victimMinecraftUuid: string,
+		killedAtUnixMs: number,
+	) {
 		const victim = this.identities.findByUuid(victimMinecraftUuid);
 		if (
 			!victim ||
@@ -252,17 +269,24 @@ export class DucksService {
 			.values({
 				killer_user_id: killer.id,
 				victim_user_id: victim.id,
-				killed_at_unix_ms: Date.now(),
+				killed_at_unix_ms: killedAtUnixMs,
 			})
-			.onConflictDoNothing()
+			.onConflictDoUpdate({
+				target: [duckCommitteeKills.killer_user_id, duckCommitteeKills.victim_user_id],
+				set: { killed_at_unix_ms: killedAtUnixMs },
+			})
 			.run();
 		const committee = this.committeeMembers();
 		const killed = new Set(
 			this.database.connection
-				.select({ id: duckCommitteeKills.victim_user_id })
+				.select({
+					id: duckCommitteeKills.victim_user_id,
+					killedAtUnixMs: duckCommitteeKills.killed_at_unix_ms,
+				})
 				.from(duckCommitteeKills)
 				.where(eq(duckCommitteeKills.killer_user_id, killer.id))
 				.all()
+				.filter((row) => isSundayInLondon(row.killedAtUnixMs))
 				.map((row) => row.id),
 		);
 		return committee.length > 0 && committee.every(({ id }) => killed.has(id))
@@ -270,14 +294,21 @@ export class DucksService {
 			: [];
 	}
 
-	private creditCommitteeAdvancements(killer: UserRow, usernames: string[]) {
-		if (!usernames.length) return [];
-		const completed = new Set(usernames.map((name) => name.toLowerCase()));
-		return this.committeeMembers().flatMap((member) =>
-			member.minecraft_uuid && completed.has(member.minecraft_username.toLowerCase())
-				? this.recordCommitteeKill(killer, member.minecraft_uuid)
-				: [],
+	private creditCommitteeAdvancements(
+		killer: UserRow,
+		advancements: { username: string; obtainedAtUnixMs: number }[],
+	) {
+		const completed = new Map(
+			advancements
+				.filter((entry) => isSundayInLondon(entry.obtainedAtUnixMs))
+				.map((entry) => [entry.username.toLowerCase(), entry.obtainedAtUnixMs]),
 		);
+		return this.committeeMembers().flatMap((member) => {
+			const obtainedAtUnixMs = completed.get(member.minecraft_username.toLowerCase());
+			return member.minecraft_uuid && obtainedAtUnixMs
+				? this.recordCommitteeKill(killer, member.minecraft_uuid, obtainedAtUnixMs)
+				: [];
+		});
 	}
 
 	private committeeMembers() {

@@ -153,7 +153,7 @@ services:
                 datapack:nullscape?
                 datapack:geophilic?
             MODRINTH_DOWNLOAD_DEPENDENCIES: required
-            VANILLATWEAKS_SHARECODE: 9BVPEY,fqD5BL
+            VANILLATWEAKS_SHARECODE: 9BVPEY,vU2ltp
             STOP_DURATION: '110'
             USE_MEOWICE_FLAGS: 'true'
             ENABLE_ROLLING_LOGS: 'false'

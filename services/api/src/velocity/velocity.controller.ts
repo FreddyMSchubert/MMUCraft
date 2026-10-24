@@ -47,7 +47,10 @@ export class VelocityPublicController {
 		return {
 			players: this.velocity
 				.adminSnapshot()
-				.players.filter((player) => player.state === 'playing')
+				.players.filter(
+					(player) =>
+						player.state === 'playing' && player.username.toLowerCase() !== 'mmu_admin',
+				)
 				.sort((left, right) =>
 					left.username.localeCompare(right.username, 'en', { sensitivity: 'base' }),
 				)

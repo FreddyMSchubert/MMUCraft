@@ -306,6 +306,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 					playerCount: players.filter(
 						(player) =>
 							player.serverName === server.name &&
+							player.username.toLowerCase() !== 'mmu_admin' &&
 							!isExemptAdmin(this.identities.findByUuid(player.uuid)),
 					).length,
 					memberWaitingCount: queuedPlayers.filter(
@@ -364,6 +365,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 				? this.livePlayers.filter(
 						(player) =>
 							player.serverName === server.name &&
+							player.username.toLowerCase() !== 'mmu_admin' &&
 							!isExemptAdmin(this.identities.findByUuid(player.uuid)),
 					).length
 				: null,

@@ -13,8 +13,9 @@ test('dashboard capacity shows the event only when a live event has players on a
 	service.identities = { findByUuid: () => null };
 	service.connectedPlayers = [];
 	service.livePlayers = [
-		{ uuid: 'main-player', serverName: 'main' },
-		{ uuid: 'event-player', serverName: 'surprising-saturday' },
+		{ uuid: 'main-player', username: 'Alice', serverName: 'main' },
+		{ uuid: 'admin-player', username: 'MMU_Admin', serverName: 'main' },
+		{ uuid: 'event-player', username: 'Zed', serverName: 'surprising-saturday' },
 	];
 	service.liveServers = new Map([['surprising-saturday', { online: true }]]);
 	service.events = { active: () => null };
@@ -27,7 +28,11 @@ test('dashboard capacity shows the event only when a live event has players on a
 	service.liveServers.get('surprising-saturday').online = true;
 	service.livePlayers.pop();
 	assert.equal(service.capacitySnapshot().showEventCapacity, false);
-	service.livePlayers.push({ uuid: 'event-player', serverName: 'surprising-saturday' });
+	service.livePlayers.push({
+		uuid: 'event-player',
+		username: 'Zed',
+		serverName: 'surprising-saturday',
+	});
 	service.settings = () => ({ event_override: 0 });
 	assert.equal(service.capacitySnapshot().showEventCapacity, true);
 	service.settings = () => ({ event_override: null });
@@ -67,6 +72,14 @@ test('dashboard roster lists players from both servers without their locations',
 						state: 'queued',
 						color: '#fff',
 						isCommittee: false,
+						customEmojis: [],
+					},
+					{
+						username: 'MMU_Admin',
+						serverName: 'main',
+						state: 'playing',
+						color: '#fff',
+						isCommittee: true,
 						customEmojis: [],
 					},
 				],

@@ -77,6 +77,7 @@
 		"particleTrails.TrailTooltip",
 		"EntityDisplayNameMixin",
 		"PlayerDisplayNameMixin",
+		"PlayerJoinMessageMixin",
 		"PlayerTabListNameMixin",
 		"GrindstoneRemoveEnchantmentLock",
 		"VillagerTradesMixin",

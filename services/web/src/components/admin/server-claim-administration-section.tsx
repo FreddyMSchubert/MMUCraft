@@ -156,8 +156,8 @@ export function ServerClaimAdministrationSection({
 				</div>
 			</div>
 			<p className="tabNote">
-				Stand in one corner chunk and capture it. Then stand in the opposite corner chunk
-				and capture it. Capture the same chunk twice for a one-chunk claim.
+				Enter chunk coordinates directly, or fill either corner from your position or
+				MMU_Admin&apos;s position.
 			</p>
 			<ServerClaimAreaPicker busy={busy} onSave={addClaim} saveLabel="Add server claim" />
 			{error && <p className="authError">{error}</p>}
@@ -206,58 +206,64 @@ function ServerClaimAreaPicker({
 	saveLabel: string;
 }) {
 	const { showAlert } = useSiteAlert();
-	const [first, setFirst] = useState<CurrentChunk | null>(
-		initial
-			? {
-					dimension: initial.dimension,
-					chunkX: initial.chunkX,
-					chunkZ: initial.chunkZ,
-				}
-			: null,
+	const [dimension, setDimension] = useState(initial?.dimension ?? 'minecraft:overworld');
+	const [firstX, setFirstX] = useState(initial ? String(initial.chunkX) : '');
+	const [firstZ, setFirstZ] = useState(initial ? String(initial.chunkZ) : '');
+	const [secondX, setSecondX] = useState(
+		initial ? String(initial.chunkXEnd ?? initial.chunkX) : '',
 	);
-	const [second, setSecond] = useState<CurrentChunk | null>(
-		initial
-			? {
-					dimension: initial.dimension,
-					chunkX: initial.chunkXEnd ?? initial.chunkX,
-					chunkZ: initial.chunkZEnd ?? initial.chunkZ,
-				}
-			: null,
+	const [secondZ, setSecondZ] = useState(
+		initial ? String(initial.chunkZEnd ?? initial.chunkZ) : '',
 	);
 	const [capturing, setCapturing] = useState(false);
-	const selected = first !== null && second !== null && first.dimension === second.dimension;
+	const first = parseCorner(dimension, firstX, firstZ);
+	const second =
+		secondX === '' && secondZ === '' ? first : parseCorner(dimension, secondX, secondZ);
+	const selected = first !== null && second !== null;
 	const chunkCount = selected
 		? (Math.abs(first.chunkX - second.chunkX) + 1) *
 			(Math.abs(first.chunkZ - second.chunkZ) + 1)
 		: 0;
 
-	async function capture(which: 'first' | 'second') {
+	useEffect(() => {
+		if (!initial) return;
+		onDirtyChange?.(
+			dimension !== initial.dimension ||
+				firstX !== String(initial.chunkX) ||
+				firstZ !== String(initial.chunkZ) ||
+				secondX !== String(initial.chunkXEnd ?? initial.chunkX) ||
+				secondZ !== String(initial.chunkZEnd ?? initial.chunkZ),
+		);
+	}, [dimension, firstX, firstZ, secondX, secondZ, initial, onDirtyChange]);
+
+	async function capture(which: 'first' | 'second', source: 'mine' | 'admin') {
 		setCapturing(true);
 		try {
-			const current = await request<CurrentChunk>('/api/admin/server-claims/current');
-			const nextFirst =
-				which === 'first' ? current : first?.dimension === current.dimension ? first : null;
-			const nextSecond =
-				which === 'second'
-					? current
-					: second?.dimension === current.dimension
-						? second
-						: null;
-			setFirst(nextFirst);
-			setSecond(nextSecond);
-			if (initial)
-				onDirtyChange?.(
-					!sameChunk(nextFirst, initial.dimension, initial.chunkX, initial.chunkZ) ||
-						!sameChunk(
-							nextSecond,
-							initial.dimension,
-							initial.chunkXEnd ?? initial.chunkX,
-							initial.chunkZEnd ?? initial.chunkZ,
-						),
-				);
+			const current = await request<CurrentChunk>(
+				source === 'mine'
+					? '/api/admin/server-claims/current'
+					: '/api/admin/build-events/admin-position',
+			);
+			if (dimension !== current.dimension) {
+				if (which === 'first') {
+					setSecondX('');
+					setSecondZ('');
+				} else {
+					setFirstX('');
+					setFirstZ('');
+				}
+			}
+			setDimension(current.dimension);
+			if (which === 'first') {
+				setFirstX(String(current.chunkX));
+				setFirstZ(String(current.chunkZ));
+			} else {
+				setSecondX(String(current.chunkX));
+				setSecondZ(String(current.chunkZ));
+			}
 		} catch (caught) {
 			await showAlert({
-				title: 'Could not capture the current chunk',
+				title: `Could not get ${source === 'mine' ? 'your' : "MMU_Admin's"} current chunk`,
 				message: readError(caught),
 				tone: 'danger',
 			});
@@ -268,30 +274,91 @@ function ServerClaimAreaPicker({
 
 	return (
 		<div className="serverClaimAreaPicker">
+			<label className="serverClaimDimension">
+				<span>Dimension</span>
+				<input
+					type="text"
+					list={`server-claim-dimensions-${initial?.id ?? 'new'}`}
+					value={dimension}
+					onChange={(event) => {
+						setDimension(event.target.value);
+					}}
+					disabled={busy || capturing}
+				/>
+			</label>
+			<datalist id={`server-claim-dimensions-${initial?.id ?? 'new'}`}>
+				<option value="minecraft:overworld" />
+				<option value="minecraft:the_nether" />
+				<option value="minecraft:the_end" />
+			</datalist>
 			<div className="serverClaimCorners">
 				{(
 					[
-						['First corner', first, 'first'],
-						['Opposite corner', second, 'second'],
+						['First corner', firstX, firstZ, setFirstX, setFirstZ, 'first'],
+						[
+							'Opposite corner (optional)',
+							secondX,
+							secondZ,
+							setSecondX,
+							setSecondZ,
+							'second',
+						],
 					] as const
-				).map(([label, corner, which]) => (
+				).map(([label, x, z, setX, setZ, which]) => (
 					<div className="serverClaimCorner" key={which}>
 						<strong>{label}</strong>
-						<span>
-							{corner
-								? `${corner.chunkX}, ${corner.chunkZ} in ${formatDimension(corner.dimension)}`
-								: 'Not selected'}
-						</span>
-						<button
-							type="button"
-							disabled={busy || capturing}
-							onClick={() => void capture(which)}
-						>
-							Use current chunk
-						</button>
+						<div className="serverClaimCoordinates">
+							<label>
+								<span>Chunk X</span>
+								<input
+									type="number"
+									min={-1875000}
+									max={1875000}
+									step={1}
+									value={x}
+									aria-label={`${label} chunk X`}
+									onChange={(event) => {
+										setX(event.target.value);
+									}}
+									disabled={busy || capturing}
+								/>
+							</label>
+							<label>
+								<span>Chunk Z</span>
+								<input
+									type="number"
+									min={-1875000}
+									max={1875000}
+									step={1}
+									value={z}
+									aria-label={`${label} chunk Z`}
+									onChange={(event) => {
+										setZ(event.target.value);
+									}}
+									disabled={busy || capturing}
+								/>
+							</label>
+						</div>
+						<div className="serverClaimCaptureActions">
+							<button
+								type="button"
+								disabled={busy || capturing}
+								onClick={() => void capture(which, 'mine')}
+							>
+								Use my current chunk
+							</button>
+							<button
+								type="button"
+								disabled={busy || capturing}
+								onClick={() => void capture(which, 'admin')}
+							>
+								Use MMU_Admin&apos;s current chunk
+							</button>
+						</div>
 					</div>
 				))}
 			</div>
+			<p>Leave the opposite corner empty for a one-chunk claim.</p>
 			{selected && (
 				<p>
 					{describeArea({
@@ -315,8 +382,10 @@ function ServerClaimAreaPicker({
 						oppositeChunkZ: second.chunkZ,
 					}).then((saved) => {
 						if (saved && !initial) {
-							setFirst(null);
-							setSecond(null);
+							setFirstX('');
+							setFirstZ('');
+							setSecondX('');
+							setSecondZ('');
 						}
 						if (saved) onDirtyChange?.(false);
 					});
@@ -328,8 +397,18 @@ function ServerClaimAreaPicker({
 	);
 }
 
-function sameChunk(chunk: CurrentChunk | null, dimension: string, x: number, z: number) {
-	return chunk?.dimension === dimension && chunk.chunkX === x && chunk.chunkZ === z;
+function parseCorner(dimension: string, x: string, z: string): CurrentChunk | null {
+	if (!x.trim() || !z.trim() || !/^[a-z0-9_.-]+:[a-z0-9_./-]+$/.test(dimension)) return null;
+	const chunkX = Number(x);
+	const chunkZ = Number(z);
+	if (
+		!Number.isInteger(chunkX) ||
+		!Number.isInteger(chunkZ) ||
+		Math.abs(chunkX) > 1875000 ||
+		Math.abs(chunkZ) > 1875000
+	)
+		return null;
+	return { dimension, chunkX, chunkZ };
 }
 
 function describeArea(area: AreaInput) {

@@ -10,6 +10,7 @@ from pathlib import Path
 
 RECIPE_ID = re.compile(r"^[a-z0-9._-]+(?:/[a-z0-9._-]+)*$")
 FAKE_TYPES = {"mainmod:fake_crafting_shaped", "mainmod:fake_crafting_shapeless"}
+SHAPED_TYPES = {"mainmod:fake_crafting_shaped", "minecraft:crafting_shaped"}
 
 
 def generate(source: Path, output: Path) -> int:
@@ -25,6 +26,15 @@ def generate(source: Path, output: Path) -> int:
 				raise ValueError(f"Invalid recipe id {recipe_id!r}: {item_path}")
 			if recipe_id in generated:
 				raise ValueError(f"Duplicate generated recipe id {recipe_id!r}: {item_path}")
+			if recipe["type"] in SHAPED_TYPES:
+				used = set("".join(recipe["pattern"])) - {" "}
+				missing = used - recipe["key"].keys()
+				unused = recipe["key"].keys() - used
+				if missing or unused:
+					raise ValueError(
+						f"Invalid shaped recipe {recipe_id!r}: missing keys {sorted(missing)}, "
+						f"unused keys {sorted(unused)}: {item_path}"
+					)
 			if recipe["type"] == "mainmod:fake_smelting":
 				if recipe["result"] != f"mainmod:{item_id}":
 					raise ValueError(f"Recipe {recipe_id} does not produce {item_id}: {item_path}")

@@ -19,7 +19,7 @@
 				"gameplayToggle": "imaginative",
 				"pattern": ["WW ", "WW ", "   "],
 				"key": {
-					"S": "minecraft:tuff_brick_wall"
+					"W": "minecraft:tuff_brick_wall"
 				},
 				"result": {
 					"stack": "mainmod:deco-gravestone",

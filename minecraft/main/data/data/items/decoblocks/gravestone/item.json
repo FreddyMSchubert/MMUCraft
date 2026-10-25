@@ -1,0 +1,31 @@
+{
+	"title": "Gravestone",
+	"id": "deco-gravestone",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["If I set up the crafting recipe wrong, that would be a grave mistake..."],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"lightLevel": 0
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/gravestone",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "imaginative",
+				"pattern": ["WW ", "WW ", "   "],
+				"key": {
+					"S": "minecraft:tuff_brick_wall"
+				},
+				"result": {
+					"stack": "mainmod:deco-gravestone",
+					"count": 4
+				}
+			}
+		]
+	}
+}

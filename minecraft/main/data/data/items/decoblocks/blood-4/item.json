@@ -1,0 +1,28 @@
+{
+	"title": "Blood Splatter",
+	"id": "deco-blood-4",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["!"],
+	"decoBlock": {
+		"ground": true,
+		"wall": true,
+		"ceiling": false,
+		"lightLevel": 0
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/blood-4",
+				"type": "mainmod:fake_crafting_shapeless",
+				"gameplayToggle": "nether",
+				"ingredients": ["minecraft:red_dye","minecraft:red_dye","minecraft:red_dye","minecraft:redstone"],
+				"result": {
+					"stack": "mainmod:deco-blood-4",
+					"count": 1
+				}
+			}
+		]
+	}
+}

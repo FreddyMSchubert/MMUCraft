@@ -8,9 +8,9 @@
 	"shopPurchasable": {
 		"membersOnly": false,
 		"priceDabloons": 150,
-		"description": "Sometimes prevents ender pearl damage and saves the thrown pearl.",
+		"description": "Ender pearl teleports sometimes cause no damage, and throwing one sometimes does not use up a pearl.",
 		"unlockWeight": 60,
-		"unlockMessage": "Unlocked charm: Enderian Soul Charm. Safer, cheaper ender pearl throws.",
+		"unlockMessage": "Unlocked charm: Enderian Soul Charm. Sometimes avoids ender pearl teleport damage and sometimes throws one without using up a pearl.",
 		"gameplayToggle": "nether"
 	},
 	"charm": {
@@ -20,8 +20,8 @@
 		"levels": [
 			{
 				"level": 1,
-				"abilityStatusCurrent": "25% chance to avoid pearl damage; 25% chance to save a thrown pearl.",
-				"abilityStatusRelative": "25% chance for each pearl benefit.",
+				"abilityStatusCurrent": "25% chance to avoid ender pearl teleport damage; separate 25% chance that throwing one does not use up a pearl.",
+				"abilityStatusRelative": "Gives a 25% chance to avoid ender pearl teleport damage and a separate 25% chance that throwing an ender pearl does not use one up.",
 				"dabloons": 100,
 				"upgradeIngredients": [
 					"minecraft:diamond_block",
@@ -41,8 +41,8 @@
 			},
 			{
 				"level": 2,
-				"abilityStatusCurrent": "40% chance to avoid pearl damage; 38% chance to save a thrown pearl.",
-				"abilityStatusRelative": "Raises the chances to 40% and 38%.",
+				"abilityStatusCurrent": "40% chance to avoid ender pearl teleport damage; separate 38% chance that throwing one does not use up a pearl.",
+				"abilityStatusRelative": "Raises the chance to avoid ender pearl teleport damage to 40% and the chance to throw one without using up a pearl to 38%.",
 				"dabloons": 100,
 				"upgradeIngredients": [
 					"minecraft:diamond_block",
@@ -75,8 +75,8 @@
 			},
 			{
 				"level": 3,
-				"abilityStatusCurrent": "52% chance to avoid pearl damage; 50% chance to save a thrown pearl.",
-				"abilityStatusRelative": "Raises the chances to 52% and 50%.",
+				"abilityStatusCurrent": "52% chance to avoid ender pearl teleport damage; separate 50% chance that throwing one does not use up a pearl.",
+				"abilityStatusRelative": "Raises the chance to avoid ender pearl teleport damage to 52% and the chance to throw one without using up a pearl to 50%.",
 				"dabloons": 125,
 				"upgradeIngredients": [
 					"minecraft:diamond_block",
@@ -100,8 +100,8 @@
 			},
 			{
 				"level": 4,
-				"abilityStatusCurrent": "63% chance to avoid pearl damage; 61% chance to save a thrown pearl.",
-				"abilityStatusRelative": "Raises the chances to 63% and 61%.",
+				"abilityStatusCurrent": "63% chance to avoid ender pearl teleport damage; separate 61% chance that throwing one does not use up a pearl.",
+				"abilityStatusRelative": "Raises the chance to avoid ender pearl teleport damage to 63% and the chance to throw one without using up a pearl to 61%.",
 				"dabloons": 150,
 				"upgradeIngredients": [
 					"minecraft:diamond_block",
@@ -139,8 +139,8 @@
 			},
 			{
 				"level": 5,
-				"abilityStatusCurrent": "72% chance to avoid pearl damage; 70% chance to save a thrown pearl.",
-				"abilityStatusRelative": "Raises the chances to 72% and 70%.",
+				"abilityStatusCurrent": "72% chance to avoid ender pearl teleport damage; separate 70% chance that throwing one does not use up a pearl.",
+				"abilityStatusRelative": "Raises the chance to avoid ender pearl teleport damage to 72% and the chance to throw one without using up a pearl to 70%.",
 				"dabloons": 175,
 				"upgradeIngredients": [
 					"minecraft:diamond_block",
@@ -184,8 +184,8 @@
 			},
 			{
 				"level": 6,
-				"abilityStatusCurrent": "79% chance to avoid pearl damage; 78% chance to save a thrown pearl.",
-				"abilityStatusRelative": "Raises the chances to 79% and 78%.",
+				"abilityStatusCurrent": "79% chance to avoid ender pearl teleport damage; separate 78% chance that throwing one does not use up a pearl.",
+				"abilityStatusRelative": "Raises the chance to avoid ender pearl teleport damage to 79% and the chance to throw one without using up a pearl to 78%.",
 				"dabloons": 200,
 				"upgradeIngredients": [
 					"minecraft:diamond_block",
@@ -211,8 +211,8 @@
 			},
 			{
 				"level": 7,
-				"abilityStatusCurrent": "85% chance to avoid pearl damage; 85% chance to save a thrown pearl.",
-				"abilityStatusRelative": "Raises both chances to 85%.",
+				"abilityStatusCurrent": "85% chance to avoid ender pearl teleport damage; separate 85% chance that throwing one does not use up a pearl.",
+				"abilityStatusRelative": "Raises the chance to avoid ender pearl teleport damage and the chance to throw one without using up a pearl to 85% each.",
 				"dabloons": 250,
 				"upgradeIngredients": [
 					"minecraft:diamond_block",
@@ -236,8 +236,8 @@
 			},
 			{
 				"level": 8,
-				"abilityStatusCurrent": "90% chance to avoid pearl damage; 90% chance to save a thrown pearl.",
-				"abilityStatusRelative": "Raises both chances to 90%.",
+				"abilityStatusCurrent": "90% chance to avoid ender pearl teleport damage; separate 90% chance that throwing one does not use up a pearl.",
+				"abilityStatusRelative": "Raises the chance to avoid ender pearl teleport damage and the chance to throw one without using up a pearl to 90% each.",
 				"dabloons": 300,
 				"upgradeIngredients": [
 					"minecraft:diamond_block",

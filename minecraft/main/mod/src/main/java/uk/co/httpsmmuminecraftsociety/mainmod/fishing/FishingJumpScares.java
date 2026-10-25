@@ -8,14 +8,18 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.Strider;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.monster.hoglin.Hoglin;
+import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.monster.cubemob.MagmaCube;
 import net.minecraft.world.entity.monster.zombie.Drowned;
 import net.minecraft.world.entity.player.Player;
@@ -33,14 +37,14 @@ public final class FishingJumpScares {
     public static final float CHANCE = 0.01F;
     private static final int PEACEFUL_CHOICES = 9;
     private static final int VIOLENT_CHOICES = 9;
-    private static final int NETHER_MOB_CHOICES = 12;
-    private static final int NETHER_CHOICES = 15;
+    private static final int NETHER_MOB_CHOICES = 10;
+    private static final int NETHER_CHOICES = 13;
 
     private FishingJumpScares() {
     }
 
     public static boolean shouldTrigger(RandomSource random, boolean nether) {
-        return random.nextFloat() < CHANCE * (nether ? 2.0F : 1.0F);
+        return random.nextFloat() < CHANCE * (nether ? 5.0F : 1.0F);
     }
 
     public static boolean spawn(ServerLevel level, FishingHook hook, Player player) {
@@ -64,9 +68,8 @@ public final class FishingJumpScares {
             return false;
         }
 
-        if (mob instanceof AgeableMob ageable) {
-            boolean baby = nether ? choice != 11 && random.nextInt(4) == 0 : !violent && random.nextBoolean();
-            ageable.setBaby(baby);
+        if (!nether && mob instanceof AgeableMob ageable) {
+            ageable.setBaby(!violent && random.nextBoolean());
         }
         if (mob instanceof Drowned drowned) {
             configureDrowned(drowned, choice);
@@ -74,8 +77,18 @@ public final class FishingJumpScares {
         if (mob instanceof MagmaCube cube) {
             cube.setSize(1 << random.nextInt(3), true);
         }
-        if (violent && type != EntityTypes.STRIDER) {
+        if (violent) {
             mob.setTarget(player);
+            if (nether) {
+                if (mob instanceof AbstractPiglin piglin) {
+                    piglin.getBrain().setMemoryWithExpiry(MemoryModuleType.ANGRY_AT, player.getUUID(), 600L);
+                } else if (mob instanceof Hoglin hoglin) {
+                    hoglin.getBrain().setMemoryWithExpiry(MemoryModuleType.ATTACK_TARGET, player, 200L);
+                } else if (mob instanceof NeutralMob neutral) {
+                    neutral.setPersistentAngerTarget(EntityReference.of(player));
+                    neutral.startPersistentAngerTimer();
+                }
+            }
         }
 
         mob.setPos(hook.getX(), surfaceY(level, hook), hook.getZ());
@@ -90,14 +103,6 @@ public final class FishingJumpScares {
         mob.setNoGravity(true);
         mob.setDeltaMovement(Vec3.ZERO);
         if (!level.addFreshEntity(mob)) return false;
-        if (nether && choice == 11 && mob instanceof Strider) {
-            Strider baby = EntityTypes.STRIDER.create(level, null, pos, EntitySpawnReason.EVENT, false, false);
-            if (baby != null) {
-                baby.setBaby(true);
-                baby.setPos(mob.position());
-                if (level.addFreshEntity(baby)) baby.startRiding(mob);
-            }
-        }
         scheduleFlight(level, mob, player, mob.position(), flightTicks, 1, originalNoGravity);
         return true;
     }
@@ -174,10 +179,9 @@ public final class FishingJumpScares {
             case 5 -> EntityTypes.MAGMA_CUBE;
             case 6 -> EntityTypes.PIGLIN;
             case 7 -> EntityTypes.PIGLIN_BRUTE;
-            case 8 -> EntityTypes.STRIDER;
-            case 9 -> EntityTypes.ZOMBIFIED_PIGLIN;
-            case 10 -> EntityTypes.ENDERMAN;
-            default -> EntityTypes.STRIDER;
+            case 8 -> EntityTypes.ZOMBIFIED_PIGLIN;
+            case 9 -> EntityTypes.ENDERMAN;
+            default -> throw new IllegalArgumentException("Not a Nether jump-scare choice: " + choice);
         };
     }
 

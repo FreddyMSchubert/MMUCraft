@@ -11,13 +11,21 @@
 		"ceiling": false,
 		"lightLevel": 0
 	},
+	"dyeable": {
+		"tintColor": "#ff0000"
+	},
 	"craftable": {
 		"recipes": [
 			{
 				"id": "decoration/blood-3",
 				"type": "mainmod:fake_crafting_shapeless",
 				"gameplayToggle": "nether",
-				"ingredients": ["minecraft:red_dye","minecraft:red_dye","minecraft:redstone","minecraft:redstone"],
+				"ingredients": [
+					"minecraft:red_dye",
+					"minecraft:red_dye",
+					"minecraft:redstone",
+					"minecraft:redstone"
+				],
 				"result": {
 					"stack": "mainmod:deco-blood-3",
 					"count": 1

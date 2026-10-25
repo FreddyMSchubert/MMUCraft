@@ -157,6 +157,7 @@ export async function parseItemDefinition(
 				shopPurchasable,
 				resourcePath,
 				baseName,
+				isDyeable: item.dyeable !== undefined,
 				modelJsonPath,
 				modelTexturePngPath,
 				modelTextureMcmetaPath: await maybeMcmetaFor(modelTexturePngPath),

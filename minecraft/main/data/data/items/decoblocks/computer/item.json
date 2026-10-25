@@ -20,7 +20,7 @@
 				"pattern": ["CLC", "GRG", "SSS"],
 				"key": {
 					"C": "minecraft:copper_ingot",
-					"L": "mainmod:redstone_lamp",
+					"L": "minecraft:copper_bulb",
 					"G": "minecraft:gold_block",
 					"R": "minecraft:redstone",
 					"S": "minecraft:stripped_birch_log"

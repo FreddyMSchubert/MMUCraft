@@ -33,6 +33,7 @@ export interface BasicItemDefinition extends BaseDiscoveredItem {
 
 export interface Basic3dItemDefinition extends BaseDiscoveredItem {
 	readonly type: 'basic-3d';
+	readonly isDyeable: boolean;
 	readonly modelJsonPath: string;
 	readonly modelTexturePngPath: string;
 	readonly modelTextureMcmetaPath?: string;

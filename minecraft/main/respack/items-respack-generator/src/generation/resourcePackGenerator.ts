@@ -420,6 +420,7 @@ async function generateBasic3dItem(
 		when: item.id,
 		modelId,
 		shadowModelId,
+		isTinted: item.isDyeable,
 	};
 }
 

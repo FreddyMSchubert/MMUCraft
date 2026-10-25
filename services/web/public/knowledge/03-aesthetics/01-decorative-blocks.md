@@ -309,10 +309,105 @@ Ever thought there aren't enough decorations in game? Why not give these a try! 
 :::end-drop
 
 
+:::drop-item deco-axe
+## Decorative Axe
+
+:::drop-indicator
+
+![Decorative Axe Recipe](/assets/knowledge/items/decorative-blocks/decorative-axe-recipe.png)
+:::recipe-items
+[Iron Axe](https://minecraft.wiki/w/Axe) → Decorative Axe
+:::
+:::end-drop
+
+
+:::drop-item deco-blood-1
+## Blood Splatter (1)
+
+:::drop-indicator
+
+![Blood Splatter 1 Recipe](/assets/knowledge/items/decorative-blocks/blood-splatter-1-recipe.png)
+:::recipe-items
+[Redstone Dust](https://minecraft.wiki/w/Redstone_Dust) ×4 → Blood Splatter (1)
+:::
+:::end-drop
+
+
+:::drop-item deco-blood-2
+## Blood Splatter (2)
+
+:::drop-indicator
+
+![Blood Splatter 2 Recipe](/assets/knowledge/items/decorative-blocks/blood-splatter-2-recipe.png)
+:::recipe-items
+[Red Dye](https://minecraft.wiki/w/Red_Dye) · [Redstone Dust](https://minecraft.wiki/w/Redstone_Dust) ×3 → Blood Splatter (2)
+:::
+:::end-drop
+
+
+:::drop-item deco-blood-3
+## Blood Splatter (3)
+
+:::drop-indicator
+
+![Blood Splatter 3 Recipe](/assets/knowledge/items/decorative-blocks/blood-splatter-3-recipe.png)
+:::recipe-items
+[Red Dye](https://minecraft.wiki/w/Red_Dye) ×2 · [Redstone Dust](https://minecraft.wiki/w/Redstone_Dust) ×2 → Blood Splatter (3)
+:::
+:::end-drop
+
+
+:::drop-item deco-blood-4
+## Blood Splatter (4)
+
+:::drop-indicator
+
+![Blood Splatter 4 Recipe](/assets/knowledge/items/decorative-blocks/blood-splatter-4-recipe.png)
+:::recipe-items
+[Red Dye](https://minecraft.wiki/w/Red_Dye) ×3 · [Redstone Dust](https://minecraft.wiki/w/Redstone_Dust) → Blood Splatter (4)
+:::
+:::end-drop
+
+
+:::drop-item deco-blood-5
+## Blood Splatter (5)
+
+:::drop-indicator
+
+![Blood Splatter 5 Recipe](/assets/knowledge/items/decorative-blocks/blood-splatter-5-recipe.png)
+:::recipe-items
+[Red Dye](https://minecraft.wiki/w/Red_Dye) ×4 → Blood Splatter (5)
+:::
+:::end-drop
+
+
+:::drop-item deco-gravestone
+## Gravestone
+
+:::drop-indicator
+
+![Gravestone Recipe](/assets/knowledge/items/decorative-blocks/gravestone-recipe.png)
+:::recipe-items
+[Tuff Brick Wall](https://minecraft.wiki/w/Tuff_Brick_Wall) (TL, TC, CL, C) → Gravestone ×4
+:::
+:::end-drop
+
+
+:::drop-item deco-skeleton
+## Skeleton
+
+:::drop-indicator
+
+![Skeleton Recipe](/assets/knowledge/items/decorative-blocks/skeleton-recipe.png)
+:::recipe-items
+[Skeleton Skull](https://minecraft.wiki/w/Skeleton_Skull) (TC) · [Bone](https://minecraft.wiki/w/Bone) (CL, C, CR, BC) → Skeleton
+:::
+:::end-drop
+
+
 ## Beer
 
-While beer can't be directly placed down, you can use an item frame (and make it invisible with the invisi-carrot) to use it as decoration.
-Its primary use is drinking.
+You can place Beer on the ground as decoration or drink it.
 
 ![Beer Recipe](/assets/knowledge/items/decorative-blocks/beer-recipe.png)
 :::recipe-items
@@ -325,12 +420,12 @@ Its primary use is drinking.
 
 :::drop-indicator
 
-Beer can also be crafted with any type of carpet to create Spoons Carpets.
+Beer can also be crafted with any color of wool carpet to create Spoons Carpets.
 
 All types of Spoons Carpets can be placed either on the floor or on the ceiling, this allows for features that normal minecraft carpets cant do - form a seamless carpet even through tables and chairs!
 
 ![Spoons Carpet Recipe](/assets/knowledge/items/decorative-blocks/sc-blue-recipe.png)
 :::recipe-items
-Beer · [Any Carpet](https://minecraft.wiki/w/Carpets) → Spoons Carpet
+Beer · [Any Wool Carpet](https://minecraft.wiki/w/Carpet) → Spoons Carpet ×8
 :::
 :::end-drop

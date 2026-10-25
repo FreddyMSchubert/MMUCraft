@@ -203,10 +203,11 @@ trap 'exit 143' TERM
 
 wait_for_proxy() {
 	if [ "$1" = ready ]; then
-		deadline=$(( $(date +%s) + ${DEPLOY_WAIT_TIMEOUT:-600} ))
+		deadline=$(( $(date +%s) + 60 ))
 	else
 		deadline=$(( $(date +%s) + 30 ))
 	fi
+	last_report=0
 	while [ "$(date +%s)" -lt "$deadline" ]; do
 		ack=$(cat data/velocity/deployment-drained 2>/dev/null || true)
 		case "$ack" in
@@ -214,6 +215,10 @@ wait_for_proxy() {
 			"$deployment_id true false"|"$deployment_id false false")
 				[ "$1" = drained ] && return 0 ;;
 		esac
+		if [ "$1" = ready ] && [ "$(( $(date +%s) - last_report ))" -ge 30 ]; then
+			echo "Waiting for Velocity to confirm a ready route; acknowledgement: ${ack:-missing}" >&2
+			last_report=$(date +%s)
+		fi
 		sleep 1
 	done
 	return 1
@@ -421,7 +426,11 @@ if printf '%s\n' "$running_services" | grep -qx minecraft; then
 			dc restart --no-deps -t 10 api
 			# Start the existing container. Do not replace it with the new image.
 			dc start --wait --wait-timeout 60 api
-			wait_for_proxy ready || { echo "The current server has not recovered." >&2; exit 1; }
+			if ! wait_for_proxy ready; then
+				echo "API drain/save failed, and Velocity did not confirm the old server was ready within 60 seconds." >&2
+				show_startup_diagnostics api minecraft velocity
+				exit 1
+			fi
 			cancel_update
 			echo "Deployment stopped: API drain/save failed (exit $status). The old API and Minecraft remain running; update status is cleared." >&2
 			exit "$status"
@@ -546,7 +555,7 @@ for service in api web minecraft; do
 		exit 1
 	}
 done
-wait_for_proxy ready || { echo "Velocity has not confirmed that the active route is ready." >&2; show_startup_diagnostics; exit 1; }
+wait_for_proxy ready || { echo "Velocity did not confirm the active route within 60 seconds; last acknowledgement: ${ack:-missing}" >&2; show_startup_diagnostics; exit 1; }
 clear_update
 announce_update_complete || graceful_failure "Could not send the update completion notice"
 

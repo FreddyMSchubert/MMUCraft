@@ -25,6 +25,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.CommitteeMembers;
 import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
@@ -95,12 +96,17 @@ public final class DuckManager {
             }
         });
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
+            if (!(entity instanceof ServerPlayer victim)) return;
             long killedAtUnixMs = System.currentTimeMillis();
-            if (entity instanceof ServerPlayer victim
-                    && source.getEntity() instanceof ServerPlayer killer
-                    && FeatureToggles.isEnabled(FeatureToggles.NETHER)
-                    && MasteryAdvancements.isCommitteeKillSunday(killedAtUnixMs)) {
+            if (!MasteryAdvancements.isCommitteeKillSunday(killedAtUnixMs)) return;
+            var attacker = source.getEntity();
+            if (attacker == null || attacker == victim) MasteryAdvancements.recordCommitteeKill(victim, victim);
+            if (!FeatureToggles.isEnabled(FeatureToggles.NETHER)) return;
+            if (attacker instanceof ServerPlayer killer) {
                 record(killer, 4, victim.getUUID().toString(), killedAtUnixMs);
+            } else if (attacker == null && CommitteeMembers.ALL.stream()
+                    .anyMatch(member -> member.username().equalsIgnoreCase(victim.getGameProfile().name()))) {
+                record(victim, 4, victim.getUUID().toString(), killedAtUnixMs);
             }
         });
     }

@@ -57,12 +57,13 @@ public class PotionOfReturningCharm implements Charm, ConsumableCallbacksCharm
             return false;
         }
 
-        BlockPos spawn = level.getRespawnData().globalPos().pos();
+        ServerLevel overworld = level.getServer().overworld();
+        BlockPos spawn = overworld.getRespawnData().globalPos().pos();
 
         TeleportPotionUtils.teleportWithCompanions(
                 "returning",
                 player,
-                level,
+                overworld,
                 spawn.getX() + 0.5,
                 spawn.getY() + 10.5,
                 spawn.getZ() + 0.5,

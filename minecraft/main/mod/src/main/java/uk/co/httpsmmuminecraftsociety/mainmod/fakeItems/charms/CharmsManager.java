@@ -281,7 +281,8 @@ public class CharmsManager
         player.stopUsingItem();
     }
     public static void onPlayerTick(ServerLevel server) {
-        for (ServerPlayer player : server.players()) {
+        for (ServerPlayer player : List.copyOf(server.players())) {
+            if (player.level() != server) continue;
             // uniquipped tick
             for (Map.Entry<Integer, FakeItem> entry : FakeItems.CHARM_ID_MAP.entrySet()) {
                 CharmItemFeature feature = entry.getValue().getFeature(CharmItemFeature.class);

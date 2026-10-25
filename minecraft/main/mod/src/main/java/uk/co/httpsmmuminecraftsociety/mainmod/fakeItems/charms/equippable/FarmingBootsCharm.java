@@ -27,7 +27,7 @@ public final class FarmingBootsCharm implements Charm, UseOnBlockCallbackCharm
         BlockState originState = level.getBlockState(originPos);
         ItemStack heldStack = player.getItemInHand(interactionHand);
         if (!heldStack.is(ItemTags.HOES)) return InteractionResult.PASS;
-        if (!isHarvestableCrop(originState)) return InteractionResult.PASS;
+        if (!(originState.getBlock() instanceof CropBlock)) return InteractionResult.PASS;
 
         boolean harvestedAny = false;
         for (BlockPos targetPos : getTargetPositions(originPos, charmLevel)) {
@@ -42,11 +42,6 @@ public final class FarmingBootsCharm implements Charm, UseOnBlockCallbackCharm
         }
 
         return harvestedAny ? InteractionResult.SUCCESS : InteractionResult.PASS;
-    }
-
-    private static boolean isHarvestableCrop(BlockState state)
-    {
-        return state.getBlock() instanceof CropBlock cropBlock && cropBlock.isMaxAge(state);
     }
 
     private static List<BlockPos> getTargetPositions(BlockPos originPos, int charmLevel)

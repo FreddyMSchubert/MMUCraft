@@ -1,0 +1,32 @@
+{
+	"title": "Skeleton",
+	"id": "deco-skeleton",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Thought it would be a good idea to go to Satan's Hollow without nose plugs"],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"lightLevel": 0
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/skeleton",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "imaginative",
+				"pattern": [" S ", "BBB", " B "],
+				"key": {
+					"S": "minecraft:skeleton_skull",
+					"B": "minecraft:bone"
+				},
+				"result": {
+					"stack": "mainmod:deco-skeleton",
+					"count": 1
+				}
+			}
+		]
+	}
+}

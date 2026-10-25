@@ -278,7 +278,7 @@ public abstract class AnimalCrossingFishingHookMixin implements FishingRodCast {
         this.mainmod$fishShadow = display;
         mainmod$positionFish(hook);
         level.addFreshEntity(display);
-		AnimalCrossingFishingBobberEffects.playFishArrival(level, display, mainmod$nether);
+		AnimalCrossingFishingBobberEffects.playFishArrival(level, hook, display, mainmod$nether);
     }
 
     @Unique

@@ -355,24 +355,19 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
                 "minecraft:compass", "fishing/first_catch", "goal");
         add("fishing/nether/first_catch", "Hot Catch", "Catch a fish in the Nether.",
                 "fake:fish-cinder_cod", "fishing/first_catch", "goal");
-        String conditionParent = "fishing/special_condition";
-        for (FishSpawnTag tag : new FishSpawnTag[]{FishSpawnTag.RIVER, FishSpawnTag.OCEAN, FishSpawnTag.DAY,
-                FishSpawnTag.NIGHT, FishSpawnTag.DEEP, FishSpawnTag.RAINY, FishSpawnTag.THUNDERSTORM,
-                FishSpawnTag.FULLMOON, FishSpawnTag.NEWMOON}) {
+        for (FishSpawnTag tag : FishSpawnTag.values()) {
+            if (FishSpawnTag.hasNetherBiome(java.util.Set.of(tag))) continue;
             String name = tag.name().toLowerCase(java.util.Locale.ROOT);
             add("fishing/condition/" + name, conditionTitle(tag),
                     "Catch a fish that requires the " + name + " condition.", "minecraft:compass",
-                    conditionParent, "goal");
-            conditionParent = "fishing/condition/" + name;
+                    "fishing/special_condition", "goal");
         }
-        conditionParent = "fishing/nether/first_catch";
         for (FishSpawnTag tag : new FishSpawnTag[]{FishSpawnTag.NETHER_WASTES, FishSpawnTag.SOUL_SAND_VALLEY,
                 FishSpawnTag.CRIMSON_FOREST, FishSpawnTag.WARPED_FOREST, FishSpawnTag.BASALT_DELTAS}) {
             String name = tag.name().toLowerCase(java.util.Locale.ROOT);
             add("fishing/nether/condition/" + name, conditionTitle(tag),
                     "Catch a fish found " + FishSpawnTag.conditionSentence(java.util.Set.of(tag)) + ".", "fake:fish-cinder_cod",
-                    conditionParent, "goal");
-            conditionParent = "fishing/nether/condition/" + name;
+                    "fishing/nether/first_catch", "goal");
         }
         line("fishing/common", "fishing/acoustic_bass", "fishing/goldfish", "fishing/vampire_carp",
                 "fishing/thundering_bass", "fishing/swordfish");

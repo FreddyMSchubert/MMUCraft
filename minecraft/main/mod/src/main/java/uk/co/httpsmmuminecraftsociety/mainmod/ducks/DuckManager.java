@@ -354,10 +354,11 @@ public final class DuckManager {
     public static void personalize(ItemStack stack, String awardedTo, long awardedAtUnixMs, String condition) {
         if (stack.isEmpty() || awardedTo.isBlank() || awardedAtUnixMs <= 0) return;
         List<Component> lines = new ArrayList<>(stack.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines());
-        lines.add(Component.literal("Awarded to " + awardedTo).withStyle(ChatFormatting.GOLD));
+        lines.add(Component.literal("Duck awarded to " + awardedTo).withStyle(ChatFormatting.GOLD));
         lines.add(Component.literal("Awarded on " + AWARD_DATE.format(Instant.ofEpochMilli(awardedAtUnixMs)))
                 .withStyle(ChatFormatting.GRAY));
-        lines.add(Component.literal(condition).withStyle(ChatFormatting.YELLOW));
+        lines.add(Component.literal("Achievement: " + condition).withStyle(ChatFormatting.YELLOW));
         stack.set(DataComponents.LORE, new ItemLore(lines));
+        FakeItems.wrapTooltip(stack);
     }
 }

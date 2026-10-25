@@ -1,5 +1,6 @@
 import path from 'path';
 import { existsSync } from 'node:fs';
+import sharp from 'sharp';
 import {
 	CHARM_ARMOR_MATERIALS,
 	FISHING_SHADOW_MODEL_OVERRIDES,
@@ -23,6 +24,7 @@ import type {
 } from '../types';
 import {
 	copyFileWithDirectory,
+	ensureDirectory,
 	readJsonFile,
 	resetDirectory,
 	writeJsonFile,
@@ -189,6 +191,26 @@ function createGeneratedItemModel(textureModelId: string): Record<string, unknow
 	};
 }
 
+async function generateOpaqueShadowTexture(source: string, destination: string): Promise<boolean> {
+	const { data, info } = await sharp(source)
+		.ensureAlpha()
+		.raw()
+		.toBuffer({ resolveWithObject: true });
+	let hasTranslucentPixels = false;
+	for (let index = 0; index < data.length; index += 4) {
+		const alpha = data[index + 3];
+		if (alpha > 0 && alpha < 255) hasTranslucentPixels = true;
+		data[index] = data[index + 1] = data[index + 2] = 0;
+		data[index + 3] = alpha === 0 ? 0 : 255;
+	}
+	if (!hasTranslucentPixels) return false;
+	await ensureDirectory(path.dirname(destination));
+	await sharp(data, { raw: { width: info.width, height: info.height, channels: 4 } })
+		.png()
+		.toFile(destination);
+	return true;
+}
+
 function getCharmLayerType(item: CharmItemDefinition): EquipmentLayerType {
 	return item.equipmentSlot === 'legs' ? 'humanoid_leggings' : 'humanoid';
 }
@@ -344,6 +366,19 @@ async function generateBasicItem(
 		createGeneratedItemModel(modelId),
 		context,
 	);
+	const shadowPath = `fishing_shadow/${item.resourcePath}`;
+	const shadowModelId = itemModelId(namespace, shadowPath);
+	const shadowTexture = itemTexturePngPath(outputDir, namespace, shadowPath);
+	const opaqueShadow = await generateOpaqueShadowTexture(item.texturePngPath, shadowTexture);
+	if (opaqueShadow) {
+		context.generatedFiles += 1;
+		await copyOptionalMcmeta(item.textureMcmetaPath, `${shadowTexture}.mcmeta`, context);
+		await writeJson(
+			itemModelJsonPath(outputDir, namespace, shadowPath),
+			createGeneratedItemModel(shadowModelId),
+			context,
+		);
+	}
 	if (item.id === 'blazing-fishing-rod') {
 		const castPath = `${item.resourcePath}-cast`;
 		await copyFile(
@@ -380,7 +415,7 @@ async function generateBasicItem(
 	return {
 		when: item.id,
 		modelId,
-		shadowModelId: modelId,
+		shadowModelId: opaqueShadow ? shadowModelId : modelId,
 	};
 }
 

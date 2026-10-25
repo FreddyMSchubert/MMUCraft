@@ -3,7 +3,6 @@ package uk.co.httpsmmuminecraftsociety.mainmod.fishing;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -278,7 +277,7 @@ public final class FishingCatches {
         return Optional.of(FishRarity.values()[rarityIndex]);
     }
 
-    public static void trackCatch(ServerPlayer player, ItemStack stack, BlockPos hookPos) {
+    public static void trackCatch(ServerPlayer player, ItemStack stack) {
         FakeItem fakeItem = FakeItems.getFakeItemFromStack(stack);
         var tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         if (!tag.contains(LENGTH_TAG)) {
@@ -312,11 +311,9 @@ public final class FishingCatches {
         if (fishFeature != null && !fishFeature.spawnTags().isEmpty()) {
             MasteryAdvancements.grant(player, "fishing/special_condition");
             for (FishSpawnTag spawnTag : fishFeature.spawnTags()) {
-                if (FishSpawnTag.matches(java.util.Set.of(spawnTag), player.level(), hookPos)) {
-                    String prefix = FishSpawnTag.hasNetherBiome(java.util.Set.of(spawnTag))
-                            ? "fishing/nether/condition/" : "fishing/condition/";
-                    MasteryAdvancements.grant(player, prefix + spawnTag.name().toLowerCase(Locale.ROOT));
-                }
+                String prefix = FishSpawnTag.hasNetherBiome(java.util.Set.of(spawnTag))
+                        ? "fishing/nether/condition/" : "fishing/condition/";
+                MasteryAdvancements.grant(player, prefix + spawnTag.name().toLowerCase(Locale.ROOT));
             }
         }
         if (fakeItem != null && rarity.ordinal() >= FishRarity.LEGENDARY.ordinal()) {

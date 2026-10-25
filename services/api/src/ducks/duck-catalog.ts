@@ -69,8 +69,8 @@ export const DUCKS = [
 		id: 10,
 		itemId: 'duck-joke',
 		condition:
-			'Post a genuinely good and new joke into the Discord suggestions channel, resulting in your joke being added in-game.',
-		announcementReason: 'getting a joke into the game',
+			'Post a genuinely good and new Minecraft joke into the Discord suggestions channel, resulting in your joke being added in-game.',
+		announcementReason: 'getting a Minecraft joke into the game',
 		manual: true,
 	},
 	{

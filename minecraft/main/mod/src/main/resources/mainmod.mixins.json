@@ -79,6 +79,7 @@
 		"EntityDisplayNameMixin",
 		"PlayerDisplayNameMixin",
 		"PlayerJoinMessageMixin",
+		"PlayerLeaveMessageMixin",
 		"PlayerTabListNameMixin",
 		"GrindstoneRemoveEnchantmentLock",
 		"VillagerTradesMixin",

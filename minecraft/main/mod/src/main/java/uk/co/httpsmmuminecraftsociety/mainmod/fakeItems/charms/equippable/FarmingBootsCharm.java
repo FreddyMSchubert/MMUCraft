@@ -8,8 +8,11 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.NetherWartBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
@@ -27,7 +30,7 @@ public final class FarmingBootsCharm implements Charm, UseOnBlockCallbackCharm
         BlockState originState = level.getBlockState(originPos);
         ItemStack heldStack = player.getItemInHand(interactionHand);
         if (!heldStack.is(ItemTags.HOES)) return InteractionResult.PASS;
-        if (!(originState.getBlock() instanceof CropBlock)) return InteractionResult.PASS;
+        if (!(originState.getBlock() instanceof CropBlock) && !originState.is(Blocks.NETHER_WART)) return InteractionResult.PASS;
 
         boolean harvestedAny = false;
         for (BlockPos targetPos : getTargetPositions(originPos, charmLevel)) {
@@ -91,16 +94,16 @@ public final class FarmingBootsCharm implements Charm, UseOnBlockCallbackCharm
     private static boolean harvestAndReplant(ServerLevel level, ServerPlayer player, BlockPos targetPos, BlockPos dropPos, ItemStack tool)
     {
         BlockState state = level.getBlockState(targetPos);
-        if (!(state.getBlock() instanceof CropBlock cropBlock)) return false;
-        if (!cropBlock.isMaxAge(state)) return false;
-
-        BlockState replantedState = cropBlock.getStateForAge(0);
+        BlockState replantedState = replantedState(state);
+        if (replantedState == null) return false;
         if (!replantedState.canSurvive(level, targetPos)) return false;
 
         List<ItemStack> drops = Block.getDrops(state, level, targetPos, null, player, tool);
 
         // consume one seed / replant item from the drops so replanting is not free
-        ItemStack replantCost = cropBlock.getCloneItemStack(level, targetPos, state, false);
+        ItemStack replantCost = state.is(Blocks.NETHER_WART)
+                ? new ItemStack(Items.NETHER_WART)
+                : ((CropBlock) state.getBlock()).getCloneItemStack(level, targetPos, state, false);
         if (!replantCost.isEmpty()) {
             shrinkFirstMatchingStack(drops, replantCost);
         }
@@ -116,6 +119,17 @@ public final class FarmingBootsCharm implements Charm, UseOnBlockCallbackCharm
         }
 
         return true;
+    }
+
+    static BlockState replantedState(BlockState state)
+    {
+        if (state.getBlock() instanceof CropBlock cropBlock && cropBlock.isMaxAge(state)) {
+            return cropBlock.getStateForAge(0);
+        }
+        if (state.is(Blocks.NETHER_WART) && state.getValue(NetherWartBlock.AGE) == NetherWartBlock.MAX_AGE) {
+            return state.setValue(NetherWartBlock.AGE, 0);
+        }
+        return null;
     }
 
     private static void shrinkFirstMatchingStack(List<ItemStack> drops, ItemStack match)

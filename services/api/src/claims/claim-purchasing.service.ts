@@ -17,7 +17,7 @@ import { ClaimMinecraftSynchronizationService } from './claim-minecraft-synchron
 const CLAIM_BASE_PRICE_DABLOONS = 50;
 const MEMBER_CLAIM_PRICE_GROWTH = 1.5;
 const NORMAL_PLAYER_CLAIM_PRICE_GROWTH = 1.7;
-const MAX_CLAIM_PRICE_DABLOONS = 2_000_000_000;
+const MAX_CLAIM_PRICE_DABLOONS = 500;
 const DEFAULT_OUTSIDER_PERMISSIONS = (1 << 9) | (1 << 14) | (1 << 15) | (1 << 18);
 export type CreateClaimInput = ClaimCornerInput;
 

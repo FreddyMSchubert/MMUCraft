@@ -12,6 +12,8 @@ import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.GearEnchantmentSanitiz
 public abstract class SanitizeOpenedMenu {
     @Inject(method = "initMenu", at = @At("HEAD"))
     private void mainmod$sanitizeOpenedInventory(AbstractContainerMenu menu, CallbackInfo ci) {
+        // Snapshot existing slots before sanitation. The listener added by initMenu then sees only real changes.
+        if (menu != ((ServerPlayer) (Object) this).inventoryMenu) menu.broadcastChanges();
         GearEnchantmentSanitizer.sanitizeMenu(menu);
     }
 }

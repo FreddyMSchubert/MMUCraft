@@ -29,7 +29,7 @@ public final class MetricsServer {
     private static final Gauge PEAK_ONLINE_PLAYERS = gauge(
             "mainmod_peak_online_players", "Highest concurrent player count ever recorded.");
     private static final Gauge TICKS_PER_SECOND = gauge(
-            "mainmod_ticks_per_second", "Estimated Minecraft server ticks per second.");
+            "mainmod_ticks_per_second", "Completed Minecraft server ticks per elapsed second over the latest sampling interval.");
     private static final Gauge MILLISECONDS_PER_TICK = gauge(
             "mainmod_milliseconds_per_tick", "Average Minecraft server tick duration in milliseconds.");
     private static final Gauge SERVER_THREAD_CPU_RATIO = gauge(
@@ -55,6 +55,8 @@ public final class MetricsServer {
     private static int peakOnlinePlayers;
     private static long startedAtNanos;
     private static long nextUpdateNanos;
+    private static long previousTickSampleNanos;
+    private static int previousTickCount;
     private static final ThreadMXBean THREAD_BEAN = ManagementFactory.getThreadMXBean();
     private static long previousServerThreadCpuNanos = -1;
     private static long previousServerThreadWallNanos;
@@ -73,6 +75,9 @@ public final class MetricsServer {
         JvmMetrics.builder().register();
         startedAtNanos = System.nanoTime();
         nextUpdateNanos = 0;
+        previousTickSampleNanos = startedAtNanos;
+        previousTickCount = minecraftServer.getTickCount();
+        TICKS_PER_SECOND.set(Double.NaN);
         previousServerThreadCpuNanos = -1;
         peakFile = minecraftServer.getWorldPath(LevelResource.ROOT).resolve("mainmod-peak-players.txt");
         peakOnlinePlayers = readPeak();
@@ -121,7 +126,13 @@ public final class MetricsServer {
 
         double millisecondsPerTick = minecraftServer.getAverageTickTimeNanos() / 1_000_000.0;
         MILLISECONDS_PER_TICK.set(millisecondsPerTick);
-        TICKS_PER_SECOND.set(Math.min(20.0, 1_000.0 / Math.max(1.0, millisecondsPerTick)));
+        long elapsedTickNanos = now - previousTickSampleNanos;
+        if (elapsedTickNanos > 0) {
+            int tickCount = minecraftServer.getTickCount();
+            TICKS_PER_SECOND.set(ticksPerSecond(tickCount - previousTickCount, elapsedTickNanos));
+            previousTickCount = tickCount;
+            previousTickSampleNanos = now;
+        }
         int loadedChunks = 0;
         int entities = 0;
         for (ServerLevel level : minecraftServer.getAllLevels()) {
@@ -135,6 +146,10 @@ public final class MetricsServer {
     }
 
     public static void stop() {
+        TICKS_PER_SECOND.set(Double.NaN);
+        previousTickSampleNanos = 0;
+        previousTickCount = 0;
+        nextUpdateNanos = 0;
         if (server != null) {
             server.close();
             server = null;
@@ -143,6 +158,10 @@ public final class MetricsServer {
 
     public static void recordPotionUse(DailyCharm charm) {
         POTIONS_USED.labelValues(charm.name().toLowerCase()).inc();
+    }
+
+    static double ticksPerSecond(int completedTicks, long elapsedNanos) {
+        return completedTicks * 1_000_000_000.0 / elapsedNanos;
     }
 
     private static Gauge gauge(String name, String help) {

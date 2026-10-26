@@ -134,6 +134,21 @@ tasks.register('checkMasteryDropGates', JavaExec) {
     enableAssertions = true
 }
 
+tasks.register('checkTickRate', JavaExec) {
+    group = 'verification'
+    classpath = sourceSets.minecraftCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.metrics.TickRateCheck'
+    enableAssertions = true
+}
+
+tasks.register('checkExplosiveFire', JavaExec) {
+    group = 'verification'
+    classpath = sourceSets.minecraftCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.advancements.ExplosiveFireCheck'
+    enableAssertions = true
+    args file('../datapacks/bacap-inventory-check/data/blazeandcave/advancement/weaponry/explosive_fire.json').absolutePath
+}
+
 tasks.register('checkGearEnchantments', JavaExec) {
     group = 'verification'
     classpath = sourceSets.minecraftCheck.runtimeClasspath
@@ -183,7 +198,7 @@ tasks.register('checkDailyCatalog', JavaExec) {
 
 tasks.named('check') {
     dependsOn 'checkMapResize', 'checkInsomniaPhantoms', 'checkFarmingBoots', 'checkMasteryDropGates', 'checkGearEnchantments', 'checkHopperFilterIdentity',
-            'checkDailyCatalog', 'checkFishingBounces', 'checkFishRarity', 'checkTeleportCompanions'
+            'checkDailyCatalog', 'checkFishingBounces', 'checkFishRarity', 'checkTeleportCompanions', 'checkTickRate', 'checkExplosiveFire'
 }
 
 def generatedResources = file("src/main/generated")

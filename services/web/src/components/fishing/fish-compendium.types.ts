@@ -120,8 +120,9 @@ export const TAGS: Record<
 		phrase: 'thunderstorms',
 	},
 	snowy: { emoji: '🌨️', label: 'Snowy', group: 'weather', phrase: 'snowfall' },
-	waxing: { emoji: '🌒', label: 'Waxing moon', group: 'moon', phrase: 'waxing moon phases' },
-	waning: { emoji: '🌘', label: 'Waning moon', group: 'moon', phrase: 'waning moon phases' },
+	// Match the lit sides of Minecraft's displayed moon phases.
+	waxing: { emoji: '🌘', label: 'Waxing moon', group: 'moon', phrase: 'waxing moon phases' },
+	waning: { emoji: '🌒', label: 'Waning moon', group: 'moon', phrase: 'waning moon phases' },
 	fullmoon: { emoji: '🌕', label: 'Full moon', group: 'moon', phrase: 'a full moon' },
 	newmoon: { emoji: '🌑', label: 'New moon', group: 'moon', phrase: 'a new moon' },
 };

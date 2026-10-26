@@ -21,7 +21,7 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm,
     public static final double EXTRA_JUMP_VELOCITY = LivingEntity.BASE_JUMP_POWER;
     private static final double HORIZONTAL_BOOST = 0.15D;
     private static final double SPRINT_HORIZONTAL_BOOST = 0.28D;
-    // Keep this tag until landing so swapping gear or reconnecting cannot grant more jumps.
+    // Keep this tag until landing, swimming, or climbing so swapping gear or reconnecting cannot grant more jumps.
     private static final String AIRBORNE_TAG = "mainmod.winged_shoes_jump";
 
     // How long a second jump press stays buffered.
@@ -49,7 +49,7 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm,
     @Override
     public void onTick(ServerPlayer player, ServerLevel level) {
         JumpState state = jumpStates.get(player);
-        if (player.onGround()) {
+        if (player.onGround() || player.isInWater() || player.onClimbable()) {
             player.removeTag(AIRBORNE_TAG);
             if (state != null) {
                 state.usedJumps = 0;
@@ -70,7 +70,7 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm,
             if (hasActiveJump(player)) state.usedJumps = getExtraJumpsForLevel(charmLevel);
             jumpStates.put(player, state);
         }
-        if (player.onGround()) return;
+        if (player.onGround() || player.isInWater() || player.onClimbable()) return;
 
         state.airTicks++;
         if (player.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)) {

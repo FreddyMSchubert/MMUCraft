@@ -76,6 +76,10 @@
 	grid-template-columns: 1fr;
 }
 
+.countdownGrid-3 > :first-child {
+	grid-column: 1 / -1;
+}
+
 .countdownCard {
 	position: relative;
 	display: grid;

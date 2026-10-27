@@ -155,7 +155,8 @@ public final class MmuCraftVelocity {
                         event.setResult(ResultedEvent.ComponentResult.denied(
                                 Messages.access(access, event.getPlayer().getUsername())
                         ));
-                    } else if (!admit(event.getPlayer(), new CapacityRole(access.member(), access.exempt()),
+                    } else if (!admit(event.getPlayer(), new CapacityRole(access.member(), access.exempt(),
+                            access.maintenanceAllowed()),
                             access.preferredServerName())) {
                         event.setResult(ResultedEvent.ComponentResult.denied(Messages.waitingRoomUnavailable()));
                     } else {
@@ -434,7 +435,8 @@ public final class MmuCraftVelocity {
         if (response.playerRoles() != null) {
             for (ApiClient.PlayerRole player : response.playerRoles()) {
                 parseUuid(player.uuid()).ifPresent(uuid -> {
-                    capacityRoles.put(uuid, new CapacityRole(player.member(), player.exempt()));
+                    capacityRoles.put(uuid, new CapacityRole(player.member(), player.exempt(),
+                            player.maintenanceAllowed()));
                     waiting.computeIfPresent(uuid, (id, entry) ->
                             new QueueEntry(player.member(), entry.order(), entry.destination()));
                 });
@@ -449,11 +451,12 @@ public final class MmuCraftVelocity {
         maintenanceMode = response.maintenanceMode();
         if (maintenanceMode) {
             manualDestinations.keySet().removeIf(uuid ->
-                    !capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST).exempt());
+                    !capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST).maintenanceAllowed());
             temporaryDestinations.keySet().removeIf(uuid ->
-                    !capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST).exempt());
+                    !capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST).maintenanceAllowed());
             proxy.getAllPlayers().stream()
-                    .filter(player -> !capacityRoles.getOrDefault(player.getUniqueId(), CapacityRole.LOWEST).exempt())
+                    .filter(player -> !capacityRoles.getOrDefault(player.getUniqueId(), CapacityRole.LOWEST)
+                            .maintenanceAllowed())
                     .forEach(player -> player.disconnect(Messages.maintenance()));
         }
 
@@ -737,8 +740,8 @@ public final class MmuCraftVelocity {
 
     private record QueueEntry(boolean member, long order, String destination) { }
 
-    private record CapacityRole(boolean member, boolean exempt) {
-        static final CapacityRole LOWEST = new CapacityRole(false, false);
+    private record CapacityRole(boolean member, boolean exempt, boolean maintenanceAllowed) {
+        static final CapacityRole LOWEST = new CapacityRole(false, false, false);
     }
 
     private static final class CapacityWarning {
@@ -910,7 +913,8 @@ public final class MmuCraftVelocity {
 
     private synchronized RegisteredServer targetFor(Player player) {
         UUID uuid = player.getUniqueId();
-        if (maintenanceMode && !capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST).exempt()) return null;
+        if (maintenanceMode && !capacityRoles.getOrDefault(uuid, CapacityRole.LOWEST).maintenanceAllowed())
+            return null;
         if (waiting.containsKey(uuid) || visitors.containsKey(uuid)) return managedServers.get("waiting-room");
         String name = temporaryDestinations.getOrDefault(uuid, manualDestinations.get(uuid));
         if (name == null && player.getCurrentServer().isEmpty())

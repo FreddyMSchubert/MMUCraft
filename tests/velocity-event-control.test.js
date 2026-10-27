@@ -151,10 +151,11 @@ test('only the designated MMU admin account bypasses player caps', () => {
 	assert.equal(service.authorizePlayer(uuid, 'Admin').exempt, true);
 });
 
-test('only the MMU admin account enters during maintenance or a ban', () => {
+test('committee can enter during maintenance but bans still apply', () => {
 	const service = Object.create(VelocityService.prototype);
 	service.settings = () => ({ maintenance_mode: 1 });
-	service.bans = { resolve: () => ({ active: true, expiresAtUnixMs: null }) };
+	let banned = false;
+	service.bans = { resolve: () => ({ active: banned, expiresAtUnixMs: null }) };
 	service.preferredServer = () => 'main';
 	service.identities = {
 		resolveAndRefresh: () => ({ id: 1, email: 'mmuminecraftsociety@gmail.com', is_member: 0 }),
@@ -165,8 +166,19 @@ test('only the MMU admin account enters during maintenance or a ban', () => {
 		email: 'committee@example.com',
 		is_committee: 1,
 	});
-	assert.equal(service.authorizePlayer(uuid, 'Committee').status, 'MAINTENANCE');
-	service.settings = () => ({ maintenance_mode: 0 });
+	const committeeAccess = service.authorizePlayer(uuid, 'Committee');
+	assert.deepEqual(
+		[committeeAccess.status, committeeAccess.exempt, committeeAccess.maintenanceAllowed],
+		['ALLOWED', false, true],
+	);
+	service.identities.resolveAndRefresh = () => ({ id: 3, email: 'member@example.com' });
+	assert.equal(service.authorizePlayer(uuid, 'Member').status, 'MAINTENANCE');
+	service.identities.resolveAndRefresh = () => ({
+		id: 2,
+		email: 'committee@example.com',
+		is_committee: 1,
+	});
+	banned = true;
 	assert.equal(service.authorizePlayer(uuid, 'Committee').status, 'BANNED');
 	const signin = Object.create(AuthSigninService.prototype);
 	signin.bans = service.bans;
@@ -175,6 +187,34 @@ test('only the MMU admin account enters during maintenance or a ban', () => {
 		false,
 	);
 	assert.throws(() => signin.requirePlayerNotBanned({ id: 2, email: 'committee@example.com' }));
+});
+
+test('maintenance control sync keeps committee distinct from capacity exemptions', () => {
+	const service = Object.create(VelocityService.prototype);
+	service.commands = new Map();
+	service.pendingQueued = new Map();
+	service.identities = {
+		findByUuid: () => ({ id: 2, email: 'committee@example.com', is_committee: 1 }),
+	};
+	service.bans = { resolve: () => ({ active: false }) };
+	service.settings = () => ({ maintenance_mode: 1, event_override: null });
+	service.servers = () => [];
+	service.eventRoute = () => ({ revision: 'main', targetServerName: 'main' });
+	const response = service.synchronize({
+		players: [
+			{
+				uuid,
+				sessionId: '00000000-0000-4000-8000-000000000001',
+				username: 'Committee',
+				serverName: 'waiting-room',
+				state: 'queued',
+				targetServerName: 'main',
+			},
+		],
+	});
+	assert.deepEqual(response.playerRoles, [
+		{ uuid, member: false, exempt: false, maintenanceAllowed: true },
+	]);
 });
 
 test('a new live event routes everyone to it except players who chose main for this event', () => {

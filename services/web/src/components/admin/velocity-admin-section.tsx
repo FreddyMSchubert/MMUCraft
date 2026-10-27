@@ -201,7 +201,7 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 					<h3>Maintenance mode</h3>
 					<p>
 						Velocity blocks entry before a player reaches a backend server, except for
-						the MMU admin account.
+						committee members and the MMU admin account.
 					</p>
 				</div>
 				<label className="maintenanceToggle">

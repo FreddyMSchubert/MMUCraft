@@ -123,7 +123,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 
 		const user = this.identities.resolveAndRefresh(uuid, username);
 		const exempt = isExemptAdmin(user);
-		if (this.settings().maintenance_mode === 1 && !exempt)
+		if (this.settings().maintenance_mode === 1 && !isMaintenanceAllowed(user))
 			return { status: 'MAINTENANCE', websiteUrl: this.websiteUrl() };
 		if (user) {
 			const ban = this.bans.resolve(user.id);
@@ -138,6 +138,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 				status: 'ALLOWED',
 				member: user.is_member === 1,
 				exempt,
+				maintenanceAllowed: isMaintenanceAllowed(user),
 				websiteUrl: this.websiteUrl(),
 				preferredServerName: this.preferredServer(uuid),
 			};
@@ -235,6 +236,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 					uuid: player.uuid,
 					member: user?.is_member === 1,
 					exempt: user ? isExemptAdmin(user) : false,
+					maintenanceAllowed: isMaintenanceAllowed(user),
 				};
 			}),
 			servers: [
@@ -420,7 +422,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			.run();
 		if (enabledInput)
 			for (const [id, command] of this.commands)
-				if (!isExemptAdmin(this.identities.findByUuid(command.playerUuid)))
+				if (!isMaintenanceAllowed(this.identities.findByUuid(command.playerUuid)))
 					this.commands.delete(id);
 		return { ok: true, maintenanceMode: enabledInput };
 	}
@@ -429,7 +431,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		const uuid = normalizeMinecraftUuid(uuidInput);
 		const user = uuid ? this.identities.findByUuid(uuid) : null;
 		if (!uuid || !user) throw new NotFoundException('Player not found');
-		if (this.settings().maintenance_mode === 1 && !isExemptAdmin(user))
+		if (this.settings().maintenance_mode === 1 && !isMaintenanceAllowed(user))
 			throw new ConflictException('Maintenance mode blocks this player');
 		const serverId = parseSafeInteger(serverIdInput, 'Select a server');
 		const server = this.database.connection
@@ -814,4 +816,8 @@ function parseSafeInteger(value: unknown, message: string) {
 
 function isExemptAdmin(user: UserRow | null | undefined) {
 	return user?.email.toLowerCase() === ADMIN_SIGNUP_EMAIL;
+}
+
+function isMaintenanceAllowed(user: UserRow | null | undefined) {
+	return isExemptAdmin(user) || user?.is_committee === 1 || user?.is_super_admin === 1;
 }

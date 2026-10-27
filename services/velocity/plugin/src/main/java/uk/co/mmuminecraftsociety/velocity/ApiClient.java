@@ -74,7 +74,8 @@ final class ApiClient {
     record ConnectedResponse(boolean ok) { }
 
     record AccessDecision(String status, String code, Long expiresAtUnixMs, String websiteUrl,
-                          String preferredServerName, boolean member, boolean exempt) { }
+                          String preferredServerName, boolean member, boolean exempt,
+                          boolean maintenanceAllowed) { }
 
     record SyncRequest(
             List<ServerHealth> servers,
@@ -98,7 +99,7 @@ final class ApiClient {
 
     record BackendServer(String name, String address, Integer maxPlayers) { }
 
-    record PlayerRole(String uuid, boolean member, boolean exempt) { }
+    record PlayerRole(String uuid, boolean member, boolean exempt, boolean maintenanceAllowed) { }
 
     record Route(String revision, String targetServerName, boolean eventOpen) { }
 

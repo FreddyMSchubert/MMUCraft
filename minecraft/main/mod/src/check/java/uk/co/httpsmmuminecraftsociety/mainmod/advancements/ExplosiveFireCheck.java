@@ -6,31 +6,24 @@ import com.mojang.serialization.JsonOps;
 import net.minecraft.SharedConstants;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
-import net.minecraft.advancements.predicates.SlotsPredicate;
-import net.minecraft.advancements.triggers.InventoryChangeTrigger;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderOwner;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.registries.VanillaRegistries;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.EntityEquipment;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.SlotAccess;
-import net.minecraft.world.entity.SlotProvider;
+import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.inventory.SlotRanges;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ChargedProjectiles;
@@ -41,8 +34,6 @@ import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.GearEnchantmentSanitiz
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
 
 public final class ExplosiveFireCheck {
     public static void main(String[] args) throws Exception {
@@ -58,36 +49,20 @@ public final class ExplosiveFireCheck {
         Advancement advancement = Advancement.CODEC.parse(ops, json).getOrThrow();
         assert advancement.criteria().size() == 3;
         assert advancement.requirements().requirements().equals(List.of(List.of("crossbow", "inventory", "offhand")));
-
-        Map<String, SlotsPredicate> checks = new HashMap<>();
         for (String name : List.of("crossbow", "inventory", "offhand")) {
-            AdvancementProgress progress = new AdvancementProgress();
-            progress.update(advancement.requirements());
-            assert !progress.isDone();
-            assert progress.grantProgress(name) && progress.isDone();
-            var criterion = (InventoryChangeTrigger.TriggerInstance) advancement.criteria().get(name).triggerInstance();
-            assert criterion.items().isEmpty(); // An unrelated changed stack must still check the held crossbow.
-            assert criterion.matches(null, new ItemStack(Items.DIRT), 0, 0, 0);
-            JsonObject slots = json.getAsJsonObject("criteria").getAsJsonObject(name)
-                    .getAsJsonObject("conditions").getAsJsonObject("player")
-                    .getAsJsonObject("predicate").getAsJsonObject("slots");
-            checks.put(name, SlotsPredicate.CODEC.parse(ops, slots).getOrThrow());
+            assert json.getAsJsonObject("criteria").getAsJsonObject(name)
+                    .get("trigger").getAsString().equals("minecraft:impossible");
         }
+        assert json.get("parent").getAsString().equals("blazeandcave:weaponry/fireworks_display");
+        assert json.getAsJsonObject("rewards").get("function").getAsString()
+                .equals("bacap_rewards:weaponry/explosive_fire");
+        AdvancementProgress progress = new AdvancementProgress();
+        progress.update(advancement.requirements());
+        assert !progress.isDone();
 
-        ItemStack unloaded = new ItemStack(Items.CROSSBOW);
-        ItemStack arrow = crossbow(new ItemStack(Items.ARROW));
-        ItemStack rocket = new ItemStack(Items.FIREWORK_ROCKET);
-        rocket.set(DataComponents.CUSTOM_NAME, Component.literal("custom rocket"));
-        ItemStack firework = crossbow(rocket);
-        ItemStack multishot = new ItemStack(Items.CROSSBOW);
-        multishot.set(DataComponents.CHARGED_PROJECTILES,
-                ChargedProjectiles.ofNonEmpty(List.of(new ItemStack(Items.ARROW), rocket, new ItemStack(Items.ARROW))));
-        for (int position : new int[] {0, 9, SlotRanges.nameToIds("weapon.offhand").slots().getInt(0)}) {
-            assert !matches(checks, unloaded, position);
-            assert !matches(checks, arrow, position);
-            assert matches(checks, firework, position);
-            assert matches(checks, multishot, position);
-        }
+        ItemStack firework = new ItemStack(Items.CROSSBOW);
+        firework.set(DataComponents.CHARGED_PROJECTILES,
+                ChargedProjectiles.ofNonEmpty(List.of(new ItemStack(Items.FIREWORK_ROCKET))));
 
         SimpleContainer contents = new SimpleContainer(2);
         contents.setItem(0, firework);
@@ -158,25 +133,8 @@ public final class ExplosiveFireCheck {
         Counter sanitizedListener = new Counter(playerInventory);
         sanitizedMenu.addSlotListener(sanitizedListener);
         assert sanitizedListener.calls == 1;
-        System.out.printf("Explosive Fire checks passed. Unchanged chest/furnace-layout inventory callbacks: %d before, %d after.%n",
+        System.out.printf("Disabled Explosive Fire loads. Unchanged chest/furnace-layout inventory callbacks: %d before, %d after.%n",
                 oldCallbacks, newCallbacks);
-    }
-
-    private static ItemStack crossbow(ItemStack projectile) {
-        ItemStack crossbow = new ItemStack(Items.CROSSBOW);
-        crossbow.set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.ofNonEmpty(List.of(projectile)));
-        return crossbow;
-    }
-
-    private static boolean matches(Map<String, SlotsPredicate> checks, ItemStack stack, int position) {
-        EntityEquipment equipment = new EntityEquipment();
-        Inventory inventory = new Inventory(null, equipment);
-        if (position < 36) inventory.getNonEquipmentItems().set(position, stack);
-        else equipment.set(EquipmentSlot.OFFHAND, stack);
-        SlotProvider provider = slot -> SlotAccess.of(
-                () -> slot == position ? stack : ItemStack.EMPTY, ignored -> {});
-        return checks.values().stream().anyMatch(check -> check.matches(provider))
-                && FireworkLoadedCrossbowPredicate.matches(inventory);
     }
 
     private static AbstractContainerMenu openMenu(boolean furnace, Inventory inventory) {

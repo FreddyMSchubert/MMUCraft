@@ -54,6 +54,10 @@ public final class DailyTaskCatalogCheck {
             throw new IllegalStateException("Missing packaged daily advancement policy: " + advancementPolicy);
         }
         DailyAdvancementPolicy.load(JsonParser.parseString(Files.readString(advancementPolicy)).getAsJsonObject());
+        if (DailyAdvancementPolicy.allows(Identifier.parse("blazeandcave:weaponry/explosive_fire"),
+                Identifier.parse("blazeandcave:weaponry/root"))) {
+            throw new IllegalStateException("Disabled Explosive Fire can be selected as a daily advancement");
+        }
         checkAdvancementDropPolicy();
         Set<String> fakeItemIds = new HashSet<>();
         try (var paths = Files.walk(project.resolve("../data/data/items"))) {

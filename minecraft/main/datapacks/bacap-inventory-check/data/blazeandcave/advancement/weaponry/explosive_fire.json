@@ -13,54 +13,9 @@
 	"parent": "blazeandcave:weaponry/fireworks_display",
 	"rewards": { "function": "bacap_rewards:weaponry/explosive_fire" },
 	"criteria": {
-		"crossbow": {
-			"trigger": "minecraft:inventory_changed",
-			"conditions": {
-				"player": {
-					"type": "minecraft:entity_properties",
-					"entity": "this",
-					"predicate": {
-						"slots": {
-							"hotbar.*": {
-								"items": "minecraft:crossbow"
-							}
-						}
-					}
-				}
-			}
-		},
-		"inventory": {
-			"trigger": "minecraft:inventory_changed",
-			"conditions": {
-				"player": {
-					"type": "minecraft:entity_properties",
-					"entity": "this",
-					"predicate": {
-						"slots": {
-							"inventory.*": {
-								"items": "minecraft:crossbow"
-							}
-						}
-					}
-				}
-			}
-		},
-		"offhand": {
-			"trigger": "minecraft:inventory_changed",
-			"conditions": {
-				"player": {
-					"type": "minecraft:entity_properties",
-					"entity": "this",
-					"predicate": {
-						"slots": {
-							"weapon.offhand": {
-								"items": "minecraft:crossbow"
-							}
-						}
-					}
-				}
-			}
-		}
+		"crossbow": { "trigger": "minecraft:impossible" },
+		"inventory": { "trigger": "minecraft:impossible" },
+		"offhand": { "trigger": "minecraft:impossible" }
 	},
 	"requirements": [["crossbow", "inventory", "offhand"]]
 }

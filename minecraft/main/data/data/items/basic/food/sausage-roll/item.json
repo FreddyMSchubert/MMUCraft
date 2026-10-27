@@ -1,0 +1,40 @@
+{
+	"title": "Sausage Roll",
+	"id": "sausage-roll",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": [],
+	"consumable": {
+		"isDrink": false,
+		"consumeSeconds": 1.6,
+		"canAlwaysEat": false,
+		"hungerBars": 3,
+		"saturationBars": 4.5,
+		"directHearts": 0,
+		"useRemainderItem": "",
+		"effects": []
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "sausage-roll-pork",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["minecraft:bread", "minecraft:cooked_porkchop"],
+				"result": {
+					"stack": "mainmod:sausage-roll",
+					"count": 1
+				}
+			},
+			{
+				"id": "sausage-roll-mushroom",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["minecraft:bread", "minecraft:brown_mushroom"],
+				"result": {
+					"stack": "mainmod:sausage-roll",
+					"count": 1
+				}
+			}
+		]
+	}
+}

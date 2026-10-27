@@ -29,6 +29,7 @@
 		"SanitizeOpenedMenu",
 		"RecoverArmorContentsOnBreak",
 		"SoulboundItemBreakAdvancement",
+		"WingedShoesMaceSmashMixin",
 		"ReskinnedHelmetTick",
 		"decoBlocks.PlaceFakeItemsAsFrames",
 		"decoBlocks.NoDecoBlockFrameItemDrops",

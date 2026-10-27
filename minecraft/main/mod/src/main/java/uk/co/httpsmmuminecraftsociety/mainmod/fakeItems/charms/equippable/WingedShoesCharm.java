@@ -21,7 +21,7 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm,
     public static final double EXTRA_JUMP_VELOCITY = LivingEntity.BASE_JUMP_POWER;
     private static final double HORIZONTAL_BOOST = 0.15D;
     private static final double SPRINT_HORIZONTAL_BOOST = 0.28D;
-    // Keep this tag until landing, swimming, or climbing so swapping gear or reconnecting cannot grant more jumps.
+    // Keep this tag until a jump reset so swapping gear or reconnecting cannot grant more jumps.
     private static final String AIRBORNE_TAG = "mainmod.winged_shoes_jump";
 
     // How long a second jump press stays buffered.
@@ -29,7 +29,7 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm,
 
     public static final int MIN_AIR_TICKS_BEFORE_EXTRA_JUMP = 3;
 
-    private final Map<ServerPlayer, JumpState> jumpStates = new WeakHashMap<>();
+    private static final Map<ServerPlayer, JumpState> jumpStates = new WeakHashMap<>();
 
     private static final class JumpState {
         int usedJumps;
@@ -46,17 +46,21 @@ public final class WingedShoesCharm implements Charm, EquippedTickCallbackCharm,
         return player.entityTags().contains(AIRBORNE_TAG);
     }
 
+    public static void resetJumps(ServerPlayer player) {
+        player.removeTag(AIRBORNE_TAG);
+        JumpState state = jumpStates.get(player);
+        if (state != null) {
+            state.usedJumps = 0;
+            state.releasedSinceJump = false;
+            state.jumpBuffer = 0;
+            state.airTicks = 0;
+        }
+    }
+
     @Override
     public void onTick(ServerPlayer player, ServerLevel level) {
-        JumpState state = jumpStates.get(player);
         if (player.onGround() || player.isInWater() || player.onClimbable()) {
-            player.removeTag(AIRBORNE_TAG);
-            if (state != null) {
-                state.usedJumps = 0;
-                state.releasedSinceJump = false;
-                state.jumpBuffer = 0;
-                state.airTicks = 0;
-            }
+            resetJumps(player);
         }
     }
 

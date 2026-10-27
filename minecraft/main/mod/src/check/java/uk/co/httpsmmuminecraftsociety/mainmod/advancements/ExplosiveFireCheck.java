@@ -10,7 +10,6 @@ import net.minecraft.advancements.predicates.SlotsPredicate;
 import net.minecraft.advancements.triggers.InventoryChangeTrigger;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderOwner;
-import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -22,6 +21,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.EntityEquipment;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.SlotProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -48,16 +48,6 @@ public final class ExplosiveFireCheck {
     public static void main(String[] args) throws Exception {
         SharedConstants.tryDetectVersion();
         Bootstrap.bootStrap();
-        // Standalone checks boot vanilla before the mod initializer; Fabric leaves this registry writable during mod init.
-        var frozen = MappedRegistry.class.getDeclaredField("frozen");
-        frozen.setAccessible(true);
-        frozen.setBoolean(BuiltInRegistries.DATA_COMPONENT_PREDICATE_TYPE, false);
-        FireworkLoadedCrossbowPredicate.register();
-        Identifier predicateId = Identifier.fromNamespaceAndPath("mainmod", "charged_firework");
-        var bind = Holder.Reference.class.getDeclaredMethod("bindValue", Object.class);
-        bind.setAccessible(true);
-        bind.invoke(BuiltInRegistries.DATA_COMPONENT_PREDICATE_TYPE.get(predicateId).orElseThrow(),
-                FireworkLoadedCrossbowPredicate.TYPE);
         var registries = VanillaRegistries.createWorldLookup();
         BuiltInRegistries.DATA_COMPONENT_INITIALIZERS.build(registries).forEach(components -> components.apply());
         JsonObject json;
@@ -179,9 +169,14 @@ public final class ExplosiveFireCheck {
     }
 
     private static boolean matches(Map<String, SlotsPredicate> checks, ItemStack stack, int position) {
+        EntityEquipment equipment = new EntityEquipment();
+        Inventory inventory = new Inventory(null, equipment);
+        if (position < 36) inventory.getNonEquipmentItems().set(position, stack);
+        else equipment.set(EquipmentSlot.OFFHAND, stack);
         SlotProvider provider = slot -> SlotAccess.of(
                 () -> slot == position ? stack : ItemStack.EMPTY, ignored -> {});
-        return checks.values().stream().anyMatch(check -> check.matches(provider));
+        return checks.values().stream().anyMatch(check -> check.matches(provider))
+                && FireworkLoadedCrossbowPredicate.matches(inventory);
     }
 
     private static AbstractContainerMenu openMenu(boolean furnace, Inventory inventory) {

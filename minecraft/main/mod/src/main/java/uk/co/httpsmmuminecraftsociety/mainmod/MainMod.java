@@ -41,7 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.httpsmmuminecraftsociety.mainmod.dataget.DataLoader;
 import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
-import uk.co.httpsmmuminecraftsociety.mainmod.advancements.FireworkLoadedCrossbowPredicate;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyEvents;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskRegistry;
@@ -103,7 +102,6 @@ public class MainMod implements ModInitializer {
 		Registry.register(BuiltInRegistries.FEATURE_TYPE,
 				Identifier.fromNamespaceAndPath(MOD_ID, "bottom_end_stone"),
 				BottomEndStoneFeature.CODEC);
-        FireworkLoadedCrossbowPredicate.register();
         BiomeModifications.addFeature(
                 BiomeSelectors.foundInTheEnd(),
                 GenerationStep.Decoration.UNDERGROUND_ORES,

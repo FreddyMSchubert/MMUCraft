@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.advancements.AdvancementDropGates;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.FireworkLoadedCrossbowPredicate;
 import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryDropGates;
 import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
@@ -21,6 +22,7 @@ import java.util.Set;
 
 @Mixin(PlayerAdvancements.class)
 public abstract class MasteryAdvancementVisibilityMixin {
+    private static final Identifier MAINMOD$EXPLOSIVE_FIRE = Identifier.parse("blazeandcave:weaponry/explosive_fire");
     @Shadow private ServerPlayer player;
     @Shadow public Set<AdvancementHolder> visible;
     @Shadow private Set<AdvancementHolder> progressChanged;
@@ -33,6 +35,11 @@ public abstract class MasteryAdvancementVisibilityMixin {
     @Inject(method = "award", at = @At("HEAD"), cancellable = true)
     private void mainmod$lockAwardUntilDrop(AdvancementHolder holder, String criterion,
             CallbackInfoReturnable<Boolean> ci) {
+        if (holder.id().equals(MAINMOD$EXPLOSIVE_FIRE)
+                && !FireworkLoadedCrossbowPredicate.matches(player.getInventory())) {
+            ci.setReturnValue(false);
+            return;
+        }
         AdvancementNode node = tree.get(holder);
         Identifier rootId = node == null ? holder.id() : node.root().holder().id();
         if (!AdvancementDropGates.isUnlocked(holder.id(), rootId)) ci.setReturnValue(false);

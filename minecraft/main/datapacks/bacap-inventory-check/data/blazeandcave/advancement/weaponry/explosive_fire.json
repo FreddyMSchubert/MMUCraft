@@ -22,8 +22,7 @@
 					"predicate": {
 						"slots": {
 							"hotbar.*": {
-								"items": "minecraft:crossbow",
-								"predicates": { "mainmod:charged_firework": {} }
+								"items": "minecraft:crossbow"
 							}
 						}
 					}
@@ -39,8 +38,7 @@
 					"predicate": {
 						"slots": {
 							"inventory.*": {
-								"items": "minecraft:crossbow",
-								"predicates": { "mainmod:charged_firework": {} }
+								"items": "minecraft:crossbow"
 							}
 						}
 					}
@@ -56,8 +54,7 @@
 					"predicate": {
 						"slots": {
 							"weapon.offhand": {
-								"items": "minecraft:crossbow",
-								"predicates": { "mainmod:charged_firework": {} }
+								"items": "minecraft:crossbow"
 							}
 						}
 					}

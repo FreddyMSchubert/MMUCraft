@@ -20,6 +20,10 @@ An item enchanted with ***SOULBOUND*** will attach to your soul, not your physic
 
 That is to say, you won't lose ***SOULBOUND*** items under the server's [death and respawning rules](/play/knowledge/death-and-respawning). They'll stay in your inventory.
 
+:::warning
+Soulbound only protects an item when it is directly in your inventory. A Soulbound item inside a backpack without Soulbound will not stay with you when you die.
+:::
+
 :::tip
 ***SOULBOUND*** can be applied to all armor and tools, but also to [*wallets*](/play/knowledge/wallets) and [*recovery compasses*](/play/knowledge/death-and-respawning). Those latter two especially are **supremely useful**.
 :::

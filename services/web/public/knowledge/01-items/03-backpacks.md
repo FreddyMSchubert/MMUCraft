@@ -71,7 +71,7 @@ The Bejeweled Backpack has 4 rows / 36 slots and is crafted like this:
 
 ## Withered Backpack
 
-The Withered Backpack has 5 rows / 45 slots and is crafted like this:
+The Withered Backpack has 5 rows / 45 slots. It won't burn when dropped into fire or lava. Craft it like this:
 
 ![Withered Backpack Crafting Recipe](/assets/knowledge/items/backpacks/withered.png)
 
@@ -81,7 +81,7 @@ The Withered Backpack has 5 rows / 45 slots and is crafted like this:
 
 ## Endless Backpack
 
-The Endless Backpack (not actually endless at all, sorry about that) has 6 rows / 54 slots and is crafted like this:
+The Endless Backpack (not actually endless at all, sorry about that) has 6 rows / 54 slots. It won't burn when dropped into fire or lava. Craft it like this:
 
 ![Endless Backpack Crafting Recipe](/assets/knowledge/items/backpacks/endless.png)
 

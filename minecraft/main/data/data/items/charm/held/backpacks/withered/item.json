@@ -4,10 +4,8 @@
 	"modelType": "basic",
 	"rarity": "legendary",
 	"maxStackSize": 1,
-	"tooltips": [
-		"Right click to open.",
-		"Holds 45 slots."
-	],
+	"fireproof": true,
+	"tooltips": ["Right click to open.", "Holds 45 slots."],
 	"charm": {
 		"charmId": 48,
 		"minLevel": 1,

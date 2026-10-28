@@ -76,7 +76,8 @@ export const DUCKS = [
 	{
 		id: 11,
 		itemId: 'duck-bugger',
-		condition: 'Find and report a bug. Thanks! (Must be previously not known, and impactful)',
+		condition:
+			'Find and report a previously unknown, impactful bug. Only bugs found on the main server count. Thanks!',
 		announcementReason: 'finding and reporting a bug',
 		manual: true,
 	},

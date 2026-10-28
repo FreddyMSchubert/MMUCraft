@@ -119,6 +119,10 @@ export function DucksTab() {
 					/>
 				))}
 			</div>
+			<p className="ducksFootnote">
+				Ducks are a small gesture for very dedicated players and people who were helpful.
+				You are not entitled to any ducks.
+			</p>
 		</section>
 	);
 }

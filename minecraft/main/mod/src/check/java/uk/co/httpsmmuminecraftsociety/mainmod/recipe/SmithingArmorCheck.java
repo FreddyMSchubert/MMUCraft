@@ -78,6 +78,7 @@ public final class SmithingArmorCheck {
 
         ItemStack upgraded = TransmuteRecipe.createWithOriginalComponents(
                 new ItemStackTemplate(Items.NETHERITE_CHESTPLATE), armor);
+        assert upgraded.getEnchantments().getLevel(boost) == 1;
         CharmorManager.updateArmorTooltip(upgraded);
         assert CharmorManager.calcCharmSlotCount(upgraded) == 4;
         assert upgraded.get(DataComponents.LORE).lines().get(4).getString().equals("4: -");
@@ -89,6 +90,7 @@ public final class SmithingArmorCheck {
         ItemStack ingot = fakeIngredient("enderite-ingot");
         ItemStack enderite = new EnderiteSmithingRecipe().assemble(
                 new SmithingRecipeInput(template, upgraded, ingot));
+        assert enderite.getEnchantments().getLevel(boost) == 1;
         assert CharmorManager.isEnderite(enderite);
         assert CharmorManager.armorMinified(enderite);
         assert CharmorManager.calcCharmSlotCount(enderite) == 6;

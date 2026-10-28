@@ -89,6 +89,13 @@
 	gap: 22px;
 }
 
+.ducksFootnote {
+	margin: 24px 4px 0;
+	color: #b4a788;
+	font-size: 0.75rem;
+	text-align: right;
+}
+
 .duckCard {
 	position: relative;
 	min-width: 0;

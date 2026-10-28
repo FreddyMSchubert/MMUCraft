@@ -156,6 +156,13 @@ tasks.register('checkGearEnchantments', JavaExec) {
     enableAssertions = true
 }
 
+tasks.register('checkSmithingArmor', JavaExec) {
+    group = 'verification'
+    classpath = sourceSets.minecraftCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.recipe.SmithingArmorCheck'
+    enableAssertions = true
+}
+
 tasks.register('checkHopperFilterIdentity', JavaExec) {
     group = 'verification'
     classpath = sourceSets.minecraftCheck.runtimeClasspath
@@ -197,7 +204,7 @@ tasks.register('checkDailyCatalog', JavaExec) {
 }
 
 tasks.named('check') {
-    dependsOn 'checkMapResize', 'checkInsomniaPhantoms', 'checkFarmingBoots', 'checkMasteryDropGates', 'checkGearEnchantments', 'checkHopperFilterIdentity',
+    dependsOn 'checkMapResize', 'checkInsomniaPhantoms', 'checkFarmingBoots', 'checkMasteryDropGates', 'checkGearEnchantments', 'checkSmithingArmor', 'checkHopperFilterIdentity',
             'checkDailyCatalog', 'checkFishingBounces', 'checkFishRarity', 'checkTeleportCompanions', 'checkTickRate', 'checkExplosiveFire'
 }
 

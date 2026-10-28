@@ -37,6 +37,7 @@
 		"decoBlocks.RemoveDecoBlockLights",
 		"decoBlocks.BreakDecoBlockFrameWithLight",
 		"UpdateArmorTooltipAfterAnvilUse",
+		"UpdateArmorAfterSmithing",
 		"KittyPajamaScareCreeper",
 		"ChargedCreeperSpawnMixin",
 		"NoSoulboundItemDropping",

@@ -63,14 +63,13 @@ public class CaveSpiderPajamasCharm implements Charm, EquippedTickCallbackCharm,
         int useTicks = PLAYER_USE_TICKS.getOrDefault(player.getUUID(), 0);
         if (useTicks >= getMaxHoldTicksPerLevel(charmLevel))
         {
-            PLAYER_USE_TICKS.remove(player.getUUID());
             return;
         }
         PLAYER_USE_TICKS.put(player.getUUID(), useTicks + 1);
 
         player.addEffect(new MobEffectInstance(
                 MobEffects.LEVITATION,
-                1,
+                2,
                 1,
                 false,
                 false,

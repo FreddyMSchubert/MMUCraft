@@ -23,6 +23,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Vex;
@@ -59,7 +60,9 @@ public final class ThunderRitual {
     private static final String STAND_TAG = "mainmod.thunder_ritual_stand";
     private static final String TRIDENT_TAG = "mainmod.thunder_ritual_checked";
     private static final String COSMETIC_ID = "cosmetic-warden-antlers";
+    private static final String VOICE_NAME = "XXXXXXXXXXXXXXXXXXXX";
     private static final Map<UUID, Session> SESSIONS = new HashMap<>();
+    private static final List<PendingCopper> PENDING_COPPER = new ArrayList<>();
     private static final List<Offering> OFFERINGS = List.of(
             new Offering(null, "soul", 1, 1, "I crave a sacrifice of the truest kind. Cast {count} soul before me."),
             new Offering(null, "soul-shard", 3, 7, "Gather what remains of the lost. I demand {count} soul shards."),
@@ -85,6 +88,7 @@ public final class ThunderRitual {
         });
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             for (UUID playerId : List.copyOf(SESSIONS.keySet())) end(playerId);
+            PENDING_COPPER.clear();
         });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> end(handler.player.getUUID()));
         PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {
@@ -115,14 +119,24 @@ public final class ThunderRitual {
                 if (trident.addTag(TRIDENT_TAG)) begin(player);
             }
         });
+        ServerTickEvents.START_SERVER_TICK.register(server -> {
+            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                if (!player.isSleeping() || !player.level().isThundering()) continue;
+                player.stopSleepInBed(true, true);
+                player.sendSystemMessage(Component.literal(
+                        "You got scared out of bed. Sleeping during thunderstorms isn't possible."), true);
+            }
+        });
         ServerTickEvents.END_SERVER_TICK.register(ThunderRitual::tick);
     }
 
     private static void begin(ServerPlayer player) {
         if (player.getXRot() > -80 || SESSIONS.containsKey(player.getUUID())
-                || player.level().dimension() != Level.OVERWORLD) return;
+                || player.level().dimension() != Level.OVERWORLD || !player.onGround()) return;
         ServerLevel level = (ServerLevel) player.level();
-        BlockPos center = player.blockPosition().below();
+        BlockPos lecternPos = player.getOnPos();
+        if (!level.getBlockState(lecternPos).is(Blocks.LECTERN)) return;
+        BlockPos center = lecternPos.below();
         if (!valid(level, center) || SESSIONS.values().stream().anyMatch(session -> session.center.equals(center))) return;
 
         int day = moonDay(level.getOverworldClockTime());
@@ -209,6 +223,12 @@ public final class ThunderRitual {
     }
 
     private static void tick(MinecraftServer server) {
+        PENDING_COPPER.removeIf(pending -> {
+            if (server.getTickCount() < pending.readyTick || !allChunksLoaded(pending.level, pending.center))
+                return false;
+            randomizeCopper(pending.level, pending.center);
+            return true;
+        });
         for (Session session : List.copyOf(SESSIONS.values())) {
             ServerPlayer player = server.getPlayerList().getPlayer(session.playerId);
             if (player == null) {
@@ -233,6 +253,7 @@ public final class ThunderRitual {
             for (ItemEntity entity : session.level.getEntitiesOfClass(ItemEntity.class, area)) {
                 ItemStack stack = entity.getItem();
                 if (!session.offering.matches(stack)) continue;
+                ServerPlayer submitter = entity.getOwner() instanceof ServerPlayer thrower ? thrower : player;
                 int consumed = Math.min(session.remaining, stack.getCount());
                 stack.shrink(consumed);
                 session.remaining -= consumed;
@@ -241,7 +262,7 @@ public final class ThunderRitual {
                 session.level.sendParticles(ParticleTypes.ELECTRIC_SPARK, entity.getX(), entity.getY(), entity.getZ(),
                         12, 0.25, 0.3, 0.25, 0.03);
                 if (session.remaining == 0) {
-                    finish(session, player);
+                    finish(session, player, submitter);
                     break;
                 }
             }
@@ -254,7 +275,7 @@ public final class ThunderRitual {
         return true;
     }
 
-    private static void finish(Session session, ServerPlayer player) {
+    private static void finish(Session session, ServerPlayer player, ServerPlayer submitter) {
         ServerLevel level = session.level;
         boolean exposedToRain = level.isRainingAt(player.blockPosition().above());
         say(player, randomLine(SATISFIED, level));
@@ -268,7 +289,14 @@ public final class ThunderRitual {
             weather.setRainTime(12_000);
             weather.setThundering(true);
             weather.setThunderTime(12_000);
-            level.playSound(null, session.center, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 2F, 1F);
+            for (int x : new int[]{-2, 2}) for (int z : new int[]{-2, 2}) {
+                BlockPos rod = session.center.offset(x, 1, z);
+                strike(level, rod.getX() + 0.5, rod.getY() + 1, rod.getZ() + 0.5, true);
+            }
+            if (level.getRandom().nextInt(10) == 0)
+                strike(level, submitter.getX(), submitter.getY(), submitter.getZ(), false);
+            // Even visual-only lightning clears copper; restore the ritual's random weathering after it ticks.
+            PENDING_COPPER.add(new PendingCopper(level, session.center, level.getServer().getTickCount() + 1));
         } else {
             int count = 1 + level.getRandom().nextInt(5);
             for (int i = 0; i < count; i++) {
@@ -284,7 +312,30 @@ public final class ThunderRitual {
         end(session.playerId);
     }
 
+    private static void strike(ServerLevel level, double x, double y, double z, boolean visualOnly) {
+        LightningBolt bolt = EntityTypes.LIGHTNING_BOLT.create(level, EntitySpawnReason.EVENT);
+        if (bolt == null) return;
+        bolt.setPos(x, y, z);
+        bolt.setVisualOnly(visualOnly);
+        level.addFreshEntity(bolt);
+    }
+
     private static void destroy(ServerLevel level, BlockPos center) {
+        for (int x : new int[]{-1, 1}) for (int z : new int[]{-1, 1})
+            level.destroyBlock(center.offset(x, 1, z), false);
+        randomizeCopper(level, center);
+        BlockPos lecternPos = center.above();
+        if (level.getBlockEntity(lecternPos) instanceof net.minecraft.world.level.block.entity.LecternBlockEntity lectern)
+            lectern.clearContent();
+        level.destroyBlock(lecternPos, false);
+        ItemEntity charcoal = new ItemEntity(level, lecternPos.getX() + 0.5, lecternPos.getY() + 0.5,
+                lecternPos.getZ() + 0.5, new ItemStack(Items.CHARCOAL, 1 + level.getRandom().nextInt(5)));
+        level.addFreshEntity(charcoal);
+        level.sendParticles(ParticleTypes.ELECTRIC_SPARK, center.getX() + 0.5, center.getY() + 1.5,
+                center.getZ() + 0.5, 60, 2, 0.5, 2, 0.1);
+    }
+
+    private static void randomizeCopper(ServerLevel level, BlockPos center) {
         Block[] blocks = {
                 Blocks.COPPER_BLOCK.weathering().unaffected(), Blocks.COPPER_BLOCK.weathering().exposed(),
                 Blocks.COPPER_BLOCK.weathering().weathered(), Blocks.COPPER_BLOCK.weathering().oxidized()
@@ -299,26 +350,21 @@ public final class ThunderRitual {
         };
         for (int x = -2; x <= 2; x++) for (int z = -2; z <= 2; z++) {
             BlockPos pos = center.offset(x, 0, z);
-            if (Math.abs(x) == 1 && Math.abs(z) == 1) level.destroyBlock(pos.above(), false);
             if (Math.abs(x) == 2 && Math.abs(z) == 2) {
                 oxidize(level, pos, blocks);
                 oxidize(level, pos.above(), rods);
             } else if (Math.abs(x) == 2 || Math.abs(z) == 2) oxidize(level, pos, stairs);
         }
-        BlockPos lecternPos = center.above();
-        if (level.getBlockEntity(lecternPos) instanceof net.minecraft.world.level.block.entity.LecternBlockEntity lectern)
-            lectern.clearContent();
-        level.destroyBlock(lecternPos, false);
-        ItemEntity charcoal = new ItemEntity(level, lecternPos.getX() + 0.5, lecternPos.getY() + 0.5,
-                lecternPos.getZ() + 0.5, new ItemStack(Items.CHARCOAL, 1 + level.getRandom().nextInt(5)));
-        level.addFreshEntity(charcoal);
-        level.sendParticles(ParticleTypes.ELECTRIC_SPARK, center.getX() + 0.5, center.getY() + 1.5,
-                center.getZ() + 0.5, 60, 2, 0.5, 2, 0.1);
     }
 
     private static void oxidize(ServerLevel level, BlockPos pos, Block[] states) {
         BlockState old = level.getBlockState(pos);
-        if (old.is(states[0])) level.setBlock(pos, states[level.getRandom().nextInt(states.length)].withPropertiesOf(old), 3);
+        for (Block state : states) {
+            if (old.is(state)) {
+                level.setBlock(pos, states[level.getRandom().nextInt(states.length)].withPropertiesOf(old), 3);
+                return;
+            }
+        }
     }
 
     private static void end(UUID playerId) {
@@ -347,7 +393,13 @@ public final class ThunderRitual {
     }
 
     private static void say(ServerPlayer player, String words) {
-        player.sendSystemMessage(Component.literal("The Stormbound: ").withStyle(ChatFormatting.DARK_AQUA, ChatFormatting.BOLD)
+        player.sendSystemMessage(Component.literal("<").withStyle(ChatFormatting.DARK_AQUA)
+                .append(Component.literal(VOICE_NAME.substring(0, 7)).withStyle(ChatFormatting.OBFUSCATED))
+                .append(" ")
+                .append(Component.literal(VOICE_NAME.substring(7, 17)).withStyle(ChatFormatting.OBFUSCATED))
+                .append(" ")
+                .append(Component.literal(VOICE_NAME.substring(17)).withStyle(ChatFormatting.OBFUSCATED))
+                .append("> ")
                 .append(Component.literal(words).withStyle(ChatFormatting.GOLD)));
     }
 
@@ -403,4 +455,6 @@ public final class ThunderRitual {
             this.remaining = remaining;
         }
     }
+
+    private record PendingCopper(ServerLevel level, BlockPos center, int readyTick) {}
 }

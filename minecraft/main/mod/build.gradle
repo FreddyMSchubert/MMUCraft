@@ -113,6 +113,13 @@ tasks.register('checkMapResize', JavaExec) {
     doFirst { workingDir.mkdirs() }
 }
 
+tasks.register('checkThunderRitual', JavaExec) {
+    group = 'verification'
+    classpath = sourceSets.minecraftCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.thunder.ThunderRitualCheck'
+    enableAssertions = true
+}
+
 tasks.register('checkInsomniaPhantoms', JavaExec) {
     group = 'verification'
     classpath = sourceSets.minecraftCheck.runtimeClasspath
@@ -204,7 +211,7 @@ tasks.register('checkDailyCatalog', JavaExec) {
 }
 
 tasks.named('check') {
-    dependsOn 'checkMapResize', 'checkInsomniaPhantoms', 'checkFarmingBoots', 'checkMasteryDropGates', 'checkGearEnchantments', 'checkSmithingArmor', 'checkHopperFilterIdentity',
+    dependsOn 'checkMapResize', 'checkThunderRitual', 'checkInsomniaPhantoms', 'checkFarmingBoots', 'checkMasteryDropGates', 'checkGearEnchantments', 'checkSmithingArmor', 'checkHopperFilterIdentity',
             'checkDailyCatalog', 'checkFishingBounces', 'checkFishRarity', 'checkTeleportCompanions', 'checkTickRate', 'checkExplosiveFire'
 }
 

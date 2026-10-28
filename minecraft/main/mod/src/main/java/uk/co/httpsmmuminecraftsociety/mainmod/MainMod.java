@@ -79,6 +79,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
 import uk.co.httpsmmuminecraftsociety.mainmod.playerpotions.PlayerDisguises;
 import uk.co.httpsmmuminecraftsociety.mainmod.playerpotions.SkinColors;
 import uk.co.httpsmmuminecraftsociety.mainmod.worldgen.BottomEndStoneFeature;
+import uk.co.httpsmmuminecraftsociety.mainmod.thunder.ThunderRitual;
 import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
 import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
@@ -134,6 +135,7 @@ public class MainMod implements ModInitializer {
         DailyEvents.register();
         MainModRecipes.register();
         GliderFlight.init();
+        ThunderRitual.init();
 
         ServerLifecycleEvents.SERVER_STARTED.register(this::registerGamerules);
         ServerLifecycleEvents.SERVER_STARTED.register(PlayerCommandWhitelist::apply);

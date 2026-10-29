@@ -13,7 +13,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -43,8 +45,8 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.StairsShape;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 
 import java.io.BufferedReader;
@@ -61,13 +63,16 @@ public final class ThunderRitual {
     private static final String TRIDENT_TAG = "mainmod.thunder_ritual_checked";
     private static final String COSMETIC_ID = "cosmetic-warden-antlers";
     private static final String VOICE_NAME = "XXXXXXXXXXXXXXXXXXXX";
+    private static final Identifier WISH_STORAGE = Identifier.fromNamespaceAndPath("mainmod", "thunder_ritual_wish");
     private static final Map<UUID, Session> SESSIONS = new HashMap<>();
     private static final List<PendingCopper> PENDING_COPPER = new ArrayList<>();
+    private static Wish wish;
     private static final List<Offering> OFFERINGS = List.of(
             new Offering(null, "soul", 1, 1, "I crave a sacrifice of the truest kind. Cast {count} soul before me."),
             new Offering(null, "soul-shard", 3, 7, "Gather what remains of the lost. I demand {count} soul shards."),
             new Offering(Items.AMETHYST_SHARD, null, 4, 8, "Let the earth sing beneath my storm. Bring {count} amethyst shards."),
-            new Offering(Items.COPPER_INGOT, null, 3, 9, "The heavens require a conductor. Offer {count} copper ingots."),
+            new Offering(Items.COPPER_BLOCK.weathering().unaffected(), null, 4, 8,
+                    "The heavens require a conductor. Offer {count} copper blocks."),
             new Offering(Items.ECHO_SHARD, null, 2, 4, "The deep remembers every thunderclap. Yield {count} echo shards."),
             new Offering(Items.GHAST_TEAR, null, 2, 5, "Even the Nether must weep for rain. Give me {count} ghast tears."),
             new Offering(Items.HEART_OF_THE_SEA, null, 1, 1, "The sea keeps a heart of its own. Surrender {count} heart of the sea."),
@@ -76,6 +81,11 @@ public final class ThunderRitual {
     private static final List<String> GREETINGS = lines("greetings");
     private static final List<String> SATISFIED = lines("satisfied");
     private static final List<String> GOODBYES = lines("goodbyes");
+    private static final List<String> FULL_MOON = lines("full_moon");
+    private static final List<String> FULL_MOON_EVE = lines("full_moon_eve");
+    private static final List<String> NO_RAIN = lines("no_rain");
+    private static final List<String> COVERED = lines("covered");
+    private static final List<String> INVALID_ALTAR = lines("invalid_altar");
 
     private ThunderRitual() {}
 
@@ -85,10 +95,12 @@ public final class ThunderRitual {
             for (Offering offering : OFFERINGS) {
                 if (offering.fakeId() != null) FakeItems.requireFakeItem(offering.fakeId());
             }
+            wish = loadWish(server);
         });
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             for (UUID playerId : List.copyOf(SESSIONS.keySet())) end(playerId);
             PENDING_COPPER.clear();
+            wish = null;
         });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> end(handler.player.getUUID()));
         PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {
@@ -137,20 +149,32 @@ public final class ThunderRitual {
         BlockPos lecternPos = player.getOnPos();
         if (!level.getBlockState(lecternPos).is(Blocks.LECTERN)) return;
         BlockPos center = lecternPos.below();
-        if (!valid(level, center) || SESSIONS.values().stream().anyMatch(session -> session.center.equals(center))) return;
+        if (SESSIONS.values().stream().anyMatch(session -> session.center.equals(center))) return;
+        if (!valid(level, center)) {
+            say(player, randomLine(INVALID_ALTAR, level));
+            return;
+        }
 
         int day = moonDay(level.getOverworldClockTime());
         if (day == 0) {
-            say(player, "Silence. I am busy celebrating the gorgeous full moon.");
+            say(player, randomLine(FULL_MOON, level));
             return;
         }
         if (day == 7) {
-            say(player, "Silence. The gorgeous full moon is coming up.");
+            say(player, randomLine(FULL_MOON_EVE, level));
+            return;
+        }
+        BlockPos sky = center.above(2);
+        if (!openSky(level, sky)) {
+            reject(level, center, player, randomLine(COVERED, level));
+            return;
+        }
+        if (!level.isRainingAt(sky)) {
+            reject(level, center, player, randomLine(NO_RAIN, level));
             return;
         }
 
-        Vec3 look = player.getLookAngle();
-        BlockPos rod = center.offset(cornerOffset(look.x), 0, cornerOffset(look.z));
+        BlockPos rod = selectedRod(center, player.getX(), player.getZ(), player.getYRot());
         ArmorStand stand = new ArmorStand(EntityTypes.ARMOR_STAND, level);
         stand.setPos(rod.getX() + 0.5, rod.getY() + 2, rod.getZ() + 0.5);
         stand.setInvisible(true);
@@ -160,19 +184,17 @@ public final class ThunderRitual {
         stand.lookAt(EntityAnchorArgument.Anchor.EYES, player.getEyePosition());
         stand.setYHeadRot(stand.getYRot());
         stand.addTag(STAND_TAG);
-        Offering offering = OFFERINGS.get(level.getRandom().nextInt(OFFERINGS.size()));
-        int count = offering.min() + level.getRandom().nextInt(offering.max() - offering.min() + 1);
-        SESSIONS.put(player.getUUID(), new Session(player.getUUID(), level, center, stand.getUUID(), offering, count,
-                level.isRaining()));
+        Wish currentWish = getOrCreateWish(level);
+        String greeting = randomLine(GREETINGS, level);
+        Session session = new Session(player.getUUID(), level, center, stand.getUUID(), currentWish,
+                greeting, wishLine(currentWish), level.getServer().getTickCount() + 20);
+        SESSIONS.put(player.getUUID(), session);
         if (!level.addFreshEntity(stand)) {
             SESSIONS.remove(player.getUUID());
             return;
         }
-        level.playSound(null, center, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.2F, 0.65F);
-        say(player, randomLine(GREETINGS, level));
-        Session session = SESSIONS.get(player.getUUID());
-        session.currentLine = offering.words().replace("{count}", countWord(count));
-        say(player, session.currentLine);
+        strike(level, rod.getX() + 0.5, rod.getY() + 2, rod.getZ() + 0.5, true);
+        say(player, greeting);
     }
 
     private static boolean valid(ServerLevel level, BlockPos center) {
@@ -230,21 +252,39 @@ public final class ThunderRitual {
             return true;
         });
         for (Session session : List.copyOf(SESSIONS.values())) {
+            if (SESSIONS.get(session.playerId) != session) continue;
             ServerPlayer player = server.getPlayerList().getPlayer(session.playerId);
             if (player == null) {
                 end(session.playerId);
                 continue;
             }
-            if (session.level.isRaining()) session.hasSeenRain = true;
-            if (session.hasSeenRain && !session.level.isRaining()) {
+            if (!session.level.isRaining()) {
                 end(session.playerId);
                 continue;
+            }
+            if (session.completed) {
+                if (server.getTickCount() >= session.nextLineTick) {
+                    session.currentLine = randomLine(GOODBYES, session.level);
+                    say(player, session.currentLine);
+                    end(session.playerId);
+                }
+                continue;
+            }
+            if (session.wish != wish) {
+                end(session.playerId);
+                continue;
+            }
+            if (!session.offeringAnnounced && server.getTickCount() >= session.nextLineTick) {
+                session.offeringAnnounced = true;
+                session.currentLine = session.offeringLine;
+                say(player, session.currentLine);
             }
             if (!allChunksLoaded(session.level, session.center)) continue;
             if (!valid(session.level, session.center)) {
                 end(session.playerId);
                 continue;
             }
+            if (!session.offeringAnnounced) continue;
             if (player.level() != session.level) continue;
             if (server.getTickCount() % 10 != 0) continue;
             BlockPos center = session.center;
@@ -252,19 +292,27 @@ public final class ThunderRitual {
                     center.getX() + 3, center.getY() + 4.5, center.getZ() + 3);
             for (ItemEntity entity : session.level.getEntitiesOfClass(ItemEntity.class, area)) {
                 ItemStack stack = entity.getItem();
-                if (!session.offering.matches(stack)) continue;
+                if (!session.wish.offering().matches(stack)) continue;
+                if (!session.level.isRainingAt(center.above(2))) {
+                    reject(session.level, center, player, randomLine(
+                            openSky(session.level, center.above(2)) ? NO_RAIN : COVERED, session.level));
+                    end(session.playerId);
+                    break;
+                }
                 ServerPlayer submitter = entity.getOwner() instanceof ServerPlayer thrower ? thrower : player;
-                int consumed = Math.min(session.remaining, stack.getCount());
+                int consumed = Math.min(session.wish.remaining, stack.getCount());
                 stack.shrink(consumed);
-                session.remaining -= consumed;
+                session.wish.remaining -= consumed;
                 if (stack.isEmpty()) entity.discard();
                 else entity.setItem(stack);
                 session.level.sendParticles(ParticleTypes.ELECTRIC_SPARK, entity.getX(), entity.getY(), entity.getZ(),
                         12, 0.25, 0.3, 0.25, 0.03);
-                if (session.remaining == 0) {
-                    finish(session, player, submitter);
+                if (session.wish.remaining == 0) {
+                    finish(session, player, submitter, server);
                     break;
                 }
+                persistWish(server);
+                refreshOfferingLines(session.wish);
             }
         }
     }
@@ -275,41 +323,55 @@ public final class ThunderRitual {
         return true;
     }
 
-    private static void finish(Session session, ServerPlayer player, ServerPlayer submitter) {
+    private static void finish(Session session, ServerPlayer player, ServerPlayer submitter, MinecraftServer server) {
         ServerLevel level = session.level;
-        boolean exposedToRain = level.isRainingAt(player.blockPosition().above());
-        say(player, randomLine(SATISFIED, level));
-        say(player, exposedToRain ? randomLine(GOODBYES, level)
-                : "You hid from my sky. Take my wrath instead of my thunder.");
-        destroy(level, session.center);
-        if (exposedToRain) {
-            var weather = level.getWeatherData();
-            weather.setClearWeatherTime(0);
-            weather.setRaining(true);
-            weather.setRainTime(12_000);
-            weather.setThundering(true);
-            weather.setThunderTime(12_000);
-            for (int x : new int[]{-2, 2}) for (int z : new int[]{-2, 2}) {
-                BlockPos rod = session.center.offset(x, 1, z);
-                strike(level, rod.getX() + 0.5, rod.getY() + 1, rod.getZ() + 0.5, true);
-            }
-            if (level.getRandom().nextInt(10) == 0)
-                strike(level, submitter.getX(), submitter.getY(), submitter.getZ(), false);
-            // Even visual-only lightning clears copper; restore the ritual's random weathering after it ticks.
-            PENDING_COPPER.add(new PendingCopper(level, session.center, level.getServer().getTickCount() + 1));
-        } else {
-            int count = 1 + level.getRandom().nextInt(5);
-            for (int i = 0; i < count; i++) {
-                BlockPos spawn = session.center.offset(level.getRandom().nextInt(5) - 2, 2, level.getRandom().nextInt(5) - 2);
-                Vex vex = EntityTypes.VEX.create(level, null, spawn, EntitySpawnReason.EVENT, false, false);
-                if (vex == null) continue;
-                vex.setPos(spawn.getX() + 0.5, spawn.getY(), spawn.getZ() + 0.5);
-                vex.setTarget(player);
-                level.addFreshEntity(vex);
-            }
-            level.playSound(null, session.center, SoundEvents.VEX_CHARGE, SoundSource.HOSTILE, 1.5F, 0.8F);
+        session.completed = true;
+        session.currentLine = randomLine(SATISFIED, level);
+        session.nextLineTick = server.getTickCount() + 20;
+        say(player, session.currentLine);
+        wish = null;
+        persistWish(server);
+        for (Session other : List.copyOf(SESSIONS.values())) {
+            if (other == session) continue;
+            ServerPlayer owner = server.getPlayerList().getPlayer(other.playerId);
+            if (owner != null) say(owner, "Another altar has paid my tribute. Call upon me anew.");
+            end(other.playerId);
         }
-        end(session.playerId);
+        destroy(level, session.center);
+        var weather = level.getWeatherData();
+        weather.setClearWeatherTime(0);
+        weather.setRaining(true);
+        weather.setRainTime(12_000);
+        weather.setThundering(true);
+        weather.setThunderTime(12_000);
+        for (int x : new int[]{-2, 2}) for (int z : new int[]{-2, 2}) {
+            BlockPos rod = session.center.offset(x, 1, z);
+            strike(level, rod.getX() + 0.5, rod.getY() + 1, rod.getZ() + 0.5, true);
+        }
+        if (level.getRandom().nextInt(10) == 0)
+            strike((ServerLevel) submitter.level(), submitter.getX(), submitter.getY(), submitter.getZ(), false);
+        // Even visual-only lightning clears copper; restore the ritual's random weathering after it ticks.
+        PENDING_COPPER.add(new PendingCopper(level, session.center, level.getServer().getTickCount() + 1));
+    }
+
+    private static void reject(ServerLevel level, BlockPos center, ServerPlayer player, String line) {
+        say(player, line);
+        destroy(level, center);
+        int count = 1 + level.getRandom().nextInt(5);
+        for (int i = 0; i < count; i++) {
+            BlockPos spawn = center.offset(level.getRandom().nextInt(5) - 2, 2, level.getRandom().nextInt(5) - 2);
+            Vex vex = EntityTypes.VEX.create(level, null, spawn, EntitySpawnReason.EVENT, false, false);
+            if (vex == null) continue;
+            vex.setPos(spawn.getX() + 0.5, spawn.getY(), spawn.getZ() + 0.5);
+            vex.setTarget(player);
+            level.addFreshEntity(vex);
+        }
+        level.playSound(null, center, SoundEvents.VEX_CHARGE, SoundSource.HOSTILE, 1.5F, 0.8F);
+    }
+
+    private static boolean openSky(ServerLevel level, BlockPos pos) {
+        return level.canSeeSky(pos)
+                && level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() <= pos.getY();
     }
 
     private static void strike(ServerLevel level, double x, double y, double z, boolean visualOnly) {
@@ -374,8 +436,27 @@ public final class ThunderRitual {
         if (stand != null) stand.discard();
     }
 
-    static int cornerOffset(double direction) {
-        return direction < 0 ? -2 : 2;
+    static BlockPos selectedRod(BlockPos center, double playerX, double playerZ, float yaw) {
+        double radians = Math.toRadians(yaw);
+        double lookX = -Math.sin(radians);
+        double lookZ = Math.cos(radians);
+        BlockPos best = null;
+        double bestAlignment = Double.NEGATIVE_INFINITY;
+        double bestDistance = Double.POSITIVE_INFINITY;
+        for (int x : new int[]{-2, 2}) for (int z : new int[]{-2, 2}) {
+            BlockPos rod = center.offset(x, 0, z);
+            double dx = rod.getX() + 0.5 - playerX;
+            double dz = rod.getZ() + 0.5 - playerZ;
+            double distance = Math.hypot(dx, dz);
+            double alignment = (lookX * dx + lookZ * dz) / distance;
+            if (alignment > bestAlignment + 1e-12
+                    || Math.abs(alignment - bestAlignment) <= 1e-12 && distance < bestDistance) {
+                best = rod;
+                bestAlignment = alignment;
+                bestDistance = distance;
+            }
+        }
+        return best;
     }
 
     static Direction inwardFacing(int x, int z) {
@@ -390,6 +471,49 @@ public final class ThunderRitual {
     static String countWord(int count) {
         String[] words = {"", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
         return count >= 1 && count <= 10 ? words[count] : Integer.toString(count);
+    }
+
+    private static Wish getOrCreateWish(ServerLevel level) {
+        if (wish == null) {
+            int index = level.getRandom().nextInt(OFFERINGS.size());
+            Offering offering = OFFERINGS.get(index);
+            int count = offering.min() + level.getRandom().nextInt(offering.max() - offering.min() + 1);
+            wish = new Wish(index, count);
+            persistWish(level.getServer());
+        }
+        return wish;
+    }
+
+    private static Wish loadWish(MinecraftServer server) {
+        CompoundTag saved = server.getCommandStorage().get(WISH_STORAGE);
+        if (!saved.contains("offering")) return null;
+        int index = saved.getIntOr("offering", -1);
+        int remaining = saved.getIntOr("remaining", -1);
+        if (index < 0 || index >= OFFERINGS.size() || remaining < 1 || remaining > OFFERINGS.get(index).max())
+            throw new IllegalStateException("Invalid saved thunder ritual wish: " + saved);
+        return new Wish(index, remaining);
+    }
+
+    private static void persistWish(MinecraftServer server) {
+        CompoundTag saved = new CompoundTag();
+        if (wish != null) {
+            saved.putInt("offering", wish.offeringIndex);
+            saved.putInt("remaining", wish.remaining);
+        }
+        server.getCommandStorage().set(WISH_STORAGE, saved);
+    }
+
+    private static String wishLine(Wish wish) {
+        return wish.offering().words().replace("{count}", countWord(wish.remaining));
+    }
+
+    private static void refreshOfferingLines(Wish wish) {
+        String line = wishLine(wish);
+        for (Session session : SESSIONS.values()) {
+            if (session.wish != wish || session.completed) continue;
+            session.offeringLine = line;
+            if (session.offeringAnnounced) session.currentLine = line;
+        }
     }
 
     private static void say(ServerPlayer player, String words) {
@@ -434,25 +558,42 @@ public final class ThunderRitual {
         }
     }
 
+    private static final class Wish {
+        final int offeringIndex;
+        int remaining;
+
+        Wish(int offeringIndex, int remaining) {
+            this.offeringIndex = offeringIndex;
+            this.remaining = remaining;
+        }
+
+        Offering offering() {
+            return OFFERINGS.get(offeringIndex);
+        }
+    }
+
     private static final class Session {
         final UUID playerId;
         final ServerLevel level;
         final BlockPos center;
         final UUID standId;
-        final Offering offering;
-        boolean hasSeenRain;
-        int remaining;
+        final Wish wish;
+        String offeringLine;
+        int nextLineTick;
+        boolean offeringAnnounced;
+        boolean completed;
         String currentLine;
 
-        Session(UUID playerId, ServerLevel level, BlockPos center, UUID standId, Offering offering, int remaining,
-                boolean startedRaining) {
+        Session(UUID playerId, ServerLevel level, BlockPos center, UUID standId, Wish wish,
+                String greeting, String offeringLine, int offeringAtTick) {
             this.playerId = playerId;
             this.level = level;
             this.center = center;
             this.standId = standId;
-            this.offering = offering;
-            this.hasSeenRain = startedRaining;
-            this.remaining = remaining;
+            this.wish = wish;
+            this.currentLine = greeting;
+            this.offeringLine = offeringLine;
+            this.nextLineTick = offeringAtTick;
         }
     }
 

@@ -1,6 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.thunder;
 
 import net.minecraft.SharedConstants;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.Bootstrap;
 
@@ -14,8 +15,12 @@ public final class ThunderRitualCheck {
             if (Math.abs(z) == 2 && Math.abs(x) < 2)
                 assert ThunderRitual.inwardFacing(x, z) == (z < 0 ? Direction.SOUTH : Direction.NORTH);
         }
-        assert ThunderRitual.cornerOffset(-0.1) == -2;
-        assert ThunderRitual.cornerOffset(0.1) == 2;
+        BlockPos center = new BlockPos(0, 64, 0);
+        assert ThunderRitual.selectedRod(center, 0.5, 0.5, -45).equals(center.offset(2, 0, 2));
+        assert ThunderRitual.selectedRod(center, 0.5, 0.5, 45).equals(center.offset(-2, 0, 2));
+        assert ThunderRitual.selectedRod(center, 0.5, 0.5, 135).equals(center.offset(-2, 0, -2));
+        assert ThunderRitual.selectedRod(center, 0.5, 0.5, -135).equals(center.offset(2, 0, -2));
+        assert ThunderRitual.selectedRod(center, 0.8, 0.5, 0).equals(center.offset(2, 0, 2));
         assert ThunderRitual.moonDay(0) == 0;
         assert ThunderRitual.moonDay(7 * 24_000L) == 7;
         assert ThunderRitual.moonDay(8 * 24_000L) == 0;

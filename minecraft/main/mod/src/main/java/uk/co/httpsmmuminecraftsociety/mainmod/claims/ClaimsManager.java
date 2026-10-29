@@ -122,10 +122,7 @@ public final class ClaimsManager {
         PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, blockEntity) ->
                 checkDirect(player, level, pos, BREAK));
         AttackEntityCallback.EVENT.register((player, level, hand, entity, hit) ->
-                checkDirect(player, level, entity.blockPosition(), entity instanceof LivingEntity living
-                        ? damagePermission(living) : entity instanceof AbstractMinecart ? MINECARTS
-                        : OTHER_ENTITY_DAMAGE)
-                        ? InteractionResult.PASS : InteractionResult.FAIL);
+                allowEntityAttack(player, entity) ? InteractionResult.PASS : InteractionResult.FAIL);
         UseEntityCallback.EVENT.register((player, level, hand, entity, hit) ->
                 checkDirect(player, level, entity.blockPosition(), entity instanceof AbstractVillager
                         ? TRADING : entity instanceof AbstractMinecart ? MINECARTS
@@ -316,6 +313,12 @@ public final class ClaimsManager {
         Claim claim = claimAt(level, pos);
         return claim == null || canAccessClaim(player, claim)
                 || (claim.outsiderPermissions() & permission) != 0;
+    }
+
+    public static boolean allowEntityAttack(Player player, Entity entity) {
+        int permission = entity instanceof LivingEntity living ? damagePermission(living)
+                : entity instanceof AbstractMinecart ? MINECARTS : OTHER_ENTITY_DAMAGE;
+        return checkDirect(player, entity.level(), entity.blockPosition(), permission);
     }
 
     public static boolean allowExplosionDamage(Level level, BlockPos pos, Entity source) {

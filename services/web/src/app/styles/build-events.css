@@ -65,9 +65,6 @@
 	border-radius: 12px;
 	background: #0c10218f;
 }
-.buildCard:not(.buildCardHidden) {
-	aspect-ratio: 32 / 9;
-}
 .buildCard:nth-child(even) {
 	flex-direction: row-reverse;
 }
@@ -81,15 +78,9 @@
 }
 .buildCardText {
 	display: grid;
-	grid-template-rows: minmax(0, 1fr) auto;
+	grid-template-rows: 1fr auto;
 	gap: 10px;
 	padding: 18px;
-	max-height: 100%;
-	overflow: hidden;
-}
-.buildCardText > div:first-child {
-	min-height: 0;
-	overflow: hidden;
 }
 .buildCard:nth-child(even) .buildCardText {
 	text-align: right;
@@ -131,15 +122,12 @@
 	gap: 10px;
 	min-height: 40px;
 }
-.buildCard:nth-child(even) .buildCardFooter {
-	justify-content: flex-end;
-}
-.buildCardFooter button {
+.buildCardFooterActions {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
 	margin-left: auto;
-}
-.buildCardFooter .buildCoordinates {
-	min-width: 0;
-	overflow-wrap: anywhere;
+	white-space: nowrap;
 }
 .buildVoted {
 	color: #78e9a6;
@@ -151,7 +139,6 @@
 .buildCardHidden .buildCardText {
 	flex: 1;
 	padding: 0;
-	max-height: none;
 }
 .buildCardHidden h5 {
 	font-size: 1.2rem;
@@ -537,18 +524,8 @@
 	.buildCard:nth-child(even) {
 		display: grid;
 	}
-	.buildCard:not(.buildCardHidden) {
-		aspect-ratio: auto;
-	}
 	.buildCard > .buildGallery {
 		width: 100%;
-	}
-	.buildCardText {
-		max-height: none;
-		grid-template-rows: auto auto;
-	}
-	.buildCardText > div:first-child {
-		overflow: visible;
 	}
 	.buildCardText h5 {
 		display: block;

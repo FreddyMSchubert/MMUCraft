@@ -534,13 +534,18 @@ export function BuildSubmissionDialog({
 							ask a builder to show you around.
 						</p>
 					)}
-					{stage !== 'ended' && submission.position && (
+					{stage !== 'ended' && !canVisit && submission.position && (
 						<p className="buildCoordinates">
 							Coordinates: {buildCoordinates(submission.position)}
 						</p>
 					)}
 					{canVisit && (
 						<div className="buildVisitActions">
+							{submission.position && (
+								<p className="buildCoordinates">
+									Coordinates: {buildCoordinates(submission.position)}
+								</p>
+							)}
 							{eligibility?.canReturn && (
 								<p className="buildVisitWarning" role="alert">
 									Please don&apos;t go away from the build, or you won&apos;t be
@@ -714,23 +719,20 @@ function BuildCard({
 					</div>
 					{!hidden && (
 						<div className="buildCardFooter">
-							{submission.voted && <span className="buildVoted">✓ Voted</span>}
 							{submission.score && (
 								<span>{submission.score.total.toFixed(2)} pts</span>
 							)}
-							{submission.position && (
-								<span className="buildCoordinates">
-									Coords: {buildCoordinates(submission.position)}
-								</span>
-							)}
-							<button
-								type="button"
-								onClick={() => {
-									setOpen(true);
-								}}
-							>
-								Details
-							</button>
+							<div className="buildCardFooterActions">
+								{submission.voted && <span className="buildVoted">✓ Voted</span>}
+								<button
+									type="button"
+									onClick={() => {
+										setOpen(true);
+									}}
+								>
+									Details
+								</button>
+							</div>
 						</div>
 					)}
 				</div>

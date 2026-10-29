@@ -410,7 +410,7 @@ public final class ClaimsManager {
         }
     }
 
-    private static boolean checkDirect(net.minecraft.world.entity.player.Player player, Level level, BlockPos pos, int permission) {
+    public static boolean checkDirect(Player player, Level level, BlockPos pos, int permission) {
         if (!(player instanceof ServerPlayer serverPlayer) || level.isClientSide()) return true;
         boolean allowed = canPerform(serverPlayer, level, pos, permission);
         if (!allowed) notifyDenied(serverPlayer);

@@ -108,6 +108,8 @@
 		"serverSideBlocks.ServerSideBlockMiningMixin",
 		"serverSideBlocks.ServerSideBlockPlacementMixin",
 		"claims.PlayerActionContextMixin",
+		"claims.LecternBlockEntityClaimMixin",
+		"claims.LecternMenuClaimMixin",
 		"claims.PlayerStabAttackMixin",
 		"claims.RedstoneControlUseMixin",
 		"claims.NetherPortalClaimMixin",

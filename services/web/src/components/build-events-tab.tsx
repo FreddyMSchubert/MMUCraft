@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useCallback, useEffect, useState, type SyntheticEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type SyntheticEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { PlayerName, type PlayerEmoji } from './player-name';
 import { useSiteAlert } from './site-alert';
@@ -93,6 +93,15 @@ function responseMessage(body: unknown, fallback: string) {
 	return fallback;
 }
 
+async function loadBuildEvent(eventId: number): Promise<BuildEventDetail> {
+	const response = await fetch('/api/build-events/' + String(eventId), {
+		cache: 'no-store',
+	});
+	const body = await response.json().catch(() => null);
+	if (!response.ok) throw new Error(responseMessage(body, 'Could not load the build event'));
+	return body as BuildEventDetail;
+}
+
 function remainingTime(target: number, now: number) {
 	const total = Math.max(0, Math.ceil((target - now) / 1000));
 	const days = Math.floor(total / 86400);
@@ -103,6 +112,10 @@ function remainingTime(target: number, now: number) {
 		(days ? String(days) + 'd ' : '') +
 		[hours, minutes, seconds].map((part) => String(part).padStart(2, '0')).join(':')
 	);
+}
+
+function buildCoordinates(position: NonNullable<BuildSubmission['position']>) {
+	return `${position.dimension} at ${position.x}, ${position.y}, ${position.z}`;
 }
 
 export function BuildTeam({ members }: { members: BuildMember[] }) {
@@ -146,7 +159,28 @@ export function BuildGallery({
 }) {
 	const [index, setIndex] = useState(0);
 	const [imageStatus, setImageStatus] = useState<Record<string, 'loaded' | 'error'>>({});
+	const [fullyVisible, setFullyVisible] = useState(false);
+	const galleryRef = useRef<HTMLDivElement>(null);
 	const imageUrls = images.map((image) => image.imageUrl).join('\n');
+	useEffect(() => {
+		let inViewport = false;
+		const updateVisibility = () => {
+			setFullyVisible(inViewport && document.visibilityState === 'visible');
+		};
+		const observer = new IntersectionObserver(
+			([entry]) => {
+				inViewport = entry.intersectionRatio === 1;
+				updateVisibility();
+			},
+			{ threshold: 1 },
+		);
+		if (galleryRef.current) observer.observe(galleryRef.current);
+		document.addEventListener('visibilitychange', updateVisibility);
+		return () => {
+			observer.disconnect();
+			document.removeEventListener('visibilitychange', updateVisibility);
+		};
+	}, []);
 	useEffect(() => {
 		const urls = imageUrls.split('\n').filter(Boolean);
 		const preloaders = urls.map((url) => {
@@ -171,6 +205,7 @@ export function BuildGallery({
 		if (
 			images.length < 2 ||
 			paused ||
+			!fullyVisible ||
 			window.matchMedia('(prefers-reduced-motion: reduce)').matches
 		)
 			return;
@@ -183,12 +218,12 @@ export function BuildGallery({
 		return () => {
 			window.clearTimeout(timer);
 		};
-	}, [images.length, index, paused]);
+	}, [images.length, index, paused, fullyVisible]);
 	const visibleIndex = images.length > 0 ? index % images.length : 0;
 	const current = images.at(visibleIndex);
 	const currentStatus = current ? imageStatus[current.imageUrl] : null;
 	return (
-		<div className="buildGallery" aria-label={'Screenshots for ' + title}>
+		<div ref={galleryRef} className="buildGallery" aria-label={'Screenshots for ' + title}>
 			{current ? (
 				<Image
 					key={current.imageUrl}
@@ -369,7 +404,6 @@ export function BuildSubmissionDialog({
 			const body = await response.json().catch(() => null);
 			if (!response.ok) throw new Error(responseMessage(body, fallback));
 			await refreshEligibility();
-			await onUpdated();
 		} catch (caught) {
 			setError(caught instanceof Error ? caught.message : fallback);
 		} finally {
@@ -496,9 +530,13 @@ export function BuildSubmissionDialog({
 					<p className="buildPlainDescription">{submission.description}</p>
 					{stage === 'ended' && submission.position && (
 						<p className="buildCoordinates">
-							Warping has closed. Visit {submission.position.dimension} at{' '}
-							{submission.position.x}, {submission.position.y},{' '}
-							{submission.position.z}, or ask a builder to show you around.
+							Warping has closed. Visit {buildCoordinates(submission.position)}, or
+							ask a builder to show you around.
+						</p>
+					)}
+					{stage !== 'ended' && submission.position && (
+						<p className="buildCoordinates">
+							Coordinates: {buildCoordinates(submission.position)}
 						</p>
 					)}
 					{canVisit && (
@@ -649,7 +687,7 @@ function BuildCard({
 					<BuildGallery
 						images={submission.images}
 						title={submission.title ?? 'Build'}
-						paused={paused}
+						paused={paused || open}
 					/>
 				)}
 				<div className="buildCardText">
@@ -679,6 +717,11 @@ function BuildCard({
 							{submission.voted && <span className="buildVoted">✓ Voted</span>}
 							{submission.score && (
 								<span>{submission.score.total.toFixed(2)} pts</span>
+							)}
+							{submission.position && (
+								<span className="buildCoordinates">
+									Coords: {buildCoordinates(submission.position)}
+								</span>
 							)}
 							<button
 								type="button"
@@ -727,25 +770,24 @@ export function BuildEventsTab({
 	const [detail, setDetail] = useState<BuildEventDetail | null>(null);
 	const [error, setError] = useState('');
 	const [now, setNow] = useState<number | null>(null);
-	const refresh = useCallback(async () => {
-		if (!event) return;
-		const response = await fetch('/api/build-events/' + String(event.id), {
-			cache: 'no-store',
-		});
-		const body = await response.json().catch(() => null);
-		if (!response.ok) throw new Error(responseMessage(body, 'Could not load the build event'));
-		setDetail(body as BuildEventDetail);
-	}, [event]);
+	const eventId = event?.id;
+	const refresh = async () => {
+		if (eventId === undefined) return;
+		setDetail(await loadBuildEvent(eventId));
+	};
 	useEffect(() => {
+		if (eventId === undefined) return;
 		const timer = window.setTimeout(() => {
-			void refresh().catch((caught: unknown) => {
-				setError(String(caught));
-			});
+			void loadBuildEvent(eventId)
+				.then(setDetail)
+				.catch((caught: unknown) => {
+					setError(String(caught));
+				});
 		}, 0);
 		return () => {
 			window.clearTimeout(timer);
 		};
-	}, [refresh]);
+	}, [eventId]);
 	useEffect(() => {
 		const initial = window.setTimeout(() => {
 			setNow(Date.now());
@@ -807,7 +849,6 @@ export function BuildEventsTab({
 				<section className="adminSection eventScores">
 					<div className="eventSectionHeading">
 						<h4>Submissions</h4>
-						<p>{current.uniquePlayerCount} players have submitted a build.</p>
 					</div>
 					{status === 'building' || status === 'preparing' ? (
 						<p>

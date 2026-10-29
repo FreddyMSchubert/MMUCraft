@@ -430,14 +430,13 @@ export class BuildEventsService {
 			admin || (event.results_revealed === 1 && (stage === 'visiting' || stage === 'ended'));
 		const revealSubmissions =
 			admin || stage === 'voting' || stage === 'visiting' || stage === 'ended';
-		const randomOrder = new Map(ranked.map((submission) => [submission.id, Math.random()]));
 		const publicOrder =
 			stage === 'voting'
 				? [...ranked].sort(
 						(a, b) =>
 							Number(a.voted) - Number(b.voted) ||
 							a.voteCount - b.voteCount ||
-							(randomOrder.get(a.id) ?? 0) - (randomOrder.get(b.id) ?? 0),
+							a.id - b.id,
 					)
 				: ranked;
 		const visible = admin ? byScore : publicOrder;

@@ -1,10 +1,12 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.thunder;
 
+import net.minecraft.SharedConstants;
 import net.minecraft.core.Direction;
 import net.minecraft.server.Bootstrap;
 
 public final class ThunderRitualCheck {
     public static void main(String[] args) {
+        SharedConstants.tryDetectVersion();
         Bootstrap.bootStrap();
         for (int x = -2; x <= 2; x++) for (int z = -2; z <= 2; z++) {
             if (Math.abs(x) == 2 && Math.abs(z) < 2)

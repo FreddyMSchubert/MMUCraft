@@ -137,6 +137,10 @@
 .buildCardFooter button {
 	margin-left: auto;
 }
+.buildCardFooter .buildCoordinates {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
 .buildVoted {
 	color: #78e9a6;
 	font-weight: 700;

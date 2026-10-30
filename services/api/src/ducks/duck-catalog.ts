@@ -16,7 +16,8 @@ export const DUCKS = [
 	{
 		id: 3,
 		itemId: 'duck-socials',
-		condition: 'Attend five in-person socials.',
+		condition:
+			'Attend five in-person socials. Come to a committee member during each social to have your attendance tracked.',
 		announcementReason: 'attending five socials',
 		manual: true,
 	},

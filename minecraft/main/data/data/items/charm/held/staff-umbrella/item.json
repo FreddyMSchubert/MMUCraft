@@ -4,7 +4,7 @@
 	"modelType": "basic-3d",
 	"rarity": "common",
 	"maxStackSize": 1,
-	"tooltips": ["\"I'm Marry Poppins, ya'll!\""],
+	"tooltips": ["\"I'm Mary Poppins, ya'll!\""],
 	"charm": {
 		"charmId": 26,
 		"minLevel": 1,

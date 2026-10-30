@@ -134,6 +134,13 @@ tasks.register('checkFarmingBoots', JavaExec) {
     enableAssertions = true
 }
 
+tasks.register('checkSpiderPajamas', JavaExec) {
+    group = 'verification'
+    classpath = sourceSets.minecraftCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.SpiderPajamasCheck'
+    enableAssertions = true
+}
+
 tasks.register('checkMasteryDropGates', JavaExec) {
     group = 'verification'
     classpath = sourceSets.minecraftCheck.runtimeClasspath
@@ -211,7 +218,7 @@ tasks.register('checkDailyCatalog', JavaExec) {
 }
 
 tasks.named('check') {
-    dependsOn 'checkMapResize', 'checkThunderRitual', 'checkInsomniaPhantoms', 'checkFarmingBoots', 'checkMasteryDropGates', 'checkGearEnchantments', 'checkSmithingArmor', 'checkHopperFilterIdentity',
+    dependsOn 'checkMapResize', 'checkThunderRitual', 'checkInsomniaPhantoms', 'checkFarmingBoots', 'checkSpiderPajamas', 'checkMasteryDropGates', 'checkGearEnchantments', 'checkSmithingArmor', 'checkHopperFilterIdentity',
             'checkDailyCatalog', 'checkFishingBounces', 'checkFishRarity', 'checkTeleportCompanions', 'checkTickRate', 'checkExplosiveFire'
 }
 

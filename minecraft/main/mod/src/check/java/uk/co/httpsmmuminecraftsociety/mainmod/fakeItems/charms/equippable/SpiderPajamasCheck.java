@@ -20,6 +20,14 @@ public final class SpiderPajamasCheck {
         assert !canClimb(probe -> probe.intersects(new AABB(-1.0D, 0.0D, 0.3D, 1.0D, 1.0D, 1.0D))
                 || probe.intersects(new AABB(-1.0D, 3.0D, 0.3D, 1.0D, 4.0D, 1.0D)), 0.6F);
         assert !SpiderPajamasCharm.isClimbableWall(PLAYER, FORWARD.scale(-1.0D), 0.6F, wall(4.0D));
+
+        Vec3 diagonal = new Vec3(1.0D, 0.0D, 1.0D).normalize();
+        assert !SpiderPajamasCharm.isClimbableWall(PLAYER, diagonal, 0.6F, wall(4.0D));
+        assert !SpiderPajamasCharm.isClimbableWall(PLAYER, new Vec3(2.0D, 0.0D, 1.0D).normalize(), 0.6F, wall(4.0D));
+        assert SpiderPajamasCharm.isClimbableWall(PLAYER, new Vec3(0.2D, 0.0D, 1.0D).normalize(), 0.6F, wall(4.0D));
+        Predicate<AABB> eastWall = probe -> probe.intersects(new AABB(0.3D, 0.0D, -1.0D, 1.0D, 4.0D, 1.0D));
+        assert SpiderPajamasCharm.isClimbableWall(PLAYER, diagonal, 0.6F,
+                probe -> wall(4.0D).test(probe) || eastWall.test(probe));
     }
 
     private static boolean canClimb(Predicate<AABB> blocked, float stepHeight) {

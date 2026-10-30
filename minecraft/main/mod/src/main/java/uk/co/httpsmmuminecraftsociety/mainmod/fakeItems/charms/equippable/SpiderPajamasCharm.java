@@ -15,7 +15,7 @@ public class SpiderPajamasCharm implements Charm, EquippedTickCallbackCharm
 {
     @Override
     public void equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel) {
-        if (!player.horizontalCollision) return;
+        if (!player.horizontalCollision || player.isInWater() || player.isInLava() || player.isShiftKeyDown()) return;
 
         var input = player.getLastClientInput();
         int forward = Boolean.compare(input.forward(), input.backward());
@@ -48,8 +48,23 @@ public class SpiderPajamasCharm implements Charm, EquippedTickCallbackCharm
     }
 
     static boolean isClimbableWall(AABB box, Vec3 direction, float stepHeight, Predicate<AABB> blocked) {
+        double x = Math.abs(direction.x);
+        double z = Math.abs(direction.z);
+        if (x > z * 1.2D) {
+            return isClimbableWallAlong(box, Math.signum(direction.x) * 0.1D, 0.0D, stepHeight, blocked);
+        }
+        if (z > x * 1.2D) {
+            return isClimbableWallAlong(box, 0.0D, Math.signum(direction.z) * 0.1D, stepHeight, blocked);
+        }
+        return x > 0.0D && z > 0.0D
+                && isClimbableWallAlong(box, Math.signum(direction.x) * 0.1D, 0.0D, stepHeight, blocked)
+                && isClimbableWallAlong(box, 0.0D, Math.signum(direction.z) * 0.1D, stepHeight, blocked);
+    }
+
+    private static boolean isClimbableWallAlong(AABB box, double x, double z, float stepHeight,
+                                                Predicate<AABB> blocked) {
         AABB ahead = box.setMaxY(Math.min(box.maxY, box.minY + 0.6D))
-                .expandTowards(direction.x * 0.1D, 0.0D, direction.z * 0.1D);
+                .expandTowards(x, 0.0D, z);
         if (!blocked.test(ahead)) return false;
 
         double top = box.minY + Math.max(3.0D, stepHeight);

@@ -27,6 +27,8 @@ public class WalletInsertRecipe extends CustomRecipe
                 coins.add(stack);
                 continue;
             }
+            if (!stack.isEmpty())
+                return new craftingInfo(false, null, null);
         }
 
         return new craftingInfo(wallet != ItemStack.EMPTY && !coins.isEmpty(), wallet, coins);

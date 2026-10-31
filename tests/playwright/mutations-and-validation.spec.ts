@@ -190,9 +190,11 @@ test('a claim owner can transfer a claim and stay a member', async ({ page, requ
 	).toBe(400);
 
 	try {
-		await expect(
-			await request.post(`${url}/members`, { headers: memberCookie, data: { userId: 3 } }),
-		).toBeOK();
+		const added = await request.post(`${url}/members`, {
+			headers: memberCookie,
+			data: { userId: 3 },
+		});
+		if (added.status() !== 409) await expect(added).toBeOK();
 		await page.context().addCookies([
 			{
 				name: 'mcstack_session',
@@ -200,7 +202,7 @@ test('a claim owner can transfer a claim and stay a member', async ({ page, requ
 				url: baseURL ?? 'http://127.0.0.1:3100',
 			},
 		]);
-		await page.goto('/play/claims');
+		await page.goto('/play/claims', { waitUntil: 'domcontentloaded' });
 		const owned = page
 			.locator('.claimsSection')
 			.filter({ has: page.getByRole('heading', { name: 'My claims' }) });

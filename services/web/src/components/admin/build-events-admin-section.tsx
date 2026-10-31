@@ -918,6 +918,31 @@ export function BuildEventsAdminSection({ subroute }: { subroute: string[] }) {
 												</button>
 												<button
 													type="button"
+													aria-pressed={Boolean(
+														submission.publicRankHidden,
+													)}
+													disabled={busy}
+													onClick={() =>
+														void change(
+															API +
+																'/' +
+																String(selected.id) +
+																'/submissions/' +
+																String(submission.id) +
+																'/public-rank',
+															'PATCH',
+															{
+																hidden: !submission.publicRankHidden,
+															},
+														)
+													}
+												>
+													{submission.publicRankHidden
+														? 'Show place in public results'
+														: 'Hide place from public results'}
+												</button>
+												<button
+													type="button"
 													onClick={() => {
 														setViewingSubmission(submission);
 													}}

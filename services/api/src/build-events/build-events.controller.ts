@@ -165,6 +165,17 @@ export class BuildEventsAdminController {
 		return this.events.setPostVotingWarp(id, submissionId, body?.enabled);
 	}
 
+	@Patch(':id/submissions/:submissionId/public-rank')
+	setPublicRankHidden(
+		@Headers('cookie') cookie: string | undefined,
+		@Param('id') id: string,
+		@Param('submissionId') submissionId: string,
+		@Body() body: { hidden?: unknown } | undefined,
+	) {
+		this.auth.requireCommitteeSession(cookie);
+		return this.events.setPublicRankHidden(id, submissionId, body?.hidden);
+	}
+
 	@Patch(':id/submissions/:submissionId/votes/:voterId')
 	excludeVote(
 		@Headers('cookie') cookie: string | undefined,

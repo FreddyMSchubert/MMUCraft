@@ -9,6 +9,14 @@ const {
 	driveImageUrl,
 	insideBuild,
 } = require('../services/api/dist/build-events/build-event-rules');
+const { BuildEventsService } = require('../services/api/dist/build-events/build-events.service');
+const { DatabaseService } = require('../services/api/dist/database/database.service');
+const {
+	buildEvents,
+	buildSubmissions,
+	buildVotes,
+	users,
+} = require('../services/api/dist/database/schema');
 
 test('build phases change at the exact configured times', () => {
 	const event = {
@@ -76,6 +84,139 @@ test('category averages retain decimals before summing', () => {
 		},
 	);
 	assert.equal(buildScore(categories, []), null);
+});
+
+test('revealed public builds follow place and can hide one place', () => {
+	const previousUrl = process.env.DATABASE_URL;
+	const previousMigrations = process.env.DATABASE_MIGRATIONS_PATH;
+	process.env.DATABASE_URL = ':memory:';
+	process.env.DATABASE_MIGRATIONS_PATH = join(__dirname, '../services/api/drizzle');
+	let db;
+	try {
+		db = new DatabaseService();
+		const now = Date.now();
+		db.connection
+			.insert(users)
+			.values({
+				id: 1,
+				email: 'voter@example.com',
+				minecraft_username: 'Voter',
+				whitelisted_at_unix_ms: now,
+				rules_accepted_at_unix_ms: now,
+				created_at_unix_ms: now,
+			})
+			.run();
+		db.connection
+			.insert(buildEvents)
+			.values({
+				id: 1,
+				title: 'Test builds',
+				description: '',
+				starts_at_unix_ms: now - 5000,
+				build_ends_at_unix_ms: now - 4000,
+				voting_starts_at_unix_ms: now - 3000,
+				voting_ends_at_unix_ms: now - 2000,
+				warp_ends_at_unix_ms: now + 100000,
+				min_team_size: 1,
+				max_team_size: 3,
+				categories_json: JSON.stringify([
+					{ id: 'score', name: 'Score', description: '', min: 1, max: 10 },
+				]),
+			})
+			.run();
+		for (const [id, title] of [
+			[1, 'Low score'],
+			[2, 'High score'],
+		])
+			db.connection
+				.insert(buildSubmissions)
+				.values({
+					id,
+					event_id: 1,
+					title,
+					description: '',
+					images_json: '[]',
+					dimension: 'minecraft:overworld',
+					block_x: 0,
+					block_y: 64,
+					block_z: 0,
+					min_chunk_x: 0,
+					max_chunk_x: 0,
+					min_chunk_z: 0,
+					max_chunk_z: 0,
+				})
+				.run();
+		for (const [submissionId, score] of [
+			[1, 1],
+			[2, 10],
+		])
+			db.connection
+				.insert(buildVotes)
+				.values({
+					submission_id: submissionId,
+					voter_user_id: 1,
+					scores_json: JSON.stringify({ score }),
+					cast_at_unix_ms: now - 2500,
+				})
+				.run();
+
+		const events = new BuildEventsService(db, {});
+		assert.deepEqual(
+			events.detail('1').submissions.map((item) => item.title),
+			['Low score', 'High score'],
+		);
+		events.reveal('1', true);
+		assert.deepEqual(
+			events.detail('1').submissions.map((item) => [item.title, item.rank]),
+			[
+				['High score', 1],
+				['Low score', 2],
+			],
+		);
+		events.setPublicRankHidden('1', '2', true);
+		assert.deepEqual(
+			events.detail('1').submissions.map((item) => item.title),
+			['Low score', 'High score'],
+		);
+		assert.equal(events.detail('1').submissions[1].rank, undefined);
+		assert.equal(events.detail('1').submissions[1].score, undefined);
+		assert.equal(events.detail('1').submissions[0].rank, undefined);
+		assert.equal(events.detail('1', undefined, true).submissions[0].rank, 1);
+		assert.equal(events.detail('1', undefined, true).submissions[0].publicRankHidden, true);
+		events.setPublicRankHidden('1', '1', true);
+		const previousRandom = Math.random;
+		try {
+			Math.random = () => 0;
+			assert.deepEqual(
+				events.detail('1').submissions.map((item) => item.title),
+				['High score', 'Low score'],
+			);
+			Math.random = () => 0.99;
+			assert.deepEqual(
+				events.detail('1').submissions.map((item) => item.title),
+				['Low score', 'High score'],
+			);
+		} finally {
+			Math.random = previousRandom;
+		}
+		events.setPublicRankHidden('1', '1', false);
+		events.setPublicRankHidden('1', '2', false);
+		assert.equal(events.detail('1').submissions[0].rank, 1);
+		db.connection
+			.update(buildVotes)
+			.set({ scores_json: JSON.stringify({ score: 10 }) })
+			.run();
+		assert.deepEqual(
+			events.detail('1').submissions.map((item) => item.rank),
+			[1, 1],
+		);
+	} finally {
+		db?.onModuleDestroy();
+		if (previousUrl === undefined) delete process.env.DATABASE_URL;
+		else process.env.DATABASE_URL = previousUrl;
+		if (previousMigrations === undefined) delete process.env.DATABASE_MIGRATIONS_PATH;
+		else process.env.DATABASE_MIGRATIONS_PATH = previousMigrations;
+	}
 });
 
 test('migration enforces one team per player and one final vote per build', () => {

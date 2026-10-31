@@ -1,4 +1,4 @@
-package uk.co.httpsmmuminecraftsociety.mainmod.mixin.claims;
+package uk.co.httpsmmuminecraftsociety.mainmod.claims;
 
 import net.minecraft.world.level.block.entity.LecternBlockEntity;
 

@@ -386,6 +386,7 @@ export class BuildEventsService {
 						(admin || submission.post_voting_warp_enabled === 1)) ||
 					(stage === 'voting' && !own && !voted),
 				postVotingWarpEnabled: submission.post_voting_warp_enabled === 1,
+				publicRankHidden: submission.public_rank_hidden === 1,
 				voteCount: counted.length,
 				score,
 				rank: null as number | null,
@@ -422,7 +423,7 @@ export class BuildEventsService {
 			}
 			for (let cursor = i; cursor <= end; cursor++) {
 				const entry = byScore[cursor];
-				if (entry) entry.rank = current.score ? end + 1 : null;
+				if (entry) entry.rank = current.score ? i + 1 : null;
 			}
 			i = end + 1;
 		}
@@ -439,7 +440,23 @@ export class BuildEventsService {
 							a.id - b.id,
 					)
 				: ranked;
-		const visible = admin ? byScore : publicOrder;
+		const hidden = ranked.filter((submission) => submission.publicRankHidden);
+		if (showResults && !admin) {
+			for (let i = hidden.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				const first = hidden[i];
+				const second = hidden[j];
+				if (first && second) {
+					hidden[i] = second;
+					hidden[j] = first;
+				}
+			}
+		}
+		const visible = admin
+			? byScore
+			: showResults
+				? [...byScore.filter((submission) => !submission.publicRankHidden), ...hidden]
+				: publicOrder;
 		const eligible = ranked.filter((submission) => !submission.own);
 		return {
 			...this.summary(event),
@@ -464,8 +481,12 @@ export class BuildEventsService {
 				voted: submission.voted,
 				canWarp: submission.canWarp,
 				postVotingWarpEnabled: admin ? submission.postVotingWarpEnabled : undefined,
-				score: showResults ? submission.score : undefined,
-				rank: showResults ? submission.rank : undefined,
+				publicRankHidden: admin ? submission.publicRankHidden : undefined,
+				score:
+					showResults && (admin || !submission.publicRankHidden)
+						? submission.score
+						: undefined,
+				rank: showResults && (admin || hidden.length === 0) ? submission.rank : undefined,
 				voteCount: admin ? submission.voteCount : undefined,
 				votes: admin ? submission.votes : undefined,
 			})),
@@ -869,6 +890,19 @@ export class BuildEventsService {
 			.where(eq(buildSubmissions.id, submission.id))
 			.run();
 		return { enabled };
+	}
+
+	setPublicRankHidden(eventIdInput: string, submissionIdInput: string, hidden: unknown) {
+		const event = this.event(eventIdInput);
+		const submission = this.submission(event.id, submissionIdInput);
+		if (typeof hidden !== 'boolean')
+			throw new BadRequestException("Choose whether this build's place is hidden");
+		this.database.connection
+			.update(buildSubmissions)
+			.set({ public_rank_hidden: hidden ? 1 : 0 })
+			.where(eq(buildSubmissions.id, submission.id))
+			.run();
+		return { hidden };
 	}
 
 	private async visit(userId: number) {

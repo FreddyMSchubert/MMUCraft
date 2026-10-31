@@ -775,6 +775,7 @@ export const buildSubmissions = sqliteTable(
 		description: text('description').notNull(),
 		images_json: text('images_json').notNull(),
 		post_voting_warp_enabled: integer('post_voting_warp_enabled').notNull().default(0),
+		public_rank_hidden: integer('public_rank_hidden').notNull().default(0),
 		dimension: text('dimension').notNull(),
 		block_x: integer('block_x').notNull(),
 		block_y: integer('block_y').notNull(),

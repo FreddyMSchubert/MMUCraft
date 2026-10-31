@@ -1,0 +1,1 @@
+ALTER TABLE `build_submissions` ADD `public_rank_hidden` integer DEFAULT 0 NOT NULL;

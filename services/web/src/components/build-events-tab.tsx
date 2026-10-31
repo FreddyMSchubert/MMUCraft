@@ -65,6 +65,7 @@ export interface BuildSubmission {
 	voted: boolean;
 	canWarp: boolean;
 	postVotingWarpEnabled?: boolean;
+	publicRankHidden?: boolean;
 	score?: { averages: { id: string; average: number }[]; total: number } | null;
 	rank?: number | null;
 	voteCount?: number;

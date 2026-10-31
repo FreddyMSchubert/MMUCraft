@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.claims.LecternClaimMenu;
 
 @Mixin(LecternMenu.class)
 abstract class LecternMenuClaimMixin implements LecternClaimMenu {

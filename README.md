@@ -44,7 +44,7 @@ Prometheus retains one day of history in local development and on the developmen
 | `make shell SERVICE=mc` | Open a Minecraft container shell. Use `api`, `web`, or `velocity` for another service. |
 | `make console` | Attach to the Minecraft server console. |
 
-`make` invokes item staging, protobuf generation, datagen, the Fabric mod build, the Velocity plugin build, and the resource-pack build. It then builds all images and starts all services.
+`make` stages item data, builds the main Minecraft mod, the Velocity and waiting-room plugins, and the main resource pack. It then builds and starts the main services. The event server is outside this build path.
 
 Use `make db-generate`, `make db-check`, and `make db-studio` for database work. Commit generated migration files from `services/api/drizzle/`.
 

@@ -246,7 +246,6 @@ set_property() {
 # Pull and validate images before player downtime starts.
 dc config --quiet
 dc pull --quiet
-dc --profile event pull --quiet surprising-saturday
 dc run --rm --no-deps --user "${PUID:-1000}:${PGID:-1000}" --entrypoint sh minecraft -c '
 	set -- ${SERVER_RUNNER:-mc-server-runner}
 	command -v "$1" >/dev/null 2>&1 || { echo "Minecraft runner $1 is missing or not executable; deployment has not started." >&2; exit 1; }
@@ -379,15 +378,7 @@ if [ -f data/velocity/event-players.txt ]; then
 	chmod 664 data/api/event-players-legacy.txt
 fi
 
-# Keep the event controller from restarting the old event image during the update.
-dc stop -t 2 event-controller || true
-dc --profile event stop surprising-saturday || true
-dc --profile event rm -f surprising-saturday || true
-dc --profile event create surprising-saturday
-if grep -Eq '"desiredRunning"[[:space:]]*:[[:space:]]*true' data/api/event-control.json 2>/dev/null; then
-	dc --profile event start surprising-saturday
-fi
-dc up -d --no-deps event-controller
+dc --profile event stop -t 2 event-controller surprising-saturday || true
 
 # Update the proxy first so it can show progress while the API and main server restart.
 shutdown_attempted=true

@@ -291,6 +291,7 @@ services:
         networks: [app]
 
     event-controller:
+        profiles: [event]
         image: ${IMAGE_PREFIX:?deploy.sh must set IMAGE_PREFIX}-event-controller:${IMAGE_TAG:?deploy.sh must set IMAGE_TAG}
         read_only: true
         security_opt:

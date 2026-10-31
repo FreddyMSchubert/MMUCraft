@@ -190,11 +190,9 @@ test('a claim owner can transfer a claim and stay a member', async ({ page, requ
 	).toBe(400);
 
 	try {
-		const added = await request.post(`${url}/members`, {
-			headers: memberCookie,
-			data: { userId: 3 },
-		});
-		if (added.status() !== 409) await expect(added).toBeOK();
+		await expect(
+			await request.post(`${url}/members`, { headers: memberCookie, data: { userId: 3 } }),
+		).toBeOK();
 		await page.context().addCookies([
 			{
 				name: 'mcstack_session',
@@ -202,14 +200,14 @@ test('a claim owner can transfer a claim and stay a member', async ({ page, requ
 				url: baseURL ?? 'http://127.0.0.1:3100',
 			},
 		]);
-		await page.goto('/play/claims', { waitUntil: 'domcontentloaded' });
+		await page.goto('/play/claims');
 		const owned = page
 			.locator('.claimsSection')
 			.filter({ has: page.getByRole('heading', { name: 'My claims' }) });
 		await owned.getByRole('button', { name: 'Edit' }).click();
 		await owned.getByText('Transfer claim', { exact: true }).first().click();
 		await expect(owned.locator('.claimTransferWarning')).toContainText('lose owner control');
-		await owned.getByRole('textbox', { name: 'New claim owner' }).fill('PlaywrightGuest');
+		await owned.getByLabel('New claim owner').fill('PlaywrightGuest');
 		await owned.getByRole('button', { name: 'Transfer claim' }).click();
 
 		await expect(owned.locator('.claimCard')).toHaveCount(0);

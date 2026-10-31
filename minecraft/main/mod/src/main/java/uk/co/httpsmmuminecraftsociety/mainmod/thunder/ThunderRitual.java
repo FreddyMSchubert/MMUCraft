@@ -21,6 +21,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -208,6 +210,8 @@ public final class ThunderRitual {
         if (bat == null) return;
         bat.setPos(rod.getX() + 0.5, rod.getY() + 2.1, rod.getZ() + 0.5);
         bat.setInvisible(true);
+        bat.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, MobEffectInstance.INFINITE_DURATION,
+                0, false, false, false));
         bat.setResting(false);
         bat.setNoAi(true);
         bat.setNoGravity(true);

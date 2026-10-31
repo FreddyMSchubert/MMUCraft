@@ -1,0 +1,12 @@
+{
+	"title": "Cyan Monarch's Hand",
+	"id": "cosmetic-halloween-build-winner",
+	"modelType": "cosmetic",
+	"rarity": "epic",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Prize for first place in the Halloween Build competition - 31/10/2026",
+		"Made in China"
+	],
+	"equippableCosmetic": {}
+}

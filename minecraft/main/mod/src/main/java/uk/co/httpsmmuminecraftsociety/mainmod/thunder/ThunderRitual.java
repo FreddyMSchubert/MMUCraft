@@ -26,6 +26,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Vex;
@@ -47,6 +48,7 @@ import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.StairsShape;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 
 import java.io.BufferedReader;
@@ -60,8 +62,10 @@ import java.util.UUID;
 
 public final class ThunderRitual {
     private static final String STAND_TAG = "mainmod.thunder_ritual_stand";
+    private static final String BAT_TAG = "mainmod.thunder_ritual_bat";
+    private static final String COSMETIC_TAG = "mainmod.thunder_ritual_cosmetic";
     private static final String TRIDENT_TAG = "mainmod.thunder_ritual_checked";
-    private static final String COSMETIC_ID = "cosmetic-warden-antlers";
+    private static final String COSMETIC_ID = "cosmetic-thunder-god";
     private static final String VOICE_NAME = "XXXXXXXXXXXXXXXXXXXX";
     private static final Identifier WISH_STORAGE = Identifier.fromNamespaceAndPath("mainmod", "thunder_ritual_wish");
     private static final Map<UUID, Session> SESSIONS = new HashMap<>();
@@ -73,10 +77,18 @@ public final class ThunderRitual {
             new Offering(Items.AMETHYST_SHARD, null, 4, 8, "Let the earth sing beneath my storm. Bring {count} amethyst shards."),
             new Offering(Items.COPPER_BLOCK.weathering().unaffected(), null, 4, 8,
                     "The heavens require a conductor. Offer {count} copper blocks."),
-            new Offering(Items.ECHO_SHARD, null, 2, 4, "The deep remembers every thunderclap. Yield {count} echo shards."),
-            new Offering(Items.GHAST_TEAR, null, 2, 5, "Even the Nether must weep for rain. Give me {count} ghast tears."),
+            new Offering(Items.ECHO_SHARD, null, 2, 3, "The deep remembers every thunderclap. Yield {count} echo shards."),
+            new Offering(Items.GHAST_TEAR, null, 1, 1, "Even the Nether must weep for rain. Give me a ghast tear."),
+            new Offering(Items.GOLDEN_APPLE, null, 1, 1, "My maw craves a gilded apple. Supply it to me posthaste."),
             new Offering(Items.HEART_OF_THE_SEA, null, 1, 1, "The sea keeps a heart of its own. Surrender {count} heart of the sea."),
-            new Offering(null, "charm-lucky-charm", 1, 1, "Fortune has smiled on you long enough. Lay down {count} Lucky Charm.")
+            new Offering(null, "beer", 2, 3, "I need fuel for my storm. Pour {count} beer into the tempest."),
+            new Offering(null, "golden-nutritional-paste", 1, 1, "My storm hungers for the finest sustenance. Present {count} golden nutritional paste."),
+            new Offering(Items.DIAMOND, null, 2, 4, "My lightning is drawn to the purest of gems. Deliver {count} diamonds."),
+            new Offering(Items.LAPIS_BLOCK, null, 1, 1, "My magic is weak without the deep blue. Bring me a lapis block."),
+            new Offering(null, "coin-10", 2, 4, "I require the currency of mortals. Offer {count} ten-denomination coins."),
+            new Offering(null, "duck-rubber", 1, 1, "My life is dreary and dull without the quack. Present a rubber duck to me."),
+            new Offering(Items.EMERALD, null, 5, 42, "My storm is drawn to the green of life. Provide {count} emeralds."),
+            new Offering(Items.GOLD_INGOT, null, 2, 20, "The shine of gold is pleasing to my eyes. Give me {count} gold ingots.")
     );
     private static final List<String> GREETINGS = lines("greetings");
     private static final List<String> SATISFIED = lines("satisfied");
@@ -112,12 +124,15 @@ public final class ThunderRitual {
             }
         });
         UseEntityCallback.EVENT.register((player, level, hand, entity, hit) -> {
-            if (!(player instanceof ServerPlayer clicker) || !(entity instanceof ArmorStand stand)
-                    || !stand.entityTags().contains(STAND_TAG)) return InteractionResult.PASS;
+            boolean ritualEntity = entity instanceof Bat bat && bat.entityTags().contains(BAT_TAG)
+                    || entity instanceof ArmorStand stand && stand.entityTags().contains(COSMETIC_TAG);
+            if (!ritualEntity) return InteractionResult.PASS;
+            if (!(player instanceof ServerPlayer clicker)) return InteractionResult.SUCCESS;
             Session session = SESSIONS.values().stream()
-                    .filter(active -> active.standId.equals(stand.getUUID())).findFirst().orElse(null);
+                    .filter(active -> active.entityId.equals(entity.getUUID())
+                            || active.cosmeticId.equals(entity.getUUID())).findFirst().orElse(null);
             if (session == null) {
-                stand.discard();
+                entity.discard();
                 return InteractionResult.SUCCESS;
             }
             say(clicker, session.currentLine);
@@ -125,7 +140,21 @@ public final class ThunderRitual {
         });
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
             if (entity instanceof ArmorStand stand && stand.entityTags().contains(STAND_TAG)) {
-                if (SESSIONS.values().stream().noneMatch(session -> session.standId.equals(stand.getUUID()))) stand.discard();
+                stand.discard();
+            } else if (entity instanceof ArmorStand stand && stand.entityTags().contains(COSMETIC_TAG)) {
+                Session session = SESSIONS.values().stream()
+                        .filter(active -> active.cosmeticId.equals(stand.getUUID())).findFirst().orElse(null);
+                if (session == null) stand.discard();
+                else if (session.level != level) {
+                    cancelDisturbed(session);
+                    stand.discard();
+                }
+            } else if (entity instanceof Bat bat && bat.entityTags().contains(BAT_TAG)) {
+                Session session = SESSIONS.values().stream()
+                        .filter(active -> active.entityId.equals(bat.getUUID())).findFirst().orElse(null);
+                if (session == null) bat.discard();
+                else if (session.level != level || bat.isLeashed() || bat.isPassenger()
+                        || !insideFlightArea(session.center, bat.position())) cancelMovedBat(session, bat);
             } else if (entity instanceof ThrownTrident trident && !trident.entityTags().contains(TRIDENT_TAG)
                     && trident.getOwner() instanceof ServerPlayer player) {
                 if (trident.addTag(TRIDENT_TAG)) begin(player);
@@ -175,24 +204,44 @@ public final class ThunderRitual {
         }
 
         BlockPos rod = selectedRod(center, player.getX(), player.getZ(), player.getYRot());
-        ArmorStand stand = new ArmorStand(EntityTypes.ARMOR_STAND, level);
-        stand.setPos(rod.getX() + 0.5, rod.getY() + 2, rod.getZ() + 0.5);
-        stand.setInvisible(true);
-        stand.setNoGravity(true);
-        stand.setPermanentlyInvulnerable(true);
-        stand.setItemSlot(EquipmentSlot.HEAD, FakeItems.createFakeItemStack(COSMETIC_ID, 1));
-        stand.lookAt(EntityAnchorArgument.Anchor.EYES, player.getEyePosition());
-        stand.setYHeadRot(stand.getYRot());
-        stand.addTag(STAND_TAG);
+        Bat bat = EntityTypes.BAT.create(level, EntitySpawnReason.EVENT);
+        if (bat == null) return;
+        bat.setPos(rod.getX() + 0.5, rod.getY() + 2.1, rod.getZ() + 0.5);
+        bat.setInvisible(true);
+        bat.setResting(false);
+        bat.setNoAi(true);
+        bat.setNoGravity(true);
+        bat.noPhysics = true;
+        bat.setPermanentlyInvulnerable(true);
+        bat.setPersistenceRequired();
+        bat.lookAt(EntityAnchorArgument.Anchor.EYES, player.getEyePosition());
+        bat.addTag(BAT_TAG);
+        ArmorStand cosmetic = new ArmorStand(EntityTypes.ARMOR_STAND, level);
+        cosmetic.setPos(bat.position());
+        cosmetic.setInvisible(true);
+        cosmetic.setNoGravity(true);
+        cosmetic.noPhysics = true;
+        cosmetic.setPermanentlyInvulnerable(true);
+        cosmetic.setNoBasePlate(true);
+        cosmetic.setItemSlot(EquipmentSlot.HEAD, FakeItems.createFakeItemStack(COSMETIC_ID, 1));
+        cosmetic.lookAt(EntityAnchorArgument.Anchor.EYES, player.getEyePosition());
+        cosmetic.setYHeadRot(cosmetic.getYRot());
+        cosmetic.addTag(COSMETIC_TAG);
         Wish currentWish = getOrCreateWish(level);
         String greeting = randomLine(GREETINGS, level);
-        Session session = new Session(player.getUUID(), level, center, stand.getUUID(), currentWish,
+        Session session = new Session(player.getUUID(), level, center, bat.getUUID(), cosmetic.getUUID(), currentWish,
                 greeting, wishLine(currentWish), level.getServer().getTickCount() + 20);
         SESSIONS.put(player.getUUID(), session);
-        if (!level.addFreshEntity(stand)) {
+        if (!level.addFreshEntity(bat)) {
             SESSIONS.remove(player.getUUID());
             return;
         }
+        if (!level.addFreshEntity(cosmetic) || !cosmetic.startRiding(bat, true, false)) {
+            end(player.getUUID());
+            cosmetic.discard();
+            return;
+        }
+        bat.positionRider(cosmetic);
         strike(level, rod.getX() + 0.5, rod.getY() + 2, rod.getZ() + 0.5, true);
         say(player, greeting);
     }
@@ -262,6 +311,35 @@ public final class ThunderRitual {
                 end(session.playerId);
                 continue;
             }
+            boolean loaded = allChunksLoaded(session.level, session.center);
+            if (loaded) {
+                Entity carrier = session.level.getEntity(session.cosmeticId);
+                if (session.level.getEntity(session.entityId) instanceof Bat bat
+                        && carrier instanceof ArmorStand cosmetic) {
+                    if (bat.isLeashed() || bat.isPassenger() || !insideFlightArea(session.center, bat.position())) {
+                        cancelMovedBat(session, bat);
+                        continue;
+                    }
+                    if (cosmetic.getVehicle() != bat && (cosmetic.isPassenger()
+                            || cosmetic.distanceToSqr(bat) > 4
+                            || !cosmetic.startRiding(bat, true, false))) {
+                        cancelDisturbed(session);
+                        continue;
+                    }
+                    session.missingBatTicks = 0;
+                    floatBat(session, bat, player, server.getTickCount());
+                    bat.positionRider(cosmetic);
+                    cosmetic.noPhysics = true;
+                    if (player.level() == session.level && player.distanceToSqr(cosmetic) < 100) {
+                        cosmetic.lookAt(EntityAnchorArgument.Anchor.EYES, player.getEyePosition());
+                        cosmetic.setYHeadRot(cosmetic.getYRot());
+                    }
+                } else if (++session.missingBatTicks > 100) {
+                    say(player, "My herald has gone beyond this altar. This summons is ended.");
+                    end(session.playerId);
+                    continue;
+                }
+            }
             if (session.completed) {
                 if (server.getTickCount() >= session.nextLineTick) {
                     session.currentLine = randomLine(GOODBYES, session.level);
@@ -279,11 +357,12 @@ public final class ThunderRitual {
                 session.currentLine = session.offeringLine;
                 say(player, session.currentLine);
             }
-            if (!allChunksLoaded(session.level, session.center)) continue;
+            if (!loaded) continue;
             if (!valid(session.level, session.center)) {
                 end(session.playerId);
                 continue;
             }
+            if (session.missingBatTicks > 0) continue;
             if (!session.offeringAnnounced) continue;
             if (player.level() != session.level) continue;
             if (server.getTickCount() % 10 != 0) continue;
@@ -317,6 +396,50 @@ public final class ThunderRitual {
         }
     }
 
+    private static void floatBat(Session session, Bat bat, ServerPlayer player, int tick) {
+        double middleX = session.center.getX() + 0.5;
+        double middleZ = session.center.getZ() + 0.5;
+        double minY = session.center.getY() + 2.05;
+        double maxY = session.center.getY() + 3.65;
+        Vec3 current = bat.position();
+        if (session.flightTarget == null || tick >= session.nextFlightTargetTick
+                || current.distanceToSqr(session.flightTarget) < 0.04) {
+            var random = session.level.getRandom();
+            session.flightTarget = new Vec3(middleX + (random.nextDouble() - 0.5) * 3.4,
+                    minY + random.nextDouble() * (maxY - minY),
+                    middleZ + (random.nextDouble() - 0.5) * 3.4);
+            session.nextFlightTargetTick = tick + 60 + random.nextInt(80);
+        }
+        Vec3 offset = session.flightTarget.subtract(current);
+        double distance = offset.length();
+        if (distance > 0.001) current = current.add(offset.scale(Math.min(0.05, distance) / distance));
+        bat.setPos(current);
+        bat.setResting(false);
+        bat.noPhysics = true;
+        bat.setDeltaMovement(Vec3.ZERO);
+        if (player.level() == session.level && player.distanceToSqr(bat) < 100)
+            bat.lookAt(EntityAnchorArgument.Anchor.EYES, player.getEyePosition());
+    }
+
+    private static boolean insideFlightArea(BlockPos center, Vec3 position) {
+        return Math.abs(position.x - center.getX() - 0.5) <= 2.25
+                && Math.abs(position.z - center.getZ() - 0.5) <= 2.25
+                && position.y >= center.getY() + 1.9 && position.y <= center.getY() + 4.2;
+    }
+
+    private static void cancelMovedBat(Session session, Bat bat) {
+        if (bat.isLeashed()) bat.dropLeash();
+        if (bat.isPassenger()) bat.stopRiding();
+        cancelDisturbed(session);
+        bat.discard();
+    }
+
+    private static void cancelDisturbed(Session session) {
+        ServerPlayer owner = session.level.getServer().getPlayerList().getPlayer(session.playerId);
+        if (owner != null) say(owner, "My herald has been drawn from the altar. This summons is ended.");
+        end(session.playerId);
+    }
+
     private static boolean allChunksLoaded(ServerLevel level, BlockPos center) {
         for (int x : new int[]{-2, 2}) for (int z : new int[]{-2, 2})
             if (!level.hasChunkAt(center.offset(x, 0, z))) return false;
@@ -339,11 +462,12 @@ public final class ThunderRitual {
         }
         destroy(level, session.center);
         var weather = level.getWeatherData();
+        int stormTime = Math.max(6_000, weather.getRainTime());
         weather.setClearWeatherTime(0);
         weather.setRaining(true);
-        weather.setRainTime(12_000);
+        weather.setRainTime(stormTime);
         weather.setThundering(true);
-        weather.setThunderTime(12_000);
+        weather.setThunderTime(stormTime);
         for (int x : new int[]{-2, 2}) for (int z : new int[]{-2, 2}) {
             BlockPos rod = session.center.offset(x, 1, z);
             strike(level, rod.getX() + 0.5, rod.getY() + 1, rod.getZ() + 0.5, true);
@@ -432,8 +556,16 @@ public final class ThunderRitual {
     private static void end(UUID playerId) {
         Session session = SESSIONS.remove(playerId);
         if (session == null) return;
-        Entity stand = session.level.getEntity(session.standId);
-        if (stand != null) stand.discard();
+        for (UUID entityId : List.of(session.cosmeticId, session.entityId)) {
+            for (ServerLevel level : session.level.getServer().getAllLevels()) {
+                Entity entity = level.getEntity(entityId);
+                if (entity instanceof Bat bat && bat.isLeashed()) bat.dropLeash();
+                if (entity != null) {
+                    if (entity.isPassenger()) entity.stopRiding();
+                    entity.discard();
+                }
+            }
+        }
     }
 
     static BlockPos selectedRod(BlockPos center, double playerX, double playerZ, float yaw) {
@@ -548,7 +680,8 @@ public final class ThunderRitual {
 
     private record Offering(Item item, String fakeId, int min, int max, String words) {
         Offering {
-            if ((item == null) == (fakeId == null) || min < 1 || max < min || !words.contains("{count}"))
+            if ((item == null) == (fakeId == null) || min < 1 || max < min
+                    || min != max && !words.contains("{count}"))
                 throw new IllegalArgumentException("Invalid thunder ritual offering: " + words);
         }
 
@@ -576,20 +709,25 @@ public final class ThunderRitual {
         final UUID playerId;
         final ServerLevel level;
         final BlockPos center;
-        final UUID standId;
+        final UUID entityId;
+        final UUID cosmeticId;
         final Wish wish;
+        Vec3 flightTarget;
+        int nextFlightTargetTick;
+        int missingBatTicks;
         String offeringLine;
         int nextLineTick;
         boolean offeringAnnounced;
         boolean completed;
         String currentLine;
 
-        Session(UUID playerId, ServerLevel level, BlockPos center, UUID standId, Wish wish,
+        Session(UUID playerId, ServerLevel level, BlockPos center, UUID entityId, UUID cosmeticId, Wish wish,
                 String greeting, String offeringLine, int offeringAtTick) {
             this.playerId = playerId;
             this.level = level;
             this.center = center;
-            this.standId = standId;
+            this.entityId = entityId;
+            this.cosmeticId = cosmeticId;
             this.wish = wish;
             this.currentLine = greeting;
             this.offeringLine = offeringLine;

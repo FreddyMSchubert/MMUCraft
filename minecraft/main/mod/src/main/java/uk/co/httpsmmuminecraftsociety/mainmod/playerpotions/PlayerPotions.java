@@ -5,7 +5,9 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import com.google.common.collect.ArrayListMultimap;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
@@ -14,6 +16,7 @@ import net.minecraft.world.item.component.ResolvableProfile;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
+import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 
 public final class PlayerPotions {
     public static final int DEFAULT_TICKS = 5 * 60 * 20;
@@ -37,7 +40,7 @@ public final class PlayerPotions {
             ItemStack result = new ItemStack(Items.POTION);
             write(result, identity);
             SkinColors.color(profile, result);
-            return result;
+            return withModel(result);
         }
         ItemStack result = input.copyWithCount(1);
         String identity = identity(input);
@@ -48,7 +51,13 @@ public final class PlayerPotions {
             converted.applyComponents(result.getComponentsPatch());
             result = converted;
         }
-        return result;
+        return withModel(result);
+    }
+
+    private static ItemStack withModel(ItemStack stack) {
+        stack.set(DataComponents.ITEM_MODEL, Identifier.fromNamespaceAndPath(MainMod.MOD_ID,
+                "impersonation/" + BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath()));
+        return stack;
     }
 
     public static boolean isDisguise(ItemStack stack) {

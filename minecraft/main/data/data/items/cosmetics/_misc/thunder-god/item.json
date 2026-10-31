@@ -1,0 +1,9 @@
+{
+	"title": "Thunder God",
+	"id": "cosmetic-thunder-god",
+	"modelType": "cosmetic",
+	"rarity": "mythical",
+	"maxStackSize": 1,
+	"tooltips": ["How did you get this? The thunder god will not be happy."],
+	"equippableCosmetic": {}
+}

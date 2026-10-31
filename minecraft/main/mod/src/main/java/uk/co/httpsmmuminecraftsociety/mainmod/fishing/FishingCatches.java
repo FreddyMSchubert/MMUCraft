@@ -26,6 +26,8 @@ import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.unlockers.UnlockBookAnimation;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
@@ -36,6 +38,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.RecordFishCatchResponse;
 import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.UnlockBookLoot;
+import uk.co.httpsmmuminecraftsociety.mainmod.serverSideBlocks.ServerSideBlocks;
 import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 import java.util.ArrayList;
@@ -53,10 +56,11 @@ public final class FishingCatches {
     static final float ITEM_SHADOW_SCALE = 0.64F;
     private static final String LENGTH_TAG = "mainmod_fish_length_cm";
     private static final String RARITY_TAG = "mainmod_fish_rarity";
-    private static final double MAX_NETHER_MYTHICAL_TREASURE_CHANCE = 0.0002D;
+    private static final double MAX_DIMENSIONAL_MYTHICAL_TREASURE_CHANCE = 0.0002D;
     private static final Map<FishRarity, List<FishLoot>> FISH_LOOT = emptyLootTable();
     private static final Map<FishRarity, List<ItemStack>> TREASURE_LOOT = emptyLootTable();
     private static final Map<FishRarity, List<ItemStack>> NETHER_TREASURE_LOOT = emptyLootTable();
+    private static final Map<FishRarity, List<ItemStack>> END_TREASURE_LOOT = emptyLootTable();
     private static final Map<String, String> FIXED_TREASURE_ANGLES = Map.of("fish-bones", "BL");
 
     static {
@@ -191,13 +195,52 @@ public final class FishingCatches {
         addNetherTreasure(FishRarity.MYTHICAL, Items.ANCIENT_DEBRIS, Items.NETHERITE_SCRAP,
                 Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE, Items.NETHERITE_INGOT,
                 Items.NETHER_STAR, Items.ENCHANTED_GOLDEN_APPLE, Items.BEACON);
+
+        addEndTreasure(FishRarity.COMMON, Items.END_STONE, Items.COBBLESTONE, Items.GRAVEL,
+                Items.FLINT, Items.STICK, Items.STRING, Items.BONE, Items.BONE_MEAL,
+                Items.ROTTEN_FLESH, Items.FEATHER, Items.GLASS_BOTTLE, Items.BOWL,
+                Items.ENDER_PEARL, Items.CHORUS_FRUIT, Items.POPPED_CHORUS_FRUIT,
+                Items.PURPUR_BLOCK, Items.PURPUR_PILLAR, Items.PURPUR_SLAB,
+                Items.PURPUR_STAIRS, Items.END_STONE_BRICKS, Items.END_ROD,
+                Items.OBSIDIAN, Items.AMETHYST_SHARD, Items.ARROW, Items.PAPER);
+        addEndTreasure(FishRarity.UNCOMMON, Items.SHULKER_SHELL, Items.ENDER_EYE,
+                Items.ENDER_CHEST, Items.SPECTRAL_ARROW, Items.PHANTOM_MEMBRANE,
+                Items.ECHO_SHARD, Items.EXPERIENCE_BOTTLE, Items.BLAZE_ROD,
+                Items.GHAST_TEAR, Items.NETHER_WART, Items.GOLD_INGOT,
+                Items.IRON_INGOT, Items.DIAMOND, Items.LAPIS_LAZULI,
+                Items.REDSTONE, Items.EMERALD, Items.AMETHYST_BLOCK,
+                Items.SCULK, Items.SCULK_VEIN, Items.SCULK_SENSOR,
+                Items.DRAGON_BREATH, Items.FIREWORK_ROCKET, Items.SADDLE);
+        addEndTreasure(FishRarity.RARE, Items.SHULKER_BOX, Items.END_CRYSTAL,
+                Items.DIAMOND_SWORD, Items.DIAMOND_PICKAXE, Items.DIAMOND_CHESTPLATE,
+                Items.TOTEM_OF_UNDYING, Items.GOLDEN_APPLE,
+                Items.HEART_OF_THE_SEA, Items.RESPAWN_ANCHOR,
+                Items.CRYING_OBSIDIAN, Items.NETHERITE_SCRAP,
+                Items.SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE);
+        addEndTreasure(FishRarity.EPIC, Items.ELYTRA, Items.DRAGON_HEAD,
+                Items.NETHERITE_INGOT, Items.ANCIENT_DEBRIS,
+                Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE,
+                Items.ENCHANTED_GOLDEN_APPLE, Items.BEACON);
+        addEndTreasure(FishRarity.LEGENDARY, Items.DRAGON_EGG,
+                Items.NETHER_STAR, Items.MUSIC_DISC_OTHERSIDE);
+        addEndTreasure(FishRarity.MYTHICAL, Items.DRAGON_EGG,
+                Items.NETHERITE_BLOCK);
+        END_TREASURE_LOOT.get(FishRarity.LEGENDARY).add(
+                ServerSideBlocks.createDrop(Blocks.TEST_BLOCK.defaultBlockState()));
+        END_TREASURE_LOOT.get(FishRarity.LEGENDARY).add(FakeItems.createFakeItemStack("enderite-scrap", 1));
+        END_TREASURE_LOOT.get(FishRarity.LEGENDARY).add(FakeItems.createFakeItemStack("enderite-upgrade-smithing-template", 1));
+        END_TREASURE_LOOT.get(FishRarity.MYTHICAL).add(FakeItems.createFakeItemStack("enderite-ingot", 1));
+        END_TREASURE_LOOT.get(FishRarity.MYTHICAL).add(
+                ServerSideBlocks.createDrop(Blocks.TEST_INSTANCE_BLOCK.defaultBlockState()));
     }
 
     private FishingCatches() {
     }
 
-    public static Pair<ItemStack, FishingPersonality> random(FishingHook hook, double itemChance, int fishingLuckBonus, int lureLevel, boolean nether) {
-        if (!nether && hook.getRandom().nextDouble() < AnimalCrossingFishingTiming.lureBookShortcutChance(lureLevel)) {
+    public static Pair<ItemStack, FishingPersonality> random(FishingHook hook, double itemChance, int fishingLuckBonus, int lureLevel) {
+        var dimension = hook.level().dimension();
+        boolean overworld = dimension == Level.OVERWORLD;
+        if (overworld && hook.getRandom().nextDouble() < AnimalCrossingFishingTiming.lureBookShortcutChance(lureLevel)) {
             ItemStack lureBook = enchantedBook(hook, Enchantments.LURE);
             return Pair.of(lureBook, treasurePersonality(FishRarity.UNCOMMON, lureBook).resolveTextureAngle(hook.getRandom()));
         }
@@ -205,7 +248,7 @@ public final class FishingCatches {
         double luck = hook.getPlayerOwner() == null
                 ? 0.0
                 : hook.getPlayerOwner().getAttributeValue(Attributes.LUCK) + fishingLuckBonus;
-        if (!nether && hook.getPlayerOwner() instanceof ServerPlayer player) {
+        if (overworld && hook.getPlayerOwner() instanceof ServerPlayer player) {
             ItemStack unlockBook = UnlockBookLoot.rollFishingBook(player, hook.getRandom(), luck);
             if (!unlockBook.isEmpty()) {
                 return Pair.of(unlockBook, treasurePersonality(FishRarity.COMMON, unlockBook).resolveTextureAngle(hook.getRandom()));
@@ -216,8 +259,8 @@ public final class FishingCatches {
         int catches = hook.getPlayerOwner() instanceof ServerPlayer player
                 ? player.getStats().getValue(Stats.CUSTOM.get(Stats.FISH_CAUGHT))
                 : 0;
-        FishRarity rarity = randomRarity(hook.getRandom(), luck, catches, nether && treasure);
-        List<CatchEntry> entries = entriesFor(treasure, rarity, hook, nether);
+        FishRarity rarity = randomRarity(hook.getRandom(), luck, catches, !overworld && treasure);
+        List<CatchEntry> entries = entriesFor(treasure, rarity, hook);
         CatchEntry selected = selectEntry(entries, hook.getRandom());
         ItemStack stack = selected.stack().copy();
         double lengthCm = rollFishLength(selected.length(), hook.getRandom());
@@ -253,6 +296,10 @@ public final class FishingCatches {
 
     private static void addNetherTreasure(FishRarity rarity, net.minecraft.world.item.Item... items) {
         for (var item : items) NETHER_TREASURE_LOOT.get(rarity).add(new ItemStack(item));
+    }
+
+    private static void addEndTreasure(FishRarity rarity, net.minecraft.world.item.Item... items) {
+        for (var item : items) END_TREASURE_LOOT.get(rarity).add(new ItemStack(item));
     }
 
     public static Optional<Component> catchMessage(ItemStack stack) {
@@ -452,11 +499,11 @@ public final class FishingCatches {
         return result;
     }
 
-    private static FishRarity randomRarity(RandomSource random, double luck, int catches, boolean netherTreasure) {
+    private static FishRarity randomRarity(RandomSource random, double luck, int catches, boolean dimensionalTreasure) {
         double[] weights = FishRarity.weightsAt(luck, catches);
-        if (netherTreasure) {
+        if (dimensionalTreasure) {
             int mythical = FishRarity.MYTHICAL.ordinal();
-            double excess = Math.max(0.0D, weights[mythical] - MAX_NETHER_MYTHICAL_TREASURE_CHANCE);
+            double excess = Math.max(0.0D, weights[mythical] - MAX_DIMENSIONAL_MYTHICAL_TREASURE_CHANCE);
             weights[mythical] -= excess;
             weights[FishRarity.COMMON.ordinal()] += excess;
         }
@@ -479,17 +526,19 @@ public final class FishingCatches {
         return lastUnlocked;
     }
 
-    private static List<CatchEntry> entriesFor(boolean treasure, FishRarity rolledRarity, FishingHook hook, boolean nether) {
+    private static List<CatchEntry> entriesFor(boolean treasure, FishRarity rolledRarity, FishingHook hook) {
         for (int index = rolledRarity.ordinal(); index >= 0; index--) {
             FishRarity rarity = FishRarity.values()[index];
-            List<CatchEntry> entries = entriesAt(treasure, rarity, hook, nether);
+            List<CatchEntry> entries = entriesAt(treasure, rarity, hook);
             if (!entries.isEmpty()) {
                 // Empty rarities fall through one step at a time, preserving the rolled group and nearest rarity.
                 return entries;
             }
         }
 
-        if (nether) throw new IllegalStateException("No Nether fishing catches loaded");
+        if (hook.level().dimension() != Level.OVERWORLD) {
+            throw new IllegalStateException("No dimensional fishing catches loaded");
+        }
         ItemStack fallback = new ItemStack(treasure ? Items.STICK : Items.SALMON);
         FishSize length = treasure ? null : new FishSize(75.0, 35.0);
         FishingPersonality personality = treasure
@@ -509,23 +558,26 @@ public final class FishingCatches {
         throw new IllegalStateException("No fishing catch selected");
     }
 
-    private static List<CatchEntry> entriesAt(boolean treasure, FishRarity rarity, FishingHook hook, boolean nether) {
+    private static List<CatchEntry> entriesAt(boolean treasure, FishRarity rarity, FishingHook hook) {
         List<CatchEntry> entries = new ArrayList<>();
+        var dimension = hook.level().dimension();
         if (treasure) {
-            for (ItemStack stack : (nether ? NETHER_TREASURE_LOOT : TREASURE_LOOT).get(rarity)) {
+            var loot = dimension == Level.NETHER ? NETHER_TREASURE_LOOT
+                    : dimension == Level.END ? END_TREASURE_LOOT : TREASURE_LOOT;
+            for (ItemStack stack : loot.get(rarity)) {
                 if (FakeItems.isSpecificFakeItem(stack, "golden-nutritional-paste")
                         && !FeatureToggles.isEnabled(FeatureToggles.CIRCUS)) continue;
                 entries.add(new CatchEntry(stack, treasurePersonality(rarity, stack), null));
             }
-            if (!nether && rarity == FishRarity.UNCOMMON) {
+            if (dimension == Level.OVERWORLD && rarity == FishRarity.UNCOMMON) {
                 ItemStack stack = enchantedBook(hook, Enchantments.LURE);
                 entries.add(new CatchEntry(stack, treasurePersonality(rarity, stack), null));
-            } else if (!nether && rarity == FishRarity.EPIC) {
+            } else if (dimension == Level.OVERWORLD && rarity == FishRarity.EPIC) {
                 ItemStack stack = enchantedBook(hook, Enchantments.LUCK_OF_THE_SEA);
                 entries.add(new CatchEntry(stack, treasurePersonality(rarity, stack), null));
             }
         } else {
-            if (!nether) {
+            if (dimension == Level.OVERWORLD) {
                 for (FishLoot fish : FISH_LOOT.get(rarity)) {
                     entries.add(new CatchEntry(fish.stack(), fishPersonality(rarity, fish.textureAngleDegrees()), fish.length()));
                 }
@@ -535,7 +587,8 @@ public final class FishingCatches {
         if (!treasure) {
             FakeItems.FISH.entrySet().stream()
                     .filter(entry -> entry.getValue().personality().rarity() == rarity)
-                    .filter(entry -> entry.getValue().dimension().equals(nether ? "nether" : "overworld"))
+                    .filter(entry -> entry.getValue().dimension().equals(
+                            dimension == Level.NETHER ? "nether" : dimension == Level.END ? "end" : "overworld"))
                     .filter(entry -> FishSpawnTag.matches(entry.getValue().spawnTags(), hook.level(), hook.blockPosition()))
                     .sorted(Comparator.comparing(entry -> entry.getKey().id()))
                     .map(FishingCatches::customFishEntry)

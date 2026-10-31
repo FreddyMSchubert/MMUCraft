@@ -7,7 +7,7 @@
 	"properties": {
 		"dimension": {
 			"type": "string",
-			"enum": ["overworld", "nether"]
+			"enum": ["overworld", "nether", "end"]
 		},
 		"angle": {
 			"description": "Direction the fish faces in its texture. Compass strings and degrees run clockwise from the top.",

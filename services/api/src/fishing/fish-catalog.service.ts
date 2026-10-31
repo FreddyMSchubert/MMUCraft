@@ -97,7 +97,9 @@ export class FishCatalogService implements OnModuleInit {
 			if (
 				typeof json.id !== 'string' ||
 				typeof json.title !== 'string' ||
-				(json.fish?.dimension !== 'nether' && json.fish?.dimension !== 'overworld') ||
+				(json.fish?.dimension !== 'nether' &&
+					json.fish?.dimension !== 'overworld' &&
+					json.fish?.dimension !== 'end') ||
 				!existsSync(textureFilePath)
 			)
 				return [];

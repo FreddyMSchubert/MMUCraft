@@ -38,7 +38,7 @@ export class FishingController {
 
 	@Get('texture/:fishId')
 	@Header('Content-Type', 'image/png')
-	@Header('Cache-Control', 'public, max-age=31536000, immutable')
+	@Header('Cache-Control', NO_STORE)
 	getTexture(@Param('fishId') fishId: string) {
 		return new StreamableFile(createReadStream(this.fishing.getTextureFilePath(fishId)));
 	}

@@ -74,6 +74,7 @@ export const TAGS: Record<
 > = {
 	overworld: { emoji: '🌍', label: 'Overworld', group: 'dimension', phrase: 'the Overworld' },
 	nether: { emoji: '🔥', label: 'Nether', group: 'dimension', phrase: 'the Nether' },
+	end: { emoji: '🌌', label: 'End', group: 'dimension', phrase: 'the End' },
 	nether_wastes: {
 		emoji: '🌋',
 		label: 'Nether Wastes',

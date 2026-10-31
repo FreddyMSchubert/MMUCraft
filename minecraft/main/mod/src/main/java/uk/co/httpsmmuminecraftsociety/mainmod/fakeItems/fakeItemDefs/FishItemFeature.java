@@ -30,7 +30,8 @@ public record FishItemFeature(
     @Override
     public void apply(ItemStack stack) {
         List<Component> lines = new ArrayList<>(stack.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines());
-        String location = dimension.equals("nether") && !FishSpawnTag.hasNetherBiome(spawnTags)
+        String location = dimension.equals("end") ? " in the End"
+                : dimension.equals("nether") && !FishSpawnTag.hasNetherBiome(spawnTags)
                 ? " in the Nether" : "";
         String conditions = spawnTags.isEmpty()
                 ? (location.isEmpty() ? " anywhere and at any time" : "")
@@ -51,7 +52,7 @@ public record FishItemFeature(
         JsonObject catching = json.has("catching") ? json.getAsJsonObject("catching") : new JsonObject();
         FishRarity rarity = FishRarity.fromJsonValue(rootJson.get("rarity").getAsString());
         String dimension = json.get("dimension").getAsString();
-        if (!dimension.equals("overworld") && !dimension.equals("nether")) {
+        if (!dimension.equals("overworld") && !dimension.equals("nether") && !dimension.equals("end")) {
             throw new IllegalArgumentException("Unknown fish dimension: " + dimension);
         }
         // The item id is the seed: reloads and separate catches keep this species consistent.

@@ -33,7 +33,7 @@ import {
 import { generateEmissiveTexture } from './emissiveTexture';
 import { replaceTrailingVariant } from '../utils/paths';
 import {
-	createBlazingFishingRodItemDefinition,
+	createFishingRodItemDefinition,
 	createCarvedPumpkinItemDefinition,
 	createCommandBlockItemDefinition,
 	createHeartOfTheSeaItemDefinition,
@@ -379,16 +379,17 @@ async function generateBasicItem(
 			context,
 		);
 	}
-	if (item.id === 'blazing-fishing-rod') {
+	if (item.id === 'blazing-fishing-rod' || item.id === 'breezy-fishing-rod') {
 		const castPath = `${item.resourcePath}-cast`;
-		await copyFile(
-			path.join(item.sourceDirectory, 'texture-cast.png'),
-			itemTexturePngPath(outputDir, namespace, castPath),
-			context,
-		);
+		const castSource = path.join(item.sourceDirectory, 'texture-cast.png');
+		if (existsSync(castSource)) {
+			await copyFile(castSource, itemTexturePngPath(outputDir, namespace, castPath), context);
+		}
 		await writeJson(
 			itemModelJsonPath(outputDir, namespace, castPath),
-			createGeneratedItemModel(itemModelId(namespace, castPath)),
+			createGeneratedItemModel(
+				existsSync(castSource) ? itemModelId(namespace, castPath) : modelId,
+			),
 			context,
 		);
 	}
@@ -663,11 +664,13 @@ export async function generateResourcePack(
 		createCarvedPumpkinItemDefinition(carvedPumpkinCases),
 		context,
 	);
-	const blazingRod = commandBlockCases.find((item) => item.when === 'blazing-fishing-rod');
-	if (blazingRod)
+	const fishingRods = commandBlockCases.filter(
+		(item) => item.when === 'blazing-fishing-rod' || item.when === 'breezy-fishing-rod',
+	);
+	if (fishingRods.length)
 		await writeJson(
 			minecraftItemDefinitionPath(options.outputDir, 'fishing_rod'),
-			createBlazingFishingRodItemDefinition(blazingRod),
+			createFishingRodItemDefinition(fishingRods),
 			context,
 		);
 	for (const itemId of FISHING_SHADOW_VANILLA_ITEMS) {

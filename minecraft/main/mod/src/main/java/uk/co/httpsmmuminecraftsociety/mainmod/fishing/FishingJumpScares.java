@@ -90,7 +90,7 @@ public final class FishingJumpScares {
         }
         if (violent) {
             mob.setTarget(player);
-            if (nether) {
+            if (nether || end) {
                 if (mob instanceof AbstractPiglin piglin) {
                     piglin.getBrain().setMemoryWithExpiry(MemoryModuleType.ANGRY_AT, player.getUUID(), 600L);
                 } else if (mob instanceof Hoglin hoglin) {

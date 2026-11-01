@@ -102,14 +102,12 @@ public abstract class AnimalCrossingFishingHookMixin implements FishingRodCast {
                 || !FeatureToggles.isEnabled(FeatureToggles.VOID) || !mainmod$breezy
                 || mainmod$endAnchor != null || Double.isNaN(mainmod$castY)
                 || hook.getY() > mainmod$castY || hook.onGround() || hook.getHookedIn() != null
-                || !AnimalCrossingFishingEnvironment.isVoidColumn(level,
-                BlockPos.containing(hook.getX(), mainmod$castY, hook.getZ()))) return;
+                || !AnimalCrossingFishingEnvironment.isVoidColumn(level, hook.blockPosition())) return;
 
         Display.ItemDisplay anchor = new EndFishingAnchor(level);
-        anchor.setPos(hook.getX(), mainmod$castY, hook.getZ());
+        anchor.setPos(hook.getX(), hook.getY(), hook.getZ());
         if (!level.addFreshEntity(anchor)) return;
         mainmod$endAnchor = anchor;
-        hook.setPos(anchor.getX(), anchor.getY(), anchor.getZ());
         hook.setDeltaMovement(Vec3.ZERO);
         setHookedEntity(anchor);
     }
@@ -127,7 +125,7 @@ public abstract class AnimalCrossingFishingHookMixin implements FishingRodCast {
         }
         if (hook.tickCount % 4 == 0) {
             level.sendParticles(PowerParticleOption.create(ParticleTypes.DRAGON_BREATH, 1.0F),
-                    hook.getX(), mainmod$castY + 0.02D, hook.getZ(),
+                    hook.getX(), hook.getY() + 0.02D, hook.getZ(),
                     3, 0.3D, 0.03D, 0.3D, 0.01D);
         }
         mainmod$tickFishing(level, hook, hook.blockPosition());

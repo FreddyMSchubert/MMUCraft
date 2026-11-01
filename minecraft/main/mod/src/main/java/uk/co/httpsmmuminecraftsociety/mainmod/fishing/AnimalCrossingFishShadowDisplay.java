@@ -145,11 +145,9 @@ public final class AnimalCrossingFishShadowDisplay {
 		double dx = hook.getX() - display.getX();
         double dz = hook.getZ() - display.getZ();
 		float yaw = (float) Math.atan2(dz, dx);
-		Quaternionf rotation = hook.level().dimension() == Level.END
-				? new Quaternionf().rotateY(-yaw + (float) Math.toRadians(90.0F))
-				: new Quaternionf()
-						.rotateY(-yaw + (float) Math.toRadians(90.0F - animation.textureAngleDegrees()))
-						.rotateX((float) Math.toRadians(90.0D));
+		Quaternionf rotation = new Quaternionf()
+				.rotateY(-yaw + (float) Math.toRadians(90.0F - animation.textureAngleDegrees()))
+				.rotateX((float) Math.toRadians(90.0D));
 		float size = appearanceScale * personality.size()
 				* ITEM_TEXTURE_PIXELS / animation.textureLengthPixels();
 		Transformation transformation = new Transformation(

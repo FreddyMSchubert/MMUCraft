@@ -196,35 +196,26 @@ public final class FishingCatches {
                 Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE, Items.NETHERITE_INGOT,
                 Items.NETHER_STAR, Items.ENCHANTED_GOLDEN_APPLE, Items.BEACON);
 
-        addEndTreasure(FishRarity.COMMON, Items.END_STONE, Items.COBBLESTONE, Items.GRAVEL,
-                Items.FLINT, Items.STICK, Items.STRING, Items.BONE, Items.BONE_MEAL,
-                Items.ROTTEN_FLESH, Items.FEATHER, Items.GLASS_BOTTLE, Items.BOWL,
-                Items.ENDER_PEARL, Items.CHORUS_FRUIT, Items.POPPED_CHORUS_FRUIT,
-                Items.PURPUR_BLOCK, Items.PURPUR_PILLAR, Items.PURPUR_SLAB,
-                Items.PURPUR_STAIRS, Items.END_STONE_BRICKS, Items.END_ROD,
-                Items.OBSIDIAN, Items.AMETHYST_SHARD, Items.ARROW, Items.PAPER);
+        addEndTreasure(FishRarity.COMMON, Items.END_STONE, Items.END_STONE_BRICKS,
+                Items.END_STONE_BRICK_SLAB, Items.END_STONE_BRICK_STAIRS,
+                Items.END_STONE_BRICK_WALL, Items.ENDER_PEARL,
+                Items.CHORUS_FRUIT, Items.POPPED_CHORUS_FRUIT,
+                Items.CHORUS_FLOWER, Items.CHORUS_PLANT,
+                Items.PURPUR_BLOCK, Items.PURPUR_PILLAR,
+                Items.PURPUR_SLAB, Items.PURPUR_STAIRS,
+                Items.END_ROD, Items.OBSIDIAN);
         addEndTreasure(FishRarity.UNCOMMON, Items.SHULKER_SHELL, Items.ENDER_EYE,
-                Items.ENDER_CHEST, Items.SPECTRAL_ARROW, Items.PHANTOM_MEMBRANE,
-                Items.ECHO_SHARD, Items.EXPERIENCE_BOTTLE, Items.BLAZE_ROD,
-                Items.GHAST_TEAR, Items.NETHER_WART, Items.GOLD_INGOT,
-                Items.IRON_INGOT, Items.DIAMOND, Items.LAPIS_LAZULI,
-                Items.REDSTONE, Items.EMERALD, Items.AMETHYST_BLOCK,
-                Items.SCULK, Items.SCULK_VEIN, Items.SCULK_SENSOR,
-                Items.DRAGON_BREATH, Items.FIREWORK_ROCKET, Items.SADDLE);
-        addEndTreasure(FishRarity.RARE, Items.SHULKER_BOX, Items.END_CRYSTAL,
-                Items.DIAMOND_SWORD, Items.DIAMOND_PICKAXE, Items.DIAMOND_CHESTPLATE,
-                Items.TOTEM_OF_UNDYING, Items.GOLDEN_APPLE,
-                Items.HEART_OF_THE_SEA, Items.RESPAWN_ANCHOR,
-                Items.CRYING_OBSIDIAN, Items.NETHERITE_SCRAP,
+                Items.ENDER_CHEST, Items.PHANTOM_MEMBRANE,
+                Items.EXPERIENCE_BOTTLE, Items.DRAGON_BREATH,
+                Items.FIREWORK_ROCKET);
+        addEndTreasure(FishRarity.RARE, Items.SHULKER_BOX,
+                Items.DIAMOND_SWORD, Items.DIAMOND_PICKAXE,
+                Items.DIAMOND_HELMET, Items.DIAMOND_CHESTPLATE,
+                Items.DIAMOND_LEGGINGS, Items.DIAMOND_BOOTS,
                 Items.SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE);
-        addEndTreasure(FishRarity.EPIC, Items.ELYTRA, Items.DRAGON_HEAD,
-                Items.NETHERITE_INGOT, Items.ANCIENT_DEBRIS,
-                Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE,
-                Items.ENCHANTED_GOLDEN_APPLE, Items.BEACON);
-        addEndTreasure(FishRarity.LEGENDARY, Items.DRAGON_EGG,
-                Items.NETHER_STAR, Items.MUSIC_DISC_OTHERSIDE);
-        addEndTreasure(FishRarity.MYTHICAL, Items.DRAGON_EGG,
-                Items.NETHERITE_BLOCK);
+        addEndTreasure(FishRarity.EPIC, Items.DRAGON_HEAD);
+        addEndTreasure(FishRarity.LEGENDARY, Items.ELYTRA);
+        addEndTreasure(FishRarity.MYTHICAL, Items.END_CRYSTAL);
         END_TREASURE_LOOT.get(FishRarity.LEGENDARY).add(
                 ServerSideBlocks.createDrop(Blocks.TEST_BLOCK.defaultBlockState()));
         END_TREASURE_LOOT.get(FishRarity.LEGENDARY).add(FakeItems.createFakeItemStack("enderite-scrap", 1));

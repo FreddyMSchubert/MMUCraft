@@ -56,6 +56,9 @@ class HopperFilterGroupReferencesTest(unittest.TestCase):
 			"sniffer_flowers": {"minecraft:pitcher_plant", "minecraft:pitcher_pod",
 				"minecraft:torchflower", "minecraft:torchflower_seeds"},
 			"red_sand": groups["red_sandstone"] | {"minecraft:red_sand"},
+			"ores": {item for items in groups.values() for item in items if item.endswith("_ore")}
+				| {"minecraft:ancient_debris"},
+			"terracotta_all": groups["terracotta"] | groups["glazed_terracotta"],
 			"villager_workstations": {"minecraft:barrel", "minecraft:blast_furnace",
 				"minecraft:brewing_stand", "minecraft:cartography_table", "minecraft:cauldron",
 				"minecraft:composter", "minecraft:fletching_table", "minecraft:grindstone",
@@ -68,6 +71,8 @@ class HopperFilterGroupReferencesTest(unittest.TestCase):
 		self.assertEqual(groups["villager_workstations"], expected["villager_workstations"])
 		self.assertEqual(groups["sniffer_flowers"], expected["sniffer_flowers"])
 		self.assertEqual(groups["red_sand"], expected["red_sand"])
+		self.assertEqual(groups["ores"], expected["ores"])
+		self.assertEqual(groups["terracotta_all"], expected["terracotta_all"])
 		validate_hopper_filter_group_references(root)
 
 	def test_singleton_groups_are_only_variant_families(self):

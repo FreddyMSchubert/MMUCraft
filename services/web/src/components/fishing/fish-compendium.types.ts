@@ -3,7 +3,16 @@ import type { TextureAnimationOptions } from '@/lib/minecraft-model-renderer';
 
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythical';
 export type TagGroup =
-	'dimension' | 'netherBiome' | 'climate' | 'water' | 'time' | 'height' | 'weather' | 'moon';
+	| 'dimension'
+	| 'netherBiome'
+	| 'endHeight'
+	| 'endBiome'
+	| 'climate'
+	| 'water'
+	| 'time'
+	| 'height'
+	| 'weather'
+	| 'moon';
 export type FishSort = 'rarity' | 'location';
 
 export interface PlayerOption {
@@ -74,6 +83,7 @@ export const TAGS: Record<
 > = {
 	overworld: { emoji: '🌍', label: 'Overworld', group: 'dimension', phrase: 'the Overworld' },
 	nether: { emoji: '🔥', label: 'Nether', group: 'dimension', phrase: 'the Nether' },
+	end: { emoji: '🌌', label: 'End', group: 'dimension', phrase: 'the End' },
 	nether_wastes: {
 		emoji: '🌋',
 		label: 'Nether Wastes',
@@ -104,6 +114,48 @@ export const TAGS: Record<
 		group: 'netherBiome',
 		phrase: 'the Basalt Deltas',
 	},
+	dense_void: {
+		emoji: '⬇️',
+		label: 'Dense Void',
+		group: 'endHeight',
+		phrase: 'the dense void (Y ≤ 5)',
+	},
+	equivoid: {
+		emoji: '↔️',
+		label: 'Equivoid',
+		group: 'endHeight',
+		phrase: 'the equivoid (Y 6–244)',
+	},
+	sparse_void: {
+		emoji: '⬆️',
+		label: 'Sparse Void',
+		group: 'endHeight',
+		phrase: 'the sparse void (Y ≥ 245)',
+	},
+	small_end_islands: {
+		emoji: '🏝️',
+		label: 'Small Islands',
+		group: 'endBiome',
+		phrase: 'Small End Islands',
+	},
+	end_midlands: {
+		emoji: '🌌',
+		label: 'Midlands',
+		group: 'endBiome',
+		phrase: 'End Midlands',
+	},
+	end_highlands: {
+		emoji: '⛰️',
+		label: 'Highlands',
+		group: 'endBiome',
+		phrase: 'End Highlands',
+	},
+	end_barrens: {
+		emoji: '🪨',
+		label: 'Barrens',
+		group: 'endBiome',
+		phrase: 'End Barrens',
+	},
 	warm: { emoji: '🔥', label: 'Warm', group: 'climate', phrase: 'hot biomes' },
 	cold: { emoji: '❄️', label: 'Cold', group: 'climate', phrase: 'cold biomes' },
 	river: { emoji: '🌉', label: 'River', group: 'water', phrase: 'rivers' },
@@ -130,6 +182,8 @@ export const TAGS: Record<
 export const GROUPS: TagGroup[] = [
 	'dimension',
 	'netherBiome',
+	'endHeight',
+	'endBiome',
 	'climate',
 	'water',
 	'time',
@@ -140,6 +194,8 @@ export const GROUPS: TagGroup[] = [
 export const GROUP_LABELS: Record<TagGroup, string> = {
 	dimension: 'Dimension',
 	netherBiome: 'Nether biome',
+	endHeight: 'End void height',
+	endBiome: 'End biome',
 	climate: 'Temperature',
 	water: 'Water type',
 	time: 'Daytime',

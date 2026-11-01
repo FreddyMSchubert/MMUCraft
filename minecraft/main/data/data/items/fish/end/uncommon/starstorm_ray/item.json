@@ -1,0 +1,18 @@
+{
+	"title": "Starstorm Ray",
+	"id": "fish-starstorm_ray",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": ["Its pale fins spread wide above the Small End Islands."],
+	"fish": {
+		"dimension": "end",
+		"angle": "BL",
+		"tags": ["small_end_islands"],
+		"size": {
+			"averageLengthCm": 54,
+			"textureLengthPixels": 18.7
+		},
+		"furnaceResult": "white_meat"
+	}
+}

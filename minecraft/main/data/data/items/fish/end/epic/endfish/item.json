@@ -1,0 +1,18 @@
+{
+	"title": "Endfish",
+	"id": "fish-endfish",
+	"modelType": "basic",
+	"rarity": "epic",
+	"maxStackSize": 64,
+	"tooltips": ["Pale growths cling to its sides as it crosses the End Midlands."],
+	"fish": {
+		"dimension": "end",
+		"angle": "BL",
+		"tags": ["equivoid", "end_midlands"],
+		"size": {
+			"averageLengthCm": 46,
+			"textureLengthPixels": 20.1
+		},
+		"furnaceResult": "white_meat"
+	}
+}

@@ -38,10 +38,9 @@ export function sortAndFilterFish(
 				(RARITY_RANK.get(left.rarity) ?? 0) - (RARITY_RANK.get(right.rarity) ?? 0);
 			const location = locationKey(left).localeCompare(locationKey(right), 'en');
 			const conditions =
-				Number(left.tags.some((tag) => tag !== 'overworld' && tag !== 'nether')) -
-				Number(right.tags.some((tag) => tag !== 'overworld' && tag !== 'nether'));
-			const dimension =
-				Number(left.tags.includes('nether')) - Number(right.tags.includes('nether'));
+				Number(left.tags.some((tag) => !['overworld', 'nether', 'end'].includes(tag))) -
+				Number(right.tags.some((tag) => !['overworld', 'nether', 'end'].includes(tag)));
+			const dimension = locationRank(left) - locationRank(right);
 			return (
 				(sort === 'rarity' ? rarity || conditions || dimension : location || rarity) ||
 				left.title.localeCompare(right.title, 'en')
@@ -49,8 +48,12 @@ export function sortAndFilterFish(
 		});
 }
 
+function locationRank(fish: CompendiumFish) {
+	return fish.tags.includes('end') ? 2 : fish.tags.includes('nether') ? 1 : 0;
+}
+
 export function locationKey(fish: CompendiumFish) {
-	return `${fish.tags.includes('nether') ? '1' : '0'}|${GROUPS.map((group) =>
+	return `${locationRank(fish)}|${GROUPS.map((group) =>
 		Object.keys(TAGS)
 			.filter((tag) => TAGS[tag].group === group && fish.tags.includes(tag))
 			.join('+'),
@@ -86,7 +89,10 @@ export function tagLines(tags: string[]) {
 
 export function conditionSentence(tags: string[]) {
 	const clauses = GROUPS.flatMap((group) => {
-		if (group === 'dimension' && tags.some((tag) => TAGS[tag].group === 'netherBiome'))
+		if (
+			group === 'dimension' &&
+			tags.some((tag) => ['netherBiome', 'endHeight', 'endBiome'].includes(TAGS[tag].group))
+		)
 			return [];
 		const matches = tags.flatMap((tag) =>
 			tag !== 'overworld' && TAGS[tag].group === group ? [TAGS[tag]] : [],
@@ -95,6 +101,8 @@ export function conditionSentence(tags: string[]) {
 		const prefix =
 			group === 'dimension' ||
 			group === 'netherBiome' ||
+			group === 'endHeight' ||
+			group === 'endBiome' ||
 			group === 'climate' ||
 			group === 'water' ||
 			group === 'height'

@@ -26,6 +26,11 @@
 	--fish-name-shine: #fff;
 }
 
+.fishCard.end {
+	--fish-name-color: #c4a5ff;
+	--fish-name-shine: #090016;
+}
+
 .fishCard:hover,
 .fishCard:focus-visible {
 	z-index: 20;

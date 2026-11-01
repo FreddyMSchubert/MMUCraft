@@ -1,0 +1,27 @@
+{
+	"title": "Breezy Fishing Rod",
+	"id": "breezy-fishing-rod",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"baseItemOverride": "minecraft:fishing_rod",
+	"tooltips": ["Fish above the End void."],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "fishing/breezy_fishing_rod",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "void",
+				"pattern": ["  B", " BS", "B S"],
+				"key": {
+					"B": "minecraft:breeze_rod",
+					"S": "minecraft:string"
+				},
+				"result": {
+					"stack": "mainmod:breezy-fishing-rod",
+					"count": 1
+				}
+			}
+		]
+	}
+}

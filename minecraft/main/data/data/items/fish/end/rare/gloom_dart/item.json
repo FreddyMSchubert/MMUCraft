@@ -1,0 +1,18 @@
+{
+	"title": "Gloom Dart",
+	"id": "fish-gloom_dart",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 64,
+	"tooltips": ["Its dark fins hide in the lower void. Its red tail gives it away."],
+	"fish": {
+		"dimension": "end",
+		"angle": "TR",
+		"tags": ["dense_void", "end_barrens"],
+		"size": {
+			"averageLengthCm": 51,
+			"textureLengthPixels": 18.7
+		},
+		"furnaceResult": "red_meat"
+	}
+}

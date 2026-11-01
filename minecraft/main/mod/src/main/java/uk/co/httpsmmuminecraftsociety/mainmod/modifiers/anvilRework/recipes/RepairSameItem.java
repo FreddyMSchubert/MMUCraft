@@ -5,6 +5,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.jspecify.annotations.Nullable;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.CosmeticsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmStackData;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
@@ -25,6 +26,7 @@ public final class RepairSameItem implements AnvilRecipe
         return left.isDamageableItem()
                 && right.isDamageableItem()
                 && left.is(right.getItem())
+                && !CosmeticsManager.determineCosmeticType(right).isHelmet()
                 && GliderCharm.isGlider(left) == GliderCharm.isGlider(right);
     }
 

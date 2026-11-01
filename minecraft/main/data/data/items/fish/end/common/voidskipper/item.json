@@ -1,0 +1,18 @@
+{
+	"title": "Voidskipper",
+	"id": "fish-voidskipper",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["It glides between the End islands."],
+	"fish": {
+		"dimension": "end",
+		"angle": "TR",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 28,
+			"textureLengthPixels": 16.6
+		},
+		"furnaceResult": "white_meat"
+	}
+}

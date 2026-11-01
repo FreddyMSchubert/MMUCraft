@@ -14,11 +14,23 @@ public final class AnimalCrossingFishingEnvironment {
 
     private AnimalCrossingFishingEnvironment() {}
 
-    public static boolean isFishable(ServerLevel level, FishingHook hook, boolean blazing) {
+    public static boolean isFishable(ServerLevel level, FishingHook hook, boolean blazing,
+                                     boolean breezy, boolean endAnchored) {
         var fluid = level.getFluidState(hook.blockPosition());
-        return level.dimension() == Level.OVERWORLD && fluid.is(FluidTags.WATER)
+        return level.dimension() == Level.OVERWORLD && !breezy && fluid.is(FluidTags.WATER)
                 || level.dimension() == Level.NETHER && FeatureToggles.isEnabled(FeatureToggles.NETHER)
-                && blazing && (fluid.is(FluidTags.LAVA) || isAtLavaSurface(level, hook));
+                && blazing && (fluid.is(FluidTags.LAVA) || isAtLavaSurface(level, hook))
+                || level.dimension() == Level.END && FeatureToggles.isEnabled(FeatureToggles.VOID)
+                && breezy && endAnchored && isVoidColumn(level, hook.blockPosition());
+    }
+
+    public static boolean isVoidColumn(ServerLevel level, BlockPos bobber) {
+        if (!level.hasChunkAt(bobber)) return false;
+        BlockPos.MutableBlockPos pos = bobber.mutable();
+        for (int y = bobber.getY(); y >= level.getMinY(); y--) {
+            if (!level.getBlockState(pos.setY(y)).isAir()) return false;
+        }
+        return true;
     }
 
     public static boolean isAtLavaSurface(Level level, FishingHook hook) {
@@ -51,6 +63,7 @@ public final class AnimalCrossingFishingEnvironment {
                 box,
                 entity -> entity.isAlive()
                         && entity != hook.getOwner()
+                        && entity != hook.getHookedIn()
                         && entity != fishShadow
                         && entity.distanceToSqr(fishShadow)
                         <= SCURRY_TRIGGER_DISTANCE * SCURRY_TRIGGER_DISTANCE

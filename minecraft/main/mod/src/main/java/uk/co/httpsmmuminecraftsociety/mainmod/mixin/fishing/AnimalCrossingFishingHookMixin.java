@@ -2,6 +2,8 @@ package uk.co.httpsmmuminecraftsociety.mainmod.mixin.fishing;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.PowerParticleOption;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -9,6 +11,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Display;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
@@ -35,11 +38,13 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fishing.AnimalCrossingFishingEnvir
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.AnimalCrossingFishingPhase;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.AnimalCrossingFishingTiming;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingCatches;
+import uk.co.httpsmmuminecraftsociety.mainmod.fishing.EndFishingAnchor;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingJumpScares;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingModifiers;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingPersonality;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingRodCast;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 @Mixin(FishingHook.class)
 public abstract class AnimalCrossingFishingHookMixin implements FishingRodCast {
@@ -50,6 +55,7 @@ public abstract class AnimalCrossingFishingHookMixin implements FishingRodCast {
     @Shadow private float fishAngle;
     @Shadow @Final private int luck;
     @Shadow @Final private int lureSpeed;
+    @Shadow private void setHookedEntity(Entity entity) { throw new AssertionError(); }
 
 	@Unique private static final int MAX_FISH_SHADOW_AGE = 20 * 65;
 
@@ -72,6 +78,9 @@ public abstract class AnimalCrossingFishingHookMixin implements FishingRodCast {
     @Unique private ItemStack mainmod$castRod = ItemStack.EMPTY;
     @Unique private InteractionHand mainmod$castHand;
     @Unique private boolean mainmod$blazing;
+    @Unique private boolean mainmod$breezy;
+    @Unique private double mainmod$castY = Double.NaN;
+    @Unique private Display.ItemDisplay mainmod$endAnchor;
     @Unique private boolean mainmod$nether;
     @Unique private double mainmod$itemChance = FishingModifiers.DEFAULT_ITEM_CHANCE;
 	@Unique private boolean mainmod$jumpScare;
@@ -81,6 +90,45 @@ public abstract class AnimalCrossingFishingHookMixin implements FishingRodCast {
         this.mainmod$castRod = rod;
         this.mainmod$castHand = hand;
         this.mainmod$blazing = FakeItems.isSpecificFakeItem(rod, "blazing-fishing-rod");
+        this.mainmod$breezy = FakeItems.isSpecificFakeItem(rod, "breezy-fishing-rod");
+        Player owner = ((FishingHook) (Object) this).getPlayerOwner();
+        if (owner != null) this.mainmod$castY = owner.getY();
+    }
+
+    @Inject(method = "tick", at = @At("HEAD"))
+    private void mainmod$anchorEndHook(CallbackInfo ci) {
+        FishingHook hook = (FishingHook) (Object) this;
+        if (!(hook.level() instanceof ServerLevel level) || level.dimension() != Level.END
+                || !FeatureToggles.isEnabled(FeatureToggles.VOID) || !mainmod$breezy
+                || mainmod$endAnchor != null || Double.isNaN(mainmod$castY)
+                || hook.getY() > mainmod$castY || hook.onGround() || hook.getHookedIn() != null
+                || !AnimalCrossingFishingEnvironment.isVoidColumn(level, hook.blockPosition())) return;
+
+        Display.ItemDisplay anchor = new EndFishingAnchor(level);
+        anchor.setPos(hook.getX(), hook.getY(), hook.getZ());
+        if (!level.addFreshEntity(anchor)) return;
+        mainmod$endAnchor = anchor;
+        hook.setDeltaMovement(Vec3.ZERO);
+        setHookedEntity(anchor);
+    }
+
+    @Inject(method = "tick", at = @At("RETURN"))
+    private void mainmod$tickEndHook(CallbackInfo ci) {
+        FishingHook hook = (FishingHook) (Object) this;
+        if (mainmod$endAnchor == null || !(hook.level() instanceof ServerLevel level)
+                || hook.isRemoved()) return;
+        if (!mainmod$endAnchor.isAlive()
+                || !AnimalCrossingFishingEnvironment.isFishable(level, hook, mainmod$blazing,
+                mainmod$breezy, true)) {
+            hook.discard();
+            return;
+        }
+        if (hook.tickCount % 4 == 0) {
+            level.sendParticles(PowerParticleOption.create(ParticleTypes.DRAGON_BREATH, 1.0F),
+                    hook.getX(), hook.getY() + 0.02D, hook.getZ(),
+                    3, 0.3D, 0.03D, 0.3D, 0.01D);
+        }
+        mainmod$tickFishing(level, hook, hook.blockPosition());
     }
 
     @Redirect(method = "tick", at = @At(value = "INVOKE",
@@ -166,15 +214,20 @@ public abstract class AnimalCrossingFishingHookMixin implements FishingRodCast {
         }
 
         ci.cancel();
+        mainmod$tickFishing(level, hook, bobberBlockPos);
+    }
 
-		if (!AnimalCrossingFishingEnvironment.isFishable(level, hook, mainmod$blazing)) {
+    @Unique
+    private void mainmod$tickFishing(ServerLevel level, FishingHook hook, BlockPos bobberBlockPos) {
+		if (!AnimalCrossingFishingEnvironment.isFishable(level, hook, mainmod$blazing,
+                mainmod$breezy, mainmod$endAnchor != null)) {
             mainmod$cleanupFishShadow();
             mainmod$phase = AnimalCrossingFishingPhase.WAITING;
             return;
         }
 		mainmod$nether = level.dimension() == Level.NETHER;
 
-		int weatherSpeed = mainmod$nether ? 1 : AnimalCrossingFishingEnvironment.weatherWaitSpeed(
+		int weatherSpeed = level.dimension() != Level.OVERWORLD ? 1 : AnimalCrossingFishingEnvironment.weatherWaitSpeed(
 				level,
 				bobberBlockPos,
 				hook
@@ -200,7 +253,8 @@ public abstract class AnimalCrossingFishingHookMixin implements FishingRodCast {
             return;
         }
 
-        if (mainmod$nether && !FakeItems.isSpecificFakeItem(stack, "blazing-fishing-rod")) {
+        if (mainmod$nether && !FakeItems.isSpecificFakeItem(stack, "blazing-fishing-rod")
+                || mainmod$endAnchor != null && !FakeItems.isSpecificFakeItem(stack, "breezy-fishing-rod")) {
             mainmod$cleanupFishShadow();
             hook.discard();
             cir.setReturnValue(0);
@@ -219,11 +273,19 @@ public abstract class AnimalCrossingFishingHookMixin implements FishingRodCast {
         }
 
         mainmod$cleanupFishShadow();
+        if (mainmod$endAnchor != null) {
+            hook.discard();
+            cir.setReturnValue(0);
+        }
     }
 
     @Inject(method = "remove", at = @At("HEAD"))
     private void mainmod$cleanupWhenRemoved(CallbackInfo ci) {
         mainmod$cleanupFishShadow();
+        if (mainmod$endAnchor != null) {
+            mainmod$endAnchor.discard();
+            mainmod$endAnchor = null;
+        }
     }
 
     @Unique
@@ -250,12 +312,11 @@ public abstract class AnimalCrossingFishingHookMixin implements FishingRodCast {
 				hook,
 				this.mainmod$itemChance,
 				this.luck,
-				AnimalCrossingFishingTiming.lureLevel(this.lureSpeed),
-				this.mainmod$nether
+				AnimalCrossingFishingTiming.lureLevel(this.lureSpeed)
 		);
         this.mainmod$catchResult = fish.getFirst();
         this.mainmod$catchPersonality = fish.getSecond();
-		this.mainmod$jumpScare = FishingJumpScares.shouldTrigger(hook.getRandom(), mainmod$nether);
+		this.mainmod$jumpScare = FishingJumpScares.shouldTrigger(hook.getRandom(), level.dimension());
 
         this.fishAngle = Mth.nextFloat(hook.getRandom(), 0.0F, 360.0F);
         this.mainmod$orbitDegrees = this.fishAngle;

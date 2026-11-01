@@ -37,7 +37,7 @@ export class FishingService {
 	) {}
 
 	recordCatch(input: RecordCatchInput) {
-		const visibleFish = this.visibleFish(this.featureToggles.enabledKeys().has('nether'));
+		const visibleFish = this.visibleFish();
 		const definition = visibleFish.find((fish) => fish.id === input.fishId);
 		const user = this.identities.resolveAndRefresh(
 			input.minecraftUuid,
@@ -171,8 +171,9 @@ export class FishingService {
 	}
 
 	getCompendium(viewer: AuthenticatedUser, userIdInput?: string) {
-		const netherOpen = this.featureToggles.enabledKeys().has('nether');
-		const visibleFish = this.visibleFish(netherOpen);
+		const enabled = this.featureToggles.enabledKeys();
+		const netherOpen = enabled.has('nether');
+		const visibleFish = this.visibleFish();
 		const visibleIds = new Set(visibleFish.map((fish) => fish.id));
 		const requestedUserId = Number(userIdInput ?? viewer.id);
 		const selectedUserId =
@@ -273,12 +274,7 @@ export class FishingService {
 	}
 
 	getCatchCountsForUsers(userIds: number[]) {
-		const rarityByFish = new Map(
-			this.visibleFish(this.featureToggles.enabledKeys().has('nether')).map((fish) => [
-				fish.id,
-				fish.rarity,
-			]),
-		);
+		const rarityByFish = new Map(this.visibleFish().map((fish) => [fish.id, fish.rarity]));
 		const countsByUserId = new Map(userIds.map((userId) => [userId, emptyCatchCounts()]));
 		if (userIds.length === 0) return countsByUserId;
 
@@ -307,13 +303,21 @@ export class FishingService {
 	}
 
 	getTextureFilePath(fishId: string) {
+		if (!this.visibleFish().some((fish) => fish.id === fishId)) {
+			throw new NotFoundException('Fish texture not found');
+		}
 		return this.fishCatalog.textureFilePath(fishId);
 	}
 
-	private visibleFish(netherOpen: boolean) {
+	private visibleFish() {
+		const enabled = this.featureToggles.enabledKeys();
 		return this.fishCatalog
 			.definitions()
-			.filter((fish) => netherOpen || !fish.tags.includes('nether'));
+			.filter(
+				(fish) =>
+					(enabled.has('nether') || !fish.tags.includes('nether')) &&
+					(enabled.has('void') || !fish.tags.includes('end')),
+			);
 	}
 
 	private unrecorded(accountLinked: boolean, message: string) {

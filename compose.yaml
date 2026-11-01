@@ -291,6 +291,7 @@ services:
             start_period: 2m
 
     event-controller:
+        profiles: [event]
         build:
             context: services/event-controller
         read_only: true

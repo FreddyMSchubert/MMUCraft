@@ -43,15 +43,15 @@ public final class FishingModifiers {
                 .findFirst()
                 .orElse(null);
         if (modifier == null) {
-            return player.level().dimension() == Level.NETHER
-                    ? DEFAULT_NETHER_ITEM_CHANCE : DEFAULT_ITEM_CHANCE;
+            return player.level().dimension() == Level.OVERWORLD
+                    ? DEFAULT_ITEM_CHANCE : DEFAULT_NETHER_ITEM_CHANCE;
         }
 
         if (!player.hasInfiniteMaterials()) {
             useOnce(player, stack, modifier.uses());
         }
-        return player.level().dimension() == Level.NETHER
-                ? modifier.netherItemChance() : modifier.itemChance();
+        return player.level().dimension() == Level.OVERWORLD
+                ? modifier.itemChance() : modifier.netherItemChance();
     }
 
     public static void onSuccessfulCatch(Player player) {

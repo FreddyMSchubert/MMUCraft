@@ -151,6 +151,7 @@ export function FishingTab({ onSelectPlayer }: { onSelectPlayer: (playerName: st
 				rarityFilters={rarityFilters}
 				tagFilters={tagFilters}
 				netherOpen={data.netherOpen}
+				voidOpen={data.fish.some((fish) => fish.tags.includes('end'))}
 				onToggleRarity={(rarity) => {
 					setRarityFilters((current) => toggled(current, rarity));
 				}}

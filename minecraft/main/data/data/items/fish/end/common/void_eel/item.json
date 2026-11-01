@@ -1,0 +1,18 @@
+{
+	"title": "Void Eel",
+	"id": "fish-void_eel",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Its thin body slips through the lowest air above the void."],
+	"fish": {
+		"dimension": "end",
+		"angle": "TR",
+		"tags": ["dense_void"],
+		"size": {
+			"averageLengthCm": 88,
+			"textureLengthPixels": 21.5
+		},
+		"furnaceResult": "red_meat"
+	}
+}

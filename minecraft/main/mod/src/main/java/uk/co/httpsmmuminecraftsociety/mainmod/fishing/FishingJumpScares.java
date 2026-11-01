@@ -28,9 +28,11 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.arrow.Arrow;
 import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
 import net.minecraft.world.entity.projectile.hurtingprojectile.SmallFireball;
+import net.minecraft.world.entity.projectile.hurtingprojectile.windcharge.WindCharge;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.phys.Vec3;
 
 public final class FishingJumpScares {
@@ -39,28 +41,37 @@ public final class FishingJumpScares {
     private static final int VIOLENT_CHOICES = 9;
     private static final int NETHER_MOB_CHOICES = 10;
     private static final int NETHER_CHOICES = 13;
+    private static final int END_MOB_CHOICES = 3;
+    private static final int END_CHOICES = 5;
 
     private FishingJumpScares() {
     }
 
-    public static boolean shouldTrigger(RandomSource random, boolean nether) {
-        return random.nextFloat() < CHANCE * (nether ? 5.0F : 1.0F);
+    public static boolean shouldTrigger(RandomSource random, ResourceKey<Level> dimension) {
+        return random.nextFloat() < CHANCE * (dimension == Level.NETHER ? 10.0F
+                : dimension == Level.END ? 5.0F : 1.0F);
     }
 
     public static boolean spawn(ServerLevel level, FishingHook hook, Player player) {
         RandomSource random = hook.getRandom();
         boolean nether = level.dimension() == Level.NETHER;
-        boolean violent = nether || random.nextBoolean();
-        int choices = nether ? NETHER_CHOICES : violent ? VIOLENT_CHOICES : PEACEFUL_CHOICES;
+        boolean end = level.dimension() == Level.END;
+        boolean violent = nether || end || random.nextBoolean();
+        int choices = nether ? NETHER_CHOICES : end ? END_CHOICES
+                : violent ? VIOLENT_CHOICES : PEACEFUL_CHOICES;
         int choice = random.nextInt(choices);
         if (nether && choice >= NETHER_MOB_CHOICES) {
             return spawnProjectile(level, hook, player, choice - NETHER_MOB_CHOICES);
         }
-        if (!nether && violent && choice == VIOLENT_CHOICES - 1) {
+        if (end && choice >= END_MOB_CHOICES) {
+            return spawnProjectile(level, hook, player, choice - END_MOB_CHOICES);
+        }
+        if (!nether && !end && violent && choice == VIOLENT_CHOICES - 1) {
             return spawnProjectile(level, hook, player, 0);
         }
         EntityType<? extends Mob> type = nether
                 ? netherType(choice)
+                : end ? endType(choice)
                 : violent ? violentType(choice) : peacefulType(choice);
         BlockPos pos = hook.blockPosition();
         Mob mob = type.create(level, null, pos, EntitySpawnReason.EVENT, false, false);
@@ -68,7 +79,7 @@ public final class FishingJumpScares {
             return false;
         }
 
-        if (!nether && mob instanceof AgeableMob ageable) {
+        if (!nether && !end && mob instanceof AgeableMob ageable) {
             ageable.setBaby(!violent && random.nextBoolean());
         }
         if (mob instanceof Drowned drowned) {
@@ -79,7 +90,7 @@ public final class FishingJumpScares {
         }
         if (violent) {
             mob.setTarget(player);
-            if (nether) {
+            if (nether || end) {
                 if (mob instanceof AbstractPiglin piglin) {
                     piglin.getBrain().setMemoryWithExpiry(MemoryModuleType.ANGRY_AT, player.getUUID(), 600L);
                 } else if (mob instanceof Hoglin hoglin) {
@@ -120,7 +131,9 @@ public final class FishingJumpScares {
     private static boolean spawnProjectile(ServerLevel level, FishingHook hook, Player player, int choice) {
         Projectile projectile = switch (choice) {
             case 0 -> new Arrow(EntityTypes.ARROW, level);
-            case 1 -> new SmallFireball(EntityTypes.SMALL_FIREBALL, level);
+            case 1 -> level.dimension() == Level.END
+                    ? new WindCharge(EntityTypes.WIND_CHARGE, level)
+                    : new SmallFireball(EntityTypes.SMALL_FIREBALL, level);
             default -> new LargeFireball(EntityTypes.FIREBALL, level);
         };
         double startY = surfaceY(level, hook) + 0.4D;
@@ -182,6 +195,15 @@ public final class FishingJumpScares {
             case 8 -> EntityTypes.ZOMBIFIED_PIGLIN;
             case 9 -> EntityTypes.ENDERMAN;
             default -> throw new IllegalArgumentException("Not a Nether jump-scare choice: " + choice);
+        };
+    }
+
+    private static EntityType<? extends Mob> endType(int choice) {
+        return switch (choice) {
+            case 0 -> EntityTypes.ENDERMITE;
+            case 1 -> EntityTypes.ENDERMAN;
+            case 2 -> EntityTypes.SHULKER;
+            default -> throw new IllegalArgumentException("Not an End jump-scare choice: " + choice);
         };
     }
 

@@ -1,0 +1,18 @@
+{
+	"title": "Dragonfish",
+	"id": "fish-dragonfish",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": ["Its long body curls as it descends into the dense void."],
+	"fish": {
+		"dimension": "end",
+		"angle": "BR",
+		"tags": ["dense_void", "end_highlands"],
+		"size": {
+			"averageLengthCm": 63,
+			"textureLengthPixels": 17.3
+		},
+		"furnaceResult": "red_meat"
+	}
+}

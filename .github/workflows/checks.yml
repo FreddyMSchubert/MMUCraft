@@ -291,19 +291,12 @@ jobs:
                   ./gradlew -p ../../../services/velocity/plugin build --no-daemon
                   ./gradlew -p ../../../minecraft/waiting-room/plugin build --no-daemon
 
-            - name: Build chunklocked and stage event mods
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
-              run: |
-                  ./minecraft/surprising-saturday/killshift/gradlew -p minecraft/surprising-saturday/chunklocked build --no-daemon
-                  python3 minecraft/surprising-saturday/chunklocked/check_loot.py
-                  python3 minecraft/surprising-saturday/download-mods.py
-
             - name: Find reusable Minecraft and service images
               id: back_images
               shell: bash
               env:
                   IMAGE_PREFIX: ${{ steps.image.outputs.prefix }}
-              run: python3 .github/scripts/image_fingerprint.py mc velocity waiting-room event event-controller backup
+              run: python3 .github/scripts/image_fingerprint.py mc velocity waiting-room backup
 
             - name: Build and push Minecraft
               if: ${{ steps.back_images.outputs.mc_exists != 'true' }}
@@ -366,35 +359,6 @@ jobs:
                   docker buildx prune --all --force
                   df -h .
 
-            - name: Build and push Surprising Saturday
-              if: ${{ steps.back_images.outputs.event_exists != 'true' }}
-              uses: docker/build-push-action@v7
-              with:
-                  context: .
-                  file: minecraft/surprising-saturday/Dockerfile
-                  platforms: linux/amd64
-                  pull: true
-                  push: true
-                  tags: ${{ steps.back_images.outputs.event_image }}
-                  cache-from: type=gha,scope=event
-                  cache-to: type=gha,mode=max,scope=event
-                  provenance: mode=max
-                  sbom: true
-
-            - name: Build and push event controller
-              if: ${{ steps.back_images.outputs.event_controller_exists != 'true' }}
-              uses: docker/build-push-action@v7
-              with:
-                  context: services/event-controller
-                  platforms: linux/amd64
-                  pull: true
-                  push: true
-                  tags: ${{ steps.back_images.outputs.event_controller_image }}
-                  cache-from: type=gha,scope=event-controller
-                  cache-to: type=gha,mode=max,scope=event-controller
-                  provenance: mode=max
-                  sbom: true
-
             - name: Build and push backup manager
               if: ${{ steps.back_images.outputs.backup_exists != 'true' }}
               uses: docker/build-push-action@v7
@@ -423,11 +387,9 @@ jobs:
                   MC_IMAGE: ${{ steps.back_images.outputs.mc_image }}
                   VELOCITY_IMAGE: ${{ steps.back_images.outputs.velocity_image }}
                   WAITING_ROOM_IMAGE: ${{ steps.back_images.outputs.waiting_room_image }}
-                  EVENT_IMAGE: ${{ steps.back_images.outputs.event_image }}
-                  EVENT_CONTROLLER_IMAGE: ${{ steps.back_images.outputs.event_controller_image }}
                   BACKUP_IMAGE: ${{ steps.back_images.outputs.backup_image }}
               run: |
-                  for service in api web mc velocity waiting-room event event-controller backup; do
+                  for service in api web mc velocity waiting-room backup; do
                     key=${service^^}
                     key=${key//-/_}
                     source_variable=${key}_IMAGE
@@ -443,7 +405,7 @@ jobs:
                   done
                   if [[ "$IMAGE_TAG" == dev ]]; then
                     # Publish the API alias last. Its revision annotation points to a complete SHA-tagged set.
-                    for service in web mc velocity waiting-room event event-controller backup api; do
+                    for service in web mc velocity waiting-room backup api; do
                       key=${service^^}
                       key=${key//-/_}
                       source_variable=${key}_IMAGE

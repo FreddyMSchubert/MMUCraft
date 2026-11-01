@@ -90,7 +90,8 @@ public final class AnimalCrossingFishShadowDisplay {
         accessor.mainmod$setTransformationInterpolationDuration(0);
         accessor.mainmod$setTransformationInterpolationDelay(0);
         accessor.mainmod$setViewRange(32.0F);
-		accessor.mainmod$setBrightnessOverride(new Brightness(0, 0));
+		accessor.mainmod$setBrightnessOverride(level.dimension() == Level.END
+				? new Brightness(12, 12) : new Brightness(0, 0));
         accessor.mainmod$setShadowRadius(0.0F);
         accessor.mainmod$setShadowStrength(0.0F);
         accessor.mainmod$setWidth(1.6F);
@@ -144,9 +145,9 @@ public final class AnimalCrossingFishShadowDisplay {
 		double dx = hook.getX() - display.getX();
         double dz = hook.getZ() - display.getZ();
 		float yaw = (float) Math.atan2(dz, dx);
-        Quaternionf rotation = new Quaternionf()
+		Quaternionf rotation = new Quaternionf()
 				.rotateY(-yaw + (float) Math.toRadians(90.0F - animation.textureAngleDegrees()))
-                .rotateX((float) Math.toRadians(90.0D));
+				.rotateX((float) Math.toRadians(90.0D));
 		float size = appearanceScale * personality.size()
 				* ITEM_TEXTURE_PIXELS / animation.textureLengthPixels();
 		Transformation transformation = new Transformation(

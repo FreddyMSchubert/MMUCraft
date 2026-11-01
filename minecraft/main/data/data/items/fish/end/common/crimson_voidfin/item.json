@@ -1,0 +1,18 @@
+{
+	"title": "Crimson Voidfin",
+	"id": "fish-crimson_voidfin",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Its red fins stand out against the dark void."],
+	"fish": {
+		"dimension": "end",
+		"angle": "TR",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 61,
+			"textureLengthPixels": 20.1
+		},
+		"furnaceResult": "red_meat"
+	}
+}

@@ -7,7 +7,7 @@
 	"properties": {
 		"dimension": {
 			"type": "string",
-			"enum": ["overworld", "nether"]
+			"enum": ["overworld", "nether", "end"]
 		},
 		"angle": {
 			"description": "Direction the fish faces in its texture. Compass strings and degrees run clockwise from the top.",
@@ -80,7 +80,7 @@
 			}
 		},
 		"tags": {
-			"description": "Spawn conditions. Tags in the same category use OR. Tags in different categories use AND. Warm and cold apply only in the Overworld. Nether biome tags apply only in the Nether.",
+			"description": "Spawn conditions. Tags in one category use OR. Tags in different categories use AND. Climate tags apply in the Overworld. Nether biome tags apply in the Nether. End biome and void height tags apply in the End.",
 			"type": "array",
 			"uniqueItems": true,
 			"items": {
@@ -93,12 +93,19 @@
 					"crimson_forest",
 					"warped_forest",
 					"basalt_deltas",
+					"small_end_islands",
+					"end_midlands",
+					"end_highlands",
+					"end_barrens",
 					"river",
 					"ocean",
 					"day",
 					"night",
 					"deep",
 					"high",
+					"dense_void",
+					"equivoid",
+					"sparse_void",
 					"rainy",
 					"thunderstorm",
 					"snowy",

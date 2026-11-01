@@ -1,0 +1,18 @@
+{
+	"title": "End Starfish",
+	"id": "fish-end_starfish",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Five bright arms keep it steady in the empty air."],
+	"fish": {
+		"dimension": "end",
+		"angle": "T",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 24,
+			"textureLengthPixels": 16.0
+		},
+		"furnaceResult": "white_meat"
+	}
+}

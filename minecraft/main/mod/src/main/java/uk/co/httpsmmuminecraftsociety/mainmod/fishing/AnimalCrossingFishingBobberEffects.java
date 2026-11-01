@@ -16,6 +16,11 @@ public final class AnimalCrossingFishingBobberEffects {
     public static void playFishArrival(ServerLevel level, FishingHook hook, Display.ItemDisplay display, boolean nether) {
         if (nether) {
             playNetherSound(level, hook, SoundEvents.FIRECHARGE_USE, 0.65F, 1.2F);
+        } else if (level.dimension() == Level.END) {
+            level.playSound(null, hook.getX(), hook.getY(), hook.getZ(),
+                    SoundEvents.BREEZE_IDLE_AIR, SoundSource.PLAYERS, 0.5F, 1.1F);
+            level.sendParticles(ParticleTypes.PORTAL, display.getX(), display.getY(), display.getZ(),
+                    8, 0.2D, 0.2D, 0.2D, 0.02D);
         } else {
             level.playSound(null, display.getX(), display.getY(), display.getZ(),
                     SoundEvents.FISH_SWIM, SoundSource.PLAYERS, 0.20F, 0.82F);
@@ -27,6 +32,13 @@ public final class AnimalCrossingFishingBobberEffects {
             playNetherSound(level, hook, SoundEvents.LAVA_POP, 0.7F, 1.2F);
             level.sendParticles(ParticleTypes.SMOKE, hook.getX(), hook.getY() + 0.1D, hook.getZ(),
                     3, 0.1D, 0.01D, 0.1D, 0.01D);
+            return;
+        }
+        if (level.dimension() == Level.END) {
+            level.playSound(null, hook.getX(), hook.getY(), hook.getZ(),
+                    SoundEvents.BREEZE_SLIDE, SoundSource.PLAYERS, 0.5F, 1.2F);
+            level.sendParticles(ParticleTypes.SMALL_GUST, hook.getX(), hook.getY(), hook.getZ(),
+                    3, 0.1D, 0.1D, 0.1D, 0.01D);
             return;
         }
         level.playSound(null, hook.getX(), hook.getY(), hook.getZ(), SoundEvents.FISH_SWIM,
@@ -45,6 +57,13 @@ public final class AnimalCrossingFishingBobberEffects {
                     12, 0.28D, 0.02D, 0.28D, 0.02D);
             return;
         }
+        if (level.dimension() == Level.END) {
+            level.playSound(null, hook.getX(), hook.getY(), hook.getZ(),
+                    SoundEvents.BREEZE_SHOOT, SoundSource.PLAYERS, 0.9F, 1.1F);
+            level.sendParticles(ParticleTypes.GUST, hook.getX(), hook.getY(), hook.getZ(),
+                    12, 0.3D, 0.2D, 0.3D, 0.02D);
+            return;
+        }
         level.playSound(null, hook.getX(), hook.getY(), hook.getZ(), SoundEvents.GENERIC_SPLASH,
                 SoundSource.PLAYERS, 0.95F, Mth.nextFloat(hook.getRandom(), 1.05F, 1.18F));
         level.playSound(null, hook.getX(), hook.getY(), hook.getZ(), SoundEvents.FISH_SWIM,
@@ -61,18 +80,34 @@ public final class AnimalCrossingFishingBobberEffects {
                     2, 0.08D, 0.02D, 0.08D, 0.0D);
             return;
         }
+        if (level.dimension() == Level.END) {
+            level.sendParticles(ParticleTypes.REVERSE_PORTAL, hook.getX(), hook.getY(), hook.getZ(),
+                    2, 0.08D, 0.08D, 0.08D, 0.0D);
+            return;
+        }
         level.sendParticles(ParticleTypes.BUBBLE, hook.getX(), hook.getY() + 0.04D, hook.getZ(),
                 2, 0.08D, 0.02D, 0.08D, 0.0D);
     }
 
     public static void playCatchStruggle(ServerLevel level, FishingHook hook, int animationTicks) {
-        hook.setDeltaMovement(hook.getDeltaMovement().add(0.0D, -0.024D, 0.0D));
+        if (level.dimension() != Level.END) {
+            hook.setDeltaMovement(hook.getDeltaMovement().add(0.0D, -0.024D, 0.0D));
+        }
         if (isNetherFishing(level)) {
             level.sendParticles(ParticleTypes.LAVA, hook.getX(), hook.getY() + 0.1D, hook.getZ(),
                     4, 0.2D, 0.02D, 0.2D, 0.02D);
             if (animationTicks % 4 == 0) {
                 playNetherSound(level, hook, SoundEvents.LAVA_POP, 0.52F,
                         Mth.nextFloat(hook.getRandom(), 1.25F, 1.5F));
+            }
+            return;
+        }
+        if (level.dimension() == Level.END) {
+            level.sendParticles(ParticleTypes.SMALL_GUST, hook.getX(), hook.getY(), hook.getZ(),
+                    4, 0.2D, 0.2D, 0.2D, 0.02D);
+            if (animationTicks % 4 == 0) {
+                level.playSound(null, hook.getX(), hook.getY(), hook.getZ(),
+                        SoundEvents.BREEZE_WHIRL, SoundSource.PLAYERS, 0.4F, 1.3F);
             }
             return;
         }
@@ -93,6 +128,9 @@ public final class AnimalCrossingFishingBobberEffects {
     public static void playScurry(ServerLevel level, FishingHook hook) {
         if (isNetherFishing(level)) {
             playNetherSound(level, hook, SoundEvents.FIRE_EXTINGUISH, 0.65F, 1.25F);
+        } else if (level.dimension() == Level.END) {
+            level.playSound(null, hook.getX(), hook.getY(), hook.getZ(),
+                    SoundEvents.BREEZE_SLIDE, SoundSource.PLAYERS, 0.65F, 1.4F);
         } else {
             level.playSound(null, hook.getX(), hook.getY(), hook.getZ(),
                     SoundEvents.FISH_SWIM, SoundSource.PLAYERS, 0.65F, 1.55F);

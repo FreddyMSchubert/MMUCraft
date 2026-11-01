@@ -1,0 +1,18 @@
+{
+	"title": "Amethyst Dragonfin",
+	"id": "fish-amethyst_dragonfin",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": ["Small bright scales mark the end of its curved tail."],
+	"fish": {
+		"dimension": "end",
+		"angle": "BL",
+		"tags": ["equivoid", "end_midlands"],
+		"size": {
+			"averageLengthCm": 59,
+			"textureLengthPixels": 17.3
+		},
+		"furnaceResult": "red_meat"
+	}
+}

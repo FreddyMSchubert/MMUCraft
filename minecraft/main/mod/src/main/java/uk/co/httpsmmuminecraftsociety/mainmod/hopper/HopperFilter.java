@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 public final class HopperFilter {
     private static final String FILTER_KEY = "mainmod.hopper_filter";
@@ -108,7 +109,7 @@ public final class HopperFilter {
         } else if (mode.group) {
             List<HopperFilterGroups.Group> candidates = HopperFilterGroups.containingAll(items);
             if (candidates.isEmpty()) return ItemStack.EMPTY;
-            String group = candidates.getFirst().id();
+            String group = candidates.get(ThreadLocalRandom.current().nextInt(candidates.size())).id();
             toggle(result, mode.blacklist ? BLACKLIST_KEY : WHITELIST_KEY, "#" + group);
         } else {
             for (ItemStack item : items) toggle(result, mode.blacklist ? BLACKLIST_KEY : WHITELIST_KEY, itemKey(item));

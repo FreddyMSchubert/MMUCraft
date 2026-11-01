@@ -1,0 +1,8 @@
+{
+	"title": "Void Glob",
+	"id": "void-glob",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": ["A heavy lump from the End void. Craft it into eight slimeballs."]
+}

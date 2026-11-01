@@ -1,0 +1,18 @@
+{
+	"title": "Ender Eel",
+	"id": "fish-ender_eel",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["It loops through the air above the End Barrens."],
+	"fish": {
+		"dimension": "end",
+		"angle": "TR",
+		"tags": ["sparse_void", "end_barrens"],
+		"size": {
+			"averageLengthCm": 76,
+			"textureLengthPixels": 14.4
+		},
+		"furnaceResult": "red_meat"
+	}
+}

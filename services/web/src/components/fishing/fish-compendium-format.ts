@@ -89,7 +89,10 @@ export function tagLines(tags: string[]) {
 
 export function conditionSentence(tags: string[]) {
 	const clauses = GROUPS.flatMap((group) => {
-		if (group === 'dimension' && tags.some((tag) => TAGS[tag].group === 'netherBiome'))
+		if (
+			group === 'dimension' &&
+			tags.some((tag) => ['netherBiome', 'endHeight', 'endBiome'].includes(TAGS[tag].group))
+		)
 			return [];
 		const matches = tags.flatMap((tag) =>
 			tag !== 'overworld' && TAGS[tag].group === group ? [TAGS[tag]] : [],
@@ -98,6 +101,8 @@ export function conditionSentence(tags: string[]) {
 		const prefix =
 			group === 'dimension' ||
 			group === 'netherBiome' ||
+			group === 'endHeight' ||
+			group === 'endBiome' ||
 			group === 'climate' ||
 			group === 'water' ||
 			group === 'height'

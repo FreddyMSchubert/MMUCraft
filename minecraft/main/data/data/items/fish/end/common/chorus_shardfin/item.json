@@ -1,0 +1,18 @@
+{
+	"title": "Chorus Shardfin",
+	"id": "fish-chorus_shardfin",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Its pale fins resemble fresh chorus petals."],
+	"fish": {
+		"dimension": "end",
+		"angle": "TR",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 43,
+			"textureLengthPixels": 15.1
+		},
+		"furnaceResult": "white_meat"
+	}
+}

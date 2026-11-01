@@ -7,11 +7,11 @@
 	"tooltips": ["It glides between the End islands."],
 	"fish": {
 		"dimension": "end",
-		"angle": "BL",
+		"angle": "TR",
 		"tags": [],
 		"size": {
 			"averageLengthCm": 28,
-			"textureLengthPixels": 16
+			"textureLengthPixels": 16.6
 		},
 		"furnaceResult": "white_meat"
 	}

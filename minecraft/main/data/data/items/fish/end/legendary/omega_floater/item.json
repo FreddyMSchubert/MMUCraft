@@ -1,0 +1,18 @@
+{
+	"title": "Omega Floater",
+	"id": "fish-omega_floater",
+	"modelType": "basic",
+	"rarity": "legendary",
+	"maxStackSize": 64,
+	"tooltips": ["A bright ring shines through its body as it floats across the End."],
+	"fish": {
+		"dimension": "end",
+		"angle": "TR",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 95,
+			"textureLengthPixels": 16.6
+		},
+		"furnaceResult": "white_meat"
+	}
+}

@@ -21,12 +21,19 @@ public enum FishSpawnTag {
     CRIMSON_FOREST("crimson_forest", Group.NETHER_BIOME, "Crimson Forests"),
     WARPED_FOREST("warped_forest", Group.NETHER_BIOME, "Warped Forests"),
     BASALT_DELTAS("basalt_deltas", Group.NETHER_BIOME, "the Basalt Deltas"),
+    SMALL_END_ISLANDS("small_end_islands", Group.END_BIOME, "Small End Islands"),
+    END_MIDLANDS("end_midlands", Group.END_BIOME, "End Midlands"),
+    END_HIGHLANDS("end_highlands", Group.END_BIOME, "End Highlands"),
+    END_BARRENS("end_barrens", Group.END_BIOME, "End Barrens"),
     RIVER("river", Group.WATER, "rivers"),
     OCEAN("ocean", Group.WATER, "oceans"),
     DAY("day", Group.TIME, "daytime"),
     NIGHT("night", Group.TIME, "nighttime"),
     DEEP("deep", Group.HEIGHT, "below Y 60"),
     HIGH("high", Group.HEIGHT, "above Y 100"),
+    DENSE_VOID("dense_void", Group.END_HEIGHT, "the dense void (Y ≤ 5)"),
+    EQUIVOID("equivoid", Group.END_HEIGHT, "the equivoid (Y 6–244)"),
+    SPARSE_VOID("sparse_void", Group.END_HEIGHT, "the sparse void (Y ≥ 245)"),
     RAINY("rainy", Group.WEATHER, "rain"),
     THUNDERSTORM("thunderstorm", Group.WEATHER, "thunderstorms"),
     SNOWY("snowy", Group.WEATHER, "snowfall"),
@@ -63,7 +70,7 @@ public enum FishSpawnTag {
         for (Group group : Group.values()) {
             List<String> alternatives = new ArrayList<>();
             String prefix = switch (group) {
-                case CLIMATE, NETHER_BIOME, WATER, HEIGHT -> "in ";
+                case CLIMATE, NETHER_BIOME, END_BIOME, WATER, HEIGHT, END_HEIGHT -> "in ";
                 default -> "during ";
             };
             for (FishSpawnTag tag : values()) {
@@ -96,6 +103,14 @@ public enum FishSpawnTag {
             if (biome.is(Biomes.CRIMSON_FOREST)) active.add(CRIMSON_FOREST);
             if (biome.is(Biomes.WARPED_FOREST)) active.add(WARPED_FOREST);
             if (biome.is(Biomes.BASALT_DELTAS)) active.add(BASALT_DELTAS);
+        } else if (level.dimension() == Level.END) {
+            if (biome.is(Biomes.SMALL_END_ISLANDS)) active.add(SMALL_END_ISLANDS);
+            if (biome.is(Biomes.END_MIDLANDS)) active.add(END_MIDLANDS);
+            if (biome.is(Biomes.END_HIGHLANDS)) active.add(END_HIGHLANDS);
+            if (biome.is(Biomes.END_BARRENS)) active.add(END_BARRENS);
+            if (pos.getY() <= level.getMinY() + 5) active.add(DENSE_VOID);
+            else if (pos.getY() >= level.getMaxY() - 10) active.add(SPARSE_VOID);
+            else active.add(EQUIVOID);
         }
 
         if (biome.is(BiomeTags.IS_RIVER)) active.add(RIVER);
@@ -141,6 +156,6 @@ public enum FishSpawnTag {
     }
 
     private enum Group {
-        CLIMATE, NETHER_BIOME, WATER, TIME, HEIGHT, WEATHER, MOON
+        CLIMATE, NETHER_BIOME, END_HEIGHT, END_BIOME, WATER, TIME, HEIGHT, WEATHER, MOON
     }
 }

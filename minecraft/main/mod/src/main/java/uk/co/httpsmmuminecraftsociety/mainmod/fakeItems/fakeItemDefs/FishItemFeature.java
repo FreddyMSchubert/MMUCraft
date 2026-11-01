@@ -30,7 +30,7 @@ public record FishItemFeature(
     @Override
     public void apply(ItemStack stack) {
         List<Component> lines = new ArrayList<>(stack.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines());
-        String location = dimension.equals("end") ? " in the End"
+        String location = dimension.equals("end") ? (spawnTags.isEmpty() ? " in the End" : "")
                 : dimension.equals("nether") && !FishSpawnTag.hasNetherBiome(spawnTags)
                 ? " in the Nether" : "";
         String conditions = spawnTags.isEmpty()

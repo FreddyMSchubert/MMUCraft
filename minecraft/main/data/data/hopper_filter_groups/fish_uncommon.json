@@ -2,6 +2,7 @@
 	"name": "Uncommon Fish",
 	"items": [
 		"mainmod:fish-albacore",
+		"mainmod:fish-amethyst_dragonfin",
 		"mainmod:fish-angelfish",
 		"mainmod:fish-arapaima",
 		"mainmod:fish-blizzard_bass",
@@ -12,6 +13,7 @@
 		"mainmod:fish-crayfish",
 		"mainmod:fish-crimson_veilfin",
 		"mainmod:fish-deformed_carp",
+		"mainmod:fish-dragonfish",
 		"mainmod:fish-echofin",
 		"mainmod:fish-eel",
 		"mainmod:fish-flowerfish",
@@ -22,6 +24,7 @@
 		"mainmod:fish-leafskimmer",
 		"mainmod:fish-lilyfish",
 		"mainmod:fish-lionfish",
+		"mainmod:fish-lunar_glimmer",
 		"mainmod:fish-lunarfish",
 		"mainmod:fish-magma_flicker",
 		"mainmod:fish-midnight_carp",
@@ -43,6 +46,7 @@
 		"mainmod:fish-squid",
 		"mainmod:fish-squigglyfish",
 		"mainmod:fish-starfish",
+		"mainmod:fish-starstorm_ray",
 		"mainmod:fish-sunfish"
 	]
 }

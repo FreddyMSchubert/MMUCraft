@@ -1,0 +1,18 @@
+{
+	"title": "Moonshard Fin",
+	"id": "fish-moonshard_fin",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 64,
+	"tooltips": ["Its pale snout catches light above the End Highlands."],
+	"fish": {
+		"dimension": "end",
+		"angle": "L",
+		"tags": ["sparse_void", "end_highlands"],
+		"size": {
+			"averageLengthCm": 42,
+			"textureLengthPixels": 15.0
+		},
+		"furnaceResult": "white_meat"
+	}
+}

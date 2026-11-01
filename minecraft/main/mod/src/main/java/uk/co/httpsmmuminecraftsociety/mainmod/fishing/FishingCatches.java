@@ -208,6 +208,7 @@ public final class FishingCatches {
                 Items.ENDER_CHEST, Items.PHANTOM_MEMBRANE,
                 Items.EXPERIENCE_BOTTLE, Items.DRAGON_BREATH,
                 Items.FIREWORK_ROCKET);
+        END_TREASURE_LOOT.get(FishRarity.UNCOMMON).add(FakeItems.createFakeItemStack("void-glob", 1));
         addEndTreasure(FishRarity.RARE, Items.SHULKER_BOX,
                 Items.DIAMOND_SWORD, Items.DIAMOND_PICKAXE,
                 Items.DIAMOND_HELMET, Items.DIAMOND_CHESTPLATE,

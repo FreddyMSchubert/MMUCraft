@@ -1,0 +1,9 @@
+{
+	"type": "mainmod:fake_crafting_shapeless",
+	"gameplayToggle": "void",
+	"ingredients": ["mainmod:void-glob"],
+	"result": {
+		"stack": "minecraft:slime_ball",
+		"count": 8
+	}
+}

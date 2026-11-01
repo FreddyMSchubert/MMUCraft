@@ -208,7 +208,9 @@ export function CompendiumGuide({
 				{GROUPS.filter((group) =>
 					group === 'dimension'
 						? netherOpen || voidOpen
-						: group !== 'netherBiome' || netherOpen,
+						: group === 'netherBiome'
+							? netherOpen
+							: (group !== 'endHeight' && group !== 'endBiome') || voidOpen,
 				).map((group) => (
 					<FilterGroup key={group} label={GROUP_LABELS[group]}>
 						{Object.entries(TAGS)

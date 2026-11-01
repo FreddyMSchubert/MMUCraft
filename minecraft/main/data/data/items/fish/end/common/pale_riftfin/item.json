@@ -1,0 +1,18 @@
+{
+	"title": "Pale Riftfin",
+	"id": "fish-pale_riftfin",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Its light body fades against End stone."],
+	"fish": {
+		"dimension": "end",
+		"angle": "TR",
+		"tags": [],
+		"size": {
+			"averageLengthCm": 36,
+			"textureLengthPixels": 15.1
+		},
+		"furnaceResult": "white_meat"
+	}
+}

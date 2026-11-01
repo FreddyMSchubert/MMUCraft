@@ -4,7 +4,8 @@ import { ClaimsModule } from '../claims/claims.module';
 import { DatabaseModule } from '../database/database.module';
 import { PlayersModule } from '../players/players.module';
 import { AdminController } from './admin.controller';
-import { GiftsController } from './gifts.controller';
+import { ExternalMembershipController, GiftsController } from './gifts.controller';
+import { ExternalMembershipService } from './external-membership.service';
 import { CountdownsController } from './countdowns.controller';
 import { CountdownsService } from './countdowns.service';
 import { GiftCodeAdministrationService } from './gift-code-administration.service';
@@ -26,11 +27,18 @@ import { DucksModule } from '../ducks/ducks.module';
 		PlayersModule,
 		DucksModule,
 	],
-	controllers: [AdminController, CountdownsController, GiftsController, ReferralsController],
+	controllers: [
+		AdminController,
+		CountdownsController,
+		GiftsController,
+		ExternalMembershipController,
+		ReferralsController,
+	],
 	providers: [
 		CountdownsService,
 		GiftCodeAdministrationService,
 		GiftCodeRedemptionService,
+		ExternalMembershipService,
 		PlayerRoleAdministrationService,
 		MembershipImportService,
 	],

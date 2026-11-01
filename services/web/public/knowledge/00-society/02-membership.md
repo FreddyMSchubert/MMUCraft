@@ -13,7 +13,7 @@ tips:
 
 # Membership
 
-***A membership costs 5£ once for the whole year.*** Thank you for your support! 🫶 We hope you enjoy your perks.
+***MMU student membership costs £5 once for the whole year.*** Thank you for your support! 🫶 We hope you enjoy your perks.
 
 ---
 
@@ -21,13 +21,13 @@ Anybody can play on this server for free. But hosting the server has real costs,
 
 ## Becoming a member
 
-Only MMU Students are able to become members.
-
-To do so, find [our societies page on the union website](https://www.theunionmmu.org/groups/26-3-minecraft-society), and click on the "**Join this group**" button. The rest will become apparent.
+MMU students can become members through [our societies page on the union website](https://www.theunionmmu.org/groups/26-3-minecraft-society). Click "**Join this group**" and follow the instructions.
 
 By joining, you agree to follow [The Union's Membership Code of Conduct 2026](https://www.theunionmmu.org/resources/the-union-s-membership-code-of-conduct-2026/download_attachment).
 
 Once you are done on the union site, please [open up a ticket on the discord server](https://discord.com/channels/1396896170751692931/1415746294659551384/1415753985561854043) so we can give you your new rank and abilities.
+
+External players can also become members if the player who invited them is a member. While online in Minecraft, open the [Become a member](/play/membership) tab on this website and pay 300 [Dabloons](/play/knowledge/money-basics). Your name tag will still say External.
 
 Thank you and Have Fun!
 

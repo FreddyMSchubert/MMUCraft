@@ -9,6 +9,7 @@ import { AdminTab } from '@/components/admin-tab';
 import { DailiesTab } from '@/components/dailies-tab';
 import { KnowledgeTab } from '@/components/knowledge-tab';
 import { MiscTab } from '@/components/misc-tab';
+import { BecomeMemberTab } from '@/components/become-member-tab';
 import { PlayersTab } from '@/components/players-tab';
 import { ShopTab } from '@/components/shop-tab';
 import { FishingTab } from '@/components/fishing-tab';
@@ -28,6 +29,7 @@ interface SessionUser {
 	skinUrl: string | null;
 	color: string;
 	isMember: boolean;
+	canBecomeMember: boolean;
 	isCommittee: boolean;
 	isSuperAdmin: boolean;
 	customEmojis: PlayerEmoji[];
@@ -50,6 +52,7 @@ type TabId =
 	| 'fishing'
 	| 'players'
 	| 'admin'
+	| 'membership'
 	| 'event'
 	| 'misc';
 
@@ -70,6 +73,7 @@ const TAB_IDS = new Set<TabId>([
 	'fishing',
 	'players',
 	'admin',
+	'membership',
 	'event',
 	'misc',
 ]);
@@ -84,6 +88,7 @@ const TAB_LINKS: TabLink[] = [
 	{ id: 'ducks', label: 'Ducks', emoji: '🦆', href: '/play/ducks' },
 	{ id: 'fishing', label: 'Fishing', emoji: '🐟', href: '/play/fishing' },
 	{ id: 'players', label: 'Players', emoji: '👤', href: '/play/players' },
+	{ id: 'membership', label: 'Become a member', emoji: '⭐', href: '/play/membership' },
 	{ id: 'admin', label: 'Admin', emoji: '👨‍💻', href: '/play/admin/members' },
 	{ id: 'misc', label: 'Misc', emoji: '⚙️', href: '/play/misc/settings' },
 ];
@@ -145,9 +150,10 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 			).filter(
 				(tab) =>
 					(tab.id !== 'admin' || isCommittee) &&
+					(tab.id !== 'membership' || user?.canBecomeMember === true) &&
 					(tab.id !== 'ducks' || ducksEnabled === true),
 			),
-		[hasLiveEvent, isCommittee, ducksEnabled],
+		[hasLiveEvent, isCommittee, ducksEnabled, user?.canBecomeMember],
 	);
 
 	useEffect(() => {
@@ -320,7 +326,11 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 			router.replace('/play/admin/members');
 			return;
 		}
-		if (!TAB_IDS.has(route[0] as TabId) || (activeTab === 'admin' && !user.isCommittee)) {
+		if (
+			!TAB_IDS.has(route[0] as TabId) ||
+			(activeTab === 'admin' && !user.isCommittee) ||
+			(activeTab === 'membership' && !user.canBecomeMember)
+		) {
 			router.replace('/play/knowledge');
 			return;
 		}
@@ -340,7 +350,8 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 			activeTab === 'charms' ||
 			activeTab === 'claims' ||
 			activeTab === 'ducks' ||
-			activeTab === 'fishing'
+			activeTab === 'fishing' ||
+			activeTab === 'membership'
 		)
 			canonicalPath = `/play/${activeTab}`;
 		else if (route.length > 2 && !(activeTab === 'event' && routeDetail === 'build'))
@@ -669,6 +680,14 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 						{activeTab === 'claims' && <ClaimsTab />}
 						{activeTab === 'ducks' && ducksEnabled === true && <DucksTab />}
 						{activeTab === 'fishing' && <FishingTab onSelectPlayer={openPlayer} />}
+						{activeTab === 'membership' && user.canBecomeMember && (
+							<BecomeMemberTab
+								onPurchased={async () => {
+									navigate('/play/shop');
+									await reloadUser();
+								}}
+							/>
+						)}
 						{activeTab === 'players' && (
 							<PlayersTab playerName={routeDetail} onSelectPlayer={openPlayer} />
 						)}

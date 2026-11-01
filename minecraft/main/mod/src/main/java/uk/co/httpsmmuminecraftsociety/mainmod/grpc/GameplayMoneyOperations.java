@@ -146,4 +146,39 @@ final class GameplayMoneyOperations {
     }
     private static final int MEMBER_EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS = 150;
     private static final int NON_MEMBER_EXTERNAL_PLAYER_INVITE_PRICE_DABLOONS = 250;
+
+    static PurchaseExternalMembershipResponse purchaseExternalMembershipOnMainThread(
+            PurchaseExternalMembershipRequest request
+    ) {
+        MinecraftServer server = GrpcBridge.minecraftServer();
+        if (server == null) throw new IllegalStateException("Minecraft server is not available");
+
+        ServerPlayer player = server.getPlayerList().getPlayerByName(request.getMinecraftUsername());
+        if (player == null || player.hasDisconnected()) {
+            return PurchaseExternalMembershipResponse.newBuilder()
+                    .setMessage("Join the Minecraft server to buy membership.")
+                    .build();
+        }
+
+        int balance = MoneyHelper.GetBalance(player);
+        if (balance < EXTERNAL_MEMBERSHIP_PRICE_DABLOONS
+                || !MoneyHelper.ReduceMoney(player, EXTERNAL_MEMBERSHIP_PRICE_DABLOONS)) {
+            return PurchaseExternalMembershipResponse.newBuilder()
+                    .setOnline(true)
+                    .setBalanceDabloons(balance)
+                    .setMessage("You need 300 Dabloons to buy membership.")
+                    .build();
+        }
+
+        int remaining = MoneyHelper.GetBalance(player);
+        MoneyHelper.SendBalanceMessage(player, -EXTERNAL_MEMBERSHIP_PRICE_DABLOONS, "Purchased external membership");
+        return PurchaseExternalMembershipResponse.newBuilder()
+                .setPurchased(true)
+                .setOnline(true)
+                .setBalanceDabloons(remaining)
+                .setMessage("Membership purchased for 300 Dabloons.")
+                .build();
+    }
+
+    private static final int EXTERNAL_MEMBERSHIP_PRICE_DABLOONS = 300;
 }

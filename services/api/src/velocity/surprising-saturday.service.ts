@@ -193,10 +193,10 @@ function titleWordLengths(title: string) {
 function playerRole(user: UserRow | undefined) {
 	return user?.is_committee || user?.is_super_admin
 		? 'Committee'
-		: user?.is_member
-			? 'Member'
-			: user?.responsible_user_id != null
-				? 'External'
+		: user?.responsible_user_id != null
+			? 'External'
+			: user?.is_member
+				? 'Member'
 				: 'Player';
 }
 

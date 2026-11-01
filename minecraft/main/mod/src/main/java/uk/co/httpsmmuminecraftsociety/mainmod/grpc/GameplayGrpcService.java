@@ -224,6 +224,15 @@ private final class GameplayControlEndpoint extends GameplayControlGrpc.Gameplay
         }
 
         @Override
+        public void purchaseExternalMembership(
+                PurchaseExternalMembershipRequest request,
+                StreamObserver<PurchaseExternalMembershipResponse> responseObserver
+        ) {
+            callOnMainThread(() -> GameplayMoneyOperations.purchaseExternalMembershipOnMainThread(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
         public void getCurrentClaimChunk(
                 GetCurrentClaimChunkRequest request,
                 StreamObserver<GetCurrentClaimChunkResponse> responseObserver

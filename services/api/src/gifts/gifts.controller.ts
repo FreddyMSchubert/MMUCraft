@@ -1,6 +1,7 @@
 import { Body, Controller, Headers, Post } from '@nestjs/common';
 import { AuthSessionService } from '../auth/auth-session.service';
 import { GiftCodeRedemptionService } from './gift-code-redemption.service';
+import { ExternalMembershipService } from './external-membership.service';
 
 @Controller('api/gift-codes')
 export class GiftsController {
@@ -16,5 +17,18 @@ export class GiftsController {
 	) {
 		const user = this.auth.requireSession(cookieHeader);
 		return this.giftCodeRedemption.redeem(user, body?.code);
+	}
+}
+
+@Controller('api/membership')
+export class ExternalMembershipController {
+	constructor(
+		private readonly auth: AuthSessionService,
+		private readonly membership: ExternalMembershipService,
+	) {}
+
+	@Post('purchase')
+	purchase(@Headers('cookie') cookieHeader: string | undefined) {
+		return this.membership.purchase(this.auth.requireSession(cookieHeader));
 	}
 }

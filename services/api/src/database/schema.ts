@@ -55,6 +55,13 @@ export const sessions = sqliteTable(
 	],
 );
 
+export const externalMembershipPurchases = sqliteTable('external_membership_purchases', {
+	user_id: integer('user_id')
+		.primaryKey()
+		.references(() => users.id, { onDelete: 'cascade' }),
+	started_at_unix_ms: integer('started_at_unix_ms').notNull(),
+});
+
 export const emailSendEvents = sqliteTable(
 	'email_send_events',
 	{
@@ -889,6 +896,7 @@ export type SurprisingSaturdayEventRow = typeof surprisingSaturdayEvents.$inferS
 export const schema = {
 	users,
 	sessions,
+	externalMembershipPurchases,
 	playerBans,
 	emailSendEvents,
 	emailWhitelist,

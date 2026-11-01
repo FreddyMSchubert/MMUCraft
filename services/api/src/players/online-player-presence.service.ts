@@ -68,10 +68,10 @@ export class OnlinePlayerPresenceService {
 			role:
 				user.is_super_admin === 1 || user.is_committee === 1
 					? 'Committee'
-					: user.is_member === 1
-						? 'Member'
-						: user.responsible_user_id !== null
-							? 'External'
+					: user.responsible_user_id !== null
+						? 'External'
+						: user.is_member === 1
+							? 'Member'
 							: 'Player',
 			nickname: profile?.preferred_name ?? '',
 			pronouns: profile?.pronouns ?? '',

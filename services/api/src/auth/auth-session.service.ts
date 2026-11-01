@@ -14,6 +14,7 @@ export interface AuthenticatedUser {
 	skinUrl: string | null;
 	color: string;
 	isMember: boolean;
+	canBecomeMember: boolean;
 	isCommittee: boolean;
 	isSuperAdmin: boolean;
 	customEmojis: PlayerEmoji[];
@@ -79,12 +80,22 @@ export class AuthSessionService {
 			.from(playerProfiles)
 			.where(eq(playerProfiles.user_id, row.id))
 			.get();
+		const inviter =
+			row.responsible_user_id === null
+				? null
+				: this.database.connection
+						.select({ isMember: users.is_member })
+						.from(users)
+						.where(eq(users.id, row.responsible_user_id))
+						.get();
 		return {
 			id: row.id,
 			minecraftUsername: row.minecraft_username,
 			skinUrl: playerSkinUrl(row.minecraft_uuid),
 			color: effectivePlayerColor(row.minecraft_uuid, profile?.color_hex),
 			isMember: row.is_member === 1,
+			canBecomeMember:
+				row.responsible_user_id !== null && row.is_member !== 1 && inviter?.isMember === 1,
 			isCommittee: isSuperAdmin || row.is_committee === 1,
 			isSuperAdmin,
 			customEmojis: customPlayerEmojis(profile?.custom_emojis_json),

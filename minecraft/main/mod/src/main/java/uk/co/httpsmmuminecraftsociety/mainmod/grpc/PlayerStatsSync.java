@@ -350,8 +350,8 @@ public final class PlayerStatsSync {
         SyncPlayerStatsResponse response = presentationByPlayer.get(player.getUUID());
         if (response == null) return new DiscordPresentation("Player", "", "", "#E6E6E6");
         String role = response.getAccountLinked() && response.getIsCommittee() ? "Committee"
-                : response.getAccountLinked() && response.getIsMember() ? "Member"
-                : response.getAccountLinked() && response.getIsExternal() ? "External" : "Player";
+                : response.getAccountLinked() && response.getIsExternal() ? "External"
+                : response.getAccountLinked() && response.getIsMember() ? "Member" : "Player";
         return new DiscordPresentation(role, response.getNickname(), response.getPronouns(), response.getColorHex());
     }
 

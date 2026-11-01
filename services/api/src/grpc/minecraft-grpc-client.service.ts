@@ -17,6 +17,7 @@ const ECONOMY_METHODS = new Set([
 	'ClaimDailyAdvancement',
 	'PurchaseShopItem',
 	'PurchaseExternalPlayerInvite',
+	'PurchaseExternalMembership',
 	'PurchaseClaim',
 	'UpgradeCharm',
 ]);

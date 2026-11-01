@@ -184,6 +184,71 @@
 	min-height: 240px;
 }
 
+.membershipPanel {
+	display: grid;
+	grid-template-columns: minmax(0, 1.5fr) minmax(240px, 1fr);
+	gap: 18px;
+	align-items: start;
+}
+
+.membershipIntro,
+.membershipPurchase {
+	padding: clamp(20px, 4vw, 32px);
+	border: 1px solid rgba(255, 209, 102, 0.25);
+	border-radius: 14px;
+	background: linear-gradient(145deg, rgba(255, 209, 102, 0.1), rgba(255, 255, 255, 0.035));
+}
+
+.membershipIntro h3 {
+	margin: 10px 0 16px;
+	font-size: clamp(1.6rem, 4vw, 2.4rem);
+}
+
+.membershipIntro p,
+.membershipPurchase p {
+	color: rgba(255, 255, 255, 0.78);
+	line-height: 1.55;
+}
+
+.membershipEyebrow,
+.membershipPurchase small {
+	color: #ffd166;
+	font-size: 0.8rem;
+	font-weight: 700;
+}
+
+.membershipPurchase {
+	display: grid;
+	gap: 16px;
+}
+
+.membershipPurchase strong {
+	display: block;
+	margin-top: 5px;
+	font-size: 1.7rem;
+}
+
+.membershipPurchase button {
+	padding: 13px 18px;
+	border: 0;
+	border-radius: 8px;
+	background: #ffd166;
+	color: #151922;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+.membershipPurchase button:disabled {
+	opacity: 0.6;
+	cursor: wait;
+}
+
+@media (max-width: 700px) {
+	.membershipPanel {
+		grid-template-columns: 1fr;
+	}
+}
+
 .playPage .knowledgeTop h3::before {
 	content: '📖';
 }

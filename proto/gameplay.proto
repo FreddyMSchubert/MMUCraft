@@ -37,6 +37,7 @@ service GameplayControl {
   rpc ClaimDailyAdvancement(ClaimDailyAdvancementRequest) returns (ClaimDailyAdvancementResponse);
   rpc PurchaseShopItem(PurchaseShopItemRequest) returns (PurchaseShopItemResponse);
   rpc PurchaseExternalPlayerInvite(PurchaseExternalPlayerInviteRequest) returns (PurchaseExternalPlayerInviteResponse);
+  rpc PurchaseExternalMembership(PurchaseExternalMembershipRequest) returns (PurchaseExternalMembershipResponse);
   rpc GetCurrentClaimChunk(GetCurrentClaimChunkRequest) returns (GetCurrentClaimChunkResponse);
   rpc TeleportBuildVisitor(TeleportBuildVisitorRequest) returns (TeleportBuildVisitorResponse);
   rpc PurchaseClaim(PurchaseClaimRequest) returns (PurchaseClaimResponse);
@@ -728,6 +729,17 @@ message PurchaseExternalPlayerInviteRequest {
 }
 
 message PurchaseExternalPlayerInviteResponse {
+  bool purchased = 1;
+  bool online = 2;
+  int32 balance_dabloons = 3;
+  string message = 4;
+}
+
+message PurchaseExternalMembershipRequest {
+  string minecraft_username = 1;
+}
+
+message PurchaseExternalMembershipResponse {
   bool purchased = 1;
   bool online = 2;
   int32 balance_dabloons = 3;

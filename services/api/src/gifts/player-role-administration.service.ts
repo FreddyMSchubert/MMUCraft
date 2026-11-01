@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { and, eq } from 'drizzle-orm';
 import {
 	DatabaseService,
+	externalMembershipPurchases,
 	playerProfiles,
 	referralLinks,
 	users,
@@ -90,6 +91,10 @@ export class PlayerRoleAdministrationService {
 							eq(referralLinks.membership_reward_dabloons, 0),
 						),
 					)
+					.run();
+			if (result.changes === 1 && isMember)
+				tx.delete(externalMembershipPurchases)
+					.where(eq(externalMembershipPurchases.user_id, userId))
 					.run();
 			return result;
 		});

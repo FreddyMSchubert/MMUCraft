@@ -421,10 +421,10 @@ export class DucksService {
 					role:
 						user.is_committee || user.is_super_admin
 							? 'Committee'
-							: user.is_member
-								? 'Member'
-								: user.responsible_user_id !== null
-									? 'External'
+							: user.responsible_user_id !== null
+								? 'External'
+								: user.is_member
+									? 'Member'
 									: '',
 					nickname: '',
 					pronouns: '',

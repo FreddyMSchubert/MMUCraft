@@ -33,6 +33,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.DecoBlockIt
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.DyeableItemFeature;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
+import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingPlaques;
 
 public final class DecoBlocksManager {
     private DecoBlocksManager() {}
@@ -143,6 +144,8 @@ public final class DecoBlocksManager {
             return rejectPlacement(player, hand);
         }
 
+        FishingPlaques.placed(frame);
+
         frame.playPlacementSound();
         level.gameEvent(player, GameEvent.ENTITY_PLACE, frame.position());
         stack.shrink(1);
@@ -196,7 +199,7 @@ public final class DecoBlocksManager {
         return stack;
     }
 
-    private static ItemStack hideCustomNameForFrame(ItemStack stack) {
+    public static ItemStack hideCustomNameForFrame(ItemStack stack) {
         Component customName = stack.get(DataComponents.CUSTOM_NAME);
         if (customName == null) {
             return stack;

@@ -192,6 +192,15 @@ tasks.register('checkFishingBounces', JavaExec) {
     enableAssertions = true
 }
 
+tasks.register('checkFishingPlaques', JavaExec) {
+    group = 'verification'
+    classpath = sourceSets.minecraftCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingPlaqueCheck'
+    enableAssertions = true
+    workingDir = layout.buildDirectory.dir('fishingPlaqueCheck').get().asFile
+    doFirst { workingDir.mkdirs() }
+}
+
 tasks.register('checkTeleportCompanions', JavaExec) {
     group = 'verification'
     classpath = sourceSets.minecraftCheck.runtimeClasspath
@@ -219,7 +228,7 @@ tasks.register('checkDailyCatalog', JavaExec) {
 
 tasks.named('check') {
     dependsOn 'checkMapResize', 'checkThunderRitual', 'checkInsomniaPhantoms', 'checkFarmingBoots', 'checkSpiderPajamas', 'checkMasteryDropGates', 'checkGearEnchantments', 'checkSmithingArmor', 'checkHopperFilterIdentity',
-            'checkDailyCatalog', 'checkFishingBounces', 'checkFishRarity', 'checkTeleportCompanions', 'checkTickRate', 'checkExplosiveFire'
+            'checkDailyCatalog', 'checkFishingBounces', 'checkFishingPlaques', 'checkFishRarity', 'checkTeleportCompanions', 'checkTickRate', 'checkExplosiveFire'
 }
 
 def generatedResources = file("src/main/generated")

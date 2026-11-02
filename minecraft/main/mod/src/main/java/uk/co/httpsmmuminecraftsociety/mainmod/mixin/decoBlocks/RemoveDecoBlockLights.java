@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.DecoBlocksManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingPlaques;
 
 @Mixin(Entity.class)
 public abstract class RemoveDecoBlockLights {
@@ -14,6 +15,10 @@ public abstract class RemoveDecoBlockLights {
     private void mainmod$removeDecoBlockLight(Entity.RemovalReason reason, CallbackInfo ci) {
         if (reason.shouldDestroy() && (Object) this instanceof ItemFrame frame) {
             DecoBlocksManager.removeOwnedLight(frame);
+        }
+        if (reason.shouldDestroy() && (Object) this instanceof ItemFrame frame
+                && frame.entityTags().contains(FishingPlaques.FRAME_TAG)) {
+            FishingPlaques.removed(frame);
         }
     }
 }

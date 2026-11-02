@@ -1,0 +1,32 @@
+{
+	"title": "Crimson Fishing Plaque",
+	"id": "deco-fishing-plaque-crimson",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Mount a caught fish."],
+	"decoBlock": {
+		"ground": false,
+		"wall": true,
+		"ceiling": false,
+		"lightLevel": 0
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/fishing_plaque_crimson",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "imaginative",
+				"pattern": ["PPP", " S "],
+				"key": {
+					"P": "minecraft:crimson_planks",
+					"S": "minecraft:stick"
+				},
+				"result": {
+					"stack": "mainmod:deco-fishing-plaque-crimson",
+					"count": 1
+				}
+			}
+		]
+	}
+}

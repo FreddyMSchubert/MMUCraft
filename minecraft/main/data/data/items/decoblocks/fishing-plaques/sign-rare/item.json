@@ -1,0 +1,8 @@
+{
+	"title": "Rare Fishing Plaque Sign",
+	"id": "fishing-plaque-sign-rare",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": []
+}

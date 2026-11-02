@@ -1,0 +1,32 @@
+{
+	"title": "Oak Fishing Plaque",
+	"id": "deco-fishing-plaque-oak",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Mount a caught fish."],
+	"decoBlock": {
+		"ground": false,
+		"wall": true,
+		"ceiling": false,
+		"lightLevel": 0
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/fishing_plaque_oak",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "imaginative",
+				"pattern": ["PPP", " S "],
+				"key": {
+					"P": "minecraft:oak_planks",
+					"S": "minecraft:stick"
+				},
+				"result": {
+					"stack": "mainmod:deco-fishing-plaque-oak",
+					"count": 1
+				}
+			}
+		]
+	}
+}

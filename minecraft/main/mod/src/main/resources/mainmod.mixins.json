@@ -37,6 +37,7 @@
 		"decoBlocks.NoDecoBlockFrameItemDrops",
 		"decoBlocks.RemoveEmptyDecoBlockFrames",
 		"decoBlocks.RemoveDecoBlockLights",
+		"decoBlocks.FishingPlaqueInteraction",
 		"decoBlocks.BreakDecoBlockFrameWithLight",
 		"UpdateArmorTooltipAfterAnvilUse",
 		"UpdateArmorAfterSmithing",

@@ -89,7 +89,7 @@ If you have suggestions for new groups to add, we are happy to add more groups.
 
 ![Filtering for groups recipe gone wrong](/assets/knowledge/items/item-filters/wrong_group_recipe.png)
 
-Items may be in multiple groups. Crafting a filter in group mode picks the smallest matching group. You can see this in the image at the top - planks is a valid group, but we were looking for an oak chest.
+Items may be in multiple groups. Crafting a filter in group mode picks a random matching group. You can see this in the image at the top - planks is a valid group, but we were looking for an oak chest.
 
 Add more items or blocks from the group you want. Only groups containing every supplied item can be picked. For Beneficial Potions, use a drinkable Healing potion and a splash Swiftness potion. For Harmful Potions, use a drinkable Poison potion and a splash Weakness potion. For all Potions, use a drinkable Healing potion and a splash Poison potion.
 

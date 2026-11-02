@@ -83,14 +83,22 @@ public final class HopperFilterIdentityCheck {
         var goodNormalPotions = new HopperFilterGroups.Group("good_normal_potions", "Beneficial Drinkable Potions",
                 Set.of(), Set.of("minecraft:swiftness"), Set.of("minecraft:potion"), Set.of(), Set.of());
         var normalPotions = new HopperFilterGroups.Group("normal_potions", "Normal Potions",
-                Set.of("minecraft:potion"), Set.of(), Set.of(), Set.of(), Set.of());
+                Set.of(), groupValues(Path.of(args[0], "normal_potions.json"), "potions"), Set.of(), Set.of(), Set.of());
+        var drinkablePotions = new HopperFilterGroups.Group("drinkable_potions", "Drinkable Potions",
+                groupItems(Path.of(args[0], "drinkable_potions.json")), Set.of(), Set.of(), Set.of(), Set.of());
         assert goodNormalPotions.matches(PotionContents.createItemStack(Items.POTION, Potions.SWIFTNESS));
         assert !goodNormalPotions.matches(PotionContents.createItemStack(Items.SPLASH_POTION, Potions.SWIFTNESS));
         assert !goodNormalPotions.matches(PotionContents.createItemStack(Items.LINGERING_POTION, Potions.SWIFTNESS));
         assert !goodNormalPotions.matches(PotionContents.createItemStack(Items.POTION, Potions.POISON));
+        for (var bottle : List.of(Items.POTION, Items.SPLASH_POTION, Items.LINGERING_POTION)) {
+            assert normalPotions.matches(PotionContents.createItemStack(bottle, Potions.WEAKNESS));
+            assert !normalPotions.matches(PotionContents.createItemStack(bottle, Potions.LONG_WEAKNESS));
+        }
+        assert drinkablePotions.matches(PotionContents.createItemStack(Items.POTION, Potions.LONG_WEAKNESS));
+        assert !drinkablePotions.matches(PotionContents.createItemStack(Items.SPLASH_POTION, Potions.WEAKNESS));
         Map<String, Integer> enchantmentCounts = Map.of("minecraft", 44, "mainmod", 2, "nova_structures", 2);
         assert goodNormalPotions.matchBreadth(48, enchantmentCounts)
-                < normalPotions.matchBreadth(48, enchantmentCounts);
+                < drinkablePotions.matchBreadth(48, enchantmentCounts);
 
         var allPotions = new HopperFilterGroups.Group("potions", "Potions",
                 groupItems(Path.of(args[0], "potions.json")), Set.of(), Set.of(), Set.of(), Set.of());
@@ -98,6 +106,8 @@ public final class HopperFilterIdentityCheck {
                 Set.of(), groupValues(Path.of(args[0], "good_potions.json"), "potions"), Set.of(), Set.of(), Set.of());
         var badPotions = new HopperFilterGroups.Group("bad_potions", "Harmful Potions",
                 Set.of(), groupValues(Path.of(args[0], "bad_potions.json"), "potions"), Set.of(), Set.of(), Set.of());
+        var weaknessPotions = new HopperFilterGroups.Group("potion_weakness", "Weakness Potions",
+                Set.of(), groupValues(Path.of(args[0], "potion_weakness.json"), "potions"), Set.of(), Set.of(), Set.of());
         var bottles = new HopperFilterGroups.Group("bottles", "Bottled Items",
                 groupItems(Path.of(args[0], "bottles.json")), Set.of(), Set.of(), Set.of(), Set.of());
         assert allPotions.items().containsAll(Set.of("mainmod:charm-potion-displacement",
@@ -110,6 +120,7 @@ public final class HopperFilterIdentityCheck {
             assert goodPotions.matches(healing) && !goodPotions.matches(poison);
             assert badPotions.matches(poison) && !badPotions.matches(healing);
         }
+        assert weaknessPotions.matches(PotionContents.createItemStack(Items.SPLASH_POTION, Potions.WEAKNESS));
         assert allPotions.matchBreadth(48, enchantmentCounts) < bottles.matchBreadth(48, enchantmentCounts);
 
         var allBooks = new HopperFilterGroups.Group("enchantments", "Enchanted Books",

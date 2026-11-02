@@ -1,0 +1,23 @@
+{
+	"model": {
+		"type": "minecraft:condition",
+		"property": "minecraft:component",
+		"on_true": {
+			"type": "minecraft:model",
+			"model": "general-pack:item/silk_touch/golden_axe"
+		},
+		"on_false": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/golden_axe"
+		},
+		"predicate": "minecraft:enchantments",
+		"value": [
+			{
+				"enchantments": "minecraft:silk_touch",
+				"levels": {
+					"min": 1
+				}
+			}
+		]
+	}
+}

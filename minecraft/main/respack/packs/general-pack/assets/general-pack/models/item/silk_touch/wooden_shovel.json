@@ -1,0 +1,6 @@
+{
+	"parent": "minecraft:item/handheld",
+	"textures": {
+		"layer0": "general-pack:item/silk_touch/wooden_shovel"
+	}
+}

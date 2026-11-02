@@ -45,6 +45,7 @@ import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.EnderChestBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.LeverBlock;
+import net.minecraft.world.level.block.PoweredRailBlock;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.Container;
 import net.minecraft.world.level.block.state.BlockState;
@@ -88,6 +89,7 @@ public final class ClaimsManager {
     private static final UUID MMU_ADMIN_UUID = UUID.fromString("cbdc84b9-53da-430b-9746-e176b16441fd");
     private static final double MINIMUM_HEADING_LIGHTNESS = 0.6;
     private static final ThreadLocal<ArrayDeque<PlayerAction>> ACTORS = ThreadLocal.withInitial(ArrayDeque::new);
+    private static final ThreadLocal<ArrayDeque<RailPowerUpdate>> RAIL_POWER_UPDATES = ThreadLocal.withInitial(ArrayDeque::new);
     private static final ThreadLocal<Integer> FIRE_TICKS = ThreadLocal.withInitial(() -> 0);
     private static final Map<UUID, ServerBossEvent> BOSS_BARS = new HashMap<>();
     private static final Map<UUID, String> BOSS_BAR_STATES = new HashMap<>();
@@ -141,6 +143,7 @@ public final class ClaimsManager {
         BOSS_BAR_STATES.clear();
         LAST_DENIED_MESSAGE.clear();
         ACTORS.remove();
+        RAIL_POWER_UPDATES.remove();
         FIRE_TICKS.remove();
     }
 
@@ -240,6 +243,16 @@ public final class ClaimsManager {
         if (action != null && action.controlDepth > 0) action.controlDepth--;
     }
 
+    public static void beginRailPowerUpdate(Level level, BlockPos pos, BlockState currentState, BlockState expectedState) {
+        RAIL_POWER_UPDATES.get().push(new RailPowerUpdate(level, pos.immutable(), currentState, expectedState));
+    }
+
+    public static void endRailPowerUpdate() {
+        ArrayDeque<RailPowerUpdate> updates = RAIL_POWER_UPDATES.get();
+        updates.pop();
+        if (updates.isEmpty()) RAIL_POWER_UPDATES.remove();
+    }
+
     public static void beginFireTick() {
         FIRE_TICKS.set(FIRE_TICKS.get() + 1);
     }
@@ -255,6 +268,7 @@ public final class ClaimsManager {
         // The click was checked already; its redstone updates are not separate player edits.
         if (action != null && action.controlDepth == 0) {
             BlockState currentState = level.getBlockState(pos);
+            if (isAuthorizedRailPowerUpdate(level, pos, currentState, newState)) return true;
             int permission = currentState.isAir() ? PLACE
                     : newState.isAir() ? BREAK
                     : currentState.getBlock() != newState.getBlock() ? PLACE
@@ -267,6 +281,15 @@ public final class ClaimsManager {
         }
         if ((!ready || isClaimed(level, pos)) && newState.getBlock() instanceof BaseFireBlock) return false;
         return true;
+    }
+
+    static boolean isAuthorizedRailPowerUpdate(Level level, BlockPos pos, BlockState currentState, BlockState newState) {
+        RailPowerUpdate update = RAIL_POWER_UPDATES.get().peek();
+        return update != null && update.level == level && update.pos.equals(pos)
+                && update.currentState.equals(currentState) && update.expectedState.equals(newState)
+                && currentState.getBlock() instanceof PoweredRailBlock
+                && newState.equals(currentState.setValue(PoweredRailBlock.POWERED,
+                        !currentState.getValue(PoweredRailBlock.POWERED)));
     }
 
     public static boolean allowBlockRemoval(Level level, BlockPos pos) {
@@ -528,6 +551,9 @@ public final class ClaimsManager {
     private record Claim(String id, UUID ownerUuid, String ownerName, String name, int colorRgb,
                          int ownerColorRgb, boolean hasCustomColor, boolean serverClaim, Set<UUID> members,
                          int outsiderPermissions) {
+    }
+
+    private record RailPowerUpdate(Level level, BlockPos pos, BlockState currentState, BlockState expectedState) {
     }
 
     private static final class PlayerAction {

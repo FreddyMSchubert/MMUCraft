@@ -215,6 +215,13 @@ tasks.register('checkFishRarity', JavaExec) {
     enableAssertions = true
 }
 
+tasks.register('checkRailPowerClaims', JavaExec) {
+    group = 'verification'
+    classpath = sourceSets.minecraftCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.claims.RailPowerClaimsCheck'
+    enableAssertions = true
+}
+
 tasks.register('checkDailyCatalog', JavaExec) {
     group = 'verification'
     description = 'Check daily task JSON structure, weights, identifiers, and generated definitions.'
@@ -227,7 +234,7 @@ tasks.register('checkDailyCatalog', JavaExec) {
 }
 
 tasks.named('check') {
-    dependsOn 'checkMapResize', 'checkThunderRitual', 'checkInsomniaPhantoms', 'checkFarmingBoots', 'checkSpiderPajamas', 'checkMasteryDropGates', 'checkGearEnchantments', 'checkSmithingArmor', 'checkHopperFilterIdentity',
+    dependsOn 'checkMapResize', 'checkThunderRitual', 'checkInsomniaPhantoms', 'checkFarmingBoots', 'checkSpiderPajamas', 'checkMasteryDropGates', 'checkGearEnchantments', 'checkSmithingArmor', 'checkHopperFilterIdentity', 'checkRailPowerClaims',
             'checkDailyCatalog', 'checkFishingBounces', 'checkFishingPlaques', 'checkFishRarity', 'checkTeleportCompanions', 'checkTickRate', 'checkExplosiveFire'
 }
 

@@ -111,6 +111,7 @@
 		"serverSideBlocks.ServerSideBlockMiningMixin",
 		"serverSideBlocks.ServerSideBlockPlacementMixin",
 		"claims.PlayerActionContextMixin",
+		"claims.PoweredRailClaimMixin",
 		"claims.LecternBlockEntityClaimMixin",
 		"claims.LecternMenuClaimMixin",
 		"claims.PlayerStabAttackMixin",

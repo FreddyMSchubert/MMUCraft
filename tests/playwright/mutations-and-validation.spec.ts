@@ -2,7 +2,6 @@ import { expect, test } from '@playwright/test';
 
 const memberCookie = { Cookie: 'mcstack_session=playwright-member' };
 const adminCookie = { Cookie: 'mcstack_session=playwright-admin' };
-const guestCookie = { Cookie: 'mcstack_session=playwright-guest' };
 
 test('committee can configure the shared launch time', async ({ request }) => {
 	const updatedTarget = '2030-01-02T12:34';
@@ -167,86 +166,26 @@ test('committee can edit another player’s claim without changing its owner', a
 	}
 });
 
-test('a claim owner can transfer a claim and stay a member', async ({ page, request, baseURL }) => {
-	const url = '/api/claims/playwright-claim';
-	expect((await request.post(`${url}/transfer`, { data: { userId: 3 } })).status()).toBe(401);
-	expect(
-		(
-			await request.post(`${url}/transfer`, { headers: guestCookie, data: { userId: 3 } })
-		).status(),
-	).toBe(404);
-	expect(
-		(
-			await request.post(`${url}/transfer`, { headers: memberCookie, data: { userId: 2 } })
-		).status(),
-	).toBe(400);
-	expect(
-		(
-			await request.post(`${url}/transfer`, {
-				headers: memberCookie,
-				data: { userId: 999999 },
-			})
-		).status(),
-	).toBe(400);
+test('claim transfer is unavailable', async ({ page, request, baseURL }) => {
+	const response = await request.post('/api/claims/playwright-claim/transfer', {
+		headers: memberCookie,
+		data: { userId: 3 },
+	});
+	expect(response.status()).toBe(404);
 
-	try {
-		await expect(
-			await request.post(`${url}/members`, { headers: memberCookie, data: { userId: 3 } }),
-		).toBeOK();
-		await page.context().addCookies([
-			{
-				name: 'mcstack_session',
-				value: 'playwright-member',
-				url: baseURL ?? 'http://127.0.0.1:3100',
-			},
-		]);
-		await page.goto('/play/claims');
-		const owned = page
-			.locator('.claimsSection')
-			.filter({ has: page.getByRole('heading', { name: 'My claims' }) });
-		await owned.getByRole('button', { name: 'Edit' }).click();
-		await owned.getByText('Transfer claim', { exact: true }).first().click();
-		await expect(owned.locator('.claimTransferWarning')).toContainText('lose owner control');
-		await owned.getByLabel('New claim owner').fill('PlaywrightGuest');
-		await owned.getByRole('button', { name: 'Transfer claim' }).click();
-
-		await expect(owned.locator('.claimCard')).toHaveCount(0);
-		const transferred = await request.get('/api/claims', { headers: guestCookie });
-		await expect(transferred).toBeOK();
-		const recipientClaims = await transferred.json();
-		expect(recipientClaims.claims).toContainEqual(
-			expect.objectContaining({
-				id: 'playwright-claim',
-				members: [
-					expect.objectContaining({ id: 3, isOwner: true }),
-					expect.objectContaining({ id: 2, isOwner: false }),
-				],
-			}),
-		);
-		const previousOwnerClaims = await request.get('/api/claims', { headers: memberCookie });
-		await expect(previousOwnerClaims).toBeOK();
-		expect((await previousOwnerClaims.json()).memberClaims).toContainEqual(
-			expect.objectContaining({ id: 'playwright-claim' }),
-		);
-		expect(
-			(
-				await request.post(`${url}/transfer`, {
-					headers: memberCookie,
-					data: { userId: 2 },
-				})
-			).status(),
-		).toBe(404);
-	} finally {
-		const guestClaims = await request.get('/api/claims', { headers: guestCookie });
-		if (
-			(await guestClaims.json()).claims.some(
-				(claim: { id: string }) => claim.id === 'playwright-claim',
-			)
-		) {
-			await request.post(`${url}/transfer`, { headers: guestCookie, data: { userId: 2 } });
-		}
-		await request.delete(`${url}/members/3`, { headers: memberCookie });
-	}
+	await page.context().addCookies([
+		{
+			name: 'mcstack_session',
+			value: 'playwright-member',
+			url: baseURL ?? 'http://127.0.0.1:3100',
+		},
+	]);
+	await page.goto('/play/claims');
+	const owned = page
+		.locator('.claimsSection')
+		.filter({ has: page.getByRole('heading', { name: 'My claims' }) });
+	await owned.getByRole('button', { name: 'Edit' }).click();
+	await expect(owned.getByText('Transfer claim', { exact: true })).toHaveCount(0);
 });
 
 test('signup gate and committee permissions reject unauthorized access', async ({

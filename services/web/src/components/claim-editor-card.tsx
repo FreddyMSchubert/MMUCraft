@@ -76,8 +76,6 @@ export function ClaimEditorCard({
 	onDelete,
 	onSave,
 	onSettings,
-	onTransfer,
-	transferCandidates = [],
 	copySources = [],
 	summary,
 	children,
@@ -89,8 +87,6 @@ export function ClaimEditorCard({
 	onDelete?: () => void;
 	onSave?: (name: string, color: string | null) => Promise<boolean>;
 	onSettings?: (change: ClaimSettingsChange) => Promise<boolean>;
-	onTransfer?: (person: ClaimPerson) => Promise<boolean>;
-	transferCandidates?: ClaimPerson[];
 	copySources?: ClaimCopySource[];
 	summary?: ReactNode;
 	children?: ReactNode;
@@ -213,83 +209,9 @@ export function ClaimEditorCard({
 							/>
 						</details>
 					)}
-					{onTransfer && (
-						<details className="claimEditorSection">
-							<summary>Transfer claim</summary>
-							<ClaimTransferEditor
-								claimId={claim.id}
-								candidates={transferCandidates}
-								busy={busy}
-								onTransfer={onTransfer}
-							/>
-						</details>
-					)}
 				</>
 			)}
 		</section>
-	);
-}
-
-function ClaimTransferEditor({
-	claimId,
-	candidates,
-	busy,
-	onTransfer,
-}: {
-	claimId: string;
-	candidates: ClaimPerson[];
-	busy: boolean;
-	onTransfer: (person: ClaimPerson) => Promise<boolean>;
-}) {
-	const { showAlert } = useSiteAlert();
-	const [search, setSearch] = useState('');
-
-	async function transfer() {
-		const player = candidates.find(
-			(person) =>
-				person.minecraftUsername.localeCompare(search.trim(), 'en', {
-					sensitivity: 'base',
-				}) === 0,
-		);
-		if (!player) {
-			await showAlert({
-				title: 'Choose a valid player',
-				message: 'Select a player from the suggestions to receive the claim.',
-				tone: 'danger',
-			});
-			return;
-		}
-		if (await onTransfer(player)) setSearch('');
-	}
-
-	return (
-		<div className="claimTransfer">
-			<p>The selected player will own this claim. You will remain a member.</p>
-			<form
-				className="claimMemberSearch"
-				onSubmit={(event) => {
-					event.preventDefault();
-					void transfer();
-				}}
-			>
-				<PlayerSelector
-					datalistId={`claim-transfer-candidates-${claimId}`}
-					options={candidates}
-					value={search}
-					onChange={setSearch}
-					placeholder="Search server players"
-					ariaLabel="New claim owner"
-					required
-					disabled={busy || candidates.length === 0}
-				/>
-				<button type="submit" disabled={busy || candidates.length === 0}>
-					Transfer claim
-				</button>
-			</form>
-			<p className="claimTransferWarning">
-				Warning: You will lose owner control. The new owner can remove your membership.
-			</p>
-		</div>
 	);
 }
 

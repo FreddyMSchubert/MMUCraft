@@ -180,7 +180,8 @@ test('revealed public builds follow place and can hide one place', () => {
 		);
 		assert.equal(events.detail('1').submissions[1].rank, undefined);
 		assert.equal(events.detail('1').submissions[1].score, undefined);
-		assert.equal(events.detail('1').submissions[0].rank, undefined);
+		assert.equal(events.detail('1').submissions[0].rank, 2);
+		assert.equal(events.detail('1').submissions[0].score.total, 1);
 		assert.equal(events.detail('1', undefined, true).submissions[0].rank, 1);
 		assert.equal(events.detail('1', undefined, true).submissions[0].publicRankHidden, true);
 		events.setPublicRankHidden('1', '1', true);

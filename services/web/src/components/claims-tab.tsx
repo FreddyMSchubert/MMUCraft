@@ -166,16 +166,6 @@ export function ClaimsTab() {
 		}, 'Could not remove the claim member');
 	}
 
-	async function transferClaim(claim: Claim, person: ClaimPerson) {
-		return run(async () => {
-			await request(`/api/claims/${claim.id}/transfer`, {
-				method: 'POST',
-				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({ userId: person.id }),
-			});
-		}, 'Could not transfer the claim');
-	}
-
 	if (!data) return error ? <p className="authError">{error}</p> : <p>Loading claims...</p>;
 
 	return (
@@ -244,8 +234,6 @@ export function ClaimsTab() {
 						onDelete={() => void removeClaim(claim)}
 						onSave={(name, color) => updateAppearance(claim, name, color)}
 						onSettings={(change) => updateSettings(claim, change)}
-						onTransfer={(person) => transferClaim(claim, person)}
-						transferCandidates={data.candidates}
 						copySources={data.copySources}
 						summary={<ClaimMembersSummary members={claim.members} />}
 					>

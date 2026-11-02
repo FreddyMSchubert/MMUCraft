@@ -298,50 +298,6 @@ export class ClaimsService {
 		return this.removeMemberFromClaim(claimId, targetUserIdInput);
 	}
 
-	async transfer(
-		user: AuthenticatedUser,
-		claimId: string,
-		targetUserIdInput: number | undefined,
-	) {
-		this.requireOwnedClaim(user.id, claimId);
-		const targetUserId = normalizeUserId(targetUserIdInput);
-		if (targetUserId === user.id) {
-			throw new BadRequestException('Choose another player to own the claim.');
-		}
-		const target = this.database.connection
-			.select({ minecraftUuid: users.minecraft_uuid })
-			.from(users)
-			.where(eq(users.id, targetUserId))
-			.get();
-		if (!target?.minecraftUuid) {
-			throw new BadRequestException('Select an active server player.');
-		}
-
-		this.database.connection.transaction((tx) => {
-			const claim = tx
-				.select({ ownerUserId: claims.owner_user_id })
-				.from(claims)
-				.where(and(eq(claims.id, claimId), eq(claims.is_server, 0)))
-				.get();
-			if (claim?.ownerUserId !== user.id) throw new NotFoundException('Claim not found.');
-			tx.delete(claimMembers)
-				.where(
-					and(eq(claimMembers.claim_id, claimId), eq(claimMembers.user_id, targetUserId)),
-				)
-				.run();
-			tx.insert(claimMembers)
-				.values({ claim_id: claimId, user_id: user.id, added_at_unix_ms: Date.now() })
-				.onConflictDoNothing()
-				.run();
-			tx.update(claims)
-				.set({ owner_user_id: targetUserId })
-				.where(eq(claims.id, claimId))
-				.run();
-		});
-		await this.minecraftSynchronization.synchronize();
-		return { ok: true };
-	}
-
 	async removeAdminMember(claimId: string, targetUserIdInput: string) {
 		this.requirePlayerClaim(claimId);
 		return this.removeMemberFromClaim(claimId, targetUserIdInput);

@@ -79,15 +79,6 @@ export class ClaimsController {
 	) {
 		return this.claims.removeMember(this.auth.requireSession(cookieHeader), claimId, userId);
 	}
-
-	@Post(':claimId/transfer')
-	transfer(
-		@Headers('cookie') cookieHeader: string | undefined,
-		@Param('claimId') claimId: string,
-		@Body() body: { userId?: number } | undefined,
-	) {
-		return this.claims.transfer(this.auth.requireSession(cookieHeader), claimId, body?.userId);
-	}
 }
 
 @Controller('api/admin/claims')

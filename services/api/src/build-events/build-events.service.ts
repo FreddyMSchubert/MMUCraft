@@ -486,7 +486,10 @@ export class BuildEventsService {
 					showResults && (admin || !submission.publicRankHidden)
 						? submission.score
 						: undefined,
-				rank: showResults && (admin || hidden.length === 0) ? submission.rank : undefined,
+				rank:
+					showResults && (admin || !submission.publicRankHidden)
+						? submission.rank
+						: undefined,
 				voteCount: admin ? submission.voteCount : undefined,
 				votes: admin ? submission.votes : undefined,
 			})),

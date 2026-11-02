@@ -33,19 +33,6 @@
 	margin: 0;
 }
 
-.claimTransfer {
-	display: grid;
-	gap: 12px;
-}
-
-.claimTransfer p {
-	margin: 0;
-}
-
-.claimTransferWarning {
-	color: #ffd166;
-}
-
 .claimSettingsCopy {
 	display: flex;
 	align-items: center;

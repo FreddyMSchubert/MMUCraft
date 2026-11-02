@@ -16,11 +16,11 @@
 			{
 				"id": "decoration/fishing_plaque_mangrove",
 				"type": "mainmod:fake_crafting_shaped",
-				"gameplayToggle": "imaginative",
-				"pattern": ["PPP", " S "],
+				"gameplayToggle": "inventors",
+				"pattern": ["LLL", "LSL", "LLL"],
 				"key": {
-					"P": "minecraft:mangrove_planks",
-					"S": "minecraft:stick"
+					"L": "minecraft:mangrove_log",
+					"S": "minecraft:mangrove_shelf"
 				},
 				"result": {
 					"stack": "mainmod:deco-fishing-plaque-mangrove",

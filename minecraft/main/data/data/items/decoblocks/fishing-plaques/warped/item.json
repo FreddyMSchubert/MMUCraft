@@ -16,11 +16,11 @@
 			{
 				"id": "decoration/fishing_plaque_warped",
 				"type": "mainmod:fake_crafting_shaped",
-				"gameplayToggle": "imaginative",
-				"pattern": ["PPP", " S "],
+				"gameplayToggle": "inventors",
+				"pattern": ["LLL", "LSL", "LLL"],
 				"key": {
-					"P": "minecraft:warped_planks",
-					"S": "minecraft:stick"
+					"L": "minecraft:warped_stem",
+					"S": "minecraft:warped_shelf"
 				},
 				"result": {
 					"stack": "mainmod:deco-fishing-plaque-warped",

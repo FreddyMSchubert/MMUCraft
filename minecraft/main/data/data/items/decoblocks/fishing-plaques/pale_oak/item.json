@@ -16,11 +16,11 @@
 			{
 				"id": "decoration/fishing_plaque_pale_oak",
 				"type": "mainmod:fake_crafting_shaped",
-				"gameplayToggle": "imaginative",
-				"pattern": ["PPP", " S "],
+				"gameplayToggle": "inventors",
+				"pattern": ["LLL", "LSL", "LLL"],
 				"key": {
-					"P": "minecraft:pale_oak_planks",
-					"S": "minecraft:stick"
+					"L": "minecraft:pale_oak_log",
+					"S": "minecraft:pale_oak_shelf"
 				},
 				"result": {
 					"stack": "mainmod:deco-fishing-plaque-pale-oak",

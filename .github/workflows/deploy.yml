@@ -110,8 +110,22 @@ jobs:
                     fi
                     tag="$ref"
                   fi
-                  for service in api web mc velocity waiting-room event event-controller backup; do
-                    docker manifest inspect "${IMAGE_PREFIX}-${service}:${tag}" >/dev/null
+                  {
+                    echo '### Deployment selection'
+                    echo "- Target: $DEPLOY_TARGET"
+                    echo "- Requested version: $DEPLOY_VERSION"
+                    echo "- Resolved image tag: $tag"
+                    echo "- Deployment files ref: $ref"
+                    echo "- Warning minutes: $WARNING_MINUTES"
+                    echo "- Force: $FORCE_DEPLOY"
+                  } >> "$GITHUB_STEP_SUMMARY"
+                  for service in api web mc velocity waiting-room backup; do
+                    image="${IMAGE_PREFIX}-${service}:${tag}"
+                    echo "Checking $image"
+                    if ! docker manifest inspect "$image" >/dev/null; then
+                      echo "::error::Required image is unavailable: $image"
+                      exit 1
+                    fi
                   done
                   echo "tag=$tag" >> "$GITHUB_OUTPUT"
                   echo "ref=$ref" >> "$GITHUB_OUTPUT"

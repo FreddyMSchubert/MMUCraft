@@ -47,14 +47,6 @@ interface EventDetail extends EventSummary {
 	players?: EventPlayer[];
 }
 
-interface MyServer {
-	uuid: string | null;
-	serverName: string | null;
-	preferredServerName: string;
-	eventReady: boolean;
-	eventOnline: boolean;
-}
-
 const GLYPHS =
 	'ABCDEFGHJKLMNOPQRSTUVWXYZabcdeghjmnopqrsuvwxyz0123456789?#$%&+-=/\\^_' +
 	'¢£¥§¬¯±µ¿ÀÁÂÃÄÅÇÈÉÊËÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåçèéêëðñòóôõö÷øùúûüý';
@@ -156,53 +148,28 @@ export function SurprisingSaturdayTab({
 	showBackLink?: boolean;
 }) {
 	const isDetailPage = selectedId !== undefined;
-	const upcoming = events.filter((event) => event.status === 'upcoming');
 	const history = events.filter((event) => event.status === 'ended').reverse();
-	const selected = isDetailPage
-		? events.find((event) => String(event.id) === selectedId)
-		: (events.find((event) => event.status === 'live') ?? upcoming[0]);
+	const selected = isDetailPage ? events.find((event) => String(event.id) === selectedId) : null;
 	const selectedEventId = selected?.id;
 	const [detail, setDetail] = useState<EventDetail | null>(null);
-	const [me, setMe] = useState<MyServer | null>(null);
 	const [error, setError] = useState('');
-	const [moving, setMoving] = useState(false);
-	const [now, setNow] = useState<number | null>(null);
-	const [moveFeedback, setMoveFeedback] = useState('');
 	const [committeeVisibleFor, setCommitteeVisibleFor] = useState<number | null>(null);
 	const showCommittee = committeeVisibleFor !== null && committeeVisibleFor === selectedEventId;
 	useEffect(() => {
-		const tick = () => {
-			setNow(Date.now());
-		};
-		tick();
-		const timer = window.setInterval(tick, 1000);
-		return () => {
-			window.clearInterval(timer);
-		};
-	}, []);
-
-	useEffect(() => {
 		let cancelled = false;
-		let timer: number | undefined;
 		async function refresh() {
 			try {
-				const [detailResponse, meResponse] = await Promise.all([
+				const detailResponse =
 					selectedEventId === undefined
-						? Promise.resolve(null)
-						: fetch(`/api/surprising-saturday/${selectedEventId}`, {
+						? null
+						: await fetch(`/api/surprising-saturday/${selectedEventId}`, {
 								cache: 'no-store',
-							}),
-					fetch('/api/surprising-saturday/me', { cache: 'no-store' }),
-				]);
-				if ((detailResponse && !detailResponse.ok) || !meResponse.ok)
+							});
+				if (detailResponse && !detailResponse.ok)
 					throw new Error('Could not load event data');
-				const [eventData, myServer] = await Promise.all([
-					detailResponse ? detailResponse.json() : Promise.resolve(null),
-					meResponse.json(),
-				]);
+				const eventData = detailResponse ? await detailResponse.json() : null;
 				if (!cancelled) {
 					setDetail(eventData as EventDetail | null);
-					setMe(myServer as MyServer);
 					setError('');
 				}
 			} catch (caught) {
@@ -210,31 +177,15 @@ export function SurprisingSaturdayTab({
 					setError(
 						caught instanceof Error ? caught.message : 'Could not load event data',
 					);
-			} finally {
-				if (!cancelled) timer = window.setTimeout(refresh, 5_000);
 			}
 		}
 		void refresh();
 		return () => {
 			cancelled = true;
-			window.clearTimeout(timer);
 		};
 	}, [selectedEventId]);
 
 	const currentDetail = detail?.id === selectedEventId ? detail : null;
-	const selectedStatus = currentDetail?.status ?? selected?.status;
-	const remainingSeconds = Math.max(
-		0,
-		Math.ceil(
-			((currentDetail?.endsAtUnixMs ?? selected?.endsAtUnixMs ?? 0) - (now ?? 0)) / 1000,
-		),
-	);
-	const days = Math.floor(remainingSeconds / 86400);
-	const hours = Math.floor((remainingSeconds % 86400) / 3600);
-	const minutes = Math.floor((remainingSeconds % 3600) / 60);
-	const seconds = remainingSeconds % 60;
-	const own = currentDetail?.players?.find((player) => player.uuid === me?.uuid);
-	const completedItems = new Set(own?.completed.map((entry) => entry.itemId));
 	const furthestGoalByPlayer = new Map<string, string>();
 	for (const player of currentDetail?.players ?? []) {
 		const completed = new Set(player.completed.map((entry) => entry.itemId));
@@ -245,47 +196,6 @@ export function SurprisingSaturdayTab({
 	const shownPlayers =
 		currentDetail?.players?.filter((player) => showCommittee || !player.isCommittee) ?? [];
 	const totalPoints = currentDetail?.items?.reduce((sum, item) => sum + item.points, 0) ?? 0;
-	const otherUpcoming = upcoming.filter((event) => event.id !== selectedEventId);
-	const onEventServer = me?.preferredServerName === 'surprising-saturday';
-	const hasEventServer =
-		currentDetail?.criteriaType === 'list_completion' ||
-		currentDetail?.criteriaType === 'joined_earning';
-
-	async function switchServer() {
-		const destination = onEventServer ? 'main' : 'surprising-saturday';
-		setMoving(true);
-		setMoveFeedback('');
-		try {
-			const response = await fetch('/api/surprising-saturday/me/server', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					serverName: destination,
-				}),
-			});
-			if (!response.ok) {
-				const body = (await response.json()) as { message?: string | string[] };
-				throw new Error(
-					Array.isArray(body.message)
-						? body.message.join(', ')
-						: (body.message ?? 'Switch failed'),
-				);
-			}
-			setMe((current) =>
-				current ? { ...current, preferredServerName: destination } : current,
-			);
-			setMoveFeedback(
-				me?.serverName
-					? 'Choice saved. You will move when that server is available.'
-					: 'Choice saved. You will join that server next time you connect.',
-			);
-		} catch (caught) {
-			setMoveFeedback(caught instanceof Error ? caught.message : 'Switch failed');
-		} finally {
-			setMoving(false);
-		}
-	}
-
 	return (
 		<div className="eventPage">
 			{(showBackLink ?? isDetailPage) && (
@@ -295,20 +205,6 @@ export function SurprisingSaturdayTab({
 			)}
 			<header className="eventTop">
 				<h3>Events</h3>
-				{selectedStatus === 'live' && now !== null && (
-					<div
-						className="eventEndCountdown"
-						role="timer"
-						aria-label={`${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds until the event ends`}
-					>
-						<strong>
-							{days > 0 && `${days}d `}
-							{String(hours).padStart(2, '0')}:{String(minutes).padStart(2, '0')}:
-							{String(seconds).padStart(2, '0')}
-						</strong>
-						<span>Until the event ends</span>
-					</div>
-				)}
 			</header>
 
 			{selected && (
@@ -322,49 +218,25 @@ export function SurprisingSaturdayTab({
 						description={currentDetail?.description ?? selected.description ?? ''}
 					/>
 					<div className="eventFeatureMeta">
-						<span className={`eventStatus eventStatus-${selectedStatus}`}>
-							Surprising Saturday ·{' '}
-							{selectedStatus === 'live'
-								? 'Live now'
-								: selectedStatus === 'upcoming'
-									? 'Coming up'
-									: 'Finished'}
+						<span className="eventStatus eventStatus-ended">
+							Surprising Saturday · Finished
 						</span>
 						<time dateTime={new Date(selected.startsAtUnixMs).toISOString()}>
 							{formatManchesterDateTime(selected.startsAtUnixMs)} –{' '}
 							{formatManchesterDateTime(selected.endsAtUnixMs)}
 						</time>
 					</div>
-					{selectedStatus === 'live' && hasEventServer && (
-						<div className="eventJoin">
-							<button
-								type="button"
-								disabled={!me?.uuid || !me.eventReady || moving}
-								onClick={() => void switchServer()}
-							>
-								{moving
-									? 'Switching…'
-									: onEventServer
-										? 'Return to main server'
-										: 'Join event server'}
-							</button>
-							{me?.eventReady && !me.eventOnline && (
-								<span>The event server is starting.</span>
-							)}
-							{moveFeedback && <span role="status">{moveFeedback}</span>}
-						</div>
-					)}
 				</section>
 			)}
 			{isDetailPage && !selected && (
 				<section className="adminSection">This event could not be found.</section>
 			)}
 
-			{selectedStatus !== 'upcoming' && currentDetail?.criteriaType === 'joined_earning' && (
+			{currentDetail?.criteriaType === 'joined_earning' && (
 				<section className="adminSection eventScores">
 					<div className="eventSectionHeading">
 						<h4>Goals</h4>
-						<p>Dabloons are paid after the event ends, on the main server.</p>
+						<p>Final goals and results from this event.</p>
 					</div>
 					<ol className="eventEarningGoals">
 						{currentDetail.items?.map((item) => {
@@ -375,11 +247,6 @@ export function SurprisingSaturdayTab({
 							return (
 								<li key={item.id}>
 									<div className="eventEarningGoalHeading">
-										<span
-											className={`eventGoalMark${completedItems.has(item.id) ? ' eventGoalMarkComplete' : ''}`}
-											role="img"
-											aria-label={`${item.name}: ${completedItems.has(item.id) ? 'completed' : 'not completed'} by you`}
-										/>
 										<div>
 											<strong>{item.name}</strong>
 											{item.description && <p>{item.description}</p>}
@@ -401,7 +268,7 @@ export function SurprisingSaturdayTab({
 					</ol>
 				</section>
 			)}
-			{selectedStatus !== 'upcoming' && currentDetail?.criteriaType === 'list_completion' && (
+			{currentDetail?.criteriaType === 'list_completion' && (
 				<section className="adminSection eventScores">
 					<div className="eventSectionHeading">
 						<h4>Leaderboard</h4>
@@ -425,40 +292,6 @@ export function SurprisingSaturdayTab({
 							cannot win.
 						</p>
 					)}
-					<details className="eventChecklist">
-						<summary>
-							Your goals ({own?.completed.length ?? 0}/
-							{currentDetail.items?.length ?? 0} · {own?.points ?? 0}/{totalPoints}{' '}
-							points)
-						</summary>
-						<ul>
-							{currentDetail.items?.map((item) => (
-								<li
-									key={item.id}
-									aria-label={`${item.name}: ${completedItems.has(item.id) ? 'complete' : 'incomplete'}, ${item.points} points`}
-								>
-									<span
-										className={`eventGoalMark${completedItems.has(item.id) ? ' eventGoalMarkComplete' : ''}`}
-										aria-hidden="true"
-									/>
-									{item.url ? (
-										<a
-											href={item.url}
-											target="_blank"
-											rel="noopener noreferrer"
-										>
-											{item.name}
-										</a>
-									) : (
-										<span>{item.name}</span>
-									)}
-									<span className="eventTargetPoints">
-										{item.points} {item.points === 1 ? 'pt' : 'pts'}
-									</span>
-								</li>
-							))}
-						</ul>
-					</details>
 					{shownPlayers.length > 0 && (
 						<div className="eventPodium">
 							{shownPlayers.slice(0, 3).map((player, index) => (
@@ -522,21 +355,6 @@ export function SurprisingSaturdayTab({
 			)}
 			{error && <p className="authError">{error}</p>}
 
-			{otherUpcoming.length > 0 && !isDetailPage && showHistory && (
-				<section className="adminSection eventListSection">
-					<h4>Also coming up</h4>
-					<div className="eventHistory">
-						{otherUpcoming.map((event) => (
-							<Link key={event.id} href={`/play/event/${event.id}`}>
-								<strong>
-									<ObfuscatedEventName wordLengths={event.titleWordLengths} />
-								</strong>
-								<time>{formatManchesterDateTime(event.startsAtUnixMs)}</time>
-							</Link>
-						))}
-					</div>
-				</section>
-			)}
 			{history.length > 0 && !isDetailPage && showHistory && (
 				<section className="adminSection eventListSection">
 					<h4>Past events</h4>

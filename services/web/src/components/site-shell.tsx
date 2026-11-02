@@ -119,7 +119,6 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	const [ducksEnabled, setDucksEnabled] = useState<boolean | null>(null);
 	const [onlinePlayers, setOnlinePlayers] = useState<OnlinePlayer[] | null>(null);
 	const [capacity, setCapacity] = useState<{
-		showEventCapacity: boolean;
 		servers: {
 			name: string;
 			playerCount: number | null;
@@ -136,11 +135,10 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	const route = useMemo(() => pathname.split('/').slice(2).map(decodePathSegment), [pathname]);
 	const activeTab = TAB_IDS.has(route[0] as TabId) ? (route[0] as TabId) : 'knowledge';
 	const routeDetail = route.at(1);
-	const liveEvent = events.find((event) => event.status === 'live');
 	const activeBuildEvents = buildEvents.filter((event) =>
 		['building', 'preparing', 'voting'].includes(event.status),
 	);
-	const hasLiveEvent = Boolean(liveEvent) || activeBuildEvents.length > 0;
+	const hasLiveEvent = activeBuildEvents.length > 0;
 	const isCommittee = user?.isCommittee;
 	const tabs = useMemo(
 		() =>
@@ -179,21 +177,17 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 
 	useEffect(() => {
 		let cancelled = false;
-		let timer: number | undefined;
 		async function refreshEvents() {
 			try {
 				const response = await fetch('/api/surprising-saturday', { cache: 'no-store' });
 				if (response.ok && !cancelled) setEvents((await response.json()) as EventSummary[]);
 			} catch {
-				// The next poll retries when the API is unavailable.
-			} finally {
-				if (!cancelled) timer = window.setTimeout(refreshEvents, 15_000);
+				// Keep the last successful history during an API outage.
 			}
 		}
 		void refreshEvents();
 		return () => {
 			cancelled = true;
-			window.clearTimeout(timer);
 		};
 	}, []);
 
@@ -274,7 +268,6 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 				const response = await fetch('/api/velocity/capacity', { cache: 'no-store' });
 				if (!response.ok) return;
 				const next = (await response.json()) as {
-					showEventCapacity: boolean;
 					servers: {
 						name: string;
 						playerCount: number | null;
@@ -442,18 +435,6 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 			}
 		>
 			<DynamicCountdowns className="desktopCountdowns" />
-			{user && liveEvent && (
-				<a className="eventBanner" href={`/play/event/${liveEvent.id}`}>
-					<span className="eventBannerPulse" aria-hidden="true">
-						🔴
-					</span>
-					<span className="eventBannerContent">
-						<strong>LIVE NOW · {liveEvent.title}</strong>
-						{liveEvent.shortDescription && <span>{liveEvent.shortDescription}</span>}
-					</span>
-					<span className="eventBannerAction">Open event →</span>
-				</a>
-			)}
 			{user &&
 				activeBuildEvents.map((event) => (
 					<Link
@@ -844,7 +825,6 @@ function CapacityCount({
 	showWaitingCounts,
 }: {
 	capacity: {
-		showEventCapacity: boolean;
 		servers: {
 			name: string;
 			playerCount: number | null;
@@ -855,22 +835,12 @@ function CapacityCount({
 	};
 	showWaitingCounts: boolean;
 }) {
-	const servers = capacity.servers
-		.filter(
-			(server) =>
-				server.name === 'main' ||
-				(capacity.showEventCapacity && server.name === 'surprising-saturday'),
-		)
-		.sort((left, right) => Number(left.name !== 'main') - Number(right.name !== 'main'));
+	const servers = capacity.servers.filter((server) => server.name === 'main');
 	return (
 		<>
 			{servers.map((server) => (
 				<span key={server.name}>
-					{capacity.showEventCapacity
-						? server.name === 'main'
-							? ' - Server '
-							: ' - Event '
-						: ' '}
+					{' '}
 					<span
 						className={
 							server.playerCount !== null && server.playerCount >= server.maxPlayers

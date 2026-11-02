@@ -2,7 +2,6 @@ import {
 	BadRequestException,
 	Body,
 	Controller,
-	Delete,
 	Get,
 	Headers,
 	Param,
@@ -77,15 +76,6 @@ export class VelocityAdminController {
 		return this.velocity.adminSnapshot();
 	}
 
-	@Patch('event-override')
-	setEventOverride(
-		@Headers('cookie') cookieHeader: string | undefined,
-		@Body() body: { enabled?: unknown } | undefined,
-	) {
-		this.sessions.requireCommitteeSession(cookieHeader);
-		return this.velocity.setEventOverride(body?.enabled);
-	}
-
 	@Patch('maintenance')
 	setMaintenanceMode(
 		@Headers('cookie') cookieHeader: string | undefined,
@@ -141,9 +131,7 @@ export class VelocityInternalController {
 			typeof body.command !== 'string' ||
 			!body.command.trim() ||
 			body.command.length > 32767 ||
-			!['main', 'waiting-room', 'surprising-saturday', 'proxy'].includes(
-				String(body.serverName),
-			)
+			!['main', 'waiting-room', 'proxy'].includes(String(body.serverName))
 		)
 			throw new BadRequestException('Invalid command log entry');
 		return this.commandLogs.record({
@@ -201,12 +189,6 @@ export class VelocityInternalController {
 	) {
 		this.velocity.verifyInternalAuthorization(authorization);
 		return this.velocity.markQueued(body?.uuid, body?.username);
-	}
-
-	@Get('event-control')
-	eventControl(@Headers('authorization') authorization: string | undefined) {
-		this.velocity.verifyInternalAuthorization(authorization);
-		return this.velocity.eventControlState();
 	}
 
 	@Get('waiting-chat')
@@ -308,134 +290,15 @@ export class VelocityInternalController {
 
 @Controller('api/surprising-saturday')
 export class SurprisingSaturdayController {
-	constructor(
-		private readonly sessions: AuthSessionService,
-		private readonly events: SurprisingSaturdayService,
-		private readonly velocity: VelocityService,
-	) {}
+	constructor(private readonly events: SurprisingSaturdayService) {}
 
 	@Get()
 	list() {
 		return this.events.list();
 	}
 
-	@Get('me')
-	me(@Headers('cookie') cookieHeader: string | undefined) {
-		const user = this.sessions.requireSession(cookieHeader);
-		return this.velocity.myServer(user.id);
-	}
-
-	@Post('me/server')
-	moveSelf(
-		@Headers('cookie') cookieHeader: string | undefined,
-		@Body() body: { serverName?: unknown } | undefined,
-	) {
-		const user = this.sessions.requireSession(cookieHeader);
-		return this.velocity.moveSelf(user.id, body?.serverName);
-	}
-
 	@Get(':id')
 	detail(@Param('id') id: string) {
 		return this.events.detail(id);
-	}
-}
-
-@Controller('api/admin/surprising-saturday')
-export class SurprisingSaturdayAdminController {
-	constructor(
-		private readonly sessions: AuthSessionService,
-		private readonly events: SurprisingSaturdayService,
-		private readonly velocity: VelocityService,
-	) {}
-
-	@Get()
-	list(@Headers('cookie') cookieHeader: string | undefined) {
-		this.sessions.requireCommitteeSession(cookieHeader);
-		return this.events.list(true);
-	}
-
-	@Get(':id')
-	detail(@Headers('cookie') cookieHeader: string | undefined, @Param('id') id: string) {
-		this.sessions.requireCommitteeSession(cookieHeader);
-		return this.events.adminDetail(id);
-	}
-
-	@Post()
-	create(
-		@Headers('cookie') cookieHeader: string | undefined,
-		@Body() body: Record<string, unknown> | undefined,
-	) {
-		this.sessions.requireCommitteeSession(cookieHeader);
-		const result = this.events.create(body);
-		this.velocity.refreshEventState();
-		return result;
-	}
-
-	@Patch(':id')
-	update(
-		@Headers('cookie') cookieHeader: string | undefined,
-		@Param('id') id: string,
-		@Body() body: Record<string, unknown> | undefined,
-	) {
-		this.sessions.requireCommitteeSession(cookieHeader);
-		const result = this.events.update(id, body);
-		this.velocity.refreshEventState();
-		return result;
-	}
-
-	@Delete(':id')
-	remove(@Headers('cookie') cookieHeader: string | undefined, @Param('id') id: string) {
-		this.sessions.requireCommitteeSession(cookieHeader);
-		const result = this.events.remove(id);
-		this.velocity.refreshEventState();
-		return result;
-	}
-}
-
-@Controller('api/internal/surprising-saturday')
-export class SurprisingSaturdayInternalController {
-	constructor(
-		private readonly velocity: VelocityService,
-		private readonly events: SurprisingSaturdayService,
-		private readonly discord: DiscordService,
-	) {}
-
-	@Get('discord-messages')
-	discordMessages(
-		@Headers('authorization') authorization: string | undefined,
-		@Query('after') after: string | undefined,
-	) {
-		this.velocity.verifyInternalAuthorization(authorization);
-		if (after !== undefined && !/^(0|[1-9][0-9]{0,19})$/.test(after))
-			throw new BadRequestException('Invalid Discord cursor');
-		return this.discord.eventChat(after ?? null);
-	}
-
-	@Get('player-data/:uuid')
-	playerData(
-		@Headers('authorization') authorization: string | undefined,
-		@Param('uuid') uuid: string,
-	) {
-		this.velocity.verifyInternalAuthorization(authorization);
-		return this.events.playerData(uuid);
-	}
-
-	@Get('score/:uuid')
-	score(
-		@Headers('authorization') authorization: string | undefined,
-		@Param('uuid') uuid: string,
-		@Query('atUnixMs') atUnixMs: string | undefined,
-	) {
-		this.velocity.verifyInternalAuthorization(authorization);
-		return this.events.score(uuid, atUnixMs);
-	}
-
-	@Post('list-completion')
-	completion(
-		@Headers('authorization') authorization: string | undefined,
-		@Body() body: Record<string, unknown> | undefined,
-	) {
-		this.velocity.verifyInternalAuthorization(authorization);
-		return this.events.recordCompletion(body);
 	}
 }

@@ -58,7 +58,7 @@ min_rz=$(floor_div "$min_z" 32)
 max_rz=$(floor_div "$max_z" 32)
 
 printf 'Keeping chunk range X=%s..%s Z=%s..%s and every overlapping region.\n' "$min_x" "$max_x" "$min_z" "$max_z"
-docker compose --env-file .env --env-file .release.env -f compose.yaml -f compose.dev.yaml --profile event down -v --remove-orphans
+docker compose --env-file .env --env-file .release.env -f compose.yaml -f compose.dev.yaml down -v --remove-orphans
 
 rm -rf backups data/chunklocked
 rm -rf data/api/backup-staging data/api/logs data/api/cache data/velocity/logs

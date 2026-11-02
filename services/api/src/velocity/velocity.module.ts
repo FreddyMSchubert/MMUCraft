@@ -3,9 +3,7 @@ import { AuthModule } from '../auth/auth.module';
 import { DatabaseModule } from '../database/database.module';
 import { DiscordModule } from '../discord/discord.module';
 import {
-	SurprisingSaturdayAdminController,
 	SurprisingSaturdayController,
-	SurprisingSaturdayInternalController,
 	VelocityAdminController,
 	VelocityInternalController,
 	VelocityPublicController,
@@ -20,10 +18,7 @@ import { VelocityService } from './velocity.service';
 		VelocityAdminController,
 		VelocityInternalController,
 		SurprisingSaturdayController,
-		SurprisingSaturdayAdminController,
-		SurprisingSaturdayInternalController,
 	],
 	providers: [VelocityService, SurprisingSaturdayService],
-	exports: [SurprisingSaturdayService],
 })
 export class VelocityModule {}

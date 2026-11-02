@@ -19,7 +19,6 @@ import { FeatureToggleAdminSection } from './admin/feature-toggle-admin-section'
 import { AnnouncementAdminSection } from './admin/announcement-admin-section';
 import { LaunchAdminSection } from './admin/launch-admin-section';
 import { DropAnalyticsAdminSection } from './admin/drop-analytics-admin-section';
-import { SurprisingSaturdayAdminSection } from './admin/surprising-saturday-admin-section';
 import { MinecraftCacheAdminSection } from './admin/minecraft-cache-admin-section';
 import { DucksAdminSection } from './admin/ducks-admin-section';
 import { BuildEventsAdminSection } from './admin/build-events-admin-section';
@@ -44,7 +43,6 @@ export function AdminTab({
 				ducksEnabled={ducksEnabled}
 			/>
 			{controller.activeSection === 'drops' && <DropAnalyticsAdminSection />}
-			{controller.activeSection === 'events' && <SurprisingSaturdayAdminSection />}
 			{controller.activeSection === 'build-events' && (
 				<BuildEventsAdminSection subroute={subroute ?? []} />
 			)}

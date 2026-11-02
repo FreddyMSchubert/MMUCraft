@@ -1,15 +1,17 @@
 name: checks-tests-images
+run-name: >-
+    Build ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.release_tag || 'dev + SHA' }} from ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.source_ref || 'main' }}
 
 on:
     workflow_dispatch:
         inputs:
             release_tag:
-                description: Published release tag to publish images under; blank publishes dev and commit-SHA image tags.
+                description: Image tag (published release only); blank publishes dev and commit SHA. Used only for manual runs.
                 required: false
                 default: ''
                 type: string
             source_ref:
-                description: Code to build (branch, tag, or commit); defaults to main.
+                description: Code to build (branch, tag, or SHA); defaults to main. Release-triggered runs use the release tag.
                 required: true
                 default: main
                 type: string
@@ -58,6 +60,27 @@ jobs:
             - name: Resolve source revision
               id: source
               run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+            - name: Show build selection
+              shell: bash
+              env:
+                  RELEASE_TAG: ${{ steps.manual_release.outputs.tag || github.event.release.tag_name }}
+                  SOURCE_REF: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.source_ref || 'main' }}
+                  SOURCE_SHA: ${{ steps.source.outputs.sha }}
+              run: |
+                  if [[ -n "$RELEASE_TAG" ]]; then
+                    image_tags="$RELEASE_TAG"
+                  else
+                    image_tags="dev and $SOURCE_SHA"
+                  fi
+                  echo "Building $SOURCE_REF at $SOURCE_SHA; images publish on success as $image_tags"
+                  {
+                    echo '### Build selection'
+                    echo "- Trigger: $GITHUB_EVENT_NAME"
+                    echo "- Source ref: $SOURCE_REF"
+                    echo "- Resolved commit: $SOURCE_SHA"
+                    echo "- Image tags on success: $image_tags"
+                  } >> "$GITHUB_STEP_SUMMARY"
 
             - name: Set up Python
               uses: actions/setup-python@v6
@@ -421,3 +444,11 @@ jobs:
                       fi
                     done
                   fi
+                  if [[ "$IMAGE_TAG" == dev ]]; then
+                    published_tags="dev and ${SOURCE_SHA}"
+                  else
+                    published_tags="$IMAGE_TAG"
+                  fi
+                  echo "Published tested images: ${published_tags} from ${SOURCE_SHA}"
+                  echo "### Published image set" >> "$GITHUB_STEP_SUMMARY"
+                  echo "Six service images published as ${published_tags} from commit ${SOURCE_SHA}." >> "$GITHUB_STEP_SUMMARY"

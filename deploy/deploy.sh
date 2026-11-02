@@ -59,8 +59,6 @@ if [ "$target" = production ]; then
 	: "${DISCORD_BOT_TOKEN:?set DISCORD_BOT_TOKEN in .env}"
 	: "${DISCORD_WAITING_ROOM_CHANNEL_ID:?set DISCORD_WAITING_ROOM_CHANNEL_ID in .env}"
 	: "${DISCORD_WAITING_ROOM_WEBHOOK_URL:?set DISCORD_WAITING_ROOM_WEBHOOK_URL in .env}"
-	: "${DISCORD_EVENT_CHANNEL_ID:?set DISCORD_EVENT_CHANNEL_ID in .env}"
-	: "${DISCORD_EVENT_WEBHOOK_URL:?set DISCORD_EVENT_WEBHOOK_URL in .env}"
 fi
 case "$PUBLIC_URL" in
 	https://*) ;;
@@ -89,7 +87,7 @@ fi
 
 # Prepare release configuration and persistent data.
 umask 077
-mkdir -p data/api data/minecraft data/velocity data/waiting-room data/chunklocked
+mkdir -p data/api data/minecraft data/velocity data/waiting-room
 if [ "$target" = production ]; then
 	mkdir -p data/locks backups
 	chmod 770 data/locks backups
@@ -102,12 +100,12 @@ fi
 printf 'IMAGE_PREFIX=%s\nIMAGE_TAG=%s\nPUBLIC_HOST=%s\nMONITORING_CONFIG_PATH=./monitoring\nCOMPOSE_FILE=%s\n' "$image_prefix" "$tag" "$public_host" "$compose_file" > .release.env
 [ -e data/api/signup-allowlist.txt ] || : > data/api/signup-allowlist.txt
 printf '%s\n' "$VELOCITY_FORWARDING_SECRET" > data/velocity/forwarding.secret
-chmod 775 data/api data/minecraft data/velocity data/waiting-room data/chunklocked
+chmod 775 data/api data/minecraft data/velocity data/waiting-room
 chmod 664 data/api/signup-allowlist.txt
 chmod 600 data/velocity/forwarding.secret
 
 dc() {
-	docker compose --env-file .env --env-file .release.env "$@"
+	COMPOSE_PROFILES= docker compose --env-file .env --env-file .release.env "$@"
 }
 
 show_startup_diagnostics() {
@@ -353,37 +351,10 @@ if [ "$had_players" = true ]; then
 fi
 [ "$proxy_drained" = true ] || graceful_failure "Velocity did not confirm that all players disconnected"
 
-# Seed the state file when upgrading from a release that did not write one.
-if [ ! -f data/api/event-control.json ] && printf '%s\n' "$running_services" | grep -qx api; then
-	old_event_state=$(dc exec -T api node -e '
-		fetch("http://127.0.0.1:8080/api/internal/velocity/event-control", {
-			headers: { authorization: "Bearer " + process.env.VELOCITY_API_SECRET },
-			signal: AbortSignal.timeout(5000),
-		}).then(async response => {
-			if (!response.ok) throw new Error(String(response.status));
-			process.stdout.write((await response.json()).desiredRunning ? "true" : "false");
-		}).catch(() => process.exit(1));
-	' 2>/dev/null || true)
-	case "$old_event_state" in
-		true|false)
-			printf '{"desiredRunning":%s}\n' "$old_event_state" > data/api/event-control.json.tmp
-			chmod 644 data/api/event-control.json.tmp
-			mv data/api/event-control.json.tmp data/api/event-control.json ;;
-	esac
-fi
-
-# Carry the old proxy's event choices into the API database on the first upgrade.
-if [ -f data/velocity/event-players.txt ]; then
-	cp data/velocity/event-players.txt data/api/event-players-legacy.txt
-	chmod 664 data/api/event-players-legacy.txt
-fi
-
-dc --profile event stop -t 2 event-controller surprising-saturday || true
-
 # Update the proxy first so it can show progress while the API and main server restart.
 shutdown_attempted=true
 rm -f data/velocity/deployment-drained
-if dc up -d --no-deps --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" velocity; then
+if dc up -d --no-deps --remove-orphans --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" velocity; then
 	:
 else
 	status=$?
@@ -467,18 +438,12 @@ else
 	show_startup_diagnostics
 	exit "$status"
 fi
-main_required=true
-if grep -Eq '"desiredRunning"[[:space:]]*:[[:space:]]*true' data/api/event-control.json 2>/dev/null; then
-	main_required=false
-	dc up -d --no-deps minecraft || echo "Main server could not start; checking the active route." >&2
+if dc up -d --no-deps minecraft; then
+	:
 else
-	if dc up -d --no-deps minecraft; then
-		:
-	else
-		status=$?
-		show_startup_diagnostics
-		exit "$status"
-	fi
+	status=$?
+	show_startup_diagnostics
+	exit "$status"
 fi
 if dc up -d --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" api web velocity; then
 	:
@@ -498,31 +463,25 @@ else
 	show_startup_diagnostics
 	exit "$status"
 fi
-if [ "$main_required" = true ]; then
-	if dc up -d --no-deps --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" minecraft; then
-		:
-	else
-		status=$?
-		show_startup_diagnostics
-		exit "$status"
-	fi
+if dc up -d --no-deps --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" minecraft; then
+	:
+else
+	status=$?
+	show_startup_diagnostics
+	exit "$status"
 fi
 
 # Re-enable the override last on every deploy where main reaches its health check.
-if [ "$main_required" = true ] || dc up -d --no-deps --wait --wait-timeout 60 minecraft; then
-	dc exec -T minecraft test -s /data/world/datapacks/bacap-inventory-check/pack.mcmeta \
-		|| { echo 'BACAP inventory override was not copied into the Minecraft world.' >&2; exit 1; }
-	dc exec -T --user "${PUID:-1000}:${PGID:-1000}" minecraft mc-send-to-console \
-		'datapack disable "file/bacap-inventory-check"' \
-		|| { echo 'Could not queue the BACAP override reset.' >&2; exit 1; }
-	sleep 10
-	dc exec -T --user "${PUID:-1000}:${PGID:-1000}" minecraft mc-send-to-console \
-		'datapack enable "file/bacap-inventory-check" last' \
-		|| { echo 'Could not queue the BACAP inventory override.' >&2; exit 1; }
-	sleep 10
-else
-	echo 'Main is not healthy during this event deploy; BACAP override activation is deferred.' >&2
-fi
+dc exec -T minecraft test -s /data/world/datapacks/bacap-inventory-check/pack.mcmeta \
+	|| { echo 'BACAP inventory override was not copied into the Minecraft world.' >&2; exit 1; }
+dc exec -T --user "${PUID:-1000}:${PGID:-1000}" minecraft mc-send-to-console \
+	'datapack disable "file/bacap-inventory-check"' \
+	|| { echo 'Could not queue the BACAP override reset.' >&2; exit 1; }
+sleep 10
+dc exec -T --user "${PUID:-1000}:${PGID:-1000}" minecraft mc-send-to-console \
+	'datapack enable "file/bacap-inventory-check" last' \
+	|| { echo 'Could not queue the BACAP inventory override.' >&2; exit 1; }
+sleep 10
 
 # The waiting room handles queued players; nginx serves resource packs.
 if dc up -d --no-deps --wait --wait-timeout "${DEPLOY_WAIT_TIMEOUT:-600}" waiting-room nginx; then
@@ -534,7 +493,6 @@ else
 fi
 # Health checks alone do not prove the running containers use this release.
 for service in api web minecraft; do
-	[ "$service" != minecraft ] || [ "$main_required" = true ] || continue
 	container=$(dc ps -q "$service")
 	[ -n "$container" ] || { echo "$service is not running after deployment." >&2; exit 1; }
 	image_service=$service

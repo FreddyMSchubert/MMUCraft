@@ -21,13 +21,13 @@ services:
 
     minecraft:
         environment:
-            MEMORY: 1G
+            MEMORY: 1536M
             INIT_MEMORY: 256M
-        mem_reservation: 1g
+        mem_reservation: 1536m
         deploy:
             resources:
                 reservations:
-                    memory: 1g
+                    memory: 1536m
 
     waiting-room:
         environment:
@@ -36,15 +36,6 @@ services:
             JVM_XX_OPTS: -XX:ActiveProcessorCount=1
         cpus: '0.5'
         mem_reservation: 512m
-
-    surprising-saturday:
-        environment:
-            MEMORY: 1G
-            INIT_MEMORY: 256M
-        mem_reservation: 256m
-
-    event-controller:
-        mem_reservation: 24m
 
     velocity:
         environment:

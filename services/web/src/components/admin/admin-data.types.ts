@@ -20,7 +20,6 @@ export type AdminSection =
 	| 'dailies'
 	| 'toggles'
 	| 'servers'
-	| 'events'
 	| 'build-events'
 	| 'maintenance'
 	| 'launch';
@@ -134,7 +133,6 @@ export function normalizeAdminSection(section: string | undefined): AdminSection
 		section === 'dailies' ||
 		section === 'toggles' ||
 		section === 'servers' ||
-		section === 'events' ||
 		section === 'build-events' ||
 		section === 'maintenance' ||
 		section === 'launch'

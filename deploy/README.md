@@ -4,7 +4,28 @@ For a new server, follow the [complete setup and cutover guide](SETUP.md).
 
 The GitHub `deploy` workflow copies this directory, the root `.env.example`, and the monitoring configuration to the selected server. It then runs `deploy.sh` with the `dev` or `production` target. Runtime state stays under `data/`, which is not present in the deployment archive, and Docker volumes are never pruned.
 
-Development builds publish both `dev` and commit-SHA image tags. Deploying `dev` selects the latest published build and uses its SHA-tagged images and matching deployment files; entering a SHA selects an earlier build. The workflow checks that all required images exist before it changes the server.
+Development builds publish both `dev` and commit-SHA image tags. Deploying `dev` selects the latest published build and uses its SHA-tagged images and matching deployment files; entering a SHA selects an earlier build. The workflow checks that all required images exist before it changes the server. The normal image set contains `api`, `web`, `mc`, `velocity`, `waiting-room`, and `backup`. It does not publish or deploy `event` or `event-controller`.
+
+## GitHub workflow inputs
+
+The `checks-tests-images` workflow runs when a release is published or when you start it manually. Its run name shows the requested image tag and source ref. Open the run summary to see the resolved commit and the tags that will be published after all checks pass. A failed run publishes no complete image set.
+
+| Manual build input | Default | Meaning |
+| --- | --- | --- |
+| `release_tag` | Blank | Blank publishes `dev` and commit-SHA tags. A published release tag such as `v1.7.8` publishes that tag. |
+| `source_ref` | `main` | Branch, tag, or commit to build. Release-triggered runs use the release tag instead. This is independent of the manual `release_tag` input. |
+
+The `deploy` workflow has these manual inputs. Its run summary shows the resolved image tag and deployment files ref. If an image is unavailable, the preflight log names it before any server changes.
+
+| Deploy input | Default | Meaning |
+| --- | --- | --- |
+| `target` | `dev` | Server to update: `dev` or `production`. |
+| `version` | `dev` | Image tag to deploy. `dev` selects the latest complete development set; a 40-character SHA selects that build; a release tag selects its published images. |
+| `source_ref` | Blank | Deployment files ref for a release tag. Blank uses `version`. For `dev` or a SHA, the resolved build commit is used. |
+| `warning_minutes` | `3` | Maximum wait for players after a restart warning. `0` skips the advance warning. |
+| `force` | `false` | Continue after a failed player notice, disconnect, or save attempt. Health checks still apply. |
+
+When deploying an existing release tag after changing deployment code, set `source_ref` to the commit containing that change. Leaving it blank checks out the release tag's older deployment files.
 
 The API applies pending Drizzle migrations before it starts listening. The image contains them at `/app/drizzle`, while `/app/data/app.sqlite` is the mounted production database; a failed migration makes the API fail instead of serving against the wrong schema.
 
@@ -26,7 +47,7 @@ The dev Compose overlay does not define or run the backup service, does not requ
 
 The manager checks every five minutes. Once the newest successful snapshot is three hours old, it backs up as soon as the Minecraft server is empty. At six hours it takes a live backup even if players remain online. It asks the existing authenticated API and Minecraft mod command path to run `save-off` and `save-all flush`; the API also creates and verifies a logical SQLite snapshot. It always asks that same path to run `save-on` before it finishes. RCON is not enabled or used. Deployments and backups use `data/locks/maintenance.lock`, so they cannot modify the server at the same time.
 
-Snapshots contain `data/minecraft`, non-database files in `data/api`, `data/velocity`, `.env`, and the consistent SQLite snapshot at `data/api/backup-staging/app.sqlite`. The backup container can read only those data directories. It cannot read `data/chunklocked`, so the event world is not backed up. Reconstructable Minecraft downloads, logs, caches, the live WAL database files, temporary staging files, and monitoring history are excluded. Prometheus and Loki retention remains independent of disaster-recovery backups.
+Snapshots contain `data/minecraft`, non-database files in `data/api`, `data/velocity`, `.env`, and the consistent SQLite snapshot at `data/api/backup-staging/app.sqlite`. The backup container can read only those data directories. Historical Surprising Saturday results are in the API database snapshot. Reconstructable Minecraft downloads, logs, caches, the live WAL database files, temporary staging files, and monitoring history are excluded. Prometheus and Loki retention remains independent of disaster-recovery backups.
 
 The local repository is at `backups/restic`. A backup proceeds only while that filesystem has at least 50 GiB and 15% available. Before each new snapshot, expired snapshots are pruned using this policy:
 
@@ -76,11 +97,9 @@ Run the `clean-dev` GitHub Actions workflow to clean the dev server around spawn
 
 Set `DISCORD_WAITING_ROOM_CHANNEL_ID` to the ID of a separate text channel. Create a webhook in that channel and set `DISCORD_WAITING_ROOM_WEBHOOK_URL` to its URL. Keep the URL private. Give the existing bot permission to read messages in the channel. Chat flows both ways, and the webhook posts join, leave, and death notices with the same player names, avatars, role colors, and online count format as the main channel. Administrators can use `/mc` in that channel to run a command on the waiting room. `/mc` in the main bridge channel still runs a command on the main server. The waiting room uses the same bot token and the existing Velocity secrets.
 
-For Killshift, set `DISCORD_EVENT_CHANNEL_ID` to a third text channel's ID and `DISCORD_EVENT_WEBHOOK_URL` to a webhook created in that channel. The event container uses the existing `DISCORD_BOT_TOKEN` to read that channel directly. Give the bot View Channel and Read Message History there and enable Message Content Intent. Killshift posts chat, joins, leaves, deaths, accepted scores, and podium changes through its event webhook. Discord messages appear only on the event server. The event bridge does not use the API for Discord messages; the API still supplies scores, player profiles, and public avatar images. Keep the webhook URL private.
+The waiting room runs in a separate Paper container with its own data directory. It uses a void generator and assumes the `waiting-void` structure is already built; the plugin does not place or verify its blocks. Its player data does not share the main server's inventory files. The container has no public port. Velocity sends queued players to it. The main server has a member queue and a regular queue. A later regular arrival cannot enter before an earlier queued member. The health check waits for the plugin to prepare the `waiting-void` world. The old `world` directory from the failed first start stays on disk but is not used.
 
-The waiting room runs in a separate Paper container with its own data directory. It uses a void generator and assumes the `waiting-void` structure is already built; the plugin does not place or verify its blocks. Its player data does not share the main server's inventory files. The container has no public port. Velocity sends queued players to it and applies separate player limits to main and Surprising Saturday. Each destination has a member queue and a regular queue. A later regular arrival cannot enter before an earlier queued member for that destination. The health check waits for the plugin to prepare the `waiting-void` world. The old `world` directory from the failed first start stays on disk but is not used.
-
-The waiting room accepts up to 100 players on dev and production. This count includes visitors who are not in a queue. Dev uses a 384 MiB Java heap and a 768 MiB container limit. Production uses a 768 MiB heap and a 1.5 GiB container limit. The container limit includes Java memory outside the heap. The deployment starts the waiting room before the main server. It lets both servers prepare at the same time and waits for their health checks before it accepts players. The waiting room health check ignores failed probes for the first five minutes.
+The waiting room accepts up to 100 players on dev and production. This count includes visitors who are not in a queue. Dev uses a 384 MiB Java heap and a 768 MiB container limit. Production uses a 768 MiB heap and a 1.5 GiB container limit. The main server now has a 1536 MiB heap on dev; production has a 10 GiB heap, 12 GiB container limit, and 7 GiB reservation. Container limits include Java memory outside the heap. The deployment starts the waiting room before the main server. It lets both servers prepare at the same time and waits for their health checks before it accepts players. The waiting room health check ignores failed probes for the first five minutes.
 
 Velocity owns the public Minecraft port. Backend servers have no published port. They use offline mode because Velocity authenticates the Mojang account. FabricProxy-Lite verifies the forwarding secret and restores the authenticated UUID, username, skin, and client address on each Fabric backend.
 
@@ -88,19 +107,13 @@ Simple Voice Chat uses UDP port `24454` on Velocity. The shared Compose file pub
 
 The images include the voice configuration. The backend enables 48-block proximity audio, 24-block whispers, and group chat. Players must install the client mod to use audio. See the root README for client setup. Deploy the updated Minecraft and Velocity images with the normal deployment workflow. After deployment, use `/voicechat test <player>` and two modded clients to check audio. Container health checks do not verify voice traffic.
 
-Install Simple Voice Chat on each temporary or event backend too. Permit UDP traffic from Velocity to that backend on its configured voice port. Separate containers can each use port `24454`. Servers that share one network address must use different voice ports.
-
 The database migration creates the `main` backend. The Velocity configuration has no static backend. If the MMUcraft Velocity plugin does not start, the proxy cannot route a player to a backend.
 
 The first Velocity deployment saves `banned-players.json.pre-velocity`. It removes only Minecraft ban entries that the old website blacklist created. It keeps bans that an operator or the console created.
 
 Velocity asks the API for an access decision during each login. The API checks maintenance mode, the website account, and active bans. A player in an active signup flow receives the signup code in the Minecraft disconnect screen. If the API is unavailable, Velocity rejects the login. Connected players stay online.
 
-Every three seconds, Velocity sends backend health, online players, and completed move commands to the API. The API returns the server registry, active route, manual moves, maintenance state, and players to disconnect. Velocity pings the registered backends. The API does not run a separate backend ping loop.
-
-Use the Admin **Servers** page to add one temporary or event server. Start that backend without a public port. Attach it to the `kubecraft_app` Docker network. Install Fabric API and FabricProxy-Lite `2.12.0`, and set `FABRIC_PROXY_SECRET` to the production forwarding secret. Add its Docker address, such as `event-server:25565`, in the website. Removing the registry entry does not stop or delete the backend container.
-
-The Servers page also shows online players and backend health. The API saves each player's server choice in SQLite. The event page can change this choice while the player is offline. Velocity reads it at login and reports successful connections back to the API. During a live event, an event preference works even when main is down. A schedule temporarily replaces the default route. At its start, connected players move to the scheduled server. At its end, they move to the current default server. The Maintenance page disconnects current players and rejects new logins during the next control sync, except for committee members and the MMU admin account.
+Every three seconds, Velocity sends backend health, online players, and completed move commands to the API. The API returns main and waiting-room backends, maintenance state, and players to disconnect. Velocity pings the registered backends. The API does not run a separate backend ping loop. The Admin **Servers** page shows the main server's online players, health, and capacity. The Maintenance page disconnects current players and rejects new logins during the next control sync, except for committee members and the MMU admin account.
 
 Public signups open automatically at the launch time configured on the Admin **Launch** page. Before then, add one permitted email address per line to `data/api/signup-allowlist.txt` to allow invited signups. Matching is case-insensitive; `*` does not allow everyone before launch. The API reads the file for each attempt without a restart. An unreadable or empty file keeps prelaunch signup closed. Existing accounts can still sign in. Normal MMU-address and sponsored external-player eligibility rules apply both before and after launch; an external address must also be added under Admin **External invites**. Invitees can use `/play` directly before the public launch page links to it. Changing the launch time immediately updates the public signup gate; open public website pages refresh the countdown setting within 30 seconds.
 
@@ -120,11 +133,11 @@ Velocity reads this file without the API. It blocks new joins and disconnects co
 
 If players were connected, the API sends a Discord start notice and a completion notice. If Velocity confirms that no players were connected, the script skips both notices. If the player state is unknown, the script attempts a notice. `force=true` still attempts notices, disconnects, and a world save. It continues after a failed attempt and writes a warning to the deployment log. Without force, a failed attempt stops deployment. Force does not bypass release health checks.
 
-The script updates Velocity before it stops the API and Minecraft. Velocity has no API startup dependency. It can show update progress while those services restart. A Velocity image change still causes a short proxy restart. During that restart, the proxy cannot show a message. The API stores the event server's desired state in `data/api/event-control.json`. The controller reads this file before it contacts the API. The script starts an active event container and its controller before it restarts the API and main server.
+The script updates Velocity before it stops the API and Minecraft. Velocity has no API startup dependency. It can show update progress while those services restart. A Velocity image change still causes a short proxy restart. During that restart, the proxy cannot show a message. The deployment removes old event containers as Compose orphans.
 
 The server list shows the update status. Each connection attempt shows the elapsed update time and an estimate of 200–300 seconds. After 10 minutes, the message asks players to contact the committee. It states whether the main server responds. The time is refreshed on each request; a disconnect screen does not update after the connection closes.
 
-The script clears the update flag after the player-facing services pass their health checks and Velocity confirms that an open route is ready. When the event server is open, this check can use it without waiting for main. It then starts and checks monitoring. A monitoring failure fails the deployment job, but players can join. If a player-facing service fails after shutdown starts, the flag stays active. Run a successful deployment to clear this state. If deployment stops before shutdown, the script clears the flag. If the API fails to save, a normal deployment first restarts the existing API and checks recovery before it clears the flag.
+The script clears the update flag after the player-facing services, including main, pass their health checks and Velocity confirms that an open route is ready. It then starts and checks monitoring. A monitoring failure fails the deployment job, but players can join. If a player-facing service fails after shutdown starts, the flag stays active. Run a successful deployment to clear this state. If deployment stops before shutdown, the script clears the flag. If the API fails to save, a normal deployment first restarts the existing API and checks recovery before it clears the flag.
 
 The first deployment of this change requires `force=true` because the old Velocity plugin cannot write an acknowledgement. The script still calls the old API to attempt its disconnect and notice. The new behaviour is available after the proxy has been updated. Later deployments can use `force=false`.
 

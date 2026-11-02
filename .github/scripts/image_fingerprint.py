@@ -62,18 +62,6 @@ INPUTS = {
         "minecraft/waiting-room/paper-global.yml",
         "minecraft/waiting-room/prepare-and-start.sh",
     ],
-    "event": [
-        ".dockerignore",
-        "minecraft/surprising-saturday/Dockerfile",
-        "minecraft/surprising-saturday/mods",
-        "minecraft/surprising-saturday/chunklocked/build/libs",
-        "minecraft/surprising-saturday/server.properties",
-        "minecraft/surprising-saturday/prepare-and-start.sh",
-    ],
-    "event-controller": [
-        "services/event-controller/Dockerfile",
-        "services/event-controller/controller.mjs",
-    ],
     "backup": [
         "services/backup/Dockerfile",
         "services/backup/backup-manager.sh",

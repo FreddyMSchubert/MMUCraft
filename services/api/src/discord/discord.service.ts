@@ -143,7 +143,6 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	private readonly logger = new Logger(DiscordService.name);
 	private readonly channelId = process.env.DISCORD_CHANNEL_ID?.trim() ?? '';
 	private readonly waitingChannelId = process.env.DISCORD_WAITING_ROOM_CHANNEL_ID?.trim() ?? '';
-	private readonly eventChannelId = process.env.DISCORD_EVENT_CHANNEL_ID?.trim() ?? '';
 	private readonly client = new Client({
 		intents: [
 			GatewayIntentBits.Guilds,
@@ -167,8 +166,6 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 	private lobbyCursor = 0;
 	// ponytail: This buffer can drop chat during outages. Persist it if chat must survive restarts.
 	private readonly lobbyMessages: { id: number; name: string; content: string }[] = [];
-	// ponytail: This buffer can drop chat during long API outages. Persist it if that matters.
-	private readonly eventMessages: { id: string; name: string; content: string }[] = [];
 	private nextWaitingCommandId = 0;
 	private readonly waitingCommands = new Map<
 		number,
@@ -238,8 +235,7 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 			if (
 				this.draining ||
 				(message.channelId !== this.channelId &&
-					message.channelId !== this.waitingChannelId &&
-					message.channelId !== this.eventChannelId) ||
+					message.channelId !== this.waitingChannelId) ||
 				message.author.bot ||
 				message.webhookId
 			)
@@ -256,13 +252,6 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 					content: content.slice(0, 500),
 				});
 				if (this.lobbyMessages.length > 100) this.lobbyMessages.shift();
-			} else if (message.channelId === this.eventChannelId) {
-				this.eventMessages.push({
-					id: message.id,
-					name: message.member?.displayName ?? message.author.displayName,
-					content: content.slice(0, 500),
-				});
-				if (this.eventMessages.length > 100) this.eventMessages.shift();
 			} else
 				this.track(
 					this.callMinecraft('BroadcastDiscordMessage', {
@@ -371,20 +360,6 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 			cursor: this.lobbyCursor,
 			messages:
 				after === null ? [] : this.lobbyMessages.filter((message) => message.id > after),
-		};
-	}
-
-	eventChat(after: string | null) {
-		const latest = this.eventMessages.at(-1)?.id;
-		return {
-			cursor:
-				latest && (after === null || BigInt(latest) > BigInt(after))
-					? latest
-					: (after ?? '0'),
-			messages:
-				after === null
-					? []
-					: this.eventMessages.filter((message) => BigInt(message.id) > BigInt(after)),
 		};
 	}
 

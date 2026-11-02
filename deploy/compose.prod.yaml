@@ -27,17 +27,17 @@ services:
 
     minecraft:
         environment:
-            MEMORY: 8G
+            MEMORY: 10G
             INIT_MEMORY: 2G
-        mem_limit: 10g
-        mem_reservation: 6g
-        memswap_limit: 12g
+        mem_limit: 12g
+        mem_reservation: 7g
+        memswap_limit: 14g
         deploy:
             resources:
                 limits:
-                    memory: 10g
+                    memory: 12g
                 reservations:
-                    memory: 6g
+                    memory: 7g
 
     waiting-room:
         environment:
@@ -47,19 +47,6 @@ services:
         mem_limit: 1536m
         mem_reservation: 256m
         memswap_limit: 1536m
-
-    surprising-saturday:
-        environment:
-            MEMORY: 3G
-            INIT_MEMORY: 1G
-        mem_limit: 4g
-        mem_reservation: 1g
-        memswap_limit: 4g
-
-    event-controller:
-        mem_limit: 96m
-        mem_reservation: 24m
-        memswap_limit: 96m
 
     backup:
         image: ${IMAGE_PREFIX:?deploy.sh must set IMAGE_PREFIX}-backup:${IMAGE_TAG:?deploy.sh must set IMAGE_TAG}

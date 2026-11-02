@@ -32,8 +32,6 @@ interface VelocityPlayer {
 interface VelocitySnapshot {
 	proxyOnline: boolean;
 	maintenanceMode: boolean;
-	eventScheduled: boolean;
-	eventDesiredRunning: boolean;
 	servers: VelocityServer[];
 	players: VelocityPlayer[];
 }
@@ -98,36 +96,6 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 		} finally {
 			setBusy(false);
 		}
-	}
-
-	async function setEventOverride(enabled: boolean) {
-		if (
-			!enabled &&
-			snapshot?.servers.some(
-				(server) => server.name === 'surprising-saturday' && server.playerCount > 0,
-			)
-		) {
-			const accepted = await confirm({
-				title: 'Stop Surprising Saturday?',
-				message:
-					'Players on the event server will move to main before the event server stops.',
-				confirmLabel: 'Stop server',
-				confirmTone: 'danger',
-				tone: 'danger',
-			});
-			if (!accepted) return;
-		}
-		await mutate('Surprising Saturday control updated', async () => {
-			await velocityRequest(
-				'/api/admin/velocity/event-override',
-				{
-					method: 'PATCH',
-					headers: { 'content-type': 'application/json' },
-					body: JSON.stringify({ enabled }),
-				},
-				'Failed to update the event server',
-			);
-		});
 	}
 
 	async function movePlayer(player: VelocityPlayer) {
@@ -226,21 +194,13 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 			</section>
 		);
 
-	const eventEnabled = snapshot.eventDesiredRunning;
-	const eventHealth = snapshot.servers.find(
-		(server) => server.name === 'surprising-saturday',
-	)?.health;
 	return (
 		<div className="velocityAdmin">
 			<section className="adminSection">
 				<div className="adminSectionHeader velocityHeading">
 					<div>
 						<h3>Servers</h3>
-						<p>
-							Main stays online. Surprising Saturday starts 15 minutes before a
-							scheduled event. A live event keeps it running. Outside an event,
-							starting the server allows only admin moves.
-						</p>
+						<p>Main is the only game server in this deployment.</p>
 					</div>
 					<span
 						className={`velocityStatus velocityStatus-${snapshot.proxyOnline ? 'online' : 'offline'}`}
@@ -248,29 +208,6 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 						Proxy {snapshot.proxyOnline ? 'online' : 'offline'}
 					</span>
 				</div>
-				<label className="maintenanceToggle">
-					<input
-						type="checkbox"
-						checked={eventEnabled}
-						disabled={busy || snapshot.eventScheduled}
-						onChange={(event) => void setEventOverride(event.target.checked)}
-					/>
-					<span>
-						{eventEnabled
-							? 'Surprising Saturday is requested to run'
-							: 'Surprising Saturday is requested to stop'}
-					</span>
-				</label>
-				<p className="velocityHint">
-					{snapshot.eventScheduled
-						? 'The event schedule controls the server.'
-						: eventEnabled
-							? 'Running for admin testing until the next scheduled event.'
-							: 'The server starts automatically for the next scheduled event.'}{' '}
-					{eventEnabled && eventHealth !== 'online'
-						? 'The event server is not ready yet. Check its health and logs if it stays offline.'
-						: 'The health below shows when startup or shutdown finishes.'}
-				</p>
 				<div className="adminTableWrap">
 					<table className="adminTable">
 						<thead>
@@ -286,11 +223,7 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 							{snapshot.servers.map((server) => (
 								<tr key={server.id}>
 									<td>
-										<strong>
-											{server.name === 'main'
-												? 'Server'
-												: 'Surprising Saturday'}
-										</strong>
+										<strong>Server</strong>
 									</td>
 									<td>
 										<span
@@ -358,8 +291,7 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 					<h3>Online players</h3>
 					<p>
 						Move a connected player for this session. The move ends when the player
-						disconnects. Outside an event, only an admin move can send a player to
-						Surprising Saturday.
+						disconnects.
 					</p>
 				</div>
 				<div className="adminTableWrap">
@@ -403,16 +335,11 @@ export function VelocityAdminSection({ section }: { section: 'servers' | 'mainte
 												.filter(
 													(server) =>
 														server.name !== player.serverName &&
-														(server.health === 'online' ||
-															server.name === 'surprising-saturday'),
+														server.health === 'online',
 												)
 												.map((server) => (
 													<option key={server.id} value={server.id}>
 														{server.name}
-														{server.name === 'surprising-saturday' &&
-														server.health !== 'online'
-															? ' (starts if stopped; moves when online)'
-															: ''}
 													</option>
 												))}
 										</select>

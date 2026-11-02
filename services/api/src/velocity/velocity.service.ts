@@ -1,15 +1,10 @@
 import {
 	BadRequestException,
 	ConflictException,
-	ForbiddenException,
 	Injectable,
 	NotFoundException,
-	OnModuleDestroy,
-	OnModuleInit,
 } from '@nestjs/common';
-import { existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { eq, inArray } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { ADMIN_SIGNUP_EMAIL, isValidMinecraftUsername } from '../auth/auth.util';
 import { PlayerBansService } from '../auth/player-bans.service';
 import { signupFlows } from '../auth/signup-flow';
@@ -20,7 +15,6 @@ import {
 	velocityServers,
 	velocityPlayerServers,
 	velocitySettings,
-	users,
 } from '../database/database.service';
 import {
 	MinecraftIdentityService,
@@ -29,12 +23,10 @@ import {
 import { requireInternalAuthorization } from '../internal-authorization';
 import { effectivePlayerColor } from '../players/player-color';
 import { customPlayerEmojis } from '../players/player-emojis';
-import { SurprisingSaturdayService } from './surprising-saturday.service';
 
 const PROXY_STALE_AFTER_MS = 10_000;
 const COMMAND_TTL_MS = 30 * 60_000;
 const SERVER_NAME_PATTERN = /^[a-z0-9][a-z0-9_-]{0,31}$/;
-const EVENT_SERVER = 'surprising-saturday';
 
 interface LiveServer {
 	name: string;
@@ -70,7 +62,7 @@ interface SyncBody {
 }
 
 @Injectable()
-export class VelocityService implements OnModuleInit, OnModuleDestroy {
+export class VelocityService {
 	private liveServers = new Map<string, LiveServer>();
 	private livePlayers: LivePlayer[] = [];
 	private connectedPlayers: LivePlayer[] = [];
@@ -79,37 +71,11 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 	// ponytail: Pending moves live in one API process; persist them if restart-safe delivery is needed.
 	private readonly commands = new Map<number, MoveCommand>();
 	private nextCommandId = Date.now();
-	private eventStateTimer?: NodeJS.Timeout;
-	private lastEventState?: boolean;
-	private readonly eventStatePath =
-		process.env.EVENT_CONTROL_STATE_PATH ??
-		join(
-			dirname(process.env.DATABASE_URL ?? join(process.cwd(), 'data', 'app.sqlite')),
-			'event-control.json',
-		);
-
 	constructor(
 		private readonly database: DatabaseService,
 		private readonly identities: MinecraftIdentityService,
 		private readonly bans: PlayerBansService,
-		private readonly events: SurprisingSaturdayService,
 	) {}
-
-	onModuleInit() {
-		this.importLegacyChoices();
-		this.refreshEventState();
-		this.eventStateTimer = setInterval(() => {
-			try {
-				this.refreshEventState();
-			} catch (error) {
-				console.error('Could not update event server state', error);
-			}
-		}, 3_000);
-	}
-
-	onModuleDestroy() {
-		if (this.eventStateTimer) clearInterval(this.eventStateTimer);
-	}
 
 	verifyInternalAuthorization(authorization: string | undefined) {
 		requireInternalAuthorization(authorization, 'Invalid Velocity API credentials');
@@ -193,26 +159,9 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 
 		const settings = this.settings();
 		const servers = this.servers();
-		const { activeEvent, ...route } = this.eventRoute(now, settings.event_override);
-		if (activeEvent)
-			this.events.recordParticipants(
-				this.livePlayers
-					.filter((player) => player.serverName === EVENT_SERVER)
-					.map((player) => player.uuid),
-				activeEvent.id,
-				now,
-			);
+		const route = { eventOpen: false, revision: 'main', targetServerName: 'main' };
 		for (const [id, command] of this.commands)
-			if (
-				command.routeRevision !== route.revision &&
-				!(
-					route.revision.startsWith('warmup:') &&
-					command.routeRevision === 'main:manual' &&
-					command.temporary &&
-					command.targetServerName === EVENT_SERVER
-				)
-			)
-				this.commands.delete(id);
+			if (command.routeRevision !== route.revision) this.commands.delete(id);
 
 		const disconnects = this.connectedPlayers.flatMap((player) => {
 			const user = this.identities.findByUuid(player.uuid);
@@ -295,9 +244,6 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			proxyOnline,
 			lastHeartbeatUnixMs: this.lastHeartbeatUnixMs,
 			maintenanceMode: this.settings().maintenance_mode === 1,
-			eventOverride: this.settings().event_override,
-			eventScheduled: Boolean(this.activeServerEvent(now) ?? this.warmingServerEvent(now)),
-			eventDesiredRunning: this.eventControlState().desiredRunning,
 			servers: servers.map((server) => {
 				const live = proxyOnline ? this.liveServers.get(server.name) : undefined;
 				return {
@@ -388,14 +334,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 					).length
 				: 0,
 		}));
-		return {
-			servers,
-			showEventCapacity:
-				proxyOnline &&
-				Boolean(this.activeServerEvent(now)) &&
-				this.liveServers.get(EVENT_SERVER)?.online === true &&
-				(servers.find((server) => server.name === EVENT_SERVER)?.playerCount ?? 0) > 0,
-		};
+		return { servers };
 	}
 
 	setMaxPlayers(serverIdInput: unknown, value: unknown) {
@@ -439,20 +378,11 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			.from(velocityServers)
 			.where(eq(velocityServers.id, serverId))
 			.get();
-		if (!server || !['main', EVENT_SERVER].includes(server.name))
-			throw new NotFoundException('Server not found');
+		if (server?.name !== 'main') throw new NotFoundException('Server not found');
 		const player = this.proxyIsOnline()
 			? this.connectedPlayers.find((candidate) => candidate.uuid === uuid)
 			: undefined;
 		if (temporary && !player) throw new ConflictException('Player is not online');
-		if (server.name === EVENT_SERVER && !this.eventControlState().desiredRunning) {
-			this.database.connection
-				.update(velocitySettings)
-				.set({ event_override: 1 })
-				.where(eq(velocitySettings.id, 1))
-				.run();
-			this.refreshEventState();
-		}
 		if (!temporary)
 			this.database.connection
 				.insert(velocityPlayerServers)
@@ -460,13 +390,13 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 					player_uuid: uuid,
 					preferred_server: server.name,
 					last_connected_server: player?.state === 'playing' ? player.serverName : null,
-					event_choice_id: this.activeServerEvent()?.id ?? null,
+					event_choice_id: null,
 				})
 				.onConflictDoUpdate({
 					target: velocityPlayerServers.player_uuid,
 					set: {
 						preferred_server: server.name,
-						event_choice_id: this.activeServerEvent()?.id ?? null,
+						event_choice_id: null,
 					},
 				})
 				.run();
@@ -485,7 +415,7 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			sessionId: player.sessionId,
 			targetServerName: server.name,
 			temporary,
-			routeRevision: this.currentRouteRevision(),
+			routeRevision: 'main',
 			createdAtUnixMs: Date.now(),
 		};
 		this.commands.set(command.id, command);
@@ -494,45 +424,6 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 			commandId: command.id,
 			preferredServerName: temporary ? this.preferredServer(uuid) : server.name,
 		};
-	}
-
-	myServer(userId: number) {
-		const user = this.database.connection
-			.select()
-			.from(users)
-			.where(eq(users.id, userId))
-			.get();
-		const uuid = normalizeMinecraftUuid(user?.minecraft_uuid ?? '');
-		const now = Date.now();
-		return {
-			uuid,
-			preferredServerName: uuid ? this.preferredServer(uuid) : 'main',
-			serverName: this.proxyIsOnline(now)
-				? (this.livePlayers.find((player) => player.uuid === uuid)?.serverName ?? null)
-				: null,
-			eventReady: Boolean(this.activeServerEvent(now)),
-			eventOnline:
-				this.proxyIsOnline(now) && this.liveServers.get(EVENT_SERVER)?.online === true,
-		};
-	}
-
-	moveSelf(userId: number, serverName: unknown) {
-		if (serverName !== 'main' && serverName !== EVENT_SERVER)
-			throw new BadRequestException('Select main or Surprising Saturday');
-		if (!this.activeServerEvent())
-			throw new ConflictException('Player switching is available during a live event');
-		const user = this.database.connection
-			.select()
-			.from(users)
-			.where(eq(users.id, userId))
-			.get();
-		if (this.bans.resolve(userId).active && !isExemptAdmin(user))
-			throw new ForbiddenException('Your Minecraft access is restricted');
-		const uuid = normalizeMinecraftUuid(user?.minecraft_uuid ?? '');
-		if (!uuid) throw new NotFoundException('Minecraft account not linked');
-		const server = this.servers().find((candidate) => candidate.name === serverName);
-		if (!server) throw new NotFoundException('Server not found');
-		return this.movePlayer(uuid, server.id, false);
 	}
 
 	private settings() {
@@ -549,118 +440,24 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 		return this.database.connection
 			.select()
 			.from(velocityServers)
-			.where(inArray(velocityServers.name, ['main', EVENT_SERVER]))
+			.where(eq(velocityServers.name, 'main'))
 			.all();
-	}
-
-	private currentRouteRevision(now = Date.now()) {
-		return this.eventRoute(now, this.settings().event_override).revision;
-	}
-
-	private activeServerEvent(now = Date.now()) {
-		const event = this.events.active(now);
-		return event?.criteria_type === 'empty' ? undefined : event;
-	}
-
-	private warmingServerEvent(now = Date.now()) {
-		const event = this.events.warmingUp(now);
-		return event?.criteria_type === 'empty' ? undefined : event;
-	}
-
-	private eventRoute(now: number, override: number | null) {
-		const activeEvent = this.activeServerEvent(now);
-		const warmingUp = activeEvent ? null : this.warmingServerEvent(now);
-		return {
-			activeEvent,
-			eventOpen: Boolean(activeEvent),
-			revision: activeEvent
-				? `event:${activeEvent.id}`
-				: warmingUp
-					? `warmup:${warmingUp.id}`
-					: override === 1
-						? 'main:manual'
-						: 'main',
-			targetServerName: activeEvent ? EVENT_SERVER : 'main',
-		};
-	}
-
-	eventControlState() {
-		const now = Date.now();
-		const override = this.settings().event_override;
-		const activeEvent = this.activeServerEvent(now);
-		const desiredRunning =
-			Boolean(activeEvent ?? this.warmingServerEvent(now)) || override === 1;
-		return {
-			desiredRunning,
-			endsAtUnixMs: activeEvent?.ends_at_unix_ms ?? null,
-			canStop:
-				this.proxyIsOnline() &&
-				this.livePlayers.every((player) => player.serverName !== EVENT_SERVER),
-		};
-	}
-
-	setEventOverride(value: unknown) {
-		if (value !== null && typeof value !== 'boolean')
-			throw new BadRequestException(
-				'enabled must be true, false, or null for automatic operation',
-			);
-		if (this.activeServerEvent() || this.warmingServerEvent())
-			throw new ConflictException('The event schedule controls Surprising Saturday');
-		this.database.connection
-			.update(velocitySettings)
-			.set({ event_override: value === null ? null : value ? 1 : 0 })
-			.where(eq(velocitySettings.id, 1))
-			.run();
-		this.refreshEventState();
-		return { ok: true, eventOverride: value };
 	}
 
 	connectedPlayer(uuidInput: unknown, serverName: unknown, temporary: unknown) {
 		const uuid = normalizeMinecraftUuid(typeof uuidInput === 'string' ? uuidInput : '');
-		if (
-			!uuid ||
-			(serverName !== 'main' && serverName !== EVENT_SERVER) ||
-			typeof temporary !== 'boolean'
-		)
+		if (!uuid || serverName !== 'main' || typeof temporary !== 'boolean')
 			throw new BadRequestException('Invalid player server');
 		this.rememberConnectedServer(uuid, serverName, temporary);
 		return { ok: true };
 	}
 
-	refreshEventState() {
-		if (
-			(this.activeServerEvent() || this.warmingServerEvent()) &&
-			this.settings().event_override !== null
-		)
-			this.database.connection
-				.update(velocitySettings)
-				.set({ event_override: null })
-				.where(eq(velocitySettings.id, 1))
-				.run();
-		const desiredRunning = this.eventControlState().desiredRunning;
-		if (desiredRunning === this.lastEventState && existsSync(this.eventStatePath)) return;
-		const temporary = `${this.eventStatePath}.tmp`;
-		writeFileSync(temporary, JSON.stringify({ desiredRunning }) + '\n', { mode: 0o644 });
-		renameSync(temporary, this.eventStatePath);
-		this.lastEventState = desiredRunning;
-	}
-
-	private preferredServer(uuid: string) {
-		const activeEvent = this.activeServerEvent();
-		if (!activeEvent) return 'main';
-		const choice = this.database.connection
-			.select({
-				preferred: velocityPlayerServers.preferred_server,
-				eventId: velocityPlayerServers.event_choice_id,
-			})
-			.from(velocityPlayerServers)
-			.where(eq(velocityPlayerServers.player_uuid, uuid))
-			.get();
-		return choice?.eventId === activeEvent.id ? choice.preferred : EVENT_SERVER;
+	private preferredServer(_uuid: string) {
+		return 'main';
 	}
 
 	private rememberConnectedServer(uuid: string, serverName: string, temporary: boolean) {
-		if (serverName !== 'main' && serverName !== EVENT_SERVER) return;
+		if (serverName !== 'main') return;
 		const saved = this.database.connection
 			.select()
 			.from(velocityPlayerServers)
@@ -675,41 +472,17 @@ export class VelocityService implements OnModuleInit, OnModuleDestroy {
 					last_connected_server: serverName,
 				})
 				.run();
-		} else if (saved.last_connected_server !== serverName) {
-			const route = this.eventRoute(Date.now(), this.settings().event_override);
+		} else if (
+			saved.last_connected_server !== serverName ||
+			saved.preferred_server !== 'main'
+		) {
 			this.database.connection
 				.update(velocityPlayerServers)
 				.set({
-					preferred_server:
-						!temporary &&
-						saved.preferred_server === saved.last_connected_server &&
-						serverName === route.targetServerName
-							? serverName
-							: saved.preferred_server,
+					preferred_server: 'main',
 					last_connected_server: serverName,
 				})
 				.where(eq(velocityPlayerServers.player_uuid, uuid))
-				.run();
-		}
-	}
-
-	private importLegacyChoices() {
-		const path = join(
-			dirname(process.env.DATABASE_URL ?? join(process.cwd(), 'data', 'app.sqlite')),
-			'event-players-legacy.txt',
-		);
-		if (!existsSync(path)) return;
-		for (const line of readFileSync(path, 'utf8').split(/\r?\n/)) {
-			const uuid = normalizeMinecraftUuid(line.trim());
-			if (!uuid) continue;
-			this.database.connection
-				.insert(velocityPlayerServers)
-				.values({
-					player_uuid: uuid,
-					preferred_server: EVENT_SERVER,
-					last_connected_server: EVENT_SERVER,
-				})
-				.onConflictDoNothing()
 				.run();
 		}
 	}
@@ -783,7 +556,7 @@ function parseLivePlayers(value: unknown): LivePlayer[] {
 			(state !== 'queued' && state !== 'visiting' && state !== 'playing') ||
 			((state === 'queued' || state === 'visiting') && serverName !== 'waiting-room') ||
 			(state === 'playing' && serverName === 'waiting-room') ||
-			!['main', EVENT_SERVER].includes(targetServerName)
+			targetServerName !== 'main'
 		)
 			return [];
 		seen.add(uuid);

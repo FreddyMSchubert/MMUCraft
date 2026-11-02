@@ -38,7 +38,6 @@ services:
             DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN:-}
             DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL:-}
             DISCORD_CHANNEL_ID: ${DISCORD_CHANNEL_ID:-}
-            DISCORD_EVENT_CHANNEL_ID: ${DISCORD_EVENT_CHANNEL_ID:-}
             DISCORD_WAITING_ROOM_CHANNEL_ID: ${DISCORD_WAITING_ROOM_CHANNEL_ID:-}
             DISCORD_WAITING_ROOM_WEBHOOK_URL: ${DISCORD_WAITING_ROOM_WEBHOOK_URL:-}
             DISCORD_GUILD_ID: ${DISCORD_GUILD_ID:-}
@@ -229,85 +228,6 @@ services:
             timeout: 5s
             retries: 12
             start_period: 5m
-        networks: [app]
-
-    surprising-saturday:
-        profiles: [event]
-        image: ${IMAGE_PREFIX:?deploy.sh must set IMAGE_PREFIX}-event:${IMAGE_TAG:?deploy.sh must set IMAGE_TAG}
-        init: true
-        stdin_open: true
-        tty: true
-        environment:
-            EULA: 'TRUE'
-            TYPE: FABRIC
-            VERSION: '26.3'
-            FABRIC_LOADER_VERSION: '0.19.5'
-            MODRINTH_PROJECTS: |-
-                spark:e3hsPc1o
-                chunky?
-                chunk-debug
-                lithium?
-                ferrite-core?
-                scalablelux?:alpha
-                servercore
-                zfastnoise?:beta
-                c2me-fabric:alpha
-                modernfix-mvus?
-                krypton?
-                vmp-fabric:alpha
-                structure-layout-optimizer?
-                clumps?
-                lazyai?
-                lmd?
-                fabric-language-kotlin
-            MODRINTH_DOWNLOAD_DEPENDENCIES: required
-            COPY_CONFIG_DEST: /data
-            SYNC_SKIP_NEWER_IN_DESTINATION: 'false'
-            SKIP_SERVER_PROPERTIES: 'true'
-            FABRIC_PROXY_SECRET: ${VELOCITY_FORWARDING_SECRET:?set VELOCITY_FORWARDING_SECRET in .env}
-            SURPRISING_SATURDAY_API_URL: http://api:8080
-            SURPRISING_SATURDAY_API_SECRET: ${VELOCITY_API_SECRET:?set VELOCITY_API_SECRET in .env}
-            CHUNKLOCKED_RESOURCE_PACK_URL: ${PUBLIC_URL:?set PUBLIC_URL in .env}/packs/chunklocked.zip
-            DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN:-}
-            DISCORD_EVENT_CHANNEL_ID: ${DISCORD_EVENT_CHANNEL_ID:-}
-            DISCORD_EVENT_WEBHOOK_URL: ${DISCORD_EVENT_WEBHOOK_URL:-}
-            DISCORD_AVATAR_BASE_URL: ${PUBLIC_URL:?set PUBLIC_URL in .env}/api/discord/avatar
-            MEMORY: 4G
-            STOP_DURATION: '110'
-            USE_MEOWICE_FLAGS: 'true'
-            UID: ${PUID:-1000}
-            GID: ${PGID:-1000}
-        volumes:
-            - ./data/chunklocked:/data
-        logging: *logging
-        restart: 'no'
-        stop_grace_period: 2m
-        healthcheck:
-            test: ['CMD', 'mc-health']
-            interval: 10s
-            timeout: 5s
-            retries: 12
-            start_period: 2m
-        networks: [app]
-
-    event-controller:
-        profiles: [event]
-        image: ${IMAGE_PREFIX:?deploy.sh must set IMAGE_PREFIX}-event-controller:${IMAGE_TAG:?deploy.sh must set IMAGE_TAG}
-        read_only: true
-        security_opt:
-            - no-new-privileges:true
-        cap_drop:
-            - ALL
-        pids_limit: 64
-        environment:
-            API_BASE_URL: http://api:8080
-            INTERNAL_API_SECRET: ${VELOCITY_API_SECRET:?set VELOCITY_API_SECRET in .env}
-            EVENT_CONTAINER_NAME: kubecraft-surprising-saturday-1
-        volumes:
-            - /var/run/docker.sock:/var/run/docker.sock:ro
-            - ./data/api:/state:ro
-        logging: *logging
-        restart: unless-stopped
         networks: [app]
 
     velocity:

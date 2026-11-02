@@ -14,7 +14,6 @@ import { DiscordService, MinecraftDiscordEvent } from '../discord/discord.servic
 import { CommandLogsService } from '../database/command-logs.service';
 import { DabloonInteractionsService } from '../database/dabloon-interactions.service';
 import { AnnouncementsService } from '../announcements/announcements.service';
-import { SurprisingSaturdayService } from '../velocity/surprising-saturday.service';
 import { DucksService } from '../ducks/ducks.service';
 import {
 	FeatureTogglesService,
@@ -64,7 +63,6 @@ export class GameplayGrpcService implements OnModuleInit {
 		private readonly shopUnlocks: ShopUnlocksService,
 		private readonly playerMoneyHistory: PlayerMoneyHistoryService,
 		private readonly playerStatistics: PlayerStatisticsSynchronizationService,
-		private readonly surprisingSaturday: SurprisingSaturdayService,
 		private readonly playerPresence: OnlinePlayerPresenceService,
 		private readonly fishing: FishingService,
 		private readonly claims: ClaimsService,
@@ -336,17 +334,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			duck_count: duckState.count,
 			duck_new_awards: duckState.newAwards,
 			duck_pending_items: duckState.pending,
-			surprising_saturday_rewards:
-				result.accountLinked && call.request.include_surprising_saturday_rewards
-					? this.surprisingSaturday
-							.rewardsForPlayer(call.request.minecraft_uuid ?? '')
-							.map((reward) => ({
-								event_id: reward.eventId,
-								title: reward.title,
-								place: reward.place,
-								amount_dabloons: reward.amount,
-							}))
-					: [],
+			surprising_saturday_rewards: [],
 			message: result.message,
 		});
 	}

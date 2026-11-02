@@ -33,6 +33,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.mixin.advancementDabloons.PlayerAd
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
+import uk.co.httpsmmuminecraftsociety.mainmod.playerpotions.PlayerDisguises;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -346,6 +347,17 @@ public final class PlayerStatsSync {
         return PlayerColors.defaultColor(player.getUUID());
     }
 
+    public static int colorFor(MinecraftServer server, UUID playerId) {
+        Integer color = colorByPlayer.get(playerId);
+        if (color != null) return color;
+        PlayerTeam team = server.getScoreboard().getPlayerTeam(teamName(playerId));
+        if (team != null) {
+            var savedColor = team.getDisplayName().getStyle().getColor();
+            if (savedColor != null) return savedColor.getValue();
+        }
+        return PlayerColors.defaultColor(playerId);
+    }
+
     public static DiscordPresentation discordPresentation(ServerPlayer player) {
         SyncPlayerStatsResponse response = presentationByPlayer.get(player.getUUID());
         if (response == null) return new DiscordPresentation("Player", "", "", "#E6E6E6");
@@ -372,16 +384,22 @@ public final class PlayerStatsSync {
     public static void applyColor(ServerPlayer player, int color) {
         color = PlayerColors.withMinimumLightness(color);
         colorByPlayer.put(player.getUUID(), color);
-        var waypoints = player.level().getWaypointManager();
-        waypoints.untrackWaypoint(player);
-        player.waypointIcon().color = Optional.of(color);
-        waypoints.trackWaypoint(player);
+        refreshLocatorColor(player);
         PlayerTeam team = playerTeam(player);
         team.setDisplayName(Component.literal(player.getScoreboardName()).withColor(color));
         team.setColor(Optional.of(PlayerColors.closestTeamColor(color)));
         player.level().getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(
                 ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME, player
         ));
+    }
+
+    public static void refreshLocatorColor(ServerPlayer player) {
+        int color = PlayerDisguises.locatorColor(player, colorFor(player));
+        if (player.waypointIcon().color.equals(Optional.of(color))) return;
+        var waypoints = player.level().getWaypointManager();
+        waypoints.untrackWaypoint(player);
+        player.waypointIcon().color = Optional.of(color);
+        waypoints.trackWaypoint(player);
     }
 
     private static void refreshPlayerList(MinecraftServer server) {

@@ -34,6 +34,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
 import uk.co.httpsmmuminecraftsociety.mainmod.mixin.playerpotions.PlayerPotionMannequinAccessor;
 import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
@@ -50,11 +51,6 @@ public final class PlayerDisguises {
         GameProfile profile = PlayerPotions.decode(identity);
         if (!(target instanceof ServerPlayer player) || profile == null
                 || ticks <= 0 || !FeatureToggles.isEnabled(FeatureToggles.CIRCUS)) return;
-        if (player.getUUID().equals(profile.id())) {
-            player.sendSystemMessage(Component.literal("You are now visible as " + profile.name()
-                    + " to others. I'm sure this will be quite shocking and weird for them, seeing as you're now... way different looking. Totally."));
-            return;
-        }
         State current = ACTIVE.get(player.getUUID());
         if (current != null && current.identity.equals(identity) && current.view != null) {
             current.remaining = ticks;
@@ -103,7 +99,7 @@ public final class PlayerDisguises {
             Mannequin view = state.view;
             if (view == null) continue;
             syncTeam(player, state);
-            syncDescription(player, state);
+            PlayerStatsSync.refreshLocatorColor(player);
             if (!player.isInvisible()) player.setInvisible(true);
             view.noPhysics = true;
             view.setDeltaMovement(player.getDeltaMovement());
@@ -207,6 +203,12 @@ public final class PlayerDisguises {
         return !ACTIVE.isEmpty();
     }
 
+    public static int locatorColor(ServerPlayer player, int normalColor) {
+        State state = ACTIVE.get(player.getUUID());
+        return state == null ? normalColor
+                : PlayerStatsSync.colorFor(player.level().getServer(), state.profile.id());
+    }
+
     public static void loaded(Entity entity, ServerLevel level) {
         if (!entity.entityTags().contains(VIEW_TAG)) return;
         for (State state : ACTIVE.values()) if (state.view == entity) return;
@@ -298,14 +300,13 @@ public final class PlayerDisguises {
     }
 
     private static void create(ServerPlayer player, State state) {
-        GameProfile profile = PlayerPotions.decode(state.identity);
+        GameProfile profile = state.profile;
         if (profile == null) { clear(player); return; }
         Mannequin view = new Mannequin(EntityTypes.MANNEQUIN, player.level());
         view.setComponent(DataComponents.PROFILE, ResolvableProfile.createResolved(profile));
         view.setCustomName(Component.literal(player.getGameProfile().name()));
-        view.setCustomNameVisible(true);
-        ((PlayerPotionMannequinAccessor) view).mainmod$setDescription(
-                Component.literal(PlayerStatsSync.belowNameText(player.getUUID())));
+        view.setCustomNameVisible(showName(player, state));
+        ((PlayerPotionMannequinAccessor) view).mainmod$setDescription(Component.empty());
         view.addTag(VIEW_TAG);
         view.setNoGravity(true);
         view.setPermanentlyInvulnerable(true);
@@ -317,6 +318,7 @@ public final class PlayerDisguises {
         if (player.level().addFreshEntity(view)) {
             syncTeam(player, state);
             player.setInvisible(true);
+            PlayerStatsSync.refreshLocatorColor(player);
         } else {
             state.view = null;
             clear(player);
@@ -331,6 +333,7 @@ public final class PlayerDisguises {
             releaseTeam(state);
             player.setInvisible(player.hasEffect(MobEffects.INVISIBILITY));
             broadcastEquipment(player, false);
+            PlayerStatsSync.refreshLocatorColor(player);
         }
     }
 
@@ -364,13 +367,24 @@ public final class PlayerDisguises {
         if (state.view.getTeam() != state.viewTeam) {
             player.level().getScoreboard().addPlayerToTeam(state.view.getScoreboardName(), state.viewTeam);
         }
-        Component prefix = team == null ? Component.empty() : team.getPlayerPrefix();
-        Component suffix = team == null ? Component.empty() : team.getPlayerSuffix();
-        if (!state.viewTeam.getPlayerPrefix().equals(prefix)) state.viewTeam.setPlayerPrefix(prefix);
-        if (!state.viewTeam.getPlayerSuffix().equals(suffix)) state.viewTeam.setPlayerSuffix(suffix);
-        if (state.viewTeam.getNameTagVisibility() != Team.Visibility.ALWAYS) {
-            state.viewTeam.setNameTagVisibility(Team.Visibility.ALWAYS);
+        if (!state.viewTeam.getPlayerPrefix().equals(Component.empty())) {
+            state.viewTeam.setPlayerPrefix(Component.empty());
         }
+        if (!state.viewTeam.getPlayerSuffix().equals(Component.empty())) {
+            state.viewTeam.setPlayerSuffix(Component.empty());
+        }
+        boolean showName = showName(player, state);
+        if (state.view.isCustomNameVisible() != showName) state.view.setCustomNameVisible(showName);
+        Team.Visibility visibility = showName ? Team.Visibility.ALWAYS : Team.Visibility.NEVER;
+        if (state.viewTeam.getNameTagVisibility() != visibility) {
+            state.viewTeam.setNameTagVisibility(visibility);
+        }
+    }
+
+    private static boolean showName(ServerPlayer player, State state) {
+        ServerPlayer target = player.level().getServer().getPlayerList().getPlayer(state.profile.id());
+        return ClaimsManager.isCommittee(state.profile.id())
+                || target != null && PlayerStatsSync.isCommittee(target);
     }
 
     private static void releaseTeam(State state) {
@@ -386,14 +400,6 @@ public final class PlayerDisguises {
         }
     }
 
-    private static void syncDescription(ServerPlayer player, State state) {
-        String text = PlayerStatsSync.belowNameText(player.getUUID());
-        if (!text.equals(state.description)) {
-            state.description = text;
-            ((PlayerPotionMannequinAccessor) state.view).mainmod$setDescription(Component.literal(text));
-        }
-    }
-
     private static void broadcastEquipment(ServerPlayer player, boolean hidden) {
         if (!(player.level() instanceof ServerLevel level)) return;
         var slots = new java.util.ArrayList<Pair<EquipmentSlot, ItemStack>>();
@@ -406,14 +412,15 @@ public final class PlayerDisguises {
 
     private static final class State {
         final String identity;
+        final GameProfile profile;
         int remaining;
         Mannequin view;
         PlayerTeam team;
         PlayerTeam viewTeam;
-        String description;
 
         State(String identity, int remaining) {
             this.identity = identity;
+            this.profile = PlayerPotions.decode(identity);
             this.remaining = remaining;
         }
     }

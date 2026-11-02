@@ -454,6 +454,10 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
             case CRIMSON_FOREST -> "Crimson Catch";
             case WARPED_FOREST -> "Warped Catch";
             case BASALT_DELTAS -> "Basalt Biter";
+            case SMALL_END_ISLANDS -> "Island Hopper";
+            case END_MIDLANDS -> "Midland Catch";
+            case END_HIGHLANDS -> "Highland Angler";
+            case END_BARRENS -> "Barren Catch";
             case WARM -> "Warm Waters";
             case COLD -> "Cold Comfort";
             case RIVER -> "Go with the Flow";
@@ -462,6 +466,9 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
             case NIGHT -> "Midnight Snack";
             case DEEP -> "Under Pressure";
             case HIGH -> "High Tide";
+            case DENSE_VOID -> "Into the Dense Void";
+            case EQUIVOID -> "Equivoid Angler";
+            case SPARSE_VOID -> "Into the Sparse Void";
             case RAINY -> "Rain Check";
             case THUNDERSTORM -> "Thunderstruck";
             case SNOWY -> "Snow Problem";
@@ -469,7 +476,6 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
             case WANING -> "Wax Off";
             case FULLMOON -> "Full Moon Rising";
             case NEWMOON -> "Dark Side of the Moon";
-            default -> throw new IllegalArgumentException("No mastery title for " + tag);
         };
     }
 

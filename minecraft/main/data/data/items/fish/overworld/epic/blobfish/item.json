@@ -10,6 +10,8 @@
 	"fish": {
 		"dimension": "overworld",
 		"angle": "B",
+		"plaque_rotation_up": null,
+		"plaque_rotation_vert_flipped": null,
 		"tags": ["deep"],
 		"size": {
 			"averageLengthCm": 30,

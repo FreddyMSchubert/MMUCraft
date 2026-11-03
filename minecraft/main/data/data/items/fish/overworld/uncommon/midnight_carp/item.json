@@ -8,6 +8,8 @@
 	"fish": {
 		"dimension": "overworld",
 		"angle": "TR",
+		"plaque_rotation_up": null,
+		"plaque_rotation_vert_flipped": null,
 		"tags": ["night"],
 		"size": {
 			"averageLengthCm": 60,

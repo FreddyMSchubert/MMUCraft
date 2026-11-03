@@ -15,13 +15,9 @@
 		"recipes": [
 			{
 				"id": "decoration/fishing_plaque_poplar",
-				"type": "mainmod:fake_crafting_shaped",
+				"type": "mainmod:fake_crafting_shapeless",
 				"gameplayToggle": "inventors",
-				"pattern": ["LLL", "LSL", "LLL"],
-				"key": {
-					"L": "minecraft:poplar_log",
-					"S": "minecraft:poplar_shelf"
-				},
+				"ingredients": ["minecraft:poplar_shelf", "minecraft:stripped_poplar_log"],
 				"result": {
 					"stack": "mainmod:deco-fishing-plaque-poplar",
 					"count": 1

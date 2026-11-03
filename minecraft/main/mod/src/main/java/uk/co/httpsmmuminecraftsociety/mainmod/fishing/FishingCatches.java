@@ -55,6 +55,7 @@ public final class FishingCatches {
     static final float FISH_SHADOW_BASE_SCALE = 1.0F;
     static final float ITEM_SHADOW_SCALE = 0.64F;
     private static final String LENGTH_TAG = "mainmod_fish_length_cm";
+    static final String CATCHER_UUID_TAG = "mainmod_fish_catcher_uuid";
     private static final String RARITY_TAG = "mainmod_fish_rarity";
     private static final double MAX_DIMENSIONAL_MYTHICAL_TREASURE_CHANCE = 0.0002D;
     private static final Map<FishRarity, List<FishLoot>> FISH_LOOT = emptyLootTable();
@@ -624,7 +625,10 @@ public final class FishingCatches {
         lore.add(Component.literal("Caught by: " + catcher.getPlainTextName()).withStyle(ChatFormatting.GRAY));
         lore.add(Component.literal("Length: " + formatLength(length)).withStyle(ChatFormatting.GRAY));
         stack.set(DataComponents.LORE, new ItemLore(lore));
-        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putDouble(LENGTH_TAG, length));
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.putDouble(LENGTH_TAG, length);
+            tag.putString(CATCHER_UUID_TAG, catcher.getUUID().toString());
+        });
     }
 
     private static String formatLength(double length) {

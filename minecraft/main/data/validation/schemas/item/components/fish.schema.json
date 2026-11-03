@@ -23,6 +23,16 @@
 				}
 			]
 		},
+		"plaque_rotation_up": {
+			"description": "Clockwise angle from the texture's top toward the direction that should point up on the plaque. Null until calibrated.",
+			"type": "number",
+			"minimum": 0,
+			"exclusiveMaximum": 360
+		},
+		"plaque_rotation_vert_flipped": {
+			"description": "Flip vertically across the plaque's horizontal axis after rotation. Null until calibrated.",
+			"type": "boolean"
+		},
 		"size": {
 			"type": "object",
 			"additionalProperties": false,
@@ -121,5 +131,13 @@
 			"enum": ["white_meat", "red_meat", "crab_claw", "tentacle"]
 		}
 	},
-	"required": ["dimension", "angle", "size", "tags", "furnaceResult"]
+	"required": [
+		"dimension",
+		"angle",
+		"plaque_rotation_up",
+		"plaque_rotation_vert_flipped",
+		"size",
+		"tags",
+		"furnaceResult"
+	]
 }

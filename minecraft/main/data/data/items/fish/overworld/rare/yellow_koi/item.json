@@ -8,6 +8,8 @@
 	"fish": {
 		"dimension": "overworld",
 		"angle": "BL",
+		"plaque_rotation_up": null,
+		"plaque_rotation_vert_flipped": null,
 		"tags": ["river"],
 		"size": {
 			"averageLengthCm": 60,

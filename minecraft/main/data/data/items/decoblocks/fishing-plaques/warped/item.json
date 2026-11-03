@@ -15,13 +15,9 @@
 		"recipes": [
 			{
 				"id": "decoration/fishing_plaque_warped",
-				"type": "mainmod:fake_crafting_shaped",
+				"type": "mainmod:fake_crafting_shapeless",
 				"gameplayToggle": "inventors",
-				"pattern": ["LLL", "LSL", "LLL"],
-				"key": {
-					"L": "minecraft:warped_stem",
-					"S": "minecraft:warped_shelf"
-				},
+				"ingredients": ["minecraft:warped_shelf", "minecraft:stripped_warped_stem"],
 				"result": {
 					"stack": "mainmod:deco-fishing-plaque-warped",
 					"count": 1

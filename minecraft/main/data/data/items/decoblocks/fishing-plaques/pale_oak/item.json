@@ -15,13 +15,9 @@
 		"recipes": [
 			{
 				"id": "decoration/fishing_plaque_pale_oak",
-				"type": "mainmod:fake_crafting_shaped",
+				"type": "mainmod:fake_crafting_shapeless",
 				"gameplayToggle": "inventors",
-				"pattern": ["LLL", "LSL", "LLL"],
-				"key": {
-					"L": "minecraft:pale_oak_log",
-					"S": "minecraft:pale_oak_shelf"
-				},
+				"ingredients": ["minecraft:pale_oak_shelf", "minecraft:stripped_pale_oak_log"],
 				"result": {
 					"stack": "mainmod:deco-fishing-plaque-pale-oak",
 					"count": 1

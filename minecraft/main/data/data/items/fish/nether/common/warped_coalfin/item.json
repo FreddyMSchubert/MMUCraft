@@ -11,6 +11,8 @@
 	"fish": {
 		"dimension": "nether",
 		"angle": "BL",
+		"plaque_rotation_up": null,
+		"plaque_rotation_vert_flipped": null,
 		"tags": ["warped_forest"],
 		"size": {
 			"averageLengthCm": 26,

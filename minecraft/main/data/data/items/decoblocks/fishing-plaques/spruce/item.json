@@ -15,13 +15,9 @@
 		"recipes": [
 			{
 				"id": "decoration/fishing_plaque_spruce",
-				"type": "mainmod:fake_crafting_shaped",
+				"type": "mainmod:fake_crafting_shapeless",
 				"gameplayToggle": "inventors",
-				"pattern": ["LLL", "LSL", "LLL"],
-				"key": {
-					"L": "minecraft:spruce_log",
-					"S": "minecraft:spruce_shelf"
-				},
+				"ingredients": ["minecraft:spruce_shelf", "minecraft:stripped_spruce_log"],
 				"result": {
 					"stack": "mainmod:deco-fishing-plaque-spruce",
 					"count": 1

@@ -70,7 +70,8 @@ public final class FakeItems {
                 FishItemFeature original = entry.getValue();
                 adjustedFish.put(entry.getKey(), new FishItemFeature(
                         original.personality().withBounceTendency(bounceTendency),
-                        original.length(), original.furnaceResult(), original.spawnTags(), original.dimension()));
+                        original.length(), original.furnaceResult(), original.spawnTags(), original.dimension(),
+                        original.plaqueRotationUp(), original.plaqueRotationVertFlipped()));
             }
             FISH = Map.copyOf(adjustedFish);
 

@@ -38,6 +38,7 @@ public final class FishingPlaqueCheck {
                 tag -> {
                     tag.putDouble("mainmod_fish_length_cm", 72.4);
                     tag.putInt("mainmod_fish_rarity", 3);
+                    tag.putString(FishingCatches.CATCHER_UUID_TAG, "123e4567-e89b-12d3-a456-426614174000");
                 });
         fish.set(DataComponents.CUSTOM_NAME, Component.literal("Prize Cod"));
         fish.set(DataComponents.LORE, new ItemLore(List.of(Component.literal("Caught by: Alex"))));

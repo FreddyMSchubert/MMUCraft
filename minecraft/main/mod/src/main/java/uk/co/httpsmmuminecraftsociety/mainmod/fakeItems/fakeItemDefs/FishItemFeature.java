@@ -25,7 +25,9 @@ public record FishItemFeature(
         FishSize length,
         FishFurnaceResult furnaceResult,
         Set<FishSpawnTag> spawnTags,
-        String dimension
+        String dimension,
+        float plaqueRotationUp,
+        boolean plaqueRotationVertFlipped
 ) implements ItemFeature {
     @Override
     public void apply(ItemStack stack) {
@@ -95,7 +97,11 @@ public record FishItemFeature(
                 ),
                 FishFurnaceResult.fromJsonValue(json.get("furnaceResult").getAsString()),
                 Set.copyOf(spawnTags),
-                dimension
+                dimension,
+                json.get("plaque_rotation_up").isJsonNull() ? 0.0F
+                        : FishTextureAngle.parse(json.get("plaque_rotation_up")),
+                !json.get("plaque_rotation_vert_flipped").isJsonNull()
+                        && json.get("plaque_rotation_vert_flipped").getAsBoolean()
         );
     }
 

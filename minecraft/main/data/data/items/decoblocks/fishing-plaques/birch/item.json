@@ -15,13 +15,9 @@
 		"recipes": [
 			{
 				"id": "decoration/fishing_plaque_birch",
-				"type": "mainmod:fake_crafting_shaped",
+				"type": "mainmod:fake_crafting_shapeless",
 				"gameplayToggle": "inventors",
-				"pattern": ["LLL", "LSL", "LLL"],
-				"key": {
-					"L": "minecraft:birch_log",
-					"S": "minecraft:birch_shelf"
-				},
+				"ingredients": ["minecraft:birch_shelf", "minecraft:stripped_birch_log"],
 				"result": {
 					"stack": "mainmod:deco-fishing-plaque-birch",
 					"count": 1

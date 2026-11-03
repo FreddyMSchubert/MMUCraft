@@ -9,6 +9,8 @@
 	"fish": {
 		"dimension": "nether",
 		"angle": "T",
+		"plaque_rotation_up": null,
+		"plaque_rotation_vert_flipped": null,
 		"tags": ["basalt_deltas"],
 		"size": {
 			"averageLengthCm": 18,

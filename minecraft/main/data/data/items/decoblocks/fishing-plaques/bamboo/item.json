@@ -15,13 +15,9 @@
 		"recipes": [
 			{
 				"id": "decoration/fishing_plaque_bamboo",
-				"type": "mainmod:fake_crafting_shaped",
+				"type": "mainmod:fake_crafting_shapeless",
 				"gameplayToggle": "inventors",
-				"pattern": ["LLL", "LSL", "LLL"],
-				"key": {
-					"L": "minecraft:bamboo_block",
-					"S": "minecraft:bamboo_shelf"
-				},
+				"ingredients": ["minecraft:bamboo_shelf", "minecraft:stripped_bamboo_block"],
 				"result": {
 					"stack": "mainmod:deco-fishing-plaque-bamboo",
 					"count": 1

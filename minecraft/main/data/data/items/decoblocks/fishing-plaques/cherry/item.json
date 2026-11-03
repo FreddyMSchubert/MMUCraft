@@ -15,13 +15,9 @@
 		"recipes": [
 			{
 				"id": "decoration/fishing_plaque_cherry",
-				"type": "mainmod:fake_crafting_shaped",
+				"type": "mainmod:fake_crafting_shapeless",
 				"gameplayToggle": "inventors",
-				"pattern": ["LLL", "LSL", "LLL"],
-				"key": {
-					"L": "minecraft:cherry_log",
-					"S": "minecraft:cherry_shelf"
-				},
+				"ingredients": ["minecraft:cherry_shelf", "minecraft:stripped_cherry_log"],
 				"result": {
 					"stack": "mainmod:deco-fishing-plaque-cherry",
 					"count": 1

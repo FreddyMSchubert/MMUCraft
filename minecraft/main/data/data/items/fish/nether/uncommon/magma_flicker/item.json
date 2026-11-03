@@ -11,6 +11,8 @@
 	"fish": {
 		"dimension": "nether",
 		"angle": "BL",
+		"plaque_rotation_up": null,
+		"plaque_rotation_vert_flipped": null,
 		"tags": ["nether_wastes"],
 		"size": {
 			"averageLengthCm": 24,

@@ -1,11 +1,14 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fishing;
 
 import com.mojang.math.Transformation;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -23,6 +26,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.DecoBlocksManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FishItemFeature;
+import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
 import uk.co.httpsmmuminecraftsociety.mainmod.mixin.fishing.DisplayEntityAccessor;
 import uk.co.httpsmmuminecraftsociety.mainmod.mixin.fishing.ItemDisplayEntityAccessor;
 
@@ -36,6 +40,7 @@ public final class FishingPlaques {
     private static final String FISH_TAG = "mainmod_plaque_fish";
     private static final String DISPLAY_TAG = "mainmod_plaque_display";
     public static final String FRAME_TAG = "mainmod_fishing_plaque";
+    public static final String ACTION_BAR_MARKER = "mainmod:fishing_plaque";
     private static final Map<UUID, Map<UUID, ClickState>> CLICKS = new HashMap<>();
 
     private FishingPlaques() {}
@@ -122,19 +127,46 @@ public final class FishingPlaques {
         Component message = switch (index) {
             case 0 -> Component.literal((item == null ? previous.getHoverName().getString() : item.title())
                     + " · " + rarity.displayName()).withColor(rarity.colorRgb());
-            case 1 -> Component.literal(catcher(previous) + " · " + size(previous));
+            case 1 -> catcher(previous, level).copy()
+                    .append(Component.literal(" · " + size(previous)).withColor(rarity.colorRgb()));
             default -> item == null || item.tooltip().isEmpty()
-                    ? Component.literal(previous.getHoverName().getString()) : item.tooltip().getFirst();
+                    ? previous.getHoverName().copy().withColor(rarity.colorRgb()).withStyle(ChatFormatting.ITALIC)
+                    : item.tooltip().getFirst().copy().withColor(rarity.colorRgb()).withStyle(ChatFormatting.ITALIC);
         };
-        serverPlayer.sendSystemMessage(message, true);
+        serverPlayer.sendSystemMessage(message.copy().withStyle(style -> style.withInsertion(ACTION_BAR_MARKER)), true);
         return InteractionResult.SUCCESS_SERVER;
     }
 
-    private static String catcher(ItemStack fish) {
+    private static Component catcher(ItemStack fish, ServerLevel level) {
         for (Component line : fish.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines()) {
-            if (line.getString().startsWith("Caught by: ")) return line.getString();
+            if (!line.getString().startsWith("Caught by: ")) continue;
+            String name = line.getString().substring("Caught by: ".length());
+            CompoundTag tag = fish.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+            String catcherId = tag.getStringOr(FishingCatches.CATCHER_UUID_TAG, "");
+            Integer color = null;
+            try {
+                if (!catcherId.isEmpty()) color = PlayerStatsSync.colorFor(level.getServer(), UUID.fromString(catcherId));
+            } catch (IllegalArgumentException ignored) {
+                // Try the saved username when the stored UUID is invalid.
+            }
+            if (color == null) color = catcherColorByName(level.getServer(), name);
+            return Component.literal("Caught by: ").withStyle(ChatFormatting.GRAY)
+                    .append(Component.literal(name).withColor(color == null ? 0xAAAAAA : color));
         }
-        return "Catcher unknown";
+        return Component.literal("Catcher unknown").withStyle(ChatFormatting.GRAY);
+    }
+
+    private static Integer catcherColorByName(MinecraftServer server, String name) {
+        ServerPlayer online = server.getPlayerList().getPlayerByName(name);
+        if (online != null) return PlayerStatsSync.colorFor(online);
+
+        PlayerTeam team = server.getScoreboard().getPlayersTeam(name);
+        if (team != null && team.getName().startsWith("mmu")) {
+            var savedColor = team.getDisplayName().getStyle().getColor();
+            if (savedColor != null) return savedColor.getValue();
+        }
+
+        return null;
     }
 
     private static String size(ItemStack fish) {
@@ -149,15 +181,18 @@ public final class FishingPlaques {
         FishRarity rarity = FishingCatches.fishRarity(fish).orElse(feature == null
                 ? FishRarity.COMMON : feature.personality().rarity());
         ItemStack sign = FakeItems.createFakeItemStack("fishing-plaque-sign-" + rarity.name().toLowerCase(Locale.ROOT), 1);
-        addDisplay(level, frame, sign, 1.0F, -0.06F);
+        addDisplay(level, frame, sign, 1.0F, 0.25F, 0.0F, false);
         CompoundTag tag = fish.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         double length = tag.getDoubleOr("mainmod_fish_length_cm", feature == null ? 50.0 : feature.length().averageCm());
         float scale = FishSize.blocks(length) * 16.0F
                 / (feature == null ? 16.0F : feature.personality().textureLengthPixels());
-        addDisplay(level, frame, fish.copyWithCount(1), scale, -0.12F);
+        addDisplay(level, frame, fish.copyWithCount(1), scale, 0.9F,
+                feature == null ? 0.0F : feature.plaqueRotationUp(),
+                feature != null && feature.plaqueRotationVertFlipped());
     }
 
-    private static void addDisplay(ServerLevel level, ItemFrame frame, ItemStack stack, float scale, float depth) {
+    private static void addDisplay(ServerLevel level, ItemFrame frame, ItemStack stack, float scale, float depth,
+                                   float rotationUp, boolean vertFlipped) {
         Display.ItemDisplay display = new Display.ItemDisplay(EntityTypes.ITEM_DISPLAY, level);
         display.setNoGravity(true);
         display.setSilent(true);
@@ -167,10 +202,17 @@ public final class FishingPlaques {
         display.setYRot(frame.getDirection().toYRot());
         ((ItemDisplayEntityAccessor) display).mainmod$setItemStack(stack);
         ((ItemDisplayEntityAccessor) display).mainmod$setItemTransform(ItemDisplayContext.FIXED);
+        if (!level.addFreshEntity(display)) return;
+        if (!display.startRiding(frame, true, false)) {
+            display.discard();
+            return;
+        }
+        frame.positionRider(display);
         ((DisplayEntityAccessor) display).mainmod$setTransformation(new Transformation(
-                new Vector3f(0.0F, 0.0F, depth), new Quaternionf(),
-                new Vector3f(scale, scale, scale), new Quaternionf()));
-        if (level.addFreshEntity(display) && !display.startRiding(frame, true, false)) display.discard();
+                new Vector3f(0.0F, (float) (frame.getY() - display.getY()), depth),
+                new Quaternionf(),
+                new Vector3f(scale, vertFlipped ? -scale : scale, scale),
+                new Quaternionf().rotateZ((float) Math.toRadians(rotationUp))));
     }
 
     private record ClickState(int index, long time) {}

@@ -15,13 +15,9 @@
 		"recipes": [
 			{
 				"id": "decoration/fishing_plaque_oak",
-				"type": "mainmod:fake_crafting_shaped",
+				"type": "mainmod:fake_crafting_shapeless",
 				"gameplayToggle": "inventors",
-				"pattern": ["LLL", "LSL", "LLL"],
-				"key": {
-					"L": "minecraft:oak_log",
-					"S": "minecraft:oak_shelf"
-				},
+				"ingredients": ["minecraft:oak_shelf", "minecraft:stripped_oak_log"],
 				"result": {
 					"stack": "mainmod:deco-fishing-plaque-oak",
 					"count": 1

@@ -15,13 +15,9 @@
 		"recipes": [
 			{
 				"id": "decoration/fishing_plaque_acacia",
-				"type": "mainmod:fake_crafting_shaped",
+				"type": "mainmod:fake_crafting_shapeless",
 				"gameplayToggle": "inventors",
-				"pattern": ["LLL", "LSL", "LLL"],
-				"key": {
-					"L": "minecraft:acacia_log",
-					"S": "minecraft:acacia_shelf"
-				},
+				"ingredients": ["minecraft:acacia_shelf", "minecraft:stripped_acacia_log"],
 				"result": {
 					"stack": "mainmod:deco-fishing-plaque-acacia",
 					"count": 1

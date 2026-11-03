@@ -8,6 +8,8 @@
 	"fish": {
 		"dimension": "end",
 		"angle": "L",
+		"plaque_rotation_up": null,
+		"plaque_rotation_vert_flipped": null,
 		"tags": ["sparse_void", "end_highlands"],
 		"size": {
 			"averageLengthCm": 42,

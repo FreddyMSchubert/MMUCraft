@@ -4,9 +4,6 @@
 	"compatibilityLevel": "JAVA_25",
 	"mixins": [
 		"InsomniaPhantomFlightMixin",
-		"StrawBedDaySleepMixin",
-		"StrawBedSleepTickMixin",
-		"StrawBedNightfallMixin",
 		"playerpotions.PlayerPotionConsumeMixin",
 		"playerpotions.PlayerPotionMilkMixin",
 		"playerpotions.PlayerPotionHasEffectsMixin",

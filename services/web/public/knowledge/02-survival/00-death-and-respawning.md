@@ -7,7 +7,7 @@ tags:
 - respawing
 - death and respawn
 tips:
-- When you die, you won't have to walk a bunch to get your items back. Instead, you will spawn somewhere random close to where you died.
+- If you have no respawn point set, you respawn somewhere random close to where you died.
 - Recovery compasses can have Soulbound applied to stay on your person after you die. That makes them super useful for finding your last death location.
 - When you die in the void, you do not lose the items in your inventory.
 - When players die on the server, they drop their head. The head will have a note saying what they died from (including who did it). How about a hunting trophy?
@@ -21,7 +21,7 @@ Anyways, for those of you that are experiencing occasional skill issues, here's 
 
 ## Respawning
 
-After death, you no longer respawn next to your bed, but closer to wherever you died. This is mainly because walking a bunch is annoying, not fun.
+If you have a respawn point set, you respawn there as usual. Without one, you respawn closer to wherever you died.
 
 Specifically, you respawn at a random position **within the server render distance** of where you died. This means that when you respawn, you are always able to see the position you died at (unless it's in a cave, behind a hill, or your render distance is set lower than the server render distance).
 

@@ -46,7 +46,7 @@ In no particular order:
 - Prioritized joining if there is too many people on the server.
 - More dabloons earned when claiming the full daily completion reward on a given day.
 - The price increase of buying more than one claim is less steep for members.
-- Respawn at half the distance from your death location as normal players.
+- Without a respawn point, respawn at half the distance from your death location as normal players.
 - Ability to buy all of the items from the shop. (Many animated & dyeable ones are otherwise unavailable)
 - Way more cool particles for particle trails than just the colored dust for your elytra, glider, bow, crossbow, trident and mace.
 - When not logging a day on the login streaks, for non-member the streak resets, where for members it is only cut in half.

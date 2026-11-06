@@ -1,7 +1,6 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.mixin.respawn;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.GlobalPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.FluidTags;
@@ -38,42 +37,41 @@ public class RespawnNearDeath {
     public MinecraftServer server;
 
     @Inject(method = "die", at = @At("HEAD"))
-    private void updateRespawnPoint(DamageSource damageSource, CallbackInfo ci) {
+    private void markVoidDeath(DamageSource damageSource, CallbackInfo ci) {
         ServerPlayer player = (ServerPlayer) (Object) this;
 
         if (damageSource.is(DamageTypes.FELL_OUT_OF_WORLD)) {
             player.addTag(VOID_DEATH_KEEP_INVENTORY_TAG);
-            player.setRespawnPosition(null, false);
-            return;
         }
-
-        ServerLevel level = player.level();
-        BlockPos spawnPos = findRespawnPosition(player, level);
-
-        if (spawnPos == null) {
-            MainMod.LOGGER.info("Could not locate a respawn position within {} tries; using world spawn", MAX_SEARCHES);
-            player.setRespawnPosition(null, false);
-            return;
-        }
-
-        LevelData.RespawnData respawnData = new LevelData.RespawnData(
-                new GlobalPos(level.dimension(), spawnPos),
-                0.0F,
-                0.0F
-        );
-
-        ServerPlayer.RespawnConfig config = new ServerPlayer.RespawnConfig(respawnData, true);
-        player.setRespawnPosition(config, false);
     }
 
     @Inject(method = "findRespawnPositionAndUseSpawnBlock", at = @At("HEAD"), cancellable = true)
-    private void useOverworldSpawnAfterVoidDeath(
+    private void useCustomRespawnPosition(
             boolean consumeSpawnBlockCharge,
             TeleportTransition.PostTeleportTransition postTeleportTransition,
             CallbackInfoReturnable<TeleportTransition> cir
     ) {
         ServerPlayer player = (ServerPlayer) (Object) this;
         if (!hasVoidDeathTag(player)) {
+            if (!consumeSpawnBlockCharge || player.getRespawnConfig() != null) {
+                return;
+            }
+
+            ServerLevel level = player.level();
+            BlockPos spawnPos = findRespawnPosition(player, level);
+            if (spawnPos == null) {
+                MainMod.LOGGER.info("Could not locate a respawn position within {} tries; using world spawn", MAX_SEARCHES);
+                return;
+            }
+
+            cir.setReturnValue(new TeleportTransition(
+                    level,
+                    new Vec3(spawnPos.getX() + 0.5, spawnPos.getY() + 0.1, spawnPos.getZ() + 0.5),
+                    Vec3.ZERO,
+                    0.0F,
+                    0.0F,
+                    postTeleportTransition
+            ));
             return;
         }
 

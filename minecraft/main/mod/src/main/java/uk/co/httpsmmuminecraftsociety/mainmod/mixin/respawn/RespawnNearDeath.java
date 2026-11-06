@@ -45,18 +45,26 @@ public class RespawnNearDeath {
         }
     }
 
-    @Inject(method = "findRespawnPositionAndUseSpawnBlock", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "findRespawnPositionAndUseSpawnBlock", at = @At("RETURN"), cancellable = true)
     private void useCustomRespawnPosition(
             boolean consumeSpawnBlockCharge,
             TeleportTransition.PostTeleportTransition postTeleportTransition,
             CallbackInfoReturnable<TeleportTransition> cir
     ) {
-        ServerPlayer player = (ServerPlayer) (Object) this;
-        if (!hasVoidDeathTag(player)) {
-            if (!consumeSpawnBlockCharge || player.getRespawnConfig() != null) {
-                return;
-            }
+        if (!consumeSpawnBlockCharge) {
+            return;
+        }
 
+        ServerPlayer player = (ServerPlayer) (Object) this;
+        boolean missingRespawnBlock = cir.getReturnValue().missingRespawnBlock();
+        if (player.getRespawnConfig() != null && !missingRespawnBlock) {
+            return;
+        }
+        if (missingRespawnBlock) {
+            player.setRespawnPosition(null, false);
+        }
+
+        if (!hasVoidDeathTag(player)) {
             ServerLevel level = player.level();
             BlockPos spawnPos = findRespawnPosition(player, level);
             if (spawnPos == null) {

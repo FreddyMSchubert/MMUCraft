@@ -32,7 +32,7 @@ Members respawn closer to their death location, half as close as normal players 
 ![Death Screen](/assets/knowledge/survival/death-respawning/death_screen.png)
 
 :::note
-When dying to the void in the end specifically, you keep all your items and respawn at world spawn.
+When you die in the End void, you keep your items. Without a respawn point, you return to world spawn.
 :::
 
 ## [Soulbound](/play/knowledge/soulbound)

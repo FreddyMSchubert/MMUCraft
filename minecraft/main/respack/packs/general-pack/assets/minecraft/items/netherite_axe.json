@@ -1,41 +1,15 @@
 {
 	"model": {
 		"type": "minecraft:condition",
-		"property": "minecraft:component",
+		"property": "minecraft:custom_model_data",
+		"index": 0,
 		"on_true": {
-			"type": "minecraft:condition",
-			"property": "minecraft:custom_model_data",
-			"index": 0,
-			"on_true": {
-				"type": "minecraft:model",
-				"model": "general-pack:item/silk_touch/enderite_axe"
-			},
-			"on_false": {
-				"type": "minecraft:model",
-				"model": "general-pack:item/silk_touch/netherite_axe"
-			}
+			"type": "minecraft:model",
+			"model": "general-pack:item/enderite/axe"
 		},
 		"on_false": {
-			"type": "minecraft:condition",
-			"property": "minecraft:custom_model_data",
-			"index": 0,
-			"on_true": {
-				"type": "minecraft:model",
-				"model": "general-pack:item/enderite/axe"
-			},
-			"on_false": {
-				"type": "minecraft:model",
-				"model": "minecraft:item/netherite_axe"
-			}
-		},
-		"predicate": "minecraft:enchantments",
-		"value": [
-			{
-				"enchantments": "minecraft:silk_touch",
-				"levels": {
-					"min": 1
-				}
-			}
-		]
+			"type": "minecraft:model",
+			"model": "minecraft:item/netherite_axe"
+		}
 	}
 }

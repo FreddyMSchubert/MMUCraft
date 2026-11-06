@@ -1,1 +1,1 @@
-npx lint-staged --max-arg-length 3000
+npx lint-staged

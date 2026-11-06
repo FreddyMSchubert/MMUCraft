@@ -5,6 +5,7 @@
 	"mixins": [
 		"InsomniaPhantomFlightMixin",
 		"StrawBedDaySleepMixin",
+		"StrawBedSleepTickMixin",
 		"StrawBedNightfallMixin",
 		"playerpotions.PlayerPotionConsumeMixin",
 		"playerpotions.PlayerPotionMilkMixin",

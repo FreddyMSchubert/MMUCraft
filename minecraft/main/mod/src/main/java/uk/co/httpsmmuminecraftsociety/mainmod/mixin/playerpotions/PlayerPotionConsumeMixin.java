@@ -21,7 +21,12 @@ abstract class PlayerPotionConsumeMixin {
         String identity = PlayerPotions.identity(stack);
         if (identity != null) {
             PlayerDisguises.apply(entity, identity, PlayerPotions.duration(identity));
-            if (entity instanceof ServerPlayer player) MasteryAdvancements.recordPotionUse(player, "impersonation");
+            if (entity instanceof ServerPlayer player) {
+                MasteryAdvancements.recordPotionUse(player, "impersonation");
+                if (player.getUUID().equals(PlayerPotions.decode(identity).id())) {
+                    MasteryAdvancements.grant(player, "potions/individuation");
+                }
+            }
         }
     }
 }

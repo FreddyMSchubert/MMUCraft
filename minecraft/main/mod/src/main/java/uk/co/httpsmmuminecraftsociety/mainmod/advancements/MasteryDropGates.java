@@ -41,7 +41,8 @@ public final class MasteryDropGates {
                     "cosmetics/retro_helmet", "potions/insomnia" -> FeatureToggles.SOARING;
             case "utility/wrench", "utility/invisible_frame", "utility/decoblock" -> "imaginative";
             case "cosmetics/sombrero", "utility/max_reach_beacon" -> FeatureToggles.NETHER;
-            case "utility/golden_paste", "potions/impersonation", "cosmetics/sombreron" -> FeatureToggles.CIRCUS;
+            case "utility/golden_paste", "potions/impersonation", "potions/individuation",
+                    "cosmetics/sombreron" -> FeatureToggles.CIRCUS;
             case "cosmetics/sombreronn", "cosmetics/solar_eclipse", "cosmetics/all_straw_hats" -> "inventors";
             case "cosmetics/posh_squid" -> "beach-party";
             default -> "";

@@ -8,8 +8,7 @@
 	"fish": {
 		"dimension": "end",
 		"angle": "BL",
-		"plaque_rotation_up": null,
-		"plaque_rotation_vert_flipped": null,
+		"plaque_right_angle": "BL",
 		"tags": ["equivoid", "end_midlands"],
 		"size": {
 			"averageLengthCm": 59,

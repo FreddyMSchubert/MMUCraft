@@ -7,7 +7,7 @@
 	"tooltips": [],
 	"shopPurchasable": {
 		"membersOnly": false,
-		"priceDabloons": 12,
+		"priceDabloons": 10,
 		"description": "Read to unlock more knowledge readable on the website. (Also obtainable in game as loot.)",
 		"unlockWeight": 100
 	},

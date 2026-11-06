@@ -181,18 +181,26 @@ public final class FishingPlaques {
         FishRarity rarity = FishingCatches.fishRarity(fish).orElse(feature == null
                 ? FishRarity.COMMON : feature.personality().rarity());
         ItemStack sign = FakeItems.createFakeItemStack("fishing-plaque-sign-" + rarity.name().toLowerCase(Locale.ROOT), 1);
-        addDisplay(level, frame, sign, 1.0F, 0.25F, 0.0F, false);
+        addDisplay(level, frame, sign, 0.5F, 0.25F, 0.0F, false);
         CompoundTag tag = fish.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         double length = tag.getDoubleOr("mainmod_fish_length_cm", feature == null ? 50.0 : feature.length().averageCm());
         float scale = FishSize.blocks(length) * 16.0F
                 / (feature == null ? 16.0F : feature.personality().textureLengthPixels());
-        addDisplay(level, frame, fish.copyWithCount(1), scale, 0.9F,
-                feature == null ? 0.0F : feature.plaqueRotationUp(),
-                feature != null && feature.plaqueRotationVertFlipped());
+        float rightAngle = feature == null ? 90.0F : feature.plaqueRightAngle();
+        boolean mirrorX = plaqueFacesLeft(rightAngle);
+        addDisplay(level, frame, fish.copyWithCount(1), scale, 0.9F, plaqueRotation(rightAngle), mirrorX);
+    }
+
+    static boolean plaqueFacesLeft(float rightAngle) {
+        return rightAngle > 180.0F;
+    }
+
+    static float plaqueRotation(float rightAngle) {
+        return rightAngle - (plaqueFacesLeft(rightAngle) ? 270.0F : 90.0F);
     }
 
     private static void addDisplay(ServerLevel level, ItemFrame frame, ItemStack stack, float scale, float depth,
-                                   float rotationUp, boolean vertFlipped) {
+                                   float rotationDegrees, boolean mirrorX) {
         Display.ItemDisplay display = new Display.ItemDisplay(EntityTypes.ITEM_DISPLAY, level);
         display.setNoGravity(true);
         display.setSilent(true);
@@ -208,11 +216,14 @@ public final class FishingPlaques {
             return;
         }
         frame.positionRider(display);
-        ((DisplayEntityAccessor) display).mainmod$setTransformation(new Transformation(
-                new Vector3f(0.0F, (float) (frame.getY() - display.getY()), depth),
-                new Quaternionf(),
-                new Vector3f(scale, vertFlipped ? -scale : scale, scale),
-                new Quaternionf().rotateZ((float) Math.toRadians(rotationUp))));
+        ((DisplayEntityAccessor) display).mainmod$setTransformation(plaqueTransform(
+                (float) (frame.getY() - display.getY()), depth, scale, rotationDegrees, mirrorX));
+    }
+
+    static Transformation plaqueTransform(float yOffset, float depth, float scale, float rotationDegrees, boolean mirrorX) {
+        return new Transformation(new Vector3f(0.0F, yOffset, depth), new Quaternionf(),
+                new Vector3f(mirrorX ? -scale : scale, scale, scale),
+                new Quaternionf().rotateZ((float) Math.toRadians(rotationDegrees)));
     }
 
     private record ClickState(int index, long time) {}

@@ -10,8 +10,7 @@
 	"fish": {
 		"dimension": "overworld",
 		"angle": "L",
-		"plaque_rotation_up": null,
-		"plaque_rotation_vert_flipped": null,
+		"plaque_right_angle": "L",
 		"tags": ["river"],
 		"size": {
 			"averageLengthCm": 60,

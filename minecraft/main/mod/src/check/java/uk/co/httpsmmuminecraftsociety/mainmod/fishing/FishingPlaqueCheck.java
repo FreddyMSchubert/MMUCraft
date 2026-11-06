@@ -11,6 +11,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.crafting.CraftingInput;
+import org.joml.Vector4f;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.FishingPlaqueRecipe;
@@ -23,6 +24,16 @@ public final class FishingPlaqueCheck {
     private FishingPlaqueCheck() {}
 
     public static void main(String[] args) {
+        for (float angle : new float[]{0, 45, 90, 135, 180, 210, 225, 270, 315, 320}) {
+            Vector4f snout = new Vector4f((float) Math.sin(Math.toRadians(angle)),
+                    (float) Math.cos(Math.toRadians(angle)), 0, 0);
+            FishingPlaques.plaqueTransform(0, 0, 1, FishingPlaques.plaqueRotation(angle),
+                    FishingPlaques.plaqueFacesLeft(angle)).getMatrix().transform(snout);
+            assert Math.abs(snout.x - 1) < 0.0001F && Math.abs(snout.y) < 0.0001F
+                    : "Plaque must point the snout right for angle " + angle + ": " + snout;
+            assert FishingPlaques.plaqueFacesLeft(angle) == (angle > 180);
+        }
+
         SharedConstants.tryDetectVersion();
         Bootstrap.bootStrap();
         BuiltInRegistries.DATA_COMPONENT_INITIALIZERS.build(VanillaRegistries.createWorldLookup())

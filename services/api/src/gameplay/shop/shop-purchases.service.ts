@@ -30,7 +30,7 @@ const KNOWLEDGE_BOOK_DAILY_LIMIT = 2;
 const FASHION_BOOK_ID = 'charm-fashion-book';
 const FASHION_BOOK_DAILY_LIMIT = 1;
 const JOKE_BOOK_ID = 'charm-joke-book';
-const JOKE_BOOK_DAILY_LIMIT = 1;
+const JOKE_BOOK_DAILY_LIMIT = 3;
 
 @Injectable()
 export class ShopPurchasesService {

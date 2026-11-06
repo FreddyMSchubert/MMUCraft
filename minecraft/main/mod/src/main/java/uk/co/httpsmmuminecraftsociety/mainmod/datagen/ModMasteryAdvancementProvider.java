@@ -344,8 +344,10 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
                     "Use the Potion of " + Character.toUpperCase(potion.charAt(0)) + potion.substring(1) + ".",
                     "fake:charm-potion-" + potion, "utility/use_potion", "task");
         }
-        add("potions/impersonation", "Potion of Impersonation", "Use the Potion of Impersonation.",
+        add("potions/impersonation", "Ego Death", "Drink a player disguise potion.",
                 "minecraft:potion", "utility/use_potion", "task");
+        add("potions/individuation", "Individuation", "Drink a potion of yourself.",
+                "minecraft:potion", "potions/impersonation", "goal");
         for (int level = 1; level <= 5; level++) {
             add("fishing/lucky_charm_" + level, "Lucky Charm " + level,
                     "Upgrade the Lucky Charm to level " + level + ".", "fake:charm-lucky-charm",

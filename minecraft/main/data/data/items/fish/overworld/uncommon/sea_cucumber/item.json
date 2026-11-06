@@ -8,8 +8,7 @@
 	"fish": {
 		"dimension": "overworld",
 		"angle": 238,
-		"plaque_rotation_up": null,
-		"plaque_rotation_vert_flipped": null,
+		"plaque_right_angle": "TL",
 		"tags": ["ocean"],
 		"size": {
 			"averageLengthCm": 30,

@@ -7,7 +7,7 @@
 	"tooltips": [],
 	"shopPurchasable": {
 		"membersOnly": false,
-		"priceDabloons": 42,
+		"priceDabloons": 25,
 		"description": "Read to unlock a random cosmetic on the website. (Also obtainable in game as loot.)",
 		"unlockWeight": 100
 	},

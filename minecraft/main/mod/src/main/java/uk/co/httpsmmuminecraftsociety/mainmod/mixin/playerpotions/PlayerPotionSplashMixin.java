@@ -22,7 +22,7 @@ abstract class PlayerPotionSplashMixin {
         if (identity == null) return;
         ThrownSplashPotion potion = (ThrownSplashPotion) (Object) this;
         if (potion.getOwner() instanceof ServerPlayer thrower) {
-            MasteryAdvancements.recordPotionUse(thrower, "impersonation");
+            MasteryAdvancements.grant(thrower, "utility/use_potion");
         }
         AABB hitBox = potion.getBoundingBox().move(hit.getLocation().subtract(potion.position()));
         AABB area = hitBox.inflate(4.0, 2.0, 4.0);

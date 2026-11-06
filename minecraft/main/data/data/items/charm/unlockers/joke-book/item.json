@@ -7,7 +7,7 @@
 	"tooltips": ["Use to hear a \"funny\" joke"],
 	"shopPurchasable": {
 		"membersOnly": false,
-		"priceDabloons": 20,
+		"priceDabloons": 5,
 		"description": "Read to hear a random Minecraft joke. (Also obtainable in game as loot.)",
 		"unlockWeight": 100
 	},

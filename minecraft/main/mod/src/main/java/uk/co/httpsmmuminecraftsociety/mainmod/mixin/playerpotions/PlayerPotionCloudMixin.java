@@ -38,7 +38,7 @@ abstract class PlayerPotionCloudMixin {
                     && mainmod$targets.add(player.getUUID())) {
                 PlayerDisguises.apply(player, identity, PlayerPotions.duration(identity));
                 if (cloud.getOwner() instanceof ServerPlayer thrower) {
-                    MasteryAdvancements.recordPotionUse(thrower, "impersonation");
+                    MasteryAdvancements.grant(thrower, "utility/use_potion");
                 }
             }
         }

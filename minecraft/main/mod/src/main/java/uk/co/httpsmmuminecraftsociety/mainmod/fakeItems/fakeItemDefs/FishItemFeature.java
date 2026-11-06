@@ -26,8 +26,7 @@ public record FishItemFeature(
         FishFurnaceResult furnaceResult,
         Set<FishSpawnTag> spawnTags,
         String dimension,
-        float plaqueRotationUp,
-        boolean plaqueRotationVertFlipped
+        float plaqueRightAngle
 ) implements ItemFeature {
     @Override
     public void apply(ItemStack stack) {
@@ -73,6 +72,8 @@ public record FishItemFeature(
                 between(random, 1.0F + 0.5F * rarityLevel, 2.5F + 1.5F * rarityLevel));
         float baselineBounces = calculateAverageBounces(averageCatchSeconds, approachSeconds, retreatSeconds, secondsAwayFromBobber);
         double averageLengthCm = size.get("averageLengthCm").getAsDouble();
+        float textureAngleDegrees = FishTextureAngle.parse(json.get("angle"));
+        JsonElement plaqueRight = json.get("plaque_right_angle");
         EnumSet<FishSpawnTag> spawnTags = EnumSet.noneOf(FishSpawnTag.class);
         for (JsonElement tag : json.getAsJsonArray("tags")) {
             spawnTags.add(FishSpawnTag.fromJsonValue(tag.getAsString()));
@@ -81,7 +82,7 @@ public record FishItemFeature(
                 new FishingPersonality(
                         rarity,
 						struggleSeconds,
-						FishTextureAngle.parse(json.get("angle")),
+						textureAngleDegrees,
 						false,
 						size.get("textureLengthPixels").getAsFloat(),
                         FishSize.blocks(averageLengthCm),
@@ -98,10 +99,7 @@ public record FishItemFeature(
                 FishFurnaceResult.fromJsonValue(json.get("furnaceResult").getAsString()),
                 Set.copyOf(spawnTags),
                 dimension,
-                json.get("plaque_rotation_up").isJsonNull() ? 0.0F
-                        : FishTextureAngle.parse(json.get("plaque_rotation_up")),
-                !json.get("plaque_rotation_vert_flipped").isJsonNull()
-                        && json.get("plaque_rotation_vert_flipped").getAsBoolean()
+                plaqueRight.isJsonNull() ? 90.0F : FishTextureAngle.parse(plaqueRight)
         );
     }
 

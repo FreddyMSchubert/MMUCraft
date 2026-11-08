@@ -220,6 +220,7 @@ export class FishingService {
 
 		return {
 			netherOpen,
+			implementedFishCount: this.fishCatalog.definitions().length,
 			currentUserId: viewer.id,
 			selectedUserId,
 			players: playerRows.map((player) => {

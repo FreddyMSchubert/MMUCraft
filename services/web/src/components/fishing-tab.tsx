@@ -218,7 +218,8 @@ export function MiniFishCompendium({ userId }: { userId: number }) {
 				Fish Compendium
 				{data && (
 					<span>
-						{data.fish.filter((fish) => fish.catch).length} / {data.fish.length} caught
+						{data.fish.filter((fish) => fish.catch).length} /{' '}
+						{data.implementedFishCount} caught
 					</span>
 				)}
 			</summary>

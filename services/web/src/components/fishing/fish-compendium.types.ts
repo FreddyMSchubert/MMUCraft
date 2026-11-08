@@ -57,6 +57,7 @@ export interface CompendiumFish {
 
 export interface CompendiumResponse {
 	netherOpen: boolean;
+	implementedFishCount: number;
 	currentUserId: number;
 	selectedUserId: number;
 	players: PlayerOption[];

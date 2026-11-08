@@ -181,14 +181,18 @@ public final class FishingPlaques {
         FishRarity rarity = FishingCatches.fishRarity(fish).orElse(feature == null
                 ? FishRarity.COMMON : feature.personality().rarity());
         ItemStack sign = FakeItems.createFakeItemStack("fishing-plaque-sign-" + rarity.name().toLowerCase(Locale.ROOT), 1);
-        addDisplay(level, frame, sign, 0.5F, 0.25F, 0.0F, false);
+        float plaqueOrigin = -1.0F / 32.0F;
+        addDisplay(level, frame, sign, 0.5F, plaqueOrigin, 0.0F, false, ItemDisplayContext.FIXED);
         CompoundTag tag = fish.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         double length = tag.getDoubleOr("mainmod_fish_length_cm", feature == null ? 50.0 : feature.length().averageCm());
         float scale = FishSize.blocks(length) * 16.0F
                 / (feature == null ? 16.0F : feature.personality().textureLengthPixels());
         float rightAngle = feature == null ? 90.0F : feature.plaqueRightAngle();
         boolean mirrorX = plaqueFacesLeft(rightAngle);
-        addDisplay(level, frame, fish.copyWithCount(1), scale, 0.9F, plaqueRotation(rightAngle), mirrorX);
+        // NONE removes the fish model's Y turn. Reverse the Z turn and X mirror to keep its direction.
+        // The wood is one pixel thick, so place the fish center on its front face.
+        addDisplay(level, frame, fish.copyWithCount(1), scale, plaqueOrigin + 1.0F / 16.0F,
+                -plaqueRotation(rightAngle), !mirrorX, ItemDisplayContext.NONE);
     }
 
     static boolean plaqueFacesLeft(float rightAngle) {
@@ -200,7 +204,7 @@ public final class FishingPlaques {
     }
 
     private static void addDisplay(ServerLevel level, ItemFrame frame, ItemStack stack, float scale, float depth,
-                                   float rotationDegrees, boolean mirrorX) {
+                                   float rotationDegrees, boolean mirrorX, ItemDisplayContext context) {
         Display.ItemDisplay display = new Display.ItemDisplay(EntityTypes.ITEM_DISPLAY, level);
         display.setNoGravity(true);
         display.setSilent(true);
@@ -209,7 +213,7 @@ public final class FishingPlaques {
         display.setPos(frame.getX(), frame.getY(), frame.getZ());
         display.setYRot(frame.getDirection().toYRot());
         ((ItemDisplayEntityAccessor) display).mainmod$setItemStack(stack);
-        ((ItemDisplayEntityAccessor) display).mainmod$setItemTransform(ItemDisplayContext.FIXED);
+        ((ItemDisplayEntityAccessor) display).mainmod$setItemTransform(context);
         if (!level.addFreshEntity(display)) return;
         if (!display.startRiding(frame, true, false)) {
             display.discard();

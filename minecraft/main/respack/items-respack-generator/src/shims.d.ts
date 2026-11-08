@@ -68,6 +68,7 @@ declare module 'sharp' {
 
 	export interface SharpInstance {
 		ensureAlpha(): SharpInstance;
+		flop(): SharpInstance;
 		raw(): SharpInstance;
 		toBuffer(): Promise<Buffer>;
 		toBuffer(options: {

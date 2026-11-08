@@ -3,8 +3,10 @@ package uk.co.httpsmmuminecraftsociety.mainmod.fishing;
 import com.mojang.math.Transformation;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,11 +19,13 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.util.Prediction;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.DecoBlocksManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
@@ -150,8 +154,10 @@ public final class FishingPlaques {
                 // Try the saved username when the stored UUID is invalid.
             }
             if (color == null) color = catcherColorByName(level.getServer(), name);
+            Component coloredName = Component.literal(name).withColor(color == null ? 0xAAAAAA : color);
+            PlayerTeam team = level.getServer().getScoreboard().getPlayersTeam(name);
             return Component.literal("Caught by: ").withStyle(ChatFormatting.GRAY)
-                    .append(Component.literal(name).withColor(color == null ? 0xAAAAAA : color));
+                    .append(team == null ? coloredName : PlayerTeam.formatNameForTeam(team, coloredName));
         }
         return Component.literal("Catcher unknown").withStyle(ChatFormatting.GRAY);
     }
@@ -182,17 +188,26 @@ public final class FishingPlaques {
                 ? FishRarity.COMMON : feature.personality().rarity());
         ItemStack sign = FakeItems.createFakeItemStack("fishing-plaque-sign-" + rarity.name().toLowerCase(Locale.ROOT), 1);
         float plaqueOrigin = -1.0F / 32.0F;
-        addDisplay(level, frame, sign, 0.5F, plaqueOrigin, 0.0F, false, ItemDisplayContext.FIXED);
+        addDisplay(level, frame, sign, 0.5F, plaqueOrigin, 0.0F, ItemDisplayContext.FIXED);
         CompoundTag tag = fish.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         double length = tag.getDoubleOr("mainmod_fish_length_cm", feature == null ? 50.0 : feature.length().averageCm());
         float scale = FishSize.blocks(length) * 16.0F
                 / (feature == null ? 16.0F : feature.personality().textureLengthPixels());
         float rightAngle = feature == null ? 90.0F : feature.plaqueRightAngle();
-        boolean mirrorX = plaqueFacesLeft(rightAngle);
-        // NONE removes the fish model's Y turn. Reverse the Z turn and X mirror to keep its direction.
+        boolean needsMirror = !plaqueFacesLeft(rightAngle);
+        boolean hasMirroredModel = feature != null || fish.is(Items.COD) || fish.is(Items.SALMON)
+                || fish.is(Items.TROPICAL_FISH) || fish.is(Items.PUFFERFISH);
+        ItemStack displayFish = fish.copyWithCount(1);
+        if (needsMirror && hasMirroredModel) {
+            String id = feature == null ? BuiltInRegistries.ITEM.getKey(fish.getItem()).getPath() : item.id();
+            displayFish.set(DataComponents.ITEM_MODEL, Identifier.fromNamespaceAndPath(
+                    MainMod.MOD_ID, "fishing_plaque/mirrored/" + id));
+        }
         // The wood is one pixel thick, so place the fish center on its front face.
-        addDisplay(level, frame, fish.copyWithCount(1), scale, plaqueOrigin + 1.0F / 16.0F,
-                -plaqueRotation(rightAngle), !mirrorX, ItemDisplayContext.NONE);
+        // shortcut: Other tagged items keep their source direction until they have a mirrored model.
+        addDisplay(level, frame, displayFish, scale, plaqueOrigin + 1.0F / 16.0F,
+                needsMirror && hasMirroredModel ? plaqueRotation(rightAngle) : -plaqueRotation(rightAngle),
+                ItemDisplayContext.NONE);
     }
 
     static boolean plaqueFacesLeft(float rightAngle) {
@@ -204,7 +219,7 @@ public final class FishingPlaques {
     }
 
     private static void addDisplay(ServerLevel level, ItemFrame frame, ItemStack stack, float scale, float depth,
-                                   float rotationDegrees, boolean mirrorX, ItemDisplayContext context) {
+                                   float rotationDegrees, ItemDisplayContext context) {
         Display.ItemDisplay display = new Display.ItemDisplay(EntityTypes.ITEM_DISPLAY, level);
         display.setNoGravity(true);
         display.setSilent(true);
@@ -221,7 +236,7 @@ public final class FishingPlaques {
         }
         frame.positionRider(display);
         ((DisplayEntityAccessor) display).mainmod$setTransformation(plaqueTransform(
-                (float) (frame.getY() - display.getY()), depth, scale, rotationDegrees, mirrorX));
+                (float) (frame.getY() - display.getY()), depth, scale, rotationDegrees, false));
     }
 
     static Transformation plaqueTransform(float yOffset, float depth, float scale, float rotationDegrees, boolean mirrorX) {

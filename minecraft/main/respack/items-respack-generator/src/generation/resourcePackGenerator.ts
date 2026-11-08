@@ -366,6 +366,32 @@ async function generateBasicItem(
 		createGeneratedItemModel(modelId),
 		context,
 	);
+	if (item.resourcePath.startsWith('fish/')) {
+		const mirroredPath = `fishing_plaque/mirrored/${item.resourcePath}`;
+		const mirroredTexture = itemTexturePngPath(outputDir, namespace, mirroredPath);
+		await ensureDirectory(path.dirname(mirroredTexture));
+		await sharp(item.texturePngPath).flop().toFile(mirroredTexture);
+		context.generatedFiles += 1;
+		await copyOptionalMcmeta(item.textureMcmetaPath, `${mirroredTexture}.mcmeta`, context);
+		await writeJson(
+			itemModelJsonPath(outputDir, namespace, mirroredPath),
+			createGeneratedItemModel(itemModelId(namespace, mirroredPath)),
+			context,
+		);
+		await writeJson(
+			path.join(
+				outputDir,
+				'assets',
+				'mainmod',
+				'items',
+				'fishing_plaque',
+				'mirrored',
+				`${item.id}.json`,
+			),
+			{ model: { type: 'minecraft:model', model: itemModelId(namespace, mirroredPath) } },
+			context,
+		);
+	}
 	const shadowPath = `fishing_shadow/${item.resourcePath}`;
 	const shadowModelId = itemModelId(namespace, shadowPath);
 	const shadowTexture = itemTexturePngPath(outputDir, namespace, shadowPath);
@@ -630,6 +656,24 @@ export async function generateResourcePack(
 					? await readJsonFile<Record<string, unknown>>(item.modelJsonPath)
 					: undefined,
 			);
+			if (item.type === 'basic' && item.resourcePath.startsWith('fish/')) {
+				const emissive = itemTexturePngPath(
+					options.outputDir,
+					options.namespace,
+					item.resourcePath,
+				).replace(/\.png$/, '_e.png');
+				if (existsSync(emissive)) {
+					const mirrored = itemTexturePngPath(
+						options.outputDir,
+						options.namespace,
+						`fishing_plaque/mirrored/${item.resourcePath}`,
+					).replace(/\.png$/, '_e.png');
+					await sharp(emissive).flop().toFile(mirrored);
+					context.generatedFiles += 1;
+					if (existsSync(`${emissive}.mcmeta`))
+						await copyFile(`${emissive}.mcmeta`, `${mirrored}.mcmeta`, context);
+				}
+			}
 			if (item.type === 'charm')
 				context.generatedFiles += await generateEmissiveTexture(
 					item.equippablePngPath,

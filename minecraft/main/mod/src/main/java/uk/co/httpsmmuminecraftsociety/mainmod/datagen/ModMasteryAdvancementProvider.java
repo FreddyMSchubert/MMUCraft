@@ -171,7 +171,7 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
         add("fishing/all_epic", "An Epic Catalogue", "Catch every epic fish.", "minecraft:fishing_rod:glint", "fishing/epic", "challenge");
         add("fishing/all_legendary", "Legends Collected", "Catch every legendary fish.", "minecraft:fishing_rod:glint", "fishing/legendary", "challenge");
         add("fishing/all_mythical", "Myths Made Real", "Catch every mythical fish.", "minecraft:fishing_rod:glint", "fishing/mythical", "challenge");
-        add("fishing/full_compendium", "The Full Compendium", "Catch every fish in MMUCraft.", "fake:charm-knowledge-book", "fishing/all_mythical", "challenge");
+        add("fishing/full_compendium", "The Full Compendium", "Catch every fish currently in MMUCraft.", "fake:charm-knowledge-book", "fishing/all_mythical", "challenge");
         add("fishing/brush_modifier", "Something in the Sand", "Brush a fishing modifier from suspicious sand or gravel.", "minecraft:brush", "fishing/first_catch", "task");
         add("fishing/worm", "Hook, Line and Worm", "Catch a fish with a Worm in your off hand.", "fake:worms", "fishing/brush_modifier", "task");
         add("fishing/golden_worm", "Golden Bait", "Catch a fish with a Golden Worm in your off hand.", "fake:golden-worms", "fishing/worm", "goal");

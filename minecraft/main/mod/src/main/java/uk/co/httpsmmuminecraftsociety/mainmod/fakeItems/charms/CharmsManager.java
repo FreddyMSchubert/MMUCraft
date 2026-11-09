@@ -203,7 +203,7 @@ public class CharmsManager
         }
         return false;
     }
-    public static int getPlayerCharmLevel(ServerPlayer player, Class<? extends Charm> charmClass) {
+    public static int getPlayerCharmLevel(Player player, Class<? extends Charm> charmClass) {
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             ItemStack stack = player.getItemBySlot(slot);
             if (stack.isEmpty()) continue;

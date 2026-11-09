@@ -114,7 +114,8 @@ public final class SmithingArmorCheck {
                 .equals("heart_sleeve__charm");
 
         ItemStack bare = hiding.assemble(hidingInput(new ItemStack(Items.DIAMOND_CHESTPLATE)));
-        assert bare.get(DataComponents.EQUIPPABLE).assetId().isEmpty();
+        assert bare.get(DataComponents.EQUIPPABLE).assetId().orElseThrow().identifier().getPath()
+                .equals("armor_hidden");
         assert bare.get(DataComponents.LORE).lines().getLast().getString().equals("Armor: Hidden");
 
         ItemStack shown = hiding.assemble(hidingInput(hidden));

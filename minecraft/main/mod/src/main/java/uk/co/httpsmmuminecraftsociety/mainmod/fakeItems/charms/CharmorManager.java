@@ -129,7 +129,7 @@ public class CharmorManager
 
         if (storedCharms.isEmpty() || (appearanceEnabled && charmsHidden(stack))) {
             stack.set(DataComponents.EQUIPPABLE, hidden
-                    ? EquippableCharmItemFeature.withoutAsset(itemDefaultEquippable)
+                    ? EquippableCharmItemFeature.withAsset(itemDefaultEquippable, "armor_hidden")
                     : minified && !materialString.isBlank()
                     ? EquippableCharmItemFeature.withAsset(itemDefaultEquippable, "armor_minified__" + materialString)
                     : isEnderite(stack)

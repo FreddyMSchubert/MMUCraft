@@ -46,4 +46,4 @@ To have your armour visible again, combine it with a glass block again.
 
 ## Armour hiding
 
-Put a piece of armour in the centre of a crafting table and surround it with eight tinted glass blocks to hide the armour entirely. Craft it the same way again to show the armour. Charms remain visible unless you hide them with a glass pane; minimising takes effect again when you show the armour.
+Put a piece of armour in the centre of a crafting table and surround it with eight tinted glass blocks to hide the armour while keeping its trim visible. Craft it the same way again to show the armour. Charms remain visible unless you hide them with a glass pane; minimising takes effect again when you show the armour.

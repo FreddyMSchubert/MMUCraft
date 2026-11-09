@@ -18,6 +18,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.CustomModelData;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.SmithingRecipeInput;
 import net.minecraft.world.item.crafting.TransmuteRecipe;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -97,7 +98,39 @@ public final class SmithingArmorCheck {
         assert enderite.get(DataComponents.LORE).lines().get(6).getString().equals("6: -");
         assert enderite.get(DataComponents.EQUIPPABLE).assetId().orElseThrow().identifier().getPath()
                 .equals("heart_sleeve__enderite__minified");
+
+        var hiding = new ToggleArmorAppearanceRecipe(ToggleArmorAppearanceRecipe.Target.HIDING);
+        CraftingInput input = hidingInput(enderite);
+        assert hiding.matches(input, null);
+        assert !hiding.matches(CraftingInput.of(3, 3, List.of(
+                new ItemStack(Items.GLASS), new ItemStack(Items.TINTED_GLASS), new ItemStack(Items.TINTED_GLASS),
+                new ItemStack(Items.TINTED_GLASS), enderite, new ItemStack(Items.TINTED_GLASS),
+                new ItemStack(Items.TINTED_GLASS), new ItemStack(Items.TINTED_GLASS), new ItemStack(Items.TINTED_GLASS))), null);
+        ItemStack hidden = hiding.assemble(input);
+        assert CharmorManager.armorHidden(hidden);
+        assert CharmorManager.armorMinified(hidden);
+        assert hidden.get(DataComponents.LORE).lines().getLast().getString().equals("Armor: Hidden");
+        assert hidden.get(DataComponents.EQUIPPABLE).assetId().orElseThrow().identifier().getPath()
+                .equals("heart_sleeve__charm");
+
+        ItemStack bare = hiding.assemble(hidingInput(new ItemStack(Items.DIAMOND_CHESTPLATE)));
+        assert bare.get(DataComponents.EQUIPPABLE).assetId().isEmpty();
+        assert bare.get(DataComponents.LORE).lines().getLast().getString().equals("Armor: Hidden");
+
+        ItemStack shown = hiding.assemble(hidingInput(hidden));
+        assert !CharmorManager.armorHidden(shown);
+        assert shown.get(DataComponents.LORE).lines().getLast().getString().equals("Armor: Minified");
+        assert shown.get(DataComponents.EQUIPPABLE).assetId().orElseThrow().identifier().getPath()
+                .equals("heart_sleeve__enderite__minified");
         System.out.println("Smithing armor checks passed.");
+    }
+
+    private static CraftingInput hidingInput(ItemStack armor) {
+        ItemStack glass = new ItemStack(Items.TINTED_GLASS);
+        return CraftingInput.of(3, 3, List.of(
+                glass, glass, glass,
+                glass, armor, glass,
+                glass, glass, glass));
     }
 
     private static ItemStack fakeIngredient(String id) {

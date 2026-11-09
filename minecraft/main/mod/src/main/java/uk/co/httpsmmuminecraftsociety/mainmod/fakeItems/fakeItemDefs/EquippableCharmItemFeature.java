@@ -62,6 +62,14 @@ public record EquippableCharmItemFeature(
         );
     }
 
+    public static Equippable withoutAsset(Equippable base) {
+        return new Equippable(
+                base.slot(), base.equipSound(), Optional.empty(), base.cameraOverlay(),
+                base.allowedEntities(), base.dispensable(), base.swappable(), base.damageOnHurt(),
+                base.equipOnInteract(), base.canBeSheared(), base.shearingSound()
+        );
+    }
+
     @Override
     public void apply(ItemStack stack)
     {

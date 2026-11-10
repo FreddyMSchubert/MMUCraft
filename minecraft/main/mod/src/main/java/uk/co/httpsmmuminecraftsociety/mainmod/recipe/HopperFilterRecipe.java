@@ -13,11 +13,12 @@ import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import uk.co.httpsmmuminecraftsociety.mainmod.hopper.HopperFilter;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 public final class HopperFilterRecipe extends CustomRecipe {
     @Override
     public boolean matches(CraftingInput input, Level level) {
-        return CraftingPlayerContext.isCommitteeCrafting()
+        return FeatureToggles.isEnabled("inventors")
                 && (isCreation(input) || HopperFilter.canConfigure(input.items()));
     }
 

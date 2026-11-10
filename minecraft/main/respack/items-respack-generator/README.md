@@ -74,10 +74,10 @@ recipe fields. The recipe types and their required fields are defined in
 ```
 
 `gameplayToggle` may be omitted or empty for recipes that are always available.
-Crafting table toggles restrict committee members too. Only committee members can
-craft and configure hopper item filters. The validator checks toggle
-IDs against `data/drops.json`. Item drop labels are inferred from the earliest dated
-toggle among `shopPurchasable`, `decoBlock`, and `craftable.recipes`; there is no root
+Crafting table toggles also apply to committee members. The `inventors` toggle lets
+all players craft and configure hopper item filters when it is enabled. The validator
+checks toggle IDs against `data/drops.json`. Item drop labels use the earliest dated
+toggle among `shopPurchasable`, `decoBlock`, and `craftable.recipes`. There is no root
 `drop` field. The generator writes these recipes into the ignored
 `mod/src/main/resources/data/mainmod/recipe/dont_edit_auto_generated` directory.
 Edit `item.json`, not the generated recipe. You can also keep a recipe directly in

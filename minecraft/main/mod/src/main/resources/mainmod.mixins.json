@@ -128,8 +128,6 @@
 		"toggles.ServerPlayerDimensionTeleportMixin",
 		"toggles.NetherPortalCreationMixin",
 		"toggles.EnderEyePortalMixin",
-		"toggles.CraftingPlayerContextMixin",
-		"toggles.CraftingResultContextMixin",
 		"dailies.DailyFoodMixin",
 		"dailies.DailyJukeboxMixin",
 		"dailies.DailyCreeperMixin",

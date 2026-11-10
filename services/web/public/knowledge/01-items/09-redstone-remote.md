@@ -1,13 +1,13 @@
 ====
 id: redstone-remote
 unlockOrder: 5
-chatMessage: You have unlocked knowledge on the Slime Detector, which helps you find slime chunks.
+chatMessage: You have unlocked knowledge about Redstone Remotes. They trigger paired sculk sensors from a distance.
 sidebarTitle: Redstone Remote
 gameplayToggle: inventors
 tags:
-- slime chunk
-- slime finder
-- chunk detector
+- redstone
+- remote
+- sculk sensor
 tips:
 - Use a Redstone Remote to trigger Redstone machinery from far away.
 - You can remotely trigger explosions using a Redstone Remote.

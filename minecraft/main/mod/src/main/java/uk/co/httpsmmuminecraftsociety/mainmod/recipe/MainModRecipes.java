@@ -14,8 +14,9 @@ import uk.co.httpsmmuminecraftsociety.mainmod.playerpotions.PlayerBrewingRecipe;
 public final class MainModRecipes {
     public static final RecipeSerializer<CombineCharmorRecipe> COMBINE_CHARMOR_SERIALIZER = unit(new CombineCharmorRecipe());
     public static final RecipeSerializer<SeperateCharmorRecipe> SEPERATE_CHARMOR_SERIALIZER = unit(new SeperateCharmorRecipe());
-    public static final RecipeSerializer<ToggleArmorAppearanceRecipe> TOGGLE_CHARM_VISIBILITY_SERIALIZER = unit(new ToggleArmorAppearanceRecipe(true));
-    public static final RecipeSerializer<ToggleArmorAppearanceRecipe> TOGGLE_ARMOR_MINIFICATION_SERIALIZER = unit(new ToggleArmorAppearanceRecipe(false));
+    public static final RecipeSerializer<ToggleArmorAppearanceRecipe> TOGGLE_CHARM_VISIBILITY_SERIALIZER = unit(new ToggleArmorAppearanceRecipe(ToggleArmorAppearanceRecipe.Target.CHARMS));
+    public static final RecipeSerializer<ToggleArmorAppearanceRecipe> TOGGLE_ARMOR_MINIFICATION_SERIALIZER = unit(new ToggleArmorAppearanceRecipe(ToggleArmorAppearanceRecipe.Target.MINIFICATION));
+    public static final RecipeSerializer<ToggleArmorAppearanceRecipe> TOGGLE_ARMOR_HIDING_SERIALIZER = unit(new ToggleArmorAppearanceRecipe(ToggleArmorAppearanceRecipe.Target.HIDING));
     public static final RecipeSerializer<CombineCosmeticRecipe> COMBINE_COSMETIC_SERIALIZER = unit(new CombineCosmeticRecipe());
     public static final RecipeSerializer<SeperateCosmeticRecipe> SEPERATE_COSMETIC_SERIALIZER = unit(new SeperateCosmeticRecipe());
     public static final RecipeSerializer<ExtractXPFromPhialRecipe> EXTRACT_XP_FROM_PHIAL_SERIALIZER = unit(new ExtractXPFromPhialRecipe());
@@ -45,6 +46,7 @@ public final class MainModRecipes {
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "seperate_charmor"), SEPERATE_CHARMOR_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "toggle_charm_visibility"), TOGGLE_CHARM_VISIBILITY_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "toggle_armor_minification"), TOGGLE_ARMOR_MINIFICATION_SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "toggle_armor_hiding"), TOGGLE_ARMOR_HIDING_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "backpack_upgrade"), BACKPACK_UPGRADE_RECIPE);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "combine_cosmetic"), COMBINE_COSMETIC_SERIALIZER);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(MainMod.MOD_ID, "seperate_cosmetic"), SEPERATE_COSMETIC_SERIALIZER);

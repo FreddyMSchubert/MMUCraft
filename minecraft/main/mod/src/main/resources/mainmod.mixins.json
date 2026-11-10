@@ -30,6 +30,7 @@
 		"RecoverArmorContentsOnBreak",
 		"SoulboundItemBreakAdvancement",
 		"WingedShoesMaceSmashMixin",
+		"BunnyPajamasJumpMixin",
 		"ReskinnedHelmetTick",
 		"decoBlocks.PlaceFakeItemsAsFrames",
 		"decoBlocks.NoDecoBlockFrameItemDrops",

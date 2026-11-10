@@ -13,15 +13,25 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 public final class ToggleArmorAppearanceRecipe extends CustomRecipe {
-    private final boolean toggleCharms;
+    public enum Target { CHARMS, MINIFICATION, HIDING }
 
-    public ToggleArmorAppearanceRecipe(boolean toggleCharms) {
-        this.toggleCharms = toggleCharms;
+    private final Target target;
+
+    public ToggleArmorAppearanceRecipe(Target target) {
+        this.target = target;
     }
 
     @Override
     public boolean matches(CraftingInput input, Level level) {
         if (!FeatureToggles.isEnabled(FeatureToggles.SOARING)) return false;
+        if (target == Target.HIDING) {
+            if (input.width() != 3 || input.height() != 3 || input.ingredientCount() != 9
+                    || !acceptsArmor(input.getItem(4))) return false;
+            for (int i = 0; i < 9; i++) {
+                if (i != 4 && !input.getItem(i).is(Items.TINTED_GLASS)) return false;
+            }
+            return true;
+        }
         if (input.ingredientCount() != 2) return false;
         boolean hasArmor = false;
         boolean hasGlass = false;
@@ -29,7 +39,7 @@ public final class ToggleArmorAppearanceRecipe extends CustomRecipe {
             if (stack.isEmpty()) continue;
             if (acceptsArmor(stack) && !hasArmor) {
                 hasArmor = true;
-            } else if (stack.is(toggleCharms ? Items.GLASS_PANE : Items.GLASS) && !hasGlass) {
+            } else if (stack.is(target == Target.CHARMS ? Items.GLASS_PANE : Items.GLASS) && !hasGlass) {
                 hasGlass = true;
             } else {
                 return false;
@@ -45,7 +55,11 @@ public final class ToggleArmorAppearanceRecipe extends CustomRecipe {
                 .filter(this::acceptsArmor)
                 .findFirst().orElseThrow().copyWithCount(1);
         CustomData.update(DataComponents.CUSTOM_DATA, armor, tag -> {
-            String key = toggleCharms ? CharmorManager.CHARMS_HIDDEN_BOOL : CharmorManager.ARMOR_MINIFIED_BOOL;
+            String key = switch (target) {
+                case CHARMS -> CharmorManager.CHARMS_HIDDEN_BOOL;
+                case MINIFICATION -> CharmorManager.ARMOR_MINIFIED_BOOL;
+                case HIDING -> CharmorManager.ARMOR_HIDDEN_BOOL;
+            };
             boolean current = tag.getBoolean(key).orElse(false);
             tag.putBoolean(key, !current);
         });
@@ -53,13 +67,16 @@ public final class ToggleArmorAppearanceRecipe extends CustomRecipe {
     }
 
     private boolean acceptsArmor(ItemStack stack) {
-        return toggleCharms ? stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)
+        return target == Target.CHARMS ? stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)
                 : CharmorManager.canMinifyArmor(stack);
     }
 
     @Override
     public RecipeSerializer<? extends CustomRecipe> getSerializer() {
-        return toggleCharms ? MainModRecipes.TOGGLE_CHARM_VISIBILITY_SERIALIZER
-                : MainModRecipes.TOGGLE_ARMOR_MINIFICATION_SERIALIZER;
+        return switch (target) {
+            case CHARMS -> MainModRecipes.TOGGLE_CHARM_VISIBILITY_SERIALIZER;
+            case MINIFICATION -> MainModRecipes.TOGGLE_ARMOR_MINIFICATION_SERIALIZER;
+            case HIDING -> MainModRecipes.TOGGLE_ARMOR_HIDING_SERIALIZER;
+        };
     }
 }

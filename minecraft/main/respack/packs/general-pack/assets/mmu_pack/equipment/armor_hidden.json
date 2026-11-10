@@ -1,0 +1,6 @@
+{
+	"layers": {
+		"humanoid": [{ "texture": "mmu_pack:armor_hidden" }],
+		"humanoid_leggings": [{ "texture": "mmu_pack:armor_hidden" }]
+	}
+}

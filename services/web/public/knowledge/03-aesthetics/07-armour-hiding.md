@@ -1,7 +1,7 @@
 ====
 id: armour-hiding
 unlockOrder: 5
-chatMessage: You've unlocked knowledge on how to hide your charms and minimise your armour.
+chatMessage: You've unlocked knowledge on how to hide your charms, minimise your armour, or hide it entirely.
 sidebarTitle: Charm and Armour Hiding
 gameplayToggle: soaring
 tags:
@@ -15,7 +15,7 @@ tips:
 - When combining a map with any other block and an invisicarrot, any instances of that block on the map will be seethrough.
 ====
 
-# Charm Hiding and Armour Minimising
+# Charm hiding and armour appearance
 
 :::drop-indicator
 
@@ -43,3 +43,7 @@ The same can be done with glass blocks to minimise your armour, leaving behind j
 ![Minimising Armour](/assets/knowledge/aesthetics/armour-hiding/minimise-recipe.png)
 
 To have your armour visible again, combine it with a glass block again.
+
+## Armour hiding
+
+Put a piece of armour in the centre of a crafting table and surround it with eight tinted glass blocks to hide the armour while keeping its trim visible. Craft it the same way again to show the armour. Charms remain visible unless you hide them with a glass pane; minimising takes effect again when you show the armour.

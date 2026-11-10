@@ -28,6 +28,7 @@ public class CharmorManager
     public static final String ENDERITE_MARKER_BOOL = "is_enderite";
     public static final String CHARMS_HIDDEN_BOOL = "charms_hidden";
     public static final String ARMOR_MINIFIED_BOOL = "armor_minified";
+    public static final String ARMOR_HIDDEN_BOOL = "armor_hidden";
 
     public static int calcCharmSlotCount(ItemStack stack) {
         if (!stack.is(ModItemTagProvider.CHARM_COMBINABLE_ARMOR_ITEMS)) return 0;
@@ -95,7 +96,8 @@ public class CharmorManager
             }
         } else {
             tooltip.removeIf(line -> line.getString().equals("Armor: Full")
-                    || line.getString().equals("Armor: Minified"));
+                    || line.getString().equals("Armor: Minified")
+                    || line.getString().equals("Armor: Hidden"));
         }
 
         if (FeatureToggles.isEnabled(FeatureToggles.SOARING)) {
@@ -103,7 +105,8 @@ public class CharmorManager
                 tooltip.add(Component.literal("Charms: " + (charmsHidden(stack) ? "Hidden" : "Shown"))
                         .withStyle(style -> style.withItalic(false)));
             }
-            tooltip.add(Component.literal("Armor: " + (armorMinified(stack) ? "Minified" : "Full"))
+            tooltip.add(Component.literal("Armor: " + (armorHidden(stack) ? "Hidden"
+                    : armorMinified(stack) ? "Minified" : "Full"))
                     .withStyle(style -> style.withItalic(false)));
         }
 
@@ -121,10 +124,13 @@ public class CharmorManager
 
         String materialString = getArmorMaterialType(stack);
         boolean appearanceEnabled = FeatureToggles.isEnabled(FeatureToggles.SOARING);
+        boolean hidden = appearanceEnabled && armorHidden(stack);
         boolean minified = appearanceEnabled && armorMinified(stack);
 
         if (storedCharms.isEmpty() || (appearanceEnabled && charmsHidden(stack))) {
-            stack.set(DataComponents.EQUIPPABLE, minified && !materialString.isBlank()
+            stack.set(DataComponents.EQUIPPABLE, hidden
+                    ? EquippableCharmItemFeature.withAsset(itemDefaultEquippable, "armor_hidden")
+                    : minified && !materialString.isBlank()
                     ? EquippableCharmItemFeature.withAsset(itemDefaultEquippable, "armor_minified__" + materialString)
                     : isEnderite(stack)
                     ? EquippableCharmItemFeature.withAsset(itemDefaultEquippable, "enderite")
@@ -146,7 +152,7 @@ public class CharmorManager
         if (suffixIndex < 0) return;
 
         String withoutCharmSuffix = charmResourcePath.substring(0, suffixIndex);
-        String newResourcePath = withoutCharmSuffix + "__" + materialString
+        String newResourcePath = hidden ? charmResourcePath : withoutCharmSuffix + "__" + materialString
                 + (minified ? "__minified" : "");
 
         Equippable newEquippableSettings = EquippableCharmItemFeature.withAsset(
@@ -185,6 +191,10 @@ public class CharmorManager
     public static boolean armorMinified(ItemStack stack) {
         return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
                 .copyTag().getBoolean(ARMOR_MINIFIED_BOOL).orElse(false);
+    }
+    public static boolean armorHidden(ItemStack stack) {
+        return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
+                .copyTag().getBoolean(ARMOR_HIDDEN_BOOL).orElse(false);
     }
 
     public static boolean canMinifyArmor(ItemStack stack) {

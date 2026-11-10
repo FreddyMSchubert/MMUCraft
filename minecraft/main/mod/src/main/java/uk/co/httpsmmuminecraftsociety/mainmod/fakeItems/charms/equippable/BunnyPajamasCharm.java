@@ -21,7 +21,7 @@ import java.util.List;
 
 public class BunnyPajamasCharm implements Charm, BaseItemChangeCallbackCharm, EquippedTickCallbackCharm
 {
-    private static final int PER_TICK_CARROT_EAT_CHANCE = 43;
+    private static final int CARROT_ATTEMPT_INTERVAL_TICKS = 30 * 20;
     private static final int CARROT_NUTRITION_SHARE_LEVEL = 4;
 
     private static final double BASE_JUMP_POWER = LivingEntity.BASE_JUMP_POWER;
@@ -46,7 +46,7 @@ public class BunnyPajamasCharm implements Charm, BaseItemChangeCallbackCharm, Eq
     @Override
     public void equippedTick(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel)
     {
-        if (level.getRandom().nextInt(PER_TICK_CARROT_EAT_CHANCE) != 0) {
+        if (player.tickCount % CARROT_ATTEMPT_INTERVAL_TICKS != 0) {
             return;
         }
 
@@ -84,15 +84,15 @@ public class BunnyPajamasCharm implements Charm, BaseItemChangeCallbackCharm, Eq
                 0.9F + level.getRandom().nextFloat() * 0.2F
         );
 
+        int countBefore = foodStack.getCount();
         ItemStack result;
         if (charmLevel >= CARROT_NUTRITION_SHARE_LEVEL)
             result = foodStack.finishUsingItem(level, player);
         else
             result = foodStack.copyWithCount(foodStack.getCount() - 1);
 
-        if (result != foodStack) {
-            inventory.setItem(slot, result);
-        }
+        if (result.getCount() >= countBefore && result.is(foodStack.getItem())) result.shrink(1);
+        inventory.setItem(slot, result);
     }
 
     private static double getJumpApexForTotalJumpPower(double totalJumpPower)
@@ -140,7 +140,7 @@ public class BunnyPajamasCharm implements Charm, BaseItemChangeCallbackCharm, Eq
         return level + 1.05F;
     }
 
-    private static float getJumpStrengthAdditionPerLevel(int level)
+    public static float getJumpStrengthAdditionPerLevel(int level)
     {
         double targetApex = getIntendedMaxJumpHeightPerLevel(level);
 

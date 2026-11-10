@@ -1,6 +1,8 @@
 {
 	"packs": [
 		"packs/shields-accuracy-pack/",
+		"https://cdn.modrinth.com/data/6udpuGCH/versions/scd0ojNG/EvenBetterEnchants_v3_1.21.5%2B.zip",
+		"https://cdn.modrinth.com/data/XsLCz9bM/versions/IeqDeS2Z/Almost%20Vanilla%20Potions.zip",
 		"https://cdn.modrinth.com/data/tpehi7ww/versions/bipfLkEE/Dungeons%20and%20Taverns%20v6.0.1.zip",
 		"packs/general-pack/",
 		"packs/VanillaTweaks_r783113_MC26.3.x/"

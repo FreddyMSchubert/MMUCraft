@@ -381,7 +381,7 @@ def load_inputs(tmp: Path):
 			print(f"==> Downloading {entry}")
 			download_remote_pack(entry, zip_path)
 			with zipfile.ZipFile(zip_path) as z:
-				z.extractall(out_dir)
+				z.extractall(out_dir, members=(name for name in z.namelist() if "silk_touch" not in name.lower()))
 			inputs.append(out_dir)
 
 		else:

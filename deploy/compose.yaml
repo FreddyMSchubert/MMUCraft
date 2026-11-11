@@ -134,6 +134,9 @@ services:
                 clumps?
                 lazyai?
                 lmd?
+                universal-bone-meal?
+                appleskin?
+                armor-poser?
                 fabricproxy-lite
                 simple-voice-chat:beta
                 emotecraft:alpha

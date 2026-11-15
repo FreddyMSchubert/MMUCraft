@@ -3,7 +3,7 @@ id: food
 unlockOrder: 8
 chatMessage: You've unlocked knowledge of custom foods.
 sidebarTitle: Food
-gameplayToggle: beach party
+gameplayToggle: beach-party
 tags:
 - food
 - fishing
@@ -129,10 +129,28 @@ Magic powder can be bought in the shop and crafter together with certain foods t
 
 | Food | Dust Required | Effect |
 | --- | --- | --- |
+| Fish and Chips | 2 | Higher chance to catch uncaught fish |
 | Sushi | 3 | Higher chance to catch common fish |
 | Crab Claw | 4 | Higher chance to catch uncommon fish |
-| Tentacle | 5 | Higher chance to catch  fish |
-| Fish Stew | 6 | Higher chance to catch  fish |
-| Esquixada | 7 | Higher chance to catch  fish |
-| Big Seafood Salad | 8 | Higher chance to catch  fish |
-| Fish and Chips | 2 | Higher chance to catch  fish |
+| Tentacle | 5 | Higher chance to catch rare fish |
+| Fish Stew | 6 | Higher chance to catch epic fish |
+| Esquixada | 7 | Higher chance to catch legendary fish |
+| Big Seafood Salad | 8 | Higher chance to catch mythical fish |
+
+## Books
+
+| Food | Dust Required | Effect |
+| --- | --- | --- |
+| Buzzbloque | 1 | Higher chance to find joke books |
+| Tea | 2 | Higher chance to find knowledge books |
+| Cocktail | 4 | Higher chance to find fashion books |
+| Wine | 7 | Higher chance to find charm books |
+
+## Money
+
+| Food | Dust Required | Effect |
+| --- | --- | --- |
+| Milkshake | 2 | All shop items are 10% off |
+| Burger | 3 | All shop items are 20% off |
+| Saturn Burger | 4 | All shop items are 30% off |
+| Roasted Marshmallows | 5 | Advancements give the same amount of money as they would on a Sunday |

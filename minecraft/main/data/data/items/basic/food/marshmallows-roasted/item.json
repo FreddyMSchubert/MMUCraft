@@ -1,0 +1,27 @@
+{
+	"title": "Roasted Marshmallows",
+	"id": "food-marshmallows-roasted",
+	"modelType": "basic-3d",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"consumable": {
+		"isDrink": false,
+		"consumeSeconds": 1,
+		"canAlwaysEat": true,
+		"hungerBars": 3,
+		"saturationBars": 1,
+		"directHearts": 0,
+		"useRemainderItem": "",
+		"effects": [
+			{
+				"id": "minecraft:speed",
+				"durationTicks": 120,
+				"amplifier": 2,
+				"showIcon": false,
+				"showParticles": true,
+				"ambient": false
+			}
+		]
+	}
+}

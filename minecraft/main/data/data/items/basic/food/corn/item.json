@@ -1,0 +1,18 @@
+{
+	"title": "Corn",
+	"id": "corn",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 32,
+	"tooltips": [],
+	"consumable": {
+		"isDrink": false,
+		"consumeSeconds": 2,
+		"canAlwaysEat": false,
+		"hungerBars": 0.5,
+		"saturationBars": 0.4,
+		"directHearts": 0,
+		"useRemainderItem": "",
+		"effects": []
+	}
+}

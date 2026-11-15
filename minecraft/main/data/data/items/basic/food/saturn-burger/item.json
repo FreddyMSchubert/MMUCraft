@@ -1,0 +1,46 @@
+{
+	"title": "Saturn Burger",
+	"id": "cosmetic-saturn-burger",
+	"modelType": "basic-3d",
+	"rarity": "epic",
+	"maxStackSize": 1,
+	"tooltips": ["Authentic Saturnian cuisine."],
+	"equippableCosmetic": {},
+	"consumable": {
+		"isDrink": false,
+		"consumeSeconds": 3.2,
+		"canAlwaysEat": false,
+		"hungerBars": 17,
+		"saturationBars": 19,
+		"directHearts": 2,
+		"useRemainderItem": "",
+		"effects": [
+			{
+				"id": "minecraft:jump_boost",
+				"durationTicks": 120,
+				"amplifier": 2,
+				"showIcon": false,
+				"showParticles": true,
+				"ambient": false
+			}
+		]
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "saturn-burger",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "beach-party",
+				"pattern": ["TTT", "TBT", "TTT"],
+				"key": {
+					"N": "minecraft:ghast_tear",
+					"B": "mainmod:cosmetic-burger"
+				},
+				"result": {
+					"stack": "mainmod:cosmetic-saturn-burger",
+					"count": 1
+				}
+			}
+		]
+	}
+}

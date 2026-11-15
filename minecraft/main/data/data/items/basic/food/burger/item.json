@@ -1,0 +1,33 @@
+{
+	"title": "Burger",
+	"id": "cosmetic-burger",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": ["Authentic Usadian cuisine."],
+	"equippableCosmetic": {},
+	"consumable": {
+		"isDrink": false,
+		"consumeSeconds": 3.2,
+		"canAlwaysEat": false,
+		"hungerBars": 15,
+		"saturationBars": 14,
+		"directHearts": 2,
+		"useRemainderItem": "",
+		"effects": []
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "burger",
+				"type": "mainmod:fake_crafting_shapeless",
+				"gameplayToggle": "beach-party",
+				"ingredients": ["minecraft:bread", "minecraft:cooked_beef", "mainmod:tomato"],
+				"result": {
+					"stack": "mainmod:cosmetic-burger",
+					"count": 1
+				}
+			}
+		]
+	}
+}

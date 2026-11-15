@@ -1,0 +1,49 @@
+{
+	"title": "Fish and Chips",
+	"id": "food-fish-and-chips",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": ["Can't get more British than this."],
+	"consumable": {
+		"isDrink": true,
+		"consumeSeconds": 3.2,
+		"canAlwaysEat": false,
+		"hungerBars": 10,
+		"saturationBars": 12,
+		"directHearts": 0,
+		"useRemainderItem": "",
+		"effects": [
+		]
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "fish-and-chips-white",
+				"gameplayToggle": "beach-party",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"mainmod:cooked-white-fish",
+					"minecraft:baked_potato"
+				],
+				"result": {
+					"stack": "mainmod:food-fish-and-chips",
+					"count": 1
+				}
+			},
+			{
+				"id": "fish-and-chips-cod",
+				"gameplayToggle": "beach-party",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"minecraft:cooked_cod",
+					"minecraft:baked_potato"
+				],
+				"result": {
+					"stack": "mainmod:food-fish-and-chips",
+					"count": 1
+				}
+			}
+		]
+	}
+}

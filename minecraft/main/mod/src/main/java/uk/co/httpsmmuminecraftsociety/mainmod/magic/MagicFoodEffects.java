@@ -16,13 +16,15 @@ import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingCatches;
+import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishRarity;
+import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +33,6 @@ import java.util.UUID;
 
 public final class MagicFoodEffects {
     private static final ZoneId LONDON = ZoneId.of("Europe/London");
-    private static final DateTimeFormatter END_TIME = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm z").withZone(LONDON);
     private static final String ACTIVATED_TAG = "mainmod_magic_food";
 
     public enum Effect {
@@ -88,8 +89,7 @@ public final class MagicFoodEffects {
                     player.sendSystemMessage(Component.literal(running.isEmpty()
                             ? "No magic food effects are active." : "Active effects:"));
                     for (Running effect : running) {
-                        player.sendSystemMessage(Component.literal("- " + effect.description() + " (until "
-                                + END_TIME.format(Instant.ofEpochMilli(effect.expiresAt())) + ")"));
+                        player.sendSystemMessage(Component.literal("- " + effect.description() + " (until midnight)"));
                     }
                     return 1;
                 })));
@@ -116,6 +116,10 @@ public final class MagicFoodEffects {
         if (food == null || food.magicEffect() == null) return;
         Spec spec = food.magicEffect();
         long now = System.currentTimeMillis();
+        MasteryAdvancements.grant(player, "magic/eat");
+        if (food.id().equals("food-marshmallows-roasted")
+                && MasteryAdvancements.isCommitteeKillSunday(now) && AdvancementMoney.isSundayRewardDay())
+            MasteryAdvancements.grant(player, "magic/sunday_marshmallows");
         long expiresAt = expiresAt(now);
         Data data = data(player);
         Effect current = data.effect(player.getUUID(), spec.effect().category, now);
@@ -125,8 +129,7 @@ public final class MagicFoodEffects {
         }
         data.activate(player.getUUID(), spec.effect(), expiresAt);
         if (spec.effect() == Effect.FISH_UNCAUGHT) FishingCatches.refreshCaughtFish(player);
-        player.sendSystemMessage(Component.literal("Activated " + spec.description() + " until "
-                + END_TIME.format(Instant.ofEpochMilli(expiresAt)) + "."));
+        player.sendSystemMessage(Component.literal("Activated " + spec.description() + " until midnight."));
     }
 
     static boolean canReplace(Effect current, Effect incoming) {
@@ -145,6 +148,10 @@ public final class MagicFoodEffects {
 
     public static int fishRarityBoostMask(ServerPlayer player) {
         return data(player).fishRarityBoostMask(player.getUUID(), System.currentTimeMillis());
+    }
+
+    public static boolean wantedFish(FishRarity rarity, int boostMask, boolean uncaughtBoost, boolean firstCatch) {
+        return (boostMask & (1 << rarity.ordinal())) != 0 || (uncaughtBoost && firstCatch);
     }
 
     public static int shopDiscount(ServerPlayer player) {

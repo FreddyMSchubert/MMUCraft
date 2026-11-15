@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
@@ -94,12 +95,29 @@ public final class UnlockBookLoot {
         if (MagicFoodEffects.has(player, MagicFoodEffects.Effect.CHARM_BOOKS)) charmChance = Math.min(1f, charmChance * 2f);
         if (MagicFoodEffects.has(player, MagicFoodEffects.Effect.KNOWLEDGE_BOOKS)) knowledgeChance = Math.min(1f, knowledgeChance * 3f);
 
+        int previousCount = itemStacks.size();
         if (availability.hasCharmsToUnlock() && Math.random() < charmChance)
             addCharmIfAvailable(player, itemStacks);
         if (availability.hasCosmeticsToUnlock() && Math.random() < cosmeticsChance)
             addCosmeticIfAvailable(player, itemStacks);
         if (availability.hasKnowledgeToUnlock() && Math.random() < knowledgeChance)
             addKnowledgeIfAvailable(player, itemStacks);
+        for (int index = previousCount; index < itemStacks.size(); index++)
+            recordMagicBookFind(player, itemStacks.get(index));
+    }
+
+    public static void recordMagicBookFind(ServerPlayer player, ItemStack stack) {
+        FakeItem book = FakeItems.getFakeItemFromStack(stack);
+        if (book == null) return;
+        MagicFoodEffects.Effect effect = switch (book.id()) {
+            case CHARM_BOOK_ID -> MagicFoodEffects.Effect.CHARM_BOOKS;
+            case "charm-fashion-book" -> MagicFoodEffects.Effect.FASHION_BOOKS;
+            case "charm-knowledge-book" -> MagicFoodEffects.Effect.KNOWLEDGE_BOOKS;
+            case "charm-joke-book" -> MagicFoodEffects.Effect.JOKE_BOOKS;
+            default -> null;
+        };
+        if (effect != null && MagicFoodEffects.has(player, effect))
+            MasteryAdvancements.grant(player, "magic/book");
     }
 
     public static void updateAvailability(ServerPlayer player, UnlockNextKnowledgeResponse response) {

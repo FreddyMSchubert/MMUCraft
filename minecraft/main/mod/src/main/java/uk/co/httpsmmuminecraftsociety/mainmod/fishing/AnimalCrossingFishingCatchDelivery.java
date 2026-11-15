@@ -9,6 +9,7 @@ import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
+import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.UnlockBookLoot;
 import java.util.List;
 
 public final class AnimalCrossingFishingCatchDelivery {
@@ -44,6 +45,7 @@ public final class AnimalCrossingFishingCatchDelivery {
             itemEntity.setInvulnerableTime(100);
         }
         level.addFreshEntity(itemEntity);
+        UnlockBookLoot.recordMagicBookFind(player, result);
         level.addFreshEntity(new ExperienceOrb(
                 level,
                 player.getX(),

@@ -222,6 +222,8 @@ export class ShopPurchasesService {
 				minecraft_username: user.minecraftUsername,
 				item_id: item.deliveryItemId,
 				price_dabloons: price,
+				magic_discount_applied:
+					price < discountedShopPrice(item.priceDabloons, existingDiscount),
 				delivery_kind: item.deliveryKind,
 				unix_ms: Date.now(),
 				display_name: item.title,

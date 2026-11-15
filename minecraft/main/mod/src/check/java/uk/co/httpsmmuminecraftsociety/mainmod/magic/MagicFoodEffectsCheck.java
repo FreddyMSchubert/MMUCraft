@@ -1,6 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.magic;
 
 import java.time.Instant;
+import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishRarity;
 
 public final class MagicFoodEffectsCheck {
     private MagicFoodEffectsCheck() {}
@@ -18,5 +19,10 @@ public final class MagicFoodEffectsCheck {
         long winter = Instant.parse("2026-11-15T12:00:00Z").toEpochMilli();
         assert MagicFoodEffects.expiresAt(summer) == Instant.parse("2026-06-01T23:00:00Z").toEpochMilli();
         assert MagicFoodEffects.expiresAt(winter) == Instant.parse("2026-11-16T00:00:00Z").toEpochMilli();
+        int mythicalBoost = 1 << FishRarity.MYTHICAL.ordinal();
+        assert MagicFoodEffects.wantedFish(FishRarity.MYTHICAL, mythicalBoost, false, false);
+        assert !MagicFoodEffects.wantedFish(FishRarity.COMMON, mythicalBoost, false, false);
+        assert MagicFoodEffects.wantedFish(FishRarity.COMMON, 0, true, true);
+        assert !MagicFoodEffects.wantedFish(FishRarity.COMMON, 0, true, false);
     }
 }

@@ -406,6 +406,8 @@ public final class FishingCatches {
             case "fish-spook_fish" -> MasteryAdvancements.grant(player, "fishing/spook_fish");
             default -> { }
         }
+        int magicRarityBoosts = MagicFoodEffects.fishRarityBoostMask(player);
+        boolean magicUncaughtBoost = MagicFoodEffects.has(player, MagicFoodEffects.Effect.FISH_UNCAUGHT);
         GameplayGrpcService.recordFishCatch(
                 player,
                 fishId,
@@ -417,6 +419,9 @@ public final class FishingCatches {
                 UUID playerId = player.getUUID();
                 if (response.getRecorded() && (CAUGHT_FISH.containsKey(playerId) || CATCH_FETCHES.contains(playerId)))
                     CAUGHT_FISH.computeIfAbsent(playerId, ignored -> new HashSet<>()).add(fishId);
+                if (response.getRecorded() && MagicFoodEffects.wantedFish(
+                        rarity, magicRarityBoosts, magicUncaughtBoost, response.getFirstCatch()))
+                    MasteryAdvancements.grant(player, "magic/fish");
                 response.getMasteryAdvancementPathsList().forEach(path -> MasteryAdvancements.grant(player, path));
                 showRecordMessages(player, stack, rarity, lengthCm, response);
             });

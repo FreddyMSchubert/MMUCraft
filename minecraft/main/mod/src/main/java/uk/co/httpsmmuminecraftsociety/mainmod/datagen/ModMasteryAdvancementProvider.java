@@ -269,6 +269,11 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
         add("food/sushi", "Freshly Rolled", "Eat Sushi (craft it with any fish and kelp).", "fake:sushi", "fishing/first_catch", "task");
         add("food/beer", "Cheers!", "Drink beer.", "fake:beer", "root", "task");
         add("food/beer_again", "Hair of the Dog", "Drink beer while already under its effects.", "fake:beer", "food/beer", "goal");
+        add("magic/eat", "A Dusting of Magic", "Eat food enhanced with Magic Dust.", "fake:magic-dust", "root", "task");
+        add("magic/shop", "A Magical Bargain", "Buy a shop item for less because of a magic food effect.", "fake:cosmetic-burger", "magic/eat", "goal");
+        add("magic/book", "More Where That Came From", "Find an unlock book while its matching magic food effect is active.", "fake:charm-knowledge-book", "magic/eat", "goal");
+        add("magic/fish", "The Fish You Wished For", "Catch a fish of a magic-boosted rarity, or a new species with the uncaught-fish effect.", "fake:food-fish-and-chips", "magic/eat", "goal");
+        add("magic/sunday_marshmallows", "Pointless Magic", "Eat magic roasted marshmallows on a Sunday (British time), when their bonus already applies.", "fake:food-marshmallows-roasted:glint", "magic/eat", "goal");
         chain("charms/get", new int[]{1, 3, 5, 10, 15, 20}, "Charm Collector", "Hold %s distinct charms at once.", "fake:charm-heart", "root");
         chain("charms/upgrade", new int[]{3, 5, 10, 15, 20}, "Charm Tinkerer", "Upgrade charms %s times.", "fake:charm-heart", "charms/upgrade_once");
         int[] cosmeticMilestones = {1, 5, 10, 20, 30, 40, 50, 75, 100};

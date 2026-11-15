@@ -108,6 +108,7 @@ final class GameplayShopOperations {
         if ("Cosmetic".equalsIgnoreCase(request.getItemType())) {
             MasteryAdvancements.recordCosmeticPurchase(player, request.getRarity(), request.getItemId());
         }
+        if (request.getMagicDiscountApplied()) MasteryAdvancements.grant(player, "magic/shop");
         return PurchaseShopItemResponse.newBuilder()
                 .setPurchased(true)
                 .setOnline(true)

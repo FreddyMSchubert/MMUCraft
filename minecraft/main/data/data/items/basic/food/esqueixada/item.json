@@ -1,0 +1,45 @@
+{
+	"title": "Esqueixada",
+	"id": "food-esqueixada",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": ["A strangely wet salad."],
+	"consumable": {
+		"isDrink": true,
+		"consumeSeconds": 1.6,
+		"canAlwaysEat": false,
+		"hungerBars": 10,
+		"saturationBars": 12,
+		"directHearts": 0,
+		"useRemainderItem": "minecraft:bowl",
+		"effects": [
+			{
+				"id": "minecraft:dolphins_grace",
+				"durationTicks": 120,
+				"amplifier": 1,
+				"showIcon": false,
+				"showParticles": true,
+				"ambient": false
+			}
+		]
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "esqueixada",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"minecraft:bowl",
+					"mainmod:cooked_cod",
+					"mainmod:tomato",
+					"#minecraft:egg"
+				],
+				"result": {
+					"stack": "mainmod:food-esqueixada",
+					"count": 1
+				}
+			}
+		]
+	}
+}

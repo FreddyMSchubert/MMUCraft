@@ -1,0 +1,123 @@
+{
+	"title": "The Big Seafood Salad",
+	"id": "food-fish-salad",
+	"modelType": "basic-3d",
+	"rarity": "rare",
+	"maxStackSize": 1,
+	"tooltips": ["I'm on a seafood salad diet, I seafood salad and I eat it lol."],
+	"consumable": {
+		"isDrink": true,
+		"consumeSeconds": 1.6,
+		"canAlwaysEat": false,
+		"hungerBars": 10,
+		"saturationBars": 12,
+		"directHearts": 0,
+		"useRemainderItem": "minecraft:bowl",
+		"effects": [
+			{
+				"id": "minecraft:dolphins_grace",
+				"durationTicks": 300,
+				"amplifier": 1,
+				"showIcon": false,
+				"showParticles": true,
+				"ambient": false
+			},
+			{
+				"id": "minecraft:luck",
+				"durationTicks": 60,
+				"amplifier": 1,
+				"showIcon": false,
+				"showParticles": true,
+				"ambient": false
+			},
+			{
+				"id": "minecraft:conduit_power",
+				"durationTicks": 60,
+				"amplifier": 1,
+				"showIcon": false,
+				"showParticles": true,
+				"ambient": false
+			}
+		]
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "fish-salad-white-red",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"mainmod:cooked-white-fish",
+					"mainmod:cooked-red-fish",
+					"mainmod:tentacle",
+					"mainmod:crab_claw",
+					"minecraft:dried_kelp",
+					"#minecraft:eggs",
+					"minecraft:honey_bottle",
+					"mainmod:tomato",
+					"minecraft:bowl"
+				],
+				"result": {
+					"stack": "mainmod:food-fish-salad",
+					"count": 1
+				}
+			},
+			{
+				"id": "fish-salad-white-salmon",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"mainmod:cooked-white-fish",
+					"minecraft:cooked_salmon",
+					"mainmod:tentacle",
+					"mainmod:crab_claw",
+					"minecraft:dried_kelp",
+					"#minecraft:eggs",
+					"minecraft:honey_bottle",
+					"mainmod:tomato",
+					"minecraft:bowl"
+				],
+				"result": {
+					"stack": "mainmod:food-fish-salad",
+					"count": 1
+				}
+			},
+			{
+				"id": "fish-salad-cod-red",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"minecraft:cooked_cod",
+					"mainmod:cooked-red-fish",
+					"mainmod:tentacle",
+					"mainmod:crab_claw",
+					"minecraft:dried_kelp",
+					"#minecraft:eggs",
+					"minecraft:honey_bottle",
+					"mainmod:tomato",
+					"minecraft:bowl"
+				],
+				"result": {
+					"stack": "mainmod:food-fish-salad",
+					"count": 1
+				}
+			},
+			{
+				"id": "fish-salad-cod-salmon",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"minecraft:cooked_cod",
+					"minecraft:cooked_salmon",
+					"mainmod:tentacle",
+					"mainmod:crab_claw",
+					"minecraft:dried_kelp",
+					"#minecraft:eggs",
+					"minecraft:honey_bottle",
+					"mainmod:tomato",
+					"minecraft:bowl"
+				],
+				"result": {
+					"stack": "mainmod:food-fish-salad",
+					"count": 1
+				}
+			}
+		]
+	}
+}

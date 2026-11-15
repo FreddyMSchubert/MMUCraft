@@ -124,3 +124,15 @@ Grapes · [Mundane Potion](https://minecraft.wiki/w/Mundane_Potion)  → Wine
 # Magic Powder
 
 Magic powder can be bought in the shop and crafter together with certain foods to recieve special effects, from a greater chance to find certain types of fish, to getting discounts in the shop.
+
+## Fishing Effects
+
+| Food | Dust Required | Effect |
+| --- | --- | --- |
+| Sushi | 3 | Higher chance to catch common fish |
+| Crab Claw | 4 | Higher chance to catch uncommon fish |
+| Tentacle | 5 | Higher chance to catch  fish |
+| Fish Stew | 6 | Higher chance to catch  fish |
+| Esquixada | 7 | Higher chance to catch  fish |
+| Big Seafood Salad | 8 | Higher chance to catch  fish |
+| Fish and Chips | 2 | Higher chance to catch  fish |

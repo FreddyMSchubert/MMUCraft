@@ -2,7 +2,7 @@
 	"title": "Grapes",
 	"id": "grapes",
 	"modelType": "basic",
-	"rarity": "rare",
+	"rarity": "common",
 	"maxStackSize": 32,
 	"tooltips": [],
 	"consumable": {

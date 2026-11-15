@@ -1,0 +1,8 @@
+{
+	"title": "Magic Dust",
+	"id": "magic-dust",
+	"modelType": "basic",
+	"rarity": "rare",
+	"maxStackSize": 32,
+	"tooltips": ["The secret ingredient."]
+}

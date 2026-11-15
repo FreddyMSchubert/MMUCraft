@@ -7,11 +7,11 @@
 	"tooltips": ["Can't get more British than this."],
 	"magicEffect": {
 		"id": "fish_uncaught",
-		"dust": 2,
+		"dust": 6,
 		"description": "higher chance of previously uncaught fish"
 	},
 	"consumable": {
-		"isDrink": true,
+		"isDrink": false,
 		"consumeSeconds": 3.2,
 		"canAlwaysEat": false,
 		"hungerBars": 10,

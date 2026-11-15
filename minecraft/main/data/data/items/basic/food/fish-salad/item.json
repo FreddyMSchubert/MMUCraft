@@ -5,6 +5,13 @@
 	"rarity": "rare",
 	"maxStackSize": 1,
 	"tooltips": ["I'm on a seafood salad diet, I seafood salad and I eat it lol."],
+	"magicEffect": { "id": "fish_mythical", "dust": 8, "description": "higher mythical fish chance" },
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"lightLevel": 0
+	},
 	"consumable": {
 		"isDrink": true,
 		"consumeSeconds": 1.6,

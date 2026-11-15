@@ -1,11 +1,11 @@
 {
 	"title": "Saturn Burger",
 	"id": "cosmetic-saturn-burger",
-	"modelType": "basic-3d",
+	"modelType": "cosmetic",
 	"rarity": "epic",
 	"maxStackSize": 1,
 	"tooltips": ["Authentic Saturnian cuisine."],
-	"magicEffect": { "id": "shop_30", "dust": 3, "description": "30% off shop purchases" },
+	"magicEffect": { "id": "shop_30", "dust": 4, "description": "30% off shop purchases" },
 	"equippableCosmetic": {},
 	"consumable": {
 		"isDrink": false,
@@ -25,6 +25,12 @@
 				"ambient": false
 			}
 		]
+	},
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"lightLevel": 0
 	},
 	"craftable": {
 		"recipes": [

@@ -8,7 +8,7 @@
 	"magicEffect": {
 		"id": "joke_books",
 		"dust": 1,
-		"description": "higher joke book chance and shorter cooldown"
+		"description": "higher joke book chance"
 	},
 	"decoBlock": {
 		"ground": true,

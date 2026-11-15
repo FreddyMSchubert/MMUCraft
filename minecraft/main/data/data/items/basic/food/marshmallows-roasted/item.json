@@ -7,7 +7,7 @@
 	"tooltips": [],
 	"magicEffect": {
 		"id": "sunday_money",
-		"dust": 2,
+		"dust": 5,
 		"description": "Sunday money for daily and advancement rewards"
 	},
 	"consumable": {

@@ -5,7 +5,7 @@
 	"rarity": "rare",
 	"maxStackSize": 32,
 	"tooltips": ["Fish rolled with kelp"],
-	"magicEffect": { "id": "fish_common", "dust": 1, "description": "higher common fish chance" },
+	"magicEffect": { "id": "fish_common", "dust": 3, "description": "higher common fish chance" },
 	"consumable": {
 		"isDrink": false,
 		"consumeSeconds": 1.6,

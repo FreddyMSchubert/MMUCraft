@@ -5,7 +5,7 @@
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": ["Perfect for lovers of all things fish."],
-	"magicEffect": { "id": "fish_rare", "dust": 2, "description": "higher rare fish chance" },
+	"magicEffect": { "id": "fish_epic", "dust": 6, "description": "higher epic fish chance" },
 	"consumable": {
 		"isDrink": true,
 		"consumeSeconds": 1.6,
@@ -24,6 +24,12 @@
 				"ambient": false
 			}
 		]
+	},
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"lightLevel": 0
 	},
 	"craftable": {
 		"recipes": [

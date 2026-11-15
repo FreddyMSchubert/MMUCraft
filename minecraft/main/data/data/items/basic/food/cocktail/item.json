@@ -7,8 +7,8 @@
 	"tooltips": [],
 	"magicEffect": {
 		"id": "fashion_books",
-		"dust": 2,
-		"description": "higher fashion book chance and shorter cooldown"
+		"dust": 4,
+		"description": "higher fashion book chance"
 	},
 	"decoBlock": {
 		"ground": true,

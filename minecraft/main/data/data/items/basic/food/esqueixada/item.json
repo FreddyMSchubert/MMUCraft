@@ -38,9 +38,9 @@
 				"type": "mainmod:fake_crafting_shapeless",
 				"ingredients": [
 					"minecraft:bowl",
-					"mainmod:cooked_cod",
+					"minecraft:cooked_cod",
 					"mainmod:tomato",
-					"#minecraft:egg"
+					"#minecraft:eggs"
 				],
 				"result": {
 					"stack": "mainmod:food-esqueixada",

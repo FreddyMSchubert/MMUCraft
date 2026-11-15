@@ -20,6 +20,12 @@
 		"useRemainderItem": "",
 		"effects": []
 	},
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"lightLevel": 0
+	},
 	"craftable": {
 		"recipes": [
 			{

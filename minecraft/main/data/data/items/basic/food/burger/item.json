@@ -1,7 +1,7 @@
 {
 	"title": "Burger",
 	"id": "cosmetic-burger",
-	"modelType": "basic-3d",
+	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": ["Authentic Usadian cuisine."],
@@ -16,6 +16,12 @@
 		"directHearts": 2,
 		"useRemainderItem": "",
 		"effects": []
+	},
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"lightLevel": 0
 	},
 	"craftable": {
 		"recipes": [

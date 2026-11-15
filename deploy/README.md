@@ -4,11 +4,11 @@ For a new server, follow the [complete setup and cutover guide](SETUP.md).
 
 The GitHub `deploy` workflow copies this directory, the root `.env.example`, and the monitoring configuration to the selected server. It then runs `deploy.sh` with the `dev` or `production` target. Runtime state stays under `data/`, which is not present in the deployment archive, and Docker volumes are never pruned.
 
-Development builds publish both `dev` and commit-SHA image tags. Deploying `dev` selects the latest published build and uses its SHA-tagged images and matching deployment files; entering a SHA selects an earlier build. The workflow checks that all required images exist before it changes the server. The normal image set contains `api`, `web`, `mc`, `velocity`, `waiting-room`, and `backup`. It does not publish or deploy `event` or `event-controller`.
+Development builds on `main` publish both `dev` and commit-SHA image tags; pushes to other branches publish SHA tags only. Deploying `dev` selects the latest published build and uses its SHA-tagged images and matching deployment files; entering a SHA selects an earlier build. The workflow checks that all required images exist before it changes the server. The normal image set contains `api`, `web`, `mc`, `velocity`, `waiting-room`, and `backup`. It does not publish or deploy `event` or `event-controller`.
 
 ## GitHub workflow inputs
 
-The `checks-tests-images` workflow runs when a release is published or when you start it manually. Its run name shows the requested image tag and source ref. Open the run summary to see the resolved commit and the tags that will be published after all checks pass. A failed run publishes no complete image set.
+The `checks-tests-images` workflow runs on pushes to every branch, when a release is published, or when you start it manually. Push builds publish commit-SHA images. Push builds on `main` also update the `dev` image tags and deploy that commit to dev after success, with no advance warning. Its run name shows the requested image tag and source ref. Open the run summary to see the resolved commit and the tags that will be published after all checks pass. A failed run publishes no complete image set.
 
 | Manual build input | Default | Meaning |
 | --- | --- | --- |

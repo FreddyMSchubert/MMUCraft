@@ -1,8 +1,10 @@
 name: checks-tests-images
 run-name: >-
-    Build ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.release_tag || 'dev + SHA' }} from ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.source_ref || 'main' }}
+    Build ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.release_tag || github.event_name == 'push' && github.ref != 'refs/heads/main' && 'SHA' || 'dev + SHA' }} from ${{ github.event_name == 'release' && github.event.release.tag_name || github.event_name == 'push' && github.sha || inputs.source_ref || 'main' }}
 
 on:
+    push:
+        branches: ['**']
     workflow_dispatch:
         inputs:
             release_tag:
@@ -54,7 +56,7 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v6
               with:
-                  ref: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.source_ref || 'main' }}
+                  ref: ${{ github.event_name == 'release' && github.event.release.tag_name || github.event_name == 'push' && github.sha || inputs.source_ref || 'main' }}
                   persist-credentials: false
 
             - name: Resolve source revision
@@ -65,7 +67,7 @@ jobs:
               shell: bash
               env:
                   RELEASE_TAG: ${{ steps.manual_release.outputs.tag || github.event.release.tag_name }}
-                  SOURCE_REF: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.source_ref || 'main' }}
+                  SOURCE_REF: ${{ github.event_name == 'release' && github.event.release.tag_name || github.event_name == 'push' && github.sha || inputs.source_ref || 'main' }}
                   SOURCE_SHA: ${{ steps.source.outputs.sha }}
               run: |
                   if [[ -n "$RELEASE_TAG" ]]; then
@@ -160,13 +162,11 @@ jobs:
                   done
 
             - name: Resolve private assets revision
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               id: assets
               shell: bash
               run: echo "ref=$(git ls-tree HEAD assets | awk '{print $3}')" >> "$GITHUB_OUTPUT"
 
             - name: Checkout private assets at the pinned revision
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               uses: actions/checkout@v6
               with:
                   repository: ${{ format('{0}_assets', github.repository) }}
@@ -176,22 +176,18 @@ jobs:
                   persist-credentials: false
 
             - name: Checkout public resource-pack merger
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               run: git submodule update --init --depth 1 minecraft/main/respack/ResourcePackMerger
 
             - name: Set up Java
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               uses: actions/setup-java@v5
               with:
                   distribution: microsoft
                   java-version: '25'
 
             - name: Build resource pack
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               run: python3 minecraft/main/respack/build-main-pack.py
 
             - name: Resolve image names and tag
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               id: image
               shell: bash
               env:
@@ -213,11 +209,9 @@ jobs:
                   echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
             - name: Set up Docker Buildx
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               uses: docker/setup-buildx-action@v4
 
             - name: Log in to GHCR
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               uses: docker/login-action@v4
               with:
                   registry: ghcr.io
@@ -295,18 +289,15 @@ jobs:
                   retention-days: 7
 
             - name: Reclaim test image and build cache space
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               run: |
                   docker image prune --all --force
                   docker buildx prune --all --force
                   df -h .
 
             - name: Set up Gradle
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               uses: gradle/actions/setup-gradle@v6
 
             - name: Build Minecraft
-              if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' }}
               working-directory: minecraft/main/mod
               run: |
                   python3 ../stage_item_data.py --root ..
@@ -405,6 +396,7 @@ jobs:
                   IMAGE_PREFIX: ${{ steps.image.outputs.prefix }}
                   IMAGE_TAG: ${{ steps.image.outputs.tag }}
                   SOURCE_SHA: ${{ steps.source.outputs.sha }}
+                  PUBLISH_DEV_ALIAS: ${{ github.event_name != 'push' || github.ref == 'refs/heads/main' }}
                   API_IMAGE: ${{ steps.front_images.outputs.api_image }}
                   WEB_IMAGE: ${{ steps.front_images.outputs.web_image }}
                   MC_IMAGE: ${{ steps.back_images.outputs.mc_image }}
@@ -426,7 +418,7 @@ jobs:
                         "${!source_variable}"
                     fi
                   done
-                  if [[ "$IMAGE_TAG" == dev ]]; then
+                  if [[ "$IMAGE_TAG" == dev && "$PUBLISH_DEV_ALIAS" == true ]]; then
                     # Publish the API alias last. Its revision annotation points to a complete SHA-tagged set.
                     for service in web mc velocity waiting-room backup api; do
                       key=${service^^}
@@ -444,8 +436,10 @@ jobs:
                       fi
                     done
                   fi
-                  if [[ "$IMAGE_TAG" == dev ]]; then
+                  if [[ "$IMAGE_TAG" == dev && "$PUBLISH_DEV_ALIAS" == true ]]; then
                     published_tags="dev and ${SOURCE_SHA}"
+                  elif [[ "$IMAGE_TAG" == dev ]]; then
+                    published_tags="$SOURCE_SHA"
                   else
                     published_tags="$IMAGE_TAG"
                   fi

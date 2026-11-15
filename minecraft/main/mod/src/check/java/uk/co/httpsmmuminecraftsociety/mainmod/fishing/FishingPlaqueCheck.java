@@ -41,7 +41,7 @@ public final class FishingPlaqueCheck {
 
         FakeItem plaqueItem = new FakeItem("Oak Fishing Plaque", "deco-fishing-plaque-oak",
                 net.minecraft.world.item.Rarity.COMMON, "common", 64, false, false, "",
-                List.of(), Items.HEART_OF_THE_SEA, List.of());
+                List.of(), Items.HEART_OF_THE_SEA, List.of(), null);
         FakeItems.ID_MAP = Map.of(plaqueItem.id(), plaqueItem);
         ItemStack plaque = plaqueItem.createItemStack();
         ItemStack fish = new ItemStack(Items.COD);

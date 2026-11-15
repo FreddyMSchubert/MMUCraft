@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public final class PlayerCooldown {
     private final long durationNanos;
-    private final Map<UUID, Long> readyAtNanos = new HashMap<>();
+    private final Map<UUID, Long> lastStartNanos = new HashMap<>();
 
     public PlayerCooldown(Duration duration) {
         durationNanos = duration.toNanos();
@@ -15,17 +15,25 @@ public final class PlayerCooldown {
     }
 
     public synchronized boolean isReady(UUID playerId) {
-        return System.nanoTime() >= readyAtNanos.getOrDefault(playerId, 0L);
+        return isReady(playerId, Duration.ofNanos(durationNanos));
+    }
+
+    public synchronized boolean isReady(UUID playerId, Duration duration) {
+        Long last = lastStartNanos.get(playerId);
+        return last == null || System.nanoTime() - last >= duration.toNanos();
     }
 
     public synchronized boolean tryStart(UUID playerId) {
-        long now = System.nanoTime();
-        if (now < readyAtNanos.getOrDefault(playerId, 0L)) return false;
-        readyAtNanos.put(playerId, now + durationNanos);
+        return tryStart(playerId, Duration.ofNanos(durationNanos));
+    }
+
+    public synchronized boolean tryStart(UUID playerId, Duration duration) {
+        if (!isReady(playerId, duration)) return false;
+        lastStartNanos.put(playerId, System.nanoTime());
         return true;
     }
 
     public synchronized void restart(UUID playerId) {
-        readyAtNanos.put(playerId, System.nanoTime() + durationNanos);
+        lastStartNanos.put(playerId, System.nanoTime());
     }
 }

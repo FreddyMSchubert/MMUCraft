@@ -4,5 +4,11 @@
 	"modelType": "basic",
 	"rarity": "rare",
 	"maxStackSize": 32,
-	"tooltips": ["The secret ingredient."]
+	"tooltips": ["The secret ingredient."],
+	"shopPurchasable": {
+		"membersOnly": false,
+		"priceDabloons": 10,
+		"description": "Combine with food to activate its magic effect. Up to 3 per day.",
+		"unlockWeight": 100
+	}
 }

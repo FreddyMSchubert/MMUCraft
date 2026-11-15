@@ -225,6 +225,13 @@ final class GameplayEventsClient {
         return call(client -> client.recordFishCatch(request));
     }
 
+
+    CompletableFuture<GetCaughtFishIdsResponse> getCaughtFishIds(ServerPlayer player) {
+        GetCaughtFishIdsRequest request = GetCaughtFishIdsRequest.newBuilder()
+                .setMinecraftUuid(player.getUUID().toString()).build();
+        return call(client -> client.getCaughtFishIds(request));
+    }
+
     CompletableFuture<UpdateDailyTaskResponse> updateDailyTask(
             int userId,
             String periodKey,

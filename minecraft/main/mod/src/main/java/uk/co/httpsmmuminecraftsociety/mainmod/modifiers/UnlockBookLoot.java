@@ -16,6 +16,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GetUnlockAvailabilityResponse;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.UnlockNextKnowledgeResponse;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.PlayerCooldown;
+import uk.co.httpsmmuminecraftsociety.mainmod.magic.MagicFoodEffects;
 
 import java.time.Duration;
 import java.util.List;
@@ -40,6 +41,7 @@ public final class UnlockBookLoot {
     private static final PlayerCooldown CHARM_DROP_COOLDOWN = new PlayerCooldown(Duration.ofHours(1));
     private static final PlayerCooldown COSMETIC_DROP_COOLDOWN = new PlayerCooldown(Duration.ofMinutes(30));
     private static final PlayerCooldown KNOWLEDGE_DROP_COOLDOWN = new PlayerCooldown(Duration.ofMinutes(30));
+    private static final PlayerCooldown JOKE_DROP_COOLDOWN = new PlayerCooldown(Duration.ofMinutes(30));
 
     private UnlockBookLoot() {
     }
@@ -88,6 +90,10 @@ public final class UnlockBookLoot {
                 charmChance = 0.002f;
         }
 
+        if (MagicFoodEffects.has(player, MagicFoodEffects.Effect.FASHION_BOOKS)) cosmeticsChance = Math.min(1f, cosmeticsChance * 2f);
+        if (MagicFoodEffects.has(player, MagicFoodEffects.Effect.CHARM_BOOKS)) charmChance = Math.min(1f, charmChance * 2f);
+        if (MagicFoodEffects.has(player, MagicFoodEffects.Effect.KNOWLEDGE_BOOKS)) knowledgeChance = Math.min(1f, knowledgeChance * 3f);
+
         if (availability.hasCharmsToUnlock() && Math.random() < charmChance)
             addCharmIfAvailable(player, itemStacks);
         if (availability.hasCosmeticsToUnlock() && Math.random() < cosmeticsChance)
@@ -105,17 +111,20 @@ public final class UnlockBookLoot {
             case CHARM_BOOK_ID -> CHARM_DROP_COOLDOWN.restart(player.getUUID());
             case "charm-fashion-book" -> COSMETIC_DROP_COOLDOWN.restart(player.getUUID());
             case "charm-knowledge-book" -> KNOWLEDGE_DROP_COOLDOWN.restart(player.getUUID());
+            case "charm-joke-book" -> JOKE_DROP_COOLDOWN.restart(player.getUUID());
             default -> { }
         }
     }
 
     public static boolean claimFishingDrop(ServerPlayer player, ItemStack stack) {
         if (FakeItems.isSpecificFakeItem(stack, CHARM_BOOK_ID))
-            return CHARM_DROP_COOLDOWN.tryStart(player.getUUID());
+            return CHARM_DROP_COOLDOWN.tryStart(player.getUUID(), cooldown(player, MagicFoodEffects.Effect.CHARM_BOOKS, 60, 30));
         if (FakeItems.isSpecificFakeItem(stack, "charm-fashion-book"))
-            return COSMETIC_DROP_COOLDOWN.tryStart(player.getUUID());
+            return COSMETIC_DROP_COOLDOWN.tryStart(player.getUUID(), cooldown(player, MagicFoodEffects.Effect.FASHION_BOOKS, 30, 15));
         if (FakeItems.isSpecificFakeItem(stack, "charm-knowledge-book"))
-            return KNOWLEDGE_DROP_COOLDOWN.tryStart(player.getUUID());
+            return KNOWLEDGE_DROP_COOLDOWN.tryStart(player.getUUID(), cooldown(player, MagicFoodEffects.Effect.KNOWLEDGE_BOOKS, 30, 5));
+        if (FakeItems.isSpecificFakeItem(stack, "charm-joke-book"))
+            return JOKE_DROP_COOLDOWN.tryStart(player.getUUID(), cooldown(player, MagicFoodEffects.Effect.JOKE_BOOKS, 30, 10));
         return true;
     }
 
@@ -126,20 +135,31 @@ public final class UnlockBookLoot {
                 + (FISHING_COSMETIC_MAX_CHANCE - FISHING_COSMETIC_MIN_CHANCE) * progress;
         double charmChance = FISHING_CHARM_MIN_CHANCE
                 + (FISHING_CHARM_MAX_CHANCE - FISHING_CHARM_MIN_CHANCE) * progress;
+        if (MagicFoodEffects.has(player, MagicFoodEffects.Effect.FASHION_BOOKS)) cosmeticChance *= 2;
+        if (MagicFoodEffects.has(player, MagicFoodEffects.Effect.CHARM_BOOKS)) charmChance *= 2;
+        double knowledgeChance = MagicFoodEffects.has(player, MagicFoodEffects.Effect.KNOWLEDGE_BOOKS)
+                ? 2.0D / 3.0D : FISHING_KNOWLEDGE_CHANCE;
+        double jokeChance = MagicFoodEffects.has(player, MagicFoodEffects.Effect.JOKE_BOOKS)
+                ? FISHING_JOKE_CHANCE * 4 : FISHING_JOKE_CHANCE;
         double roll = random.nextDouble();
-        double cursor = FISHING_KNOWLEDGE_CHANCE;
+        double cursor = knowledgeChance;
 
-        if (roll < cursor) return availability.hasKnowledgeToUnlock() && KNOWLEDGE_DROP_COOLDOWN.isReady(player.getUUID())
+        if (roll < cursor) return availability.hasKnowledgeToUnlock() && KNOWLEDGE_DROP_COOLDOWN.isReady(player.getUUID(), cooldown(player, MagicFoodEffects.Effect.KNOWLEDGE_BOOKS, 30, 5))
                 ? createFishingBook("charm-knowledge-book") : ItemStack.EMPTY;
         cursor += cosmeticChance / FISHING_DELIVERY_RATE;
-        if (roll < cursor) return availability.hasCosmeticsToUnlock() && COSMETIC_DROP_COOLDOWN.isReady(player.getUUID())
+        if (roll < cursor) return availability.hasCosmeticsToUnlock() && COSMETIC_DROP_COOLDOWN.isReady(player.getUUID(), cooldown(player, MagicFoodEffects.Effect.FASHION_BOOKS, 30, 15))
                 ? createFishingBook("charm-fashion-book") : ItemStack.EMPTY;
         cursor += charmChance / FISHING_DELIVERY_RATE;
-        if (roll < cursor) return availability.hasCharmsToUnlock() && CHARM_DROP_COOLDOWN.isReady(player.getUUID())
+        if (roll < cursor) return availability.hasCharmsToUnlock() && CHARM_DROP_COOLDOWN.isReady(player.getUUID(), cooldown(player, MagicFoodEffects.Effect.CHARM_BOOKS, 60, 30))
                 ? createFishingBook(CHARM_BOOK_ID) : ItemStack.EMPTY;
-        cursor += FISHING_JOKE_CHANCE / FISHING_DELIVERY_RATE;
-        if (roll < cursor) return createFishingBook("charm-joke-book");
+        cursor += jokeChance / FISHING_DELIVERY_RATE;
+        if (roll < cursor) return JOKE_DROP_COOLDOWN.isReady(player.getUUID(), cooldown(player, MagicFoodEffects.Effect.JOKE_BOOKS, 30, 10))
+                ? createFishingBook("charm-joke-book") : ItemStack.EMPTY;
         return ItemStack.EMPTY;
+    }
+
+    private static Duration cooldown(ServerPlayer player, MagicFoodEffects.Effect effect, int normalMinutes, int magicMinutes) {
+        return Duration.ofMinutes(MagicFoodEffects.has(player, effect) ? magicMinutes : normalMinutes);
     }
 
     private static ItemStack createFishingBook(String fakeItemId) {
@@ -208,7 +228,7 @@ public final class UnlockBookLoot {
         FakeItem charmBook = FakeItems.ID_MAP.get(CHARM_BOOK_ID);
         if (charmBook == null) {
             MainMod.LOGGER.warn("Cannot add unlock-book loot drop because fake item {} is not loaded", CHARM_BOOK_ID);
-        } else if (CHARM_DROP_COOLDOWN.tryStart(player.getUUID())) {
+        } else if (CHARM_DROP_COOLDOWN.tryStart(player.getUUID(), cooldown(player, MagicFoodEffects.Effect.CHARM_BOOKS, 60, 30))) {
             itemStacks.add(charmBook.createItemStack());
         }
     }
@@ -217,7 +237,7 @@ public final class UnlockBookLoot {
         FakeItem cosmeticBook = FakeItems.ID_MAP.get("charm-fashion-book");
         if (cosmeticBook == null) {
             MainMod.LOGGER.warn("Cannot add unlock-book loot drop because fake item {} is not loaded", "charm-fashion-book");
-        } else if (COSMETIC_DROP_COOLDOWN.tryStart(player.getUUID())) {
+        } else if (COSMETIC_DROP_COOLDOWN.tryStart(player.getUUID(), cooldown(player, MagicFoodEffects.Effect.FASHION_BOOKS, 30, 15))) {
             itemStacks.add(cosmeticBook.createItemStack());
         }
     }
@@ -226,7 +246,7 @@ public final class UnlockBookLoot {
         FakeItem knowledgeBook = FakeItems.ID_MAP.get("charm-knowledge-book");
         if (knowledgeBook == null) {
             MainMod.LOGGER.warn("Cannot add unlock-book loot drop because fake item {} is not loaded", "charm-knowledge-book");
-        } else if (KNOWLEDGE_DROP_COOLDOWN.tryStart(player.getUUID())) {
+        } else if (KNOWLEDGE_DROP_COOLDOWN.tryStart(player.getUUID(), cooldown(player, MagicFoodEffects.Effect.KNOWLEDGE_BOOKS, 30, 5))) {
             itemStacks.add(knowledgeBook.createItemStack());
         }
     }

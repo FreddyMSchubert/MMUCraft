@@ -81,7 +81,8 @@ public class PlayerAdvancementMoney {
         int reward = AdvancementMoney.rewardForAdvancement(
                 advancementHolder.id(),
                 rewards.experience(),
-                isMember
+                isMember,
+                rewardedPlayer
         ).totalReward();
         boolean rewarded = reward > 0 && MoneyHelper.GainMoney(rewardedPlayer, reward);
         DisplayInfo display = advancementHolder.value().display().orElseThrow();

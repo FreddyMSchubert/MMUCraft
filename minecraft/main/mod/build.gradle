@@ -215,6 +215,13 @@ tasks.register('checkFishRarity', JavaExec) {
     enableAssertions = true
 }
 
+tasks.register('checkMagicFoodEffects', JavaExec) {
+    dependsOn tasks.named('minecraftCheckClasses')
+    classpath = sourceSets.minecraftCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.magic.MagicFoodEffectsCheck'
+    jvmArgs '-ea'
+}
+
 tasks.register('checkRailPowerClaims', JavaExec) {
     group = 'verification'
     classpath = sourceSets.minecraftCheck.runtimeClasspath
@@ -235,7 +242,7 @@ tasks.register('checkDailyCatalog', JavaExec) {
 
 tasks.named('check') {
     dependsOn 'checkMapResize', 'checkThunderRitual', 'checkInsomniaPhantoms', 'checkFarmingBoots', 'checkSpiderPajamas', 'checkMasteryDropGates', 'checkGearEnchantments', 'checkSmithingArmor', 'checkHopperFilterIdentity', 'checkRailPowerClaims',
-            'checkDailyCatalog', 'checkFishingBounces', 'checkFishingPlaques', 'checkFishRarity', 'checkTeleportCompanions', 'checkTickRate', 'checkExplosiveFire'
+            'checkDailyCatalog', 'checkFishingBounces', 'checkFishingPlaques', 'checkFishRarity', 'checkMagicFoodEffects', 'checkTeleportCompanions', 'checkTickRate', 'checkExplosiveFire'
 }
 
 def generatedResources = file("src/main/generated")

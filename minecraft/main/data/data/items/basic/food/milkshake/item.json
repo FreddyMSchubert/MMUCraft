@@ -5,6 +5,7 @@
 	"rarity": "common",
 	"maxStackSize": 16,
 	"tooltips": [],
+	"magicEffect": { "id": "shop_20", "dust": 2, "description": "20% off shop purchases" },
 	"decoBlock": {
 		"ground": true,
 		"wall": false,

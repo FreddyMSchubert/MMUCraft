@@ -71,6 +71,9 @@ import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.FoodModifier;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.LootTableModifiers;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.AnvilLogic;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyCommand;
+import uk.co.httpsmmuminecraftsociety.mainmod.magic.MagicFoodEffects;
+import uk.co.httpsmmuminecraftsociety.mainmod.magic.MarshmallowRoasting;
+import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingCatches;
 import uk.co.httpsmmuminecraftsociety.mainmod.metrics.MetricsServer;
 import uk.co.httpsmmuminecraftsociety.mainmod.miniblocks.MiniBlockCatalog;
 import uk.co.httpsmmuminecraftsociety.mainmod.miniblocks.MiniBlockCommand;
@@ -113,6 +116,7 @@ public class MainMod implements ModInitializer {
         LOGGER.info("Loaded {} mini block definitions", MiniBlockCatalog.definitions().size());
 
         FakeItemsCommand.init();
+        MagicFoodEffects.init();
         MiniBlockCommand.init();
         FeatureToggles.listen(FeatureToggles.WELCOMING, enabled -> {
             MinecraftServer server = GrpcBridge.minecraftServer();
@@ -158,8 +162,11 @@ public class MainMod implements ModInitializer {
             LegacyFakeItemMigration.migratePlayer(handler.player);
             CharmsManager.refreshInventory(handler.player);
             MasteryAdvancements.onJoin(handler.player);
+            if (MagicFoodEffects.has(handler.player, MagicFoodEffects.Effect.FISH_UNCAUGHT))
+                FishingCatches.refreshCaughtFish(handler.player);
         });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+            MarshmallowRoasting.disconnected(handler.player);
             PlayerDisguises.disconnected(handler.player);
             PotionOfDisplacementCharm.onPlayerDisconnect(handler.player);
         });

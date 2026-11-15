@@ -36,6 +36,16 @@ export class FishingService {
 		private readonly featureToggles: FeatureTogglesService,
 	) {}
 
+	caughtFishIds(minecraftUuid: string): string[] {
+		return this.database.connection
+			.select({ fishId: fishCatches.fish_id })
+			.from(fishCatches)
+			.innerJoin(users, eq(fishCatches.user_id, users.id))
+			.where(eq(users.minecraft_uuid, minecraftUuid))
+			.all()
+			.map((row) => row.fishId);
+	}
+
 	recordCatch(input: RecordCatchInput) {
 		const visibleFish = this.visibleFish();
 		const definition = visibleFish.find((fish) => fish.id === input.fishId);

@@ -13,6 +13,7 @@ import net.minecraft.world.item.component.ItemLore;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.hopper.HopperFilter;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
+import uk.co.httpsmmuminecraftsociety.mainmod.magic.MagicFoodEffects;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.JsonUtils;
 
 import java.util.ArrayList;
@@ -30,7 +31,8 @@ public record FakeItem(
         String shopDrop,
         List<Component> tooltip,
         Item baseItem,
-        List<ItemFeature> features
+        List<ItemFeature> features,
+        MagicFoodEffects.Spec magicEffect
 ) {
     public static FakeItem fromJson(JsonObject json, String filePath) {
         try {
@@ -48,6 +50,15 @@ public record FakeItem(
                     .map(Component.class::cast)
                     .toList();
             List<ItemFeature> features = ItemFeature.of(json);
+            MagicFoodEffects.Spec magicEffect = null;
+            if (json.has("magicEffect")) {
+                JsonObject magic = json.getAsJsonObject("magicEffect");
+                if (features.stream().noneMatch(ConsumableItemFeature.class::isInstance))
+                    throw new IllegalArgumentException("magicEffect requires consumable");
+                magicEffect = new MagicFoodEffects.Spec(
+                        MagicFoodEffects.Effect.byId(magic.get("id").getAsString()),
+                        magic.get("dust").getAsInt(), magic.get("description").getAsString());
+            }
 
             Item baseItem = Items.HEART_OF_THE_SEA;
             if (features.stream().anyMatch(EquippableCosmeticItemFeature.class::isInstance))
@@ -67,7 +78,8 @@ public record FakeItem(
                             ? json.getAsJsonObject("shopPurchasable").get("gameplayToggle").getAsString() : "",
                     tooltip,
                     baseItem,
-                    features);
+                    features,
+                    magicEffect);
         }
         catch (RuntimeException e) {
             throw new RuntimeException(filePath + ": " + e.getMessage());
@@ -80,7 +92,7 @@ public record FakeItem(
 
         stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of(), List.of(), List.of(id), List.of()));
         stack.set(DataComponents.CUSTOM_NAME, MoneyHelper.ReplaceDabloonWords(title));
-        List<Component> lore = buildLore();
+        List<Component> lore = buildLore(false);
         if (!lore.isEmpty())
             stack.set(DataComponents.LORE, new ItemLore(lore));
         stack.set(DataComponents.RARITY, rarity);
@@ -112,12 +124,18 @@ public record FakeItem(
         }
     }
 
-    private List<Component> buildLore() {
+    public List<Component> buildLore(boolean activated) {
         List<Component> lore = new ArrayList<>();
         if (tooltip != null) {
             lore.addAll(tooltip.stream()
                     .filter(Objects::nonNull)
                     .toList());
+        }
+        if (magicEffect != null) {
+            lore.add(Component.literal(activated
+                    ? "Effect: " + magicEffect.description()
+                    : "Combine with " + magicEffect.dust() + " magic dust to activate " + magicEffect.description())
+                    .withStyle(ChatFormatting.LIGHT_PURPLE));
         }
 
         List<String> abilityLabels = abilityLabels();

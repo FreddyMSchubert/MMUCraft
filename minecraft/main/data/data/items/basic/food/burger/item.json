@@ -5,6 +5,7 @@
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": ["Authentic Usadian cuisine."],
+	"magicEffect": { "id": "shop_20", "dust": 2, "description": "20% off shop purchases" },
 	"equippableCosmetic": {},
 	"consumable": {
 		"isDrink": false,

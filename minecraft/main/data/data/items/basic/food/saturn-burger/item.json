@@ -5,6 +5,7 @@
 	"rarity": "epic",
 	"maxStackSize": 1,
 	"tooltips": ["Authentic Saturnian cuisine."],
+	"magicEffect": { "id": "shop_30", "dust": 3, "description": "30% off shop purchases" },
 	"equippableCosmetic": {},
 	"consumable": {
 		"isDrink": false,

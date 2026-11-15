@@ -59,7 +59,7 @@ public final class SmithingArmorCheck {
         FakeItems.CHARM_ID_MAP = Map.of(9000, new FakeItem("Test Charm", "test-charm", Rarity.UNCOMMON,
                 "uncommon", 1, false, false, "", List.of(), Items.ELYTRA,
                 List.of(new EquippableCharmItemFeature(
-                        EquippableCharmItemFeature.createEquippableSettings("heart_sleeve__charm", EquipmentSlot.CHEST)))));
+                        EquippableCharmItemFeature.createEquippableSettings("heart_sleeve__charm", EquipmentSlot.CHEST))), null));
 
         ItemStack armor = new ItemStack(Items.DIAMOND_CHESTPLATE);
         CharmStackData.setStoredCharms(armor, List.of(new StoredCharmData(9000, 1)));

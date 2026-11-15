@@ -40,6 +40,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.UnlockBookLoot;
 import uk.co.httpsmmuminecraftsociety.mainmod.serverSideBlocks.ServerSideBlocks;
 import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
+import uk.co.httpsmmuminecraftsociety.mainmod.magic.MagicFoodEffects;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -48,6 +49,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -63,6 +68,25 @@ public final class FishingCatches {
     private static final Map<FishRarity, List<ItemStack>> NETHER_TREASURE_LOOT = emptyLootTable();
     private static final Map<FishRarity, List<ItemStack>> END_TREASURE_LOOT = emptyLootTable();
     private static final Map<String, String> FIXED_TREASURE_ANGLES = Map.of("fish-bones", "BL");
+    private static final Map<UUID, Set<String>> CAUGHT_FISH = new ConcurrentHashMap<>();
+    private static final Set<UUID> CATCH_FETCHES = ConcurrentHashMap.newKeySet();
+
+    public static void refreshCaughtFish(ServerPlayer player) {
+        UUID playerId = player.getUUID();
+        if (!CATCH_FETCHES.add(playerId)) return;
+        GameplayGrpcService.getCaughtFishIds(player).whenComplete((response, error) -> {
+            player.level().getServer().execute(() -> {
+                CATCH_FETCHES.remove(playerId);
+                if (error != null) {
+                    MainMod.LOGGER.warn("Could not load fish compendium for {}", player.getName().getString(), error);
+                } else {
+                    Set<String> known = new HashSet<>(CAUGHT_FISH.getOrDefault(playerId, Set.of()));
+                    known.addAll(response.getFishIdsList());
+                    CAUGHT_FISH.put(playerId, known);
+                }
+            });
+        });
+    }
 
     static {
         addFish(FishRarity.COMMON, new ItemStack(Items.COD), 53.0, 25.0, "BL");
@@ -252,9 +276,11 @@ public final class FishingCatches {
         int catches = hook.getPlayerOwner() instanceof ServerPlayer player
                 ? player.getStats().getValue(Stats.CUSTOM.get(Stats.FISH_CAUGHT))
                 : 0;
-        FishRarity rarity = randomRarity(hook.getRandom(), luck, catches, !overworld && treasure);
+        ServerPlayer fisher = hook.getPlayerOwner() instanceof ServerPlayer player ? player : null;
+        FishRarity rarity = randomRarity(hook.getRandom(), luck, catches, !overworld && treasure,
+                fisher == null || treasure ? 0 : MagicFoodEffects.fishRarityBoostMask(fisher));
         List<CatchEntry> entries = entriesFor(treasure, rarity, hook);
-        CatchEntry selected = selectEntry(entries, hook.getRandom());
+        CatchEntry selected = selectEntry(entries, hook.getRandom(), treasure ? null : fisher);
         ItemStack stack = selected.stack().copy();
         double lengthCm = rollFishLength(selected.length(), hook.getRandom());
         decorateFish(stack, hook.getPlayerOwner(), lengthCm);
@@ -388,6 +414,9 @@ public final class FishingCatches {
         ).thenAccept(response -> {
             MinecraftServer server = player.level().getServer();
             server.execute(() -> {
+                UUID playerId = player.getUUID();
+                if (response.getRecorded() && (CAUGHT_FISH.containsKey(playerId) || CATCH_FETCHES.contains(playerId)))
+                    CAUGHT_FISH.computeIfAbsent(playerId, ignored -> new HashSet<>()).add(fishId);
                 response.getMasteryAdvancementPathsList().forEach(path -> MasteryAdvancements.grant(player, path));
                 showRecordMessages(player, stack, rarity, lengthCm, response);
             });
@@ -492,8 +521,9 @@ public final class FishingCatches {
         return result;
     }
 
-    private static FishRarity randomRarity(RandomSource random, double luck, int catches, boolean dimensionalTreasure) {
-        double[] weights = FishRarity.weightsAt(luck, catches);
+    private static FishRarity randomRarity(RandomSource random, double luck, int catches, boolean dimensionalTreasure,
+                                           int boostMask) {
+        double[] weights = FishRarity.weightsWithBoost(luck, catches, boostMask);
         if (dimensionalTreasure) {
             int mythical = FishRarity.MYTHICAL.ordinal();
             double excess = Math.max(0.0D, weights[mythical] - MAX_DIMENSIONAL_MYTHICAL_TREASURE_CHANCE);
@@ -549,6 +579,31 @@ public final class FishingCatches {
             if (roll < 0) return entry;
         }
         throw new IllegalStateException("No fishing catch selected");
+    }
+
+    private static CatchEntry selectEntry(List<CatchEntry> entries, RandomSource random, ServerPlayer player) {
+        if (player == null || !MagicFoodEffects.has(player, MagicFoodEffects.Effect.FISH_UNCAUGHT))
+            return selectEntry(entries, random);
+        Set<String> known = CAUGHT_FISH.get(player.getUUID());
+        if (known == null) {
+            refreshCaughtFish(player);
+            return selectEntry(entries, random);
+        }
+        int total = 0;
+        for (CatchEntry entry : entries) total += entry.weight() * (unseenFish(entry, known) ? 3 : 1);
+        int roll = random.nextInt(total);
+        for (CatchEntry entry : entries) {
+            roll -= entry.weight() * (unseenFish(entry, known) ? 3 : 1);
+            if (roll < 0) return entry;
+        }
+        throw new IllegalStateException("No fishing catch selected");
+    }
+
+    private static boolean unseenFish(CatchEntry entry, Set<String> known) {
+        if (entry.length() == null) return false;
+        String id = fakeItemId(entry.stack());
+        if (id.isEmpty()) id = BuiltInRegistries.ITEM.getKey(entry.stack().getItem()).toString();
+        return !known.contains(id);
     }
 
     private static List<CatchEntry> entriesAt(boolean treasure, FishRarity rarity, FishingHook hook) {

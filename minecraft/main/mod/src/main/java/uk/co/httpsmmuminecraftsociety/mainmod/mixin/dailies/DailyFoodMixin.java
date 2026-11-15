@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.magic.MagicFoodEffects;
 import net.minecraft.world.effect.MobEffects;
 
 @Mixin(ItemStack.class)
@@ -24,6 +25,7 @@ public abstract class DailyFoodMixin {
     ) {
         ItemStack stack = (ItemStack) (Object) this;
         if (entity instanceof ServerPlayer player && stack.has(DataComponents.FOOD)) {
+            MagicFoodEffects.consumed(player, stack);
             DailyTaskManager.onEat(player, stack);
             if (FakeItems.isSpecificFakeItem(stack, "golden-nutritional-paste")) {
                 MasteryAdvancements.grant(player, "utility/golden_paste");

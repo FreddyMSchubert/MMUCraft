@@ -15,6 +15,9 @@ import {
 } from './daily-task-rules';
 import { DailyTaskStorageService } from './daily-task-storage.service';
 import { DailyTaskUpdateEventsService } from './daily-task-update-events.service';
+import { DatabaseService } from '../../database/database.service';
+import { MinecraftGrpcClientService } from '../../grpc/minecraft-grpc-client.service';
+import { activeFoodEffects } from '../magic-food-effects';
 
 @Injectable()
 export class DailyBonusClaimsService {
@@ -24,6 +27,8 @@ export class DailyBonusClaimsService {
 		private readonly dailyStorage: DailyTaskStorageService,
 		private readonly taskUpdates: DailyTaskUpdateEventsService,
 		private readonly playerMoneyHistory: PlayerMoneyHistoryService,
+		private readonly database: DatabaseService,
+		private readonly minecraft: MinecraftGrpcClientService,
 	) {}
 
 	async claimLoginBonus(user: AuthenticatedUser) {
@@ -167,7 +172,11 @@ export class DailyBonusClaimsService {
 			);
 		}
 
-		const rewardDabloons = dailyCompletionReward(periodKey, user.isMember).total;
+		const rewardDabloons = dailyCompletionReward(
+			periodKey,
+			user.isMember,
+			(await activeFoodEffects(this.database, this.minecraft, user)).sunday_money,
+		).total;
 		const inserted = this.dailyStorage.insertClaim(
 			user.id,
 			DAILY_COMPLETION_TASK_ID,

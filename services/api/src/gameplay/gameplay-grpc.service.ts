@@ -85,6 +85,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			SyncPlayerStats: this.syncPlayerStats.bind(this),
 			RecordMoneyEvent: this.recordMoneyEvent.bind(this),
 			RecordFishCatch: this.recordFishCatch.bind(this),
+			GetCaughtFishIds: this.getCaughtFishIds.bind(this),
 			GetClaimsSnapshot: this.getClaimsSnapshot.bind(this),
 			GetFeatureToggles: this.getFeatureToggles.bind(this),
 			GetDailyTasksSnapshot: this.getDailyTasksSnapshot.bind(this),
@@ -453,5 +454,12 @@ export class GameplayGrpcService implements OnModuleInit {
 				caughtAtUnixMs: call.request.unix_ms ?? Date.now(),
 			}),
 		);
+	}
+
+	private getCaughtFishIds(
+		call: grpc.ServerUnaryCall<{ minecraft_uuid: string }, { fish_ids: string[] }>,
+		callback: UnaryCallback<{ fish_ids: string[] }>,
+	) {
+		callback(null, { fish_ids: this.fishing.caughtFishIds(call.request.minecraft_uuid) });
 	}
 }

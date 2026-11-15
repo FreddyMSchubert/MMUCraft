@@ -66,6 +66,34 @@
 		"consumable": {
 			"$ref": "./components/consumable.schema.json"
 		},
+		"magicEffect": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"id": {
+					"type": "string",
+					"enum": [
+						"sunday_money",
+						"shop_20",
+						"shop_30",
+						"fashion_books",
+						"charm_books",
+						"knowledge_books",
+						"joke_books",
+						"fish_common",
+						"fish_uncommon",
+						"fish_rare",
+						"fish_epic",
+						"fish_legendary",
+						"fish_mythical",
+						"fish_uncaught"
+					]
+				},
+				"dust": { "type": "integer", "minimum": 1, "maximum": 8 },
+				"description": { "type": "string", "minLength": 1 }
+			},
+			"required": ["id", "dust", "description"]
+		},
 		"dyeable": {
 			"$ref": "./components/dyeable.schema.json"
 		},
@@ -87,6 +115,10 @@
 	},
 	"required": ["title", "id", "modelType", "rarity", "maxStackSize", "tooltips"],
 	"allOf": [
+		{
+			"if": { "required": ["magicEffect"] },
+			"then": { "required": ["consumable"] }
+		},
 		{
 			"if": { "required": ["particleEmission"] },
 			"then": {

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from '../../auth/auth.module';
 import { DatabaseModule } from '../../database/database.module';
+import { GrpcModule } from '../../grpc/grpc.module';
 import { PlayersModule } from '../../players/players.module';
 import { ShopModule } from '../shop/shop.module';
 import { AdminDailiesController, DailiesController } from './dailies.controller';
@@ -14,7 +15,7 @@ import { DailyTaskAssignmentService } from './daily-task-assignment.service';
 import { DailiesService } from './dailies.service';
 
 @Module({
-	imports: [AuthModule, DatabaseModule, PlayersModule, ShopModule],
+	imports: [AuthModule, DatabaseModule, GrpcModule, PlayersModule, ShopModule],
 	controllers: [DailiesController, AdminDailiesController],
 	providers: [
 		DailiesService,

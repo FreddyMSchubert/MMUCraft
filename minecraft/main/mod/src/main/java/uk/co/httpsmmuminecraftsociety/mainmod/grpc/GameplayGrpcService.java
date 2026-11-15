@@ -5,6 +5,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
+import uk.co.httpsmmuminecraftsociety.mainmod.magic.MagicFoodEffects;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -31,6 +32,10 @@ public final class GameplayGrpcService extends GrpcHandler {
             String minecraftUsername, String minecraftUuid
     ) {
         return INSTANCE.eventsClient.getUnlockAvailability(minecraftUsername, minecraftUuid);
+    }
+
+    public static CompletableFuture<GetCaughtFishIdsResponse> getCaughtFishIds(net.minecraft.server.level.ServerPlayer player) {
+        return INSTANCE.eventsClient.getCaughtFishIds(player);
     }
 
     public static CompletableFuture<GetKnowledgeTipResponse> getKnowledgeTip(
@@ -212,6 +217,21 @@ private final class GameplayControlEndpoint extends GameplayControlGrpc.Gameplay
         ) {
             callOnMainThread(() -> GameplayShopOperations.purchaseShopItemOnMainThread(request))
                     .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
+        public void getActiveFoodEffects(
+                GetActiveFoodEffectsRequest request,
+                StreamObserver<GetActiveFoodEffectsResponse> responseObserver
+        ) {
+            callOnMainThread(() -> {
+                var server = GrpcBridge.minecraftServer();
+                var playerId = java.util.UUID.fromString(request.getMinecraftUuid());
+                return GetActiveFoodEffectsResponse.newBuilder()
+                        .setShopDiscountPercent(MagicFoodEffects.shopDiscount(server, playerId))
+                        .setSundayMoney(MagicFoodEffects.has(server, playerId, MagicFoodEffects.Effect.SUNDAY_MONEY))
+                        .build();
+            }).whenComplete((response, error) -> complete(responseObserver, response, error));
         }
 
         @Override

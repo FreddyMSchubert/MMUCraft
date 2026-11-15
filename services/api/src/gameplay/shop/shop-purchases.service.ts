@@ -14,7 +14,9 @@ import {
 	isBritishAnniversary,
 	isShoppingSunday,
 	shopDiscountPercent,
+	stackedShopDiscountPercent,
 } from './shop-daily-deals';
+import { activeFoodEffects } from '../magic-food-effects';
 import { type CatalogItem, ShopItemCatalogService } from './shop-item-catalog.service';
 import { type ShopUnlockAvailability, ShopUnlocksService } from './shop-unlocks.service';
 
@@ -31,6 +33,8 @@ const FASHION_BOOK_ID = 'charm-fashion-book';
 const FASHION_BOOK_DAILY_LIMIT = 1;
 const JOKE_BOOK_ID = 'charm-joke-book';
 const JOKE_BOOK_DAILY_LIMIT = 3;
+const MAGIC_DUST_ID = 'magic-dust';
+const MAGIC_DUST_DAILY_LIMIT = 3;
 
 @Injectable()
 export class ShopPurchasesService {
@@ -42,7 +46,7 @@ export class ShopPurchasesService {
 		private readonly featureToggles: FeatureTogglesService,
 	) {}
 
-	getShopForUser(user: AuthenticatedUser) {
+	async getShopForUser(user: AuthenticatedUser) {
 		const items = this.itemCatalog.load().items;
 		const unlockedIds = this.unlocks.unlockedItemIdsForUser(user.id);
 		const enabledToggles = this.featureToggles.enabledKeys();
@@ -55,6 +59,12 @@ export class ShopPurchasesService {
 		const limitedPurchaseCounts = this.limitedPurchaseCounts(user.id, dealDate);
 		const dailyDealIds = availableDailyDealItemIds(items, dealDate, enabledToggles);
 		const signupAnniversary = this.isSignupAnniversary(user.id);
+		const magicDiscount = (
+			await activeFoodEffects(this.database, this.minecraft, user).catch(() => ({
+				shop_discount_percent: 0,
+				sunday_money: false,
+			}))
+		).shop_discount_percent;
 
 		return {
 			isMember: user.isMember,
@@ -69,10 +79,14 @@ export class ShopPurchasesService {
 					const dailyDiscount = dailyDealIds.has(item.id)
 						? dailyDealDiscountPercent(item.id, dealDate)
 						: 0;
-					const discountPercent = shopDiscountPercent(
+					const existingDiscount = shopDiscountPercent(
 						item.id,
 						signupAnniversary,
 						dailyDiscount,
+					);
+					const discountPercent = stackedShopDiscountPercent(
+						existingDiscount,
+						magicDiscount,
 					);
 					return {
 						id: item.id,
@@ -85,7 +99,15 @@ export class ShopPurchasesService {
 						originalPriceDabloons: item.priceDabloons,
 						isDailyDeal: discountPercent > 0,
 						discountPercent,
-						dealMessage: discountPercent > 0 ? dailyDealMessage(item, dealDate) : null,
+						dealMessage:
+							existingDiscount > 0
+								? dailyDealMessage(item, dealDate) +
+									(magicDiscount > 0
+										? ` Magic food adds ${magicDiscount}% off.`
+										: '')
+								: magicDiscount > 0
+									? `Magic food: ${magicDiscount}% off`
+									: null,
 						discountedPriceDabloons: discountedShopPrice(
 							item.priceDabloons,
 							discountPercent,
@@ -178,11 +200,14 @@ export class ShopPurchasesService {
 		).has(item.id)
 			? dailyDealDiscountPercent(item.id, dealDate)
 			: 0;
-		const discountPercent = shopDiscountPercent(
+		const existingDiscount = shopDiscountPercent(
 			item.id,
 			this.isSignupAnniversary(user.id),
 			dailyDiscount,
 		);
+		const magicDiscount = (await activeFoodEffects(this.database, this.minecraft, user))
+			.shop_discount_percent;
+		const discountPercent = stackedShopDiscountPercent(existingDiscount, magicDiscount);
 		const price = discountedShopPrice(item.priceDabloons, discountPercent);
 		const reservedSlot = this.reserveLimitedPurchase(user.id, item, dealDate);
 
@@ -342,6 +367,7 @@ function limitedPurchaseDailyLimit(itemId: string): number | null {
 	if (itemId === KNOWLEDGE_BOOK_ID) return KNOWLEDGE_BOOK_DAILY_LIMIT;
 	if (itemId === FASHION_BOOK_ID) return FASHION_BOOK_DAILY_LIMIT;
 	if (itemId === JOKE_BOOK_ID) return JOKE_BOOK_DAILY_LIMIT;
+	if (itemId === MAGIC_DUST_ID) return MAGIC_DUST_DAILY_LIMIT;
 	return null;
 }
 

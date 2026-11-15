@@ -128,8 +128,8 @@ export function dailyAdvancementBonus(baseRewardDabloons: number) {
 	return Math.max(10, Math.ceil(bounded / 10) * 10 - bounded);
 }
 
-export function dailyCompletionReward(periodKey: string, isMember: boolean) {
-	const isSunday = new Date(`${periodKey}T00:00:00Z`).getUTCDay() === 0;
+export function dailyCompletionReward(periodKey: string, isMember: boolean, forceSunday = false) {
+	const isSunday = forceSunday || new Date(`${periodKey}T00:00:00Z`).getUTCDay() === 0;
 	return {
 		isSunday,
 		total:

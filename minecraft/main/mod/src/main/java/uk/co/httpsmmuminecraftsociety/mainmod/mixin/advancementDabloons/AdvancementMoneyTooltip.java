@@ -64,7 +64,8 @@ public class AdvancementMoneyTooltip {
                             holder.id(),
                             displayInfo,
                             advancement.rewards().experience(),
-                            PlayerStatsSync.isMember(this.player)
+                            PlayerStatsSync.isMember(this.player),
+                            this.player
                     ),
                     displayInfo.background(),
                     displayInfo.type(),

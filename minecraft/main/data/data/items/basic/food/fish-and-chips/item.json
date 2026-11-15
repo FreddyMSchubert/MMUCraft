@@ -5,6 +5,11 @@
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": ["Can't get more British than this."],
+	"magicEffect": {
+		"id": "fish_uncaught",
+		"dust": 2,
+		"description": "higher chance of previously uncaught fish"
+	},
 	"consumable": {
 		"isDrink": true,
 		"consumeSeconds": 3.2,
@@ -13,8 +18,7 @@
 		"saturationBars": 12,
 		"directHearts": 0,
 		"useRemainderItem": "",
-		"effects": [
-		]
+		"effects": []
 	},
 	"craftable": {
 		"recipes": [
@@ -22,10 +26,7 @@
 				"id": "fish-and-chips-white",
 				"gameplayToggle": "beach-party",
 				"type": "mainmod:fake_crafting_shapeless",
-				"ingredients": [
-					"mainmod:cooked-white-fish",
-					"minecraft:baked_potato"
-				],
+				"ingredients": ["mainmod:cooked-white-fish", "minecraft:baked_potato"],
 				"result": {
 					"stack": "mainmod:food-fish-and-chips",
 					"count": 1
@@ -35,10 +36,7 @@
 				"id": "fish-and-chips-cod",
 				"gameplayToggle": "beach-party",
 				"type": "mainmod:fake_crafting_shapeless",
-				"ingredients": [
-					"minecraft:cooked_cod",
-					"minecraft:baked_potato"
-				],
+				"ingredients": ["minecraft:cooked_cod", "minecraft:baked_potato"],
 				"result": {
 					"stack": "mainmod:food-fish-and-chips",
 					"count": 1

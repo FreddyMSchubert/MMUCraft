@@ -5,6 +5,11 @@
 	"rarity": "uncommon",
 	"maxStackSize": 1,
 	"tooltips": [],
+	"magicEffect": {
+		"id": "sunday_money",
+		"dust": 2,
+		"description": "Sunday money for daily and advancement rewards"
+	},
 	"consumable": {
 		"isDrink": false,
 		"consumeSeconds": 1,

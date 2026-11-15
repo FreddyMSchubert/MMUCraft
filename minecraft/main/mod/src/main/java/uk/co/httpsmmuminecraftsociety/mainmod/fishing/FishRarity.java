@@ -63,6 +63,39 @@ public enum FishRarity {
         return weights;
     }
 
+    static double[] weightsWithBoost(double luck, int catches, int boostMask) {
+        double[] weights = weightsAt(luck, catches);
+        if (boostMask == 0) return weights;
+        double[] unlocked = catches < MYTHICAL.requiredCatches() && (boostMask & 0b111000) != 0
+                ? weightsAt(luck, Integer.MAX_VALUE) : weights;
+        double progress = Math.max(0.0, Math.min(11.0, luck)) / 11.0;
+        double total = 0.0;
+        for (FishRarity rarity : values()) {
+            int index = rarity.ordinal();
+            if ((boostMask & (1 << index)) != 0) {
+                double multiplier = switch (rarity) {
+                    case COMMON -> 2.0;
+                    case UNCOMMON -> 2.5;
+                    case RARE -> 3.0;
+                    case EPIC -> 4.0;
+                    case LEGENDARY -> 5.0;
+                    case MYTHICAL -> 8.0;
+                };
+                double minimum = switch (rarity) {
+                    case EPIC -> 0.04 + 0.04 * progress;
+                    case LEGENDARY -> 0.02 + 0.02 * progress;
+                    case MYTHICAL -> 0.01 + 0.01 * progress;
+                    default -> 0.0;
+                };
+                double source = weights[index] > 0.0 ? weights[index] : unlocked[index];
+                weights[index] = Math.max(multiplier * source, minimum);
+            }
+            total += weights[index];
+        }
+        for (int index = 0; index < weights.length; index++) weights[index] /= total;
+        return weights;
+    }
+
     public int colorRgb() {
         return switch (this) {
             case COMMON -> 0xFFFFFF;

@@ -23,6 +23,8 @@ import {
 } from './daily-task-rules';
 import { DailyTaskStorageService } from './daily-task-storage.service';
 import { DailyTaskUpdateEventsService } from './daily-task-update-events.service';
+import { MinecraftGrpcClientService } from '../../grpc/minecraft-grpc-client.service';
+import { activeFoodEffects } from '../magic-food-effects';
 
 function errorMessage(error: unknown) {
 	return error instanceof Error ? error.message : String(error);
@@ -39,6 +41,7 @@ export class DailiesService {
 		private readonly dailyStorage: DailyTaskStorageService,
 		private readonly taskUpdates: DailyTaskUpdateEventsService,
 		private readonly shopItemCatalog: ShopItemCatalogService,
+		private readonly minecraft: MinecraftGrpcClientService,
 	) {}
 
 	async getStatus(user: AuthenticatedUser) {
@@ -52,7 +55,16 @@ export class DailiesService {
 		const loginReward = rewardForStreak(loginBonusClaimed ? loginStreak : loginStreak + 1);
 		const generatedTasks = await this.dailyTaskAssignment.tasksForPeriod(user, periodKey);
 		const completedTaskCount = this.dailyStorage.completedTaskCount(user.id, periodKey);
-		const completionReward = dailyCompletionReward(periodKey, user.isMember);
+		const completionReward = dailyCompletionReward(
+			periodKey,
+			user.isMember,
+			(
+				await activeFoodEffects(this.database, this.minecraft, user).catch(() => ({
+					shop_discount_percent: 0,
+					sunday_money: false,
+				}))
+			).sunday_money,
+		);
 		const advancementTask = await this.dailyTaskAssignment
 			.advancementForPeriod(user, periodKey)
 			.catch(() => ({

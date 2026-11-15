@@ -10,6 +10,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.level.ServerPlayer;
+import uk.co.httpsmmuminecraftsociety.mainmod.magic.MagicFoodEffects;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -59,9 +61,11 @@ public final class AdvancementMoney {
     public static RewardCalculation rewardForAdvancement(
             Identifier advancementId,
             int experience,
-            boolean isMember
+            boolean isMember,
+            ServerPlayer player
     ) {
-        return calculateReward(moneyForAdvancement(advancementId, experience), isSundayRewardDay(), isMember);
+        return calculateReward(moneyForAdvancement(advancementId, experience),
+                isSundayRewardDay() || MagicFoodEffects.has(player, MagicFoodEffects.Effect.SUNDAY_MONEY), isMember);
     }
 
     public static RewardCalculation calculateReward(int baseReward, boolean isSunday, boolean isMember) {
@@ -192,9 +196,10 @@ public final class AdvancementMoney {
             Identifier advancementId,
             DisplayInfo displayInfo,
             int experience,
-            boolean isMember
+            boolean isMember,
+            ServerPlayer player
     ) {
-        RewardCalculation reward = rewardForAdvancement(advancementId, experience, isMember);
+        RewardCalculation reward = rewardForAdvancement(advancementId, experience, isMember, player);
         if (reward.baseReward() == 0) {
             return displayInfo.description()
                     .copy()

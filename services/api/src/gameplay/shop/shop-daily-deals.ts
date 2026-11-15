@@ -75,6 +75,10 @@ export function discountedShopPrice(price: number, discountPercent: number): num
 	return Math.max(1, Math.floor(price * (1 - discountPercent / 100)));
 }
 
+export function stackedShopDiscountPercent(existing: number, magic: number): number {
+	return Math.round(10_000 * (1 - (1 - existing / 100) * (1 - magic / 100))) / 100;
+}
+
 export function isBritishAnniversary(createdAtUnixMs: number, nowUnixMs: number): boolean {
 	return (
 		BRITISH_MONTH_AND_DAY.format(createdAtUnixMs) === BRITISH_MONTH_AND_DAY.format(nowUnixMs)

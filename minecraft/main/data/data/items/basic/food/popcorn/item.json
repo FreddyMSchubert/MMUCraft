@@ -1,0 +1,31 @@
+{
+	"title": "Popcorn",
+	"id": "popcorn",
+	"modelType": "basic-3d",
+	"rarity": "rare",
+	"maxStackSize": 32,
+	"tooltips": [],
+	"consumable": {
+		"isDrink": false,
+		"consumeSeconds": 1.6,
+		"canAlwaysEat": false,
+		"hungerBars": 3.5,
+		"saturationBars": 4,
+		"directHearts": 0,
+		"useRemainderItem": "",
+		"effects": []
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "popcorn",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["mainmod:corn", "minecraft:paper"],
+				"result": {
+					"stack": "mainmod:popcorn",
+					"count": 1
+				}
+			}
+		]
+	}
+}

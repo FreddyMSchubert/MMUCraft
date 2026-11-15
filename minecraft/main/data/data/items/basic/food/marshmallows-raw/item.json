@@ -1,0 +1,36 @@
+{
+	"title": "Marshmallows",
+	"id": "food-marshmallows",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"consumable": {
+		"isDrink": false,
+		"consumeSeconds": 1,
+		"canAlwaysEat": true,
+		"hungerBars": 1.5,
+		"saturationBars": 0.5,
+		"directHearts": 0,
+		"useRemainderItem": "",
+		"effects": []
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "marshmallows",
+				"type": "mainmod:fake_crafting_shaped",
+				"gameplayToggle": "beach-party",
+				"pattern": ["  S"," S ","T  "],
+				"key": {
+					"S": "minecraft:sugar",
+					"T": "minecraft:stick"
+				},
+				"result": {
+					"stack": "mainmod:food-marshmallows",
+					"count": 1
+				}
+			}
+		]
+	}
+}

@@ -50,11 +50,12 @@
 		"recipes": [
 			{
 				"id": "decoration/wine",
+				"gameplayToggle": "beach-party",
 				"type": "mainmod:fake_crafting_shapeless",
 				"ingredients": [
 					"minecraft:potion[minecraft:potion_contents=mundane]=Mundane Potion",
-					"minecraft:sweet_berries",
-					"minecraft:sweet_berries"
+					"mainmod:grapes",
+					"mainmod:grapes"
 				],
 				"result": {
 					"stack": "mainmod:wine-bottle",

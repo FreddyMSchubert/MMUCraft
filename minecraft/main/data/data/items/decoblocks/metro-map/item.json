@@ -1,0 +1,28 @@
+{
+	"title": "Metro Map",
+	"id": "deco-metro-map",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Might be missing a line or two, but the important ones are all there."],
+	"decoBlock": {
+		"ground": false,
+		"wall": true,
+		"ceiling": false,
+		"lightLevel": 0
+	},
+	"craftable": {
+		"recipes": [
+			{
+				"id": "decoration/metro-map",
+				"type": "mainmod:fake_crafting_shapeless",
+				"gameplayToggle": "beach-party",
+				"ingredients": ["minecraft:minecart", "minecraft:painting"],
+				"result": {
+					"stack": "mainmod:deco-metro-map",
+					"count": 1
+				}
+			}
+		]
+	}
+}

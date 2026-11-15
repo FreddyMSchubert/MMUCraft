@@ -5,6 +5,7 @@
 	"rarity": "common",
 	"maxStackSize": 64,
 	"tooltips": ["Cooked shellfish meat"],
+	"magicEffect": { "id": "fish_uncommon", "dust": 4, "description": "higher uncommon fish chance" },
 	"consumable": {
 		"isDrink": false,
 		"consumeSeconds": 1.6,

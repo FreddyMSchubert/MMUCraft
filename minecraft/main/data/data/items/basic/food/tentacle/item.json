@@ -5,6 +5,7 @@
 	"rarity": "common",
 	"maxStackSize": 64,
 	"tooltips": ["Cooked cephalopod meat"],
+	"magicEffect": { "id": "fish_rare", "dust": 5, "description": "higher rare fish chance" },
 	"consumable": {
 		"isDrink": false,
 		"consumeSeconds": 1.6,

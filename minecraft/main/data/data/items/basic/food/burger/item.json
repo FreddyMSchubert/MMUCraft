@@ -1,11 +1,11 @@
 {
 	"title": "Burger",
 	"id": "cosmetic-burger",
-	"modelType": "basic-3d",
+	"modelType": "cosmetic",
 	"rarity": "common",
 	"maxStackSize": 1,
 	"tooltips": ["Authentic Usadian cuisine."],
-	"magicEffect": { "id": "shop_20", "dust": 2, "description": "20% off shop purchases" },
+	"magicEffect": { "id": "shop_20", "dust": 3, "description": "20% off shop purchases" },
 	"equippableCosmetic": {},
 	"consumable": {
 		"isDrink": false,
@@ -16,6 +16,12 @@
 		"directHearts": 2,
 		"useRemainderItem": "",
 		"effects": []
+	},
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"lightLevel": 0
 	},
 	"craftable": {
 		"recipes": [

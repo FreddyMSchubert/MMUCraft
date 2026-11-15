@@ -19,7 +19,7 @@
 		"hungerBars": 1,
 		"saturationBars": 0,
 		"directHearts": 0,
-		"useRemainderItem": "minecraft:glass_bottle",
+		"useRemainderItem": "",
 		"effects": [
 			{
 				"id": "minecraft:saturation",
@@ -38,7 +38,6 @@
 				"gameplayToggle": "beach-party",
 				"type": "mainmod:fake_crafting_shapeless",
 				"ingredients": [
-					"minecraft:potion",
 					"minecraft:sweet_berries",
 					"minecraft:milk_bucket"
 				],

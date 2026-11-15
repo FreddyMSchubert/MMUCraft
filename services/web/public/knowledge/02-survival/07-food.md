@@ -3,7 +3,7 @@ id: food
 unlockOrder: 8
 chatMessage: You've unlocked knowledge of custom foods.
 sidebarTitle: Food
-gameplayToggle: beach party
+gameplayToggle: beach-party
 tags:
 - food
 - fishing

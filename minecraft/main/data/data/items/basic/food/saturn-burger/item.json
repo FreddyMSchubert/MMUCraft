@@ -14,7 +14,16 @@
 		"saturationBars": 19,
 		"directHearts": 2,
 		"useRemainderItem": "",
-		"effects": []
+		"effects": [
+			{
+				"id": "minecraft:jump_boost",
+				"durationTicks": 120,
+				"amplifier": 2,
+				"showIcon": false,
+				"showParticles": true,
+				"ambient": false
+			}
+		]
 	},
 	"craftable": {
 		"recipes": [

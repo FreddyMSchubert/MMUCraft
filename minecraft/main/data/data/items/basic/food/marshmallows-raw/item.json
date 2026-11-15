@@ -13,7 +13,16 @@
 		"saturationBars": 0.5,
 		"directHearts": 0,
 		"useRemainderItem": "",
-		"effects": []
+		"effects": [
+			{
+				"id": "minecraft:speed",
+				"durationTicks": 60,
+				"amplifier": 1,
+				"showIcon": false,
+				"showParticles": true,
+				"ambient": false
+			}
+		]
 	},
 	"craftable": {
 		"recipes": [

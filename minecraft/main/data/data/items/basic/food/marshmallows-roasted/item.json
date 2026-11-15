@@ -13,6 +13,15 @@
 		"saturationBars": 1,
 		"directHearts": 0,
 		"useRemainderItem": "",
-		"effects": []
+		"effects": [
+			{
+				"id": "minecraft:speed",
+				"durationTicks": 120,
+				"amplifier": 2,
+				"showIcon": false,
+				"showParticles": true,
+				"ambient": false
+			}
+		]
 	}
 }

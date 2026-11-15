@@ -33,7 +33,7 @@
 				"gameplayToggle": "beach-party",
 				"pattern": ["TTT", "TBT", "TTT"],
 				"key": {
-					"N": "minecraft:ghast_tear",
+					"T": "minecraft:ghast_tear",
 					"B": "mainmod:cosmetic-burger"
 				},
 				"result": {

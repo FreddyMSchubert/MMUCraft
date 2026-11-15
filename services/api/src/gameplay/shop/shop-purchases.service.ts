@@ -205,8 +205,13 @@ export class ShopPurchasesService {
 			this.isSignupAnniversary(user.id),
 			dailyDiscount,
 		);
-		const magicDiscount = (await activeFoodEffects(this.database, this.minecraft, user))
-			.shop_discount_percent;
+		const magicDiscount = (
+			await activeFoodEffects(this.database, this.minecraft, user).catch(() => {
+				throw new BadRequestException(
+					'The Minecraft server could not verify your magic food discount. Try again shortly.',
+				);
+			})
+		).shop_discount_percent;
 		const discountPercent = stackedShopDiscountPercent(existingDiscount, magicDiscount);
 		const price = discountedShopPrice(item.priceDabloons, discountPercent);
 		const reservedSlot = this.reserveLimitedPurchase(user.id, item, dealDate);

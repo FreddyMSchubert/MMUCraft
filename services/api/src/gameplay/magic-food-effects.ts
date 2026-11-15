@@ -19,5 +19,7 @@ export async function activeFoodEffects(
 		.where(eq(users.id, user.id))
 		.get()?.value;
 	if (!uuid) return { shop_discount_percent: 0, sunday_money: false };
-	return minecraft.gameplay<ActiveFoodEffects>('GetActiveFoodEffects', { minecraft_uuid: uuid });
+	return minecraft.gameplay<ActiveFoodEffects>('GetActiveFoodEffects', {
+		minecraft_uuid: uuid.replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, '$1-$2-$3-$4-$5'),
+	});
 }

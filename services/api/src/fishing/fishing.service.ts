@@ -10,7 +10,10 @@ import {
 	playerProfiles,
 	users,
 } from '../database/database.service';
-import { MinecraftIdentityService } from '../database/minecraft-identity.service';
+import {
+	MinecraftIdentityService,
+	normalizeMinecraftUuid,
+} from '../database/minecraft-identity.service';
 import { effectivePlayerColor, playerAvatarUrl } from '../players/player-color';
 import { customPlayerEmojis } from '../players/player-emojis';
 import { FeatureTogglesService } from '../toggles/feature-toggles.service';
@@ -37,11 +40,13 @@ export class FishingService {
 	) {}
 
 	caughtFishIds(minecraftUuid: string): string[] {
+		const uuid = normalizeMinecraftUuid(minecraftUuid);
+		if (!uuid) return [];
 		return this.database.connection
 			.select({ fishId: fishCatches.fish_id })
 			.from(fishCatches)
 			.innerJoin(users, eq(fishCatches.user_id, users.id))
-			.where(eq(users.minecraft_uuid, minecraftUuid))
+			.where(eq(users.minecraft_uuid, uuid))
 			.all()
 			.map((row) => row.fishId);
 	}

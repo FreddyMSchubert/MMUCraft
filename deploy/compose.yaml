@@ -113,7 +113,7 @@ services:
             EULA: 'TRUE'
             TYPE: FABRIC
             VERSION: '26.3'
-            FABRIC_LOADER_VERSION: '0.19.5'
+            FABRIC_LOADER_VERSION: '0.20.1'
             MODRINTH_PROJECTS: |-
                 fabric-api
                 spark:e3hsPc1o

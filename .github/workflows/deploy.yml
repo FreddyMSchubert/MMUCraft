@@ -1,7 +1,10 @@
 name: deploy
-run-name: Deploy ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || inputs.version }} to ${{ github.event_name == 'workflow_run' && 'dev' || inputs.target }}
+run-name: >-
+    ${{ github.event_name == 'schedule' && 'Check due carbon deploys' || format('{0} {1} to {2}', github.event_name == 'workflow_dispatch' && inputs.carbon_aware && 'Plan' || 'Deploy', github.event_name == 'repository_dispatch' && format('planned #{0}', github.event.client_payload.artifact_id) || github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || inputs.version, github.event_name == 'repository_dispatch' && github.event.client_payload.target || github.event_name == 'workflow_run' && 'dev' || inputs.target) }}
 
 on:
+    schedule:
+        - cron: '2/5 * * * *'
     workflow_run:
         workflows: [checks-tests-images]
         types: [completed]
@@ -36,38 +39,146 @@ on:
                 required: true
                 default: false
                 type: boolean
+            carbon_aware:
+                description: Let CATS choose a deploy time before 07:00 UK time tomorrow
+                required: true
+                default: false
+                type: boolean
+    repository_dispatch:
+        types: [carbon-aware-deploy]
 
 permissions:
     contents: read
     packages: read
 
 concurrency:
-    group: deploy-${{ github.event_name == 'workflow_run' && 'dev' || inputs.target }}
+    group: deploy-${{ github.event_name == 'schedule' && 'scheduler' || github.event_name == 'repository_dispatch' && github.event.client_payload.target || github.event_name == 'workflow_run' && 'dev' || inputs.target }}
     cancel-in-progress: false
 
 jobs:
-    deploy:
+    plan:
         if: >-
-            (github.event_name == 'workflow_run' &&
-             github.event.workflow_run.conclusion == 'success' &&
-             github.event.workflow_run.event == 'push') ||
-            (github.event_name == 'workflow_dispatch' &&
-             (inputs.target == 'dev' ||
-              (github.actor == 'FreddyMSchubert' && github.triggering_actor == 'FreddyMSchubert')))
+            github.event_name == 'workflow_dispatch' && inputs.carbon_aware &&
+            (inputs.target == 'dev' ||
+             (github.actor == 'FreddyMSchubert' && github.triggering_actor == 'FreddyMSchubert'))
         runs-on: ubuntu-24.04
-        environment: ${{ github.event_name == 'workflow_run' && 'dev' || inputs.target }}
-        env:
-            DEPLOY_TARGET: ${{ github.event_name == 'workflow_run' && 'dev' || inputs.target }}
-            DEPLOY_VERSION: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || inputs.version }}
-            WARNING_MINUTES: ${{ github.event_name == 'workflow_run' && '0' || inputs.warning_minutes }}
-            FORCE_DEPLOY: ${{ github.event_name == 'workflow_run' && 'false' || inputs.force }}
+        permissions:
+            actions: write
+            contents: read
         steps:
+            - uses: actions/checkout@v6
+              with:
+                  persist-credentials: false
+
+            - uses: actions/setup-python@v6
+              with:
+                  python-version: '3.12'
+
+            - name: Install CATS
+              run: python -m pip install climate-aware-task-scheduler==1.2.1
+
+            - name: Choose deployment time
+              env:
+                  PLAN_TARGET: ${{ inputs.target }}
+                  PLAN_VERSION: ${{ inputs.version }}
+                  PLAN_SOURCE_REF: ${{ inputs.source_ref }}
+                  PLAN_WARNING_MINUTES: ${{ inputs.warning_minutes }}
+                  PLAN_FORCE: ${{ inputs.force }}
+                  PLAN_OUTPUT: ${{ runner.temp }}/plan.json
+              run: python deploy/carbon-deploy.py plan
+
+            - name: Replace an older plan for this server
+              env:
+                  GITHUB_TOKEN: ${{ github.token }}
+                  PLAN_TARGET: ${{ inputs.target }}
+              run: python3 deploy/carbon-deploy.py cancel "$PLAN_TARGET"
+
+            - name: Save deployment plan
+              uses: actions/upload-artifact@v4
+              with:
+                  name: carbon-deploy-${{ inputs.target }}
+                  path: ${{ runner.temp }}/plan.json
+                  retention-days: 2
+                  if-no-files-found: error
+
+    claim:
+        if: github.event_name == 'repository_dispatch'
+        runs-on: ubuntu-24.04
+        permissions:
+            actions: write
+            contents: read
+        outputs:
+            claimed: ${{ steps.claim.outputs.claimed }}
+            target: ${{ steps.claim.outputs.target }}
+            version: ${{ steps.claim.outputs.version }}
+            source_ref: ${{ steps.claim.outputs.source_ref }}
+            warning_minutes: ${{ steps.claim.outputs.warning_minutes }}
+            force: ${{ steps.claim.outputs.force }}
+        steps:
+            - uses: actions/checkout@v6
+              with:
+                  persist-credentials: false
+
+            - name: Claim authorised deployment plan
+              id: claim
+              env:
+                  GITHUB_TOKEN: ${{ github.token }}
+                  PLAN_ARTIFACT_ID: ${{ github.event.client_payload.artifact_id }}
+                  PLAN_TARGET: ${{ github.event.client_payload.target }}
+              run: python3 deploy/carbon-deploy.py claim "$PLAN_ARTIFACT_ID" "$PLAN_TARGET"
+
+    schedule:
+        if: github.event_name == 'schedule'
+        runs-on: ubuntu-24.04
+        permissions:
+            actions: read
+            contents: write
+        steps:
+            - uses: actions/checkout@v6
+              with:
+                  persist-credentials: false
+            - name: Start due deployments
+              env:
+                  GITHUB_TOKEN: ${{ github.token }}
+              run: python3 deploy/carbon-deploy.py dispatch
+
+    deploy:
+        needs: claim
+        if: >-
+            always() &&
+            ((github.event_name == 'workflow_run' &&
+              github.event.workflow_run.conclusion == 'success' &&
+              github.event.workflow_run.event == 'push') ||
+             (github.event_name == 'workflow_dispatch' && !inputs.carbon_aware &&
+              (inputs.target == 'dev' ||
+               (github.actor == 'FreddyMSchubert' && github.triggering_actor == 'FreddyMSchubert'))) ||
+             (github.event_name == 'repository_dispatch' &&
+              needs.claim.result == 'success' && needs.claim.outputs.claimed == 'true'))
+        runs-on: ubuntu-24.04
+        environment: ${{ github.event_name == 'repository_dispatch' && needs.claim.outputs.target || github.event_name == 'workflow_run' && 'dev' || inputs.target }}
+        permissions:
+            actions: write
+            contents: read
+            packages: read
+        env:
+            DEPLOY_TARGET: ${{ github.event_name == 'repository_dispatch' && needs.claim.outputs.target || github.event_name == 'workflow_run' && 'dev' || inputs.target }}
+            DEPLOY_VERSION: ${{ github.event_name == 'repository_dispatch' && needs.claim.outputs.version || github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || inputs.version }}
+            WARNING_MINUTES: ${{ github.event_name == 'repository_dispatch' && needs.claim.outputs.warning_minutes || github.event_name == 'workflow_run' && '0' || inputs.warning_minutes }}
+            FORCE_DEPLOY: ${{ github.event_name == 'repository_dispatch' && needs.claim.outputs.force || github.event_name == 'workflow_run' && 'false' || inputs.force }}
+        steps:
+            - name: Checkout scheduler for immediate deploys
+              if: github.event_name != 'repository_dispatch'
+              uses: actions/checkout@v6
+              with:
+                  ref: ${{ github.event.repository.default_branch }}
+                  persist-credentials: false
+
             - name: Validate requested version
               id: version
               shell: bash
               env:
                   REQUESTED_VERSION: ${{ env.DEPLOY_VERSION }}
-                  REQUESTED_SOURCE_REF: ${{ inputs.source_ref }}
+                  REQUESTED_SOURCE_REF: ${{ github.event_name == 'repository_dispatch' && needs.claim.outputs.source_ref || inputs.source_ref }}
               run: |
                   tag="$REQUESTED_VERSION"
                   ref="${REQUESTED_SOURCE_REF:-$REQUESTED_VERSION}"
@@ -137,6 +248,12 @@ jobs:
                   done
                   echo "tag=$tag" >> "$GITHUB_OUTPUT"
                   echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
+            - name: Cancel pending plan for this server
+              if: github.event_name != 'repository_dispatch'
+              env:
+                  GITHUB_TOKEN: ${{ github.token }}
+              run: python3 deploy/carbon-deploy.py cancel "$DEPLOY_TARGET"
 
             - name: Checkout deployment files
               uses: actions/checkout@v6

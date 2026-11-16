@@ -80,6 +80,7 @@ public class LootTableModifiers {
     private static final List<LootAddition> additions = List.of(
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/player"), null, Items.PLAYER_HEAD, 1.0F, 1, 1),
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/enderman"), null, Items.ENDER_PEARL, 1.0F, 3, 10),
+            new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/husk"), null, Items.SAND, 1.0F, 1, 3),
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "chests/ancient_city"), "charm-sculk-phial", null, 0.1F, 1, 1),
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "chests/ancient_city"), "enderite-upgrade-smithing-template", null, 0.125F, 1, 1),
             new LootAddition(Identifier.fromNamespaceAndPath("minecraft", "entities/bat"), null, Items.PHANTOM_MEMBRANE, 1.0F, 1, 1),

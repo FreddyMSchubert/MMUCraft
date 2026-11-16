@@ -34,13 +34,41 @@
 	"craftable": {
 		"recipes": [
 			{
-				"id": "esqueixada",
+				"id": "esqueixada-normal",
 				"type": "mainmod:fake_crafting_shapeless",
 				"ingredients": [
 					"minecraft:bowl",
-					"mainmod:cooked_cod",
+					"minecraft:cooked_cod",
 					"mainmod:tomato",
-					"#minecraft:egg"
+					"minecraft:egg"
+				],
+				"result": {
+					"stack": "mainmod:food-esqueixada",
+					"count": 1
+				}
+			},
+			{
+				"id": "esqueixada-blue",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"minecraft:bowl",
+					"minecraft:cooked_cod",
+					"mainmod:tomato",
+					"minecraft:blue_egg"
+				],
+				"result": {
+					"stack": "mainmod:food-esqueixada",
+					"count": 1
+				}
+			},
+			{
+				"id": "esqueixada-brown",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"minecraft:bowl",
+					"minecraft:cooked_cod",
+					"mainmod:tomato",
+					"minecraft:brown_egg"
 				],
 				"result": {
 					"stack": "mainmod:food-esqueixada",

@@ -76,6 +76,7 @@ Burger (C) · [Ghast Tear](https://minecraft.wiki/w/Ghast_Tear) (TL, TC, TR, CL,
 
 ### Esqueixada
 
+![Esqueixada Recipe](/assets/knowledge/survival/food/esqueixada.png)
 :::recipe-items
 [Cooked Cod](https://minecraft.wiki/w/Cooked_Cod) · [Bowl](https://minecraft.wiki/w/Bowl) · [Egg](https://minecraft.wiki/w/Egg) · Tomato → Esqueixada
 :::
@@ -89,7 +90,7 @@ White Fish Meat · [Baked Potato](https://minecraft.wiki/w/Baked_Potato) → Fis
 
 ### Big Fish Salad
 
-
+![Fish Salad Recipe](/assets/knowledge/survival/food/fish-salad.png)
 :::recipe-items
 White Fish Meat · White Fish Meat · Tentacle · Crab Claw · [Dried Kelp](https://minecraft.wiki/w/Dried_Kelp) · [Egg](https://minecraft.wiki/w/Egg) · [Honey](https://minecraft.wiki/w/Honey_Bottle) · Tomato · [Bowl](https://minecraft.wiki/w/Bowl) → Big Fish Salad
 :::

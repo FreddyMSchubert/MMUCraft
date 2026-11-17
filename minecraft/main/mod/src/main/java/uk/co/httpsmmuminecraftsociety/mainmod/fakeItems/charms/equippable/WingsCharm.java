@@ -4,11 +4,17 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import uk.co.httpsmmuminecraftsociety.mainmod.datagen.ModItemTagProvider;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmStackData;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.BaseItemChangeCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 
 public final class WingsCharm implements Charm, BaseItemChangeCallbackCharm {
     public static final int CHARM_ID = 58;
+
+    public static boolean hasUpdraft(ItemStack stack) {
+        return stack.has(DataComponents.GLIDER) && CharmStackData.getStoredCharms(stack).stream()
+                .anyMatch(charm -> charm.charmId() == CHARM_ID && charm.level() >= 2);
+    }
 
     @Override
     public void enableEffectForItem(ItemStack stack, int charmLevel) {

@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.WingsCharm;
 
 public final class GliderFlight {
     public static final double GLIDER_SPEED_BPS = 14.2;
@@ -47,7 +48,8 @@ public final class GliderFlight {
     }
 
     public static void allowImpulseAscent(ServerPlayer player) {
-        if (!GliderCharm.isGlider(player.getItemBySlot(EquipmentSlot.CHEST))) return;
+        var chest = player.getItemBySlot(EquipmentSlot.CHEST);
+        if (!GliderCharm.isGlider(chest) && !WingsCharm.hasUpdraft(chest)) return;
         FlightState state = STATES.computeIfAbsent(player, ignored -> new FlightState());
         state.ascentGraceUntil = player.tickCount + ASCENT_GRACE_TICKS;
         state.impulseTick = player.tickCount;
@@ -69,15 +71,16 @@ public final class GliderFlight {
     private static void tick(ServerPlayer player) {
         var chest = player.getItemBySlot(EquipmentSlot.CHEST);
         boolean glider = GliderCharm.isGlider(chest);
+        boolean updraft = glider || WingsCharm.hasUpdraft(chest);
         if (!player.isAlive() || player.isSpectator() || player.getAbilities().flying
-                || !chest.is(Items.ELYTRA) || !chest.has(DataComponents.GLIDER)) {
+                || (!chest.is(Items.ELYTRA) && !updraft) || !chest.has(DataComponents.GLIDER)) {
             STATES.remove(player);
             return;
         }
 
         FlightState state = STATES.computeIfAbsent(player, ignored -> new FlightState());
         Vec3 position = player.getBoundingBox().getCenter();
-        if (!glider) state.updraft = null;
+        if (!updraft) state.updraft = null;
         if (state.dimension != player.level().dimension()) {
             state.updraft = null;
             state.speedLimit = GLIDER_SPEED_BPS;
@@ -131,15 +134,15 @@ public final class GliderFlight {
             state.ascentGraceUntil = player.tickCount + ASCENT_GRACE_TICKS;
         }
 
-        if (glider) {
+        if (updraft) {
             Updrafts.Updraft caught = Updrafts.findAt(player);
             if (caught != null) {
                 state.distanceSinceUpdraft = 0;
-                MasteryAdvancements.grant(player, "glider/updraft");
+                if (glider) MasteryAdvancements.grant(player, "glider/updraft");
             }
-            else state.distanceSinceUpdraft += Math.hypot(position.x - previous.x, position.z - previous.z);
-            velocity = applyUpdraft(state, caught, velocity, player.getBoundingBox().minY, player.tickCount);
-            velocity = velocity.add(0, -extraGravity(state.distanceSinceUpdraft), 0);
+            else if (glider) state.distanceSinceUpdraft += Math.hypot(position.x - previous.x, position.z - previous.z);
+            velocity = applyUpdraft(state, caught, velocity, player.getBoundingBox().minY, player.tickCount, glider);
+            if (glider) velocity = velocity.add(0, -extraGravity(state.distanceSinceUpdraft), 0);
         }
 
         velocity = clampSpeed(velocity, glider ? state.speedLimit : ELYTRA_SPEED_BPS);
@@ -149,20 +152,22 @@ public final class GliderFlight {
         }
     }
 
-    static Vec3 applyUpdraft(FlightState state, Updrafts.Updraft caught, Vec3 velocity, double feetY, int tick) {
+    static Vec3 applyUpdraft(FlightState state, Updrafts.Updraft caught, Vec3 velocity, double feetY, int tick,
+                             boolean glider) {
         if (caught != null) state.updraft = caught;
         double lift = state.updraft == null ? 0 : state.updraft.liftAt(feetY, tick);
         double upwardSpeed = velocity.y;
         if (lift > 0) {
             upwardSpeed = Math.min(state.updraft.heatSource().maxUpwardSpeed(), upwardSpeed + lift);
+            if (!glider) upwardSpeed = Math.max(velocity.y, upwardSpeed);
         }
-        if (state.updraft != null && tick >= state.ascentGraceUntil) {
+        if (glider && state.updraft != null && tick >= state.ascentGraceUntil) {
             // Stop heat-driven ascent at the source ceiling. Other boosts can pass it.
             upwardSpeed = Math.min(upwardSpeed, Math.max(0, state.updraft.ceilingY() - feetY));
         }
         if (lift == 0) {
             state.updraft = null;
-            if (tick >= state.ascentGraceUntil && upwardSpeed > 0) upwardSpeed *= UPWARD_DAMPING;
+            if (glider && tick >= state.ascentGraceUntil && upwardSpeed > 0) upwardSpeed *= UPWARD_DAMPING;
         }
         return new Vec3(velocity.x, upwardSpeed, velocity.z);
     }

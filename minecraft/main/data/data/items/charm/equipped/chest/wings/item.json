@@ -16,7 +16,7 @@
 	"charm": {
 		"charmId": 58,
 		"minLevel": 0,
-		"maxLevel": 1,
+		"maxLevel": 2,
 		"levels": [
 			{
 				"level": 1,
@@ -24,6 +24,30 @@
 				"abilityStatusRelative": "Makes this chestplate work as an elytra.",
 				"dabloons": 1000,
 				"upgradeIngredients": ["minecraft:elytra"]
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "This chestplate works as an elytra and catches glider updrafts, even in rain.",
+				"abilityStatusRelative": "Lets this chestplate catch glider updrafts, even in rain.",
+				"dabloons": 500,
+				"upgradeIngredients": [
+					"mainmod:charm-glider",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane",
+					"minecraft:phantom_membrane"
+				]
 			}
 		]
 	},

@@ -2,6 +2,7 @@
 	"name": "Placeable Cosmetics",
 	"items": [
 		"mainmod:cosmetic-book-stack",
+		"mainmod:cosmetic-burger",
 		"mainmod:cosmetic-butterflies",
 		"mainmod:cosmetic-candle",
 		"mainmod:cosmetic-cardboard-box",
@@ -16,6 +17,7 @@
 		"mainmod:cosmetic-plunger",
 		"mainmod:cosmetic-pumpkin",
 		"mainmod:cosmetic-rootling",
+		"mainmod:cosmetic-saturn-burger",
 		"mainmod:cosmetic-sea-scorpion",
 		"mainmod:cosmetic-skull",
 		"mainmod:cosmetic-traffic-cone",

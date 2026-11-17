@@ -32,6 +32,10 @@ If you want to, you still can treat enchanting and anvils just as usual. The def
 
 ![Librarian with a book on their lectern](/assets/knowledge/survival/enchanting-anvils/book-on-lectern.png)
 
+:::warning
+Sidenote, we do have the [DnT datapack](https://modrinth.com/datapack/dungeons-and-taverns) installed, but the Outreach, Swift Soar and Traveller have been removed.
+:::
+
 ## Duplicating books
 
 Put an enchanted book on the lectern used by a librarian. The librarian's first trade becomes an exact copy of that book if copying is allowed for every enchantment on it. Replace the lectern book whenever you want a different copy trade.

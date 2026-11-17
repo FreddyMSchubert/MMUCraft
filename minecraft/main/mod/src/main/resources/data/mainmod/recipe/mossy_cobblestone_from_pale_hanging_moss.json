@@ -1,0 +1,9 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"category": "building",
+	"group": "mossy_cobblestone",
+	"ingredients": ["minecraft:cobblestone", "minecraft:pale_hanging_moss"],
+	"result": {
+		"id": "minecraft:mossy_cobblestone"
+	}
+}

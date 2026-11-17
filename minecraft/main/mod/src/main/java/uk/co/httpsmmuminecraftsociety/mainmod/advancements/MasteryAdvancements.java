@@ -172,7 +172,8 @@ public final class MasteryAdvancements {
                 && FakeItems.isSpecificFakeItem(player.getItemBySlot(EquipmentSlot.HEAD), "cosmetic-hood-camel")) {
             grant(serverPlayer, "cosmetics/who_needs_camels");
         }
-        return InteractionResult.PASS;
+        // ItemEvents.USE needs null to continue the item's normal use.
+        return null;
     }
 
     public static void checkJokeVibe(ServerPlayer player) {

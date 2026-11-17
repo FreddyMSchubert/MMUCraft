@@ -6,18 +6,26 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.AfterBlockBreakCallbackCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.UseOnBlockCallbackCharm;
 
 import java.util.ArrayDeque;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
-public class SawBeltCharm implements Charm, AfterBlockBreakCallbackCharm
+public class SawBeltCharm implements Charm, AfterBlockBreakCallbackCharm, UseOnBlockCallbackCharm
 {
     private static final Set<UUID> ACTIVE_PLAYERS = ConcurrentHashMap.newKeySet();
     // One progression step per wood set; the final step retains the old 256-log cap.
@@ -50,10 +58,35 @@ public class SawBeltCharm implements Charm, AfterBlockBreakCallbackCharm
         if (!ACTIVE_PLAYERS.add(uuid)) return;
 
         try {
-            fellTree(player, level, originPos, charmLevel);
+            spreadLogs(player, level, originPos, charmLevel, player.gameMode::destroyBlock);
         } finally {
             ACTIVE_PLAYERS.remove(uuid);
         }
+    }
+
+    @Override
+    public InteractionResult onUseOnBlock(ItemStack stack, ServerPlayer player, ServerLevel level, InteractionHand hand, BlockHitResult hit, int charmLevel)
+    {
+        ItemStack axe = player.getMainHandItem();
+        BlockPos originPos = hit.getBlockPos();
+        if (hand != InteractionHand.MAIN_HAND || player.isSpectator() || !player.isShiftKeyDown()
+                || !axe.is(ItemTags.AXES) || player.getCooldowns().isOnCooldown(axe)
+                || !isTreeLog(level.getBlockState(originPos))) return InteractionResult.PASS;
+        if (!ClaimsManager.canAccess(player, level, originPos) || !player.mayUseItemAt(originPos, hit.getDirection(), axe))
+            return InteractionResult.PASS;
+
+        InteractionResult result = axe.useOn(new UseOnContext(player, hand, hit));
+        if (!result.consumesAction()) return result;
+
+        spreadLogs(player, level, originPos, charmLevel, pos -> {
+            ItemStack heldAxe = player.getMainHandItem();
+            if (player.getCooldowns().isOnCooldown(heldAxe) || !ClaimsManager.canAccess(player, level, pos)
+                    || !player.mayUseItemAt(pos, hit.getDirection(), heldAxe))
+                return false;
+            BlockHitResult targetHit = new BlockHitResult(Vec3.atCenterOf(pos), hit.getDirection(), pos, false);
+            return heldAxe.useOn(new UseOnContext(player, hand, targetHit)).consumesAction();
+        });
+        return result;
     }
 
     private static boolean isTreeLog(BlockState state)
@@ -61,7 +94,7 @@ public class SawBeltCharm implements Charm, AfterBlockBreakCallbackCharm
         return state.is(BlockTags.LOGS);
     }
 
-    private static void fellTree(ServerPlayer player, ServerLevel level, BlockPos originPos, int charmLevel)
+    private static void spreadLogs(ServerPlayer player, ServerLevel level, BlockPos originPos, int charmLevel, Predicate<BlockPos> useLog)
     {
         int remaining = getMaxExtraBlocksForLevel(charmLevel);
         if (remaining <= 0) return;
@@ -91,7 +124,7 @@ public class SawBeltCharm implements Charm, AfterBlockBreakCallbackCharm
                         BlockState nextState = level.getBlockState(nextPos);
                         if (!isTreeLog(nextState)) continue;
 
-                        if (!player.gameMode.destroyBlock(nextPos)) continue;
+                        if (!useLog.test(nextPos)) continue;
 
                         CharmParticles.atBlock(level, nextPos, ParticleTypes.DUST_PLUME, 3);
 

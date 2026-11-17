@@ -105,7 +105,7 @@ public final class WrenchCharm implements Charm, UseOnBlockCallbackCharm, Attack
         }
 
         showProperties(player, changed, properties, selected);
-        MasteryAdvancements.grant(player, "utility/wrench");
+        MasteryAdvancements.recordWrenchUse(player);
         return InteractionResult.SUCCESS_SERVER;
     }
 
@@ -134,7 +134,7 @@ public final class WrenchCharm implements Charm, UseOnBlockCallbackCharm, Attack
         DebugStickState selection = stack.getOrDefault(DataComponents.DEBUG_STICK_STATE, DebugStickState.EMPTY);
         stack.set(DataComponents.DEBUG_STICK_STATE, selection.withProperty(state.typeHolder(), selected));
         showProperties(player, state, properties, selected);
-        MasteryAdvancements.grant(player, "utility/wrench");
+        MasteryAdvancements.recordWrenchUse(player);
         return InteractionResult.SUCCESS_SERVER;
     }
 

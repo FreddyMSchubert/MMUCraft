@@ -142,6 +142,26 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
 
     private void defineAdvancements() {
         add("root", "Welcome! Your journey starts now.", "Master every corner of MMUCraft.", "fake:deco-mmu-dirt", null, "task");
+        add("charms/cover_me_in_trinkets", "Cover me in Trinkets", "Wear five charms on each piece of armour.", "minecraft:netherite_chestplate:glint", "charms/apply_boost", "challenge");
+        add("utility/peer_review", "Peer Review", "Have three players use slime detectors in the same chunk.", "minecraft:slime_ball", "utility/slime_detector", "goal");
+        add("backpacks/enderception", "Enderception", "Store an Endless Backpack in an Ender Chest.", "fake:charm-endless-backpack", "backpacks/endless", "goal");
+        add("utility/pocket_watching", "Pocket Watching", "Apply Soulbound to a wallet.", "fake:charm-wallet:glint", "utility/soulbound", "goal");
+        add("glider/breath_of_the_wild", "The Titular \"Breath\" of the Wild", "Glide 500 blocks from your start without touching the ground.", "fake:charm-glider", "glider/craft", "challenge");
+        add("utility/wrench_wrangler_100", "Wrench Wrangler", "Use the wrench 100 times. Quite the perfectionist.", "fake:charm-wrench", "utility/wrench", "challenge");
+        add("social/potion_of_poaching_10", "Potion of Poaching", "Hunt 10 Boss Phantoms.", "minecraft:phantom_membrane", "potions/insomnia", "challenge");
+        add("utility/band_aid_fix", "Band-Aid Fix", "Eat an Invisi-Carrot while under Darkness.", "fake:charm-invisi-carrot", "utility/invisible_frame", "goal");
+        add("utility/yellow_chakra_get", "Yellow Chakra Get!", "Drink Golden Nutritional Paste near a Sulfur Cube.", "fake:golden-nutritional-paste", "utility/golden_paste", "goal");
+        add("utility/the_greggs_at_the_end", "The Greggs at the End of the Game", "Use an autocrafter to make a sausage roll in the End.", "fake:sausage-roll", "enderite/scrap", "goal");
+        add("utility/emergency_pufferfish", "Emergency Pufferfish", "Apply Soulbound to a pufferfish bucket.", "minecraft:pufferfish_bucket:glint", "utility/soulbound", "goal");
+        add("social/bootleg_committee_member", "Bootleg Committee Member", "Die while carrying something a committee member drops on death.", "minecraft:player_head", "social/committee_any", "goal");
+        add("utility/shadow_wizard_money_gang", "Shadow Wizard Money Gang", "Duplicate a cursed book with a librarian's lectern.", "minecraft:enchanted_book:glint", "utility/duplicate_book", "goal");
+        add("utility/resourceful_resource_pack", "Resourceful Resource Pack", "Put a 16x16 map in an item frame.", "minecraft:filled_map", "utility/invisible_frame", "goal");
+        add("cosmetics/stealth_mission", "Stealth Mission", "Wear a full set of minified armour.", "minecraft:leather_chestplate", "charms/apply_boost", "goal");
+        add("cosmetics/baby_slime_cosplay", "Baby slime cosplay", "Wear Leprechaun Boots with a Slime Head.", "fake:cosmetic-slime-head", "cosmetics/item/slime-head", "goal");
+        add("cosmetics/who_let_the_dogs_out", "Who let the dogs out?", "Punch a wild wolf while wearing Dog Ears.", "fake:cosmetic-dog-ears", "cosmetics/unlock_1", "goal");
+        add("cosmetics/who_needs_camels", "Who needs camels!", "Use a spear while wearing the Camel Hood.", "fake:cosmetic-hood-camel", "cosmetics/unlock_1", "goal");
+        add("cosmetics/you_are_a_vibe_bro", "You are a vibe bro", "Read a Joke Book with Headphones while a jukebox plays nearby.", "fake:cosmetic-headphones", "cosmetics/item/headphones", "goal");
+        add("cosmetics/but_wheres_the_caveman", "But where's the caveman?", "Wear a Cowboy Hat while frozen.", "fake:cosmetic-cowboy-hat", "cosmetics/item/cowboy-hat", "goal");
         add("fishing/first_catch", "Something's Fishy", "Catch a fish.", "minecraft:fishing_rod", "root", "task");
         add("fishing/common", "Common Catch", "Catch a common fish.", "minecraft:fishing_rod", "fishing/first_catch", "task");
         add("fishing/uncommon", "Uncommon Catch", "Catch an uncommon fish.", "minecraft:fishing_rod", "fishing/common", "task");

@@ -31,6 +31,7 @@ public final class SlimeDetectorCharm implements Charm, UseCallbackCharm {
     public InteractionResult onUse(ItemStack stack, ServerPlayer player, ServerLevel level, int charmLevel) {
         int bars = signalBars(level.getSeed(), player.chunkPosition());
         MasteryAdvancements.grant(player, "utility/slime_detector");
+        MasteryAdvancements.recordSlimeScan(player, level);
         if (isSlimeChunk(level.getSeed(), player.chunkPosition().x(), player.chunkPosition().z())) {
             MasteryAdvancements.grant(player, "utility/slime_chunk");
         }

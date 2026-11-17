@@ -2,16 +2,21 @@ package uk.co.httpsmmuminecraftsociety.mainmod.mixin;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.level.block.CrafterBlock;
 import net.minecraft.world.level.block.entity.CrafterBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.DabloonInteractionLog;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 
 @Mixin(CrafterBlock.class)
 public abstract class DabloonCrafterMixin {
@@ -23,6 +28,13 @@ public abstract class DabloonCrafterMixin {
         if (recipe.isEmpty()) return;
         ItemStack output = recipe.get().value().assemble(input);
         if (output.isEmpty()) return;
+
+        if (level.dimension() == Level.END && FakeItems.isSpecificFakeItem(output, "sausage-roll")) {
+            // shortcut: A crafter has no player owner, so nearby players get credit; track ownership if needed.
+            for (ServerPlayer player : level.getEntitiesOfClass(ServerPlayer.class, new AABB(pos).inflate(16))) {
+                MasteryAdvancements.grant(player, "utility/the_greggs_at_the_end");
+            }
+        }
 
         int inputCoins = 0;
         boolean coin = DabloonInteractionLog.kind(output).equals("coin");

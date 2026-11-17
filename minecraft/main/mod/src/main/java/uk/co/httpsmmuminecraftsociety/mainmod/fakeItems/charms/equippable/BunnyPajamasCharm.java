@@ -21,7 +21,7 @@ import java.util.List;
 
 public class BunnyPajamasCharm implements Charm, BaseItemChangeCallbackCharm, EquippedTickCallbackCharm
 {
-    private static final int CARROT_ATTEMPT_INTERVAL_TICKS = 30 * 20;
+    private static final int CARROT_ATTEMPT_INTERVAL_TICKS = 60 * 20;
     private static final int CARROT_NUTRITION_SHARE_LEVEL = 4;
 
     private static final double BASE_JUMP_POWER = LivingEntity.BASE_JUMP_POWER;

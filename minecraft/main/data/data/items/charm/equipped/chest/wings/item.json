@@ -11,7 +11,7 @@
 		"description": "Turns a chestplate into an elytra.",
 		"unlockWeight": 15,
 		"unlockMessage": "Unlocked charm: Wings Charm. Turn a chestplate into an elytra.",
-		"gameplayToggle": "unthemed"
+		"gameplayToggle": "efficient"
 	},
 	"charm": {
 		"charmId": 58,

@@ -125,7 +125,7 @@
 		"id": "beach-party",
 		"name": "Beach Party",
 		"date": "2026-11-15",
-		"description": "Ocean adventures and the Iron Stomach, Scuba Tank, Candle of the Deep and Vitality Mending charms.\n\nThis year starts: 2026-11-09\n\nLast year: 2025-11-03 to 2025-11-09\n\nSurprising Saturday: Manhunt: split everyone randomly into hunters and runners\n\nSunday plan: Tease the End opening next week\nIron Stomach Charm, Scuba Tank Charm, Candle of the Deep Charm and Vitality Mending Charm\n\nScreenshot: Player in a halo with many god rays",
+		"description": "Ocean adventures and the Iron Stomach, Scuba Tank and Vitality Mending charms.\n\nThis year starts: 2026-11-09\n\nLast year: 2025-11-03 to 2025-11-09\n\nSurprising Saturday: Manhunt: split everyone randomly into hunters and runners\n\nSunday plan: Tease the End opening next week\nIron Stomach Charm, Scuba Tank Charm and Vitality Mending Charm\n\nScreenshot: Player in a halo with many god rays",
 		"emoji": "🏖️",
 		"colors": [
 			{
@@ -142,7 +142,7 @@
 		"id": "void",
 		"name": "Void",
 		"date": "2026-11-22",
-		"description": "The End opens with Enderite and End City exploration.\n\nThis year starts: 2026-11-16\n\nLast year: 2025-11-10 to 2025-11-16\n\nSurprising Saturday: Skyblock\n\nSunday plan: Unlock the End\nEnderite\nRemind players to check out particle trails\n\nScreenshot: Enderite and shulker hat while raiding an End City, with shulker shots nearby",
+		"description": "The End opens with Enderite, End City exploration and the Auto-Eating Charm.\n\nThis year starts: 2026-11-16\n\nLast year: 2025-11-10 to 2025-11-16\n\nSurprising Saturday: Skyblock\n\nSunday plan: Unlock the End\nEnderite\nAuto-Eating Charm\nRemind players to check out particle trails\n\nScreenshot: Enderite and shulker hat while raiding an End City, with shulker shots nearby",
 		"emoji": "🌌",
 		"colors": [
 			{
@@ -156,10 +156,10 @@
 		]
 	},
 	{
-		"id": "unthemed",
-		"name": "Unthemed",
+		"id": "efficient",
+		"name": "Efficient",
 		"date": "2026-11-29",
-		"description": "A week without a fixed theme, ahead of the Christmas season.\n\nThis year starts: 2026-11-23\n\nLast year: 2025-11-17 to 2025-11-23\n\nSunday plan: No fixed theme; Christmas is coming soon",
+		"description": "The Efficient drop adds the Candle of the Deep Charm and Wings Charm one week after Void.\n\nThis year starts: 2026-11-23\n\nLast year: 2025-11-17 to 2025-11-23\n\nSunday plan: Candle of the Deep Charm and Wings Charm\nChristmas is coming soon",
 		"emoji": "❔",
 		"colors": [
 			{

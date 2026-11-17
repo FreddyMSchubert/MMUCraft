@@ -1,0 +1,113 @@
+{
+	"title": "Auto-Eating Charm",
+	"id": "charm-auto-eating",
+	"modelType": "charm",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [
+		"Skips magic food, food with negative effects, chorus fruit, golden apples, and cake."
+	],
+	"shopPurchasable": {
+		"membersOnly": false,
+		"priceDabloons": 50,
+		"description": "Auto-eats food when you are hungry. Higher levels add more food, storage, and speed.",
+		"unlockWeight": 50,
+		"unlockMessage": "Unlocked charm: Auto-Eating Charm. It auto-eats food when you are hungry.",
+		"gameplayToggle": "void"
+	},
+	"charm": {
+		"charmId": 62,
+		"minLevel": 0,
+		"maxLevel": 12,
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Auto-eats raw vegetables and some raw meat from your inventory every 30 seconds.",
+				"abilityStatusRelative": "Auto-eats raw vegetables and some raw meat from your inventory every 30 seconds.",
+				"dabloons": 25,
+				"upgradeIngredients": []
+			},
+			{
+				"level": 2,
+				"abilityStatusCurrent": "Auto-eats most food from your inventory every 30 seconds.",
+				"abilityStatusRelative": "Auto-eats most food from your inventory.",
+				"dabloons": 100,
+				"upgradeIngredients": []
+			},
+			{
+				"level": 3,
+				"abilityStatusCurrent": "Auto-eats golden carrots, steak, porkchops, and lower-level food every 30 seconds.",
+				"abilityStatusRelative": "Auto-eats golden carrots, steak, and porkchops too.",
+				"dabloons": 150,
+				"upgradeIngredients": []
+			},
+			{
+				"level": 4,
+				"abilityStatusCurrent": "Auto-eats food, including stews, from your inventory, backpacks, shulker boxes, bundles, and ender chest recursively every 30 seconds.",
+				"abilityStatusRelative": "Auto-eats stews and searches backpacks, shulker boxes, bundles, and ender chest recursively.",
+				"dabloons": 200,
+				"upgradeIngredients": []
+			},
+			{
+				"level": 5,
+				"abilityStatusCurrent": "Auto-eats food from your inventory and nested storage recursively every 20 seconds.",
+				"abilityStatusRelative": "Auto-eats every 20 seconds.",
+				"dabloons": 100,
+				"upgradeIngredients": []
+			},
+			{
+				"level": 6,
+				"abilityStatusCurrent": "Auto-eats food from your inventory and nested storage recursively every 15 seconds.",
+				"abilityStatusRelative": "Auto-eats every 15 seconds.",
+				"dabloons": 115,
+				"upgradeIngredients": []
+			},
+			{
+				"level": 7,
+				"abilityStatusCurrent": "Auto-eats food from your inventory and nested storage recursively every 10 seconds.",
+				"abilityStatusRelative": "Auto-eats every 10 seconds.",
+				"dabloons": 130,
+				"upgradeIngredients": []
+			},
+			{
+				"level": 8,
+				"abilityStatusCurrent": "Auto-eats food from your inventory and nested storage recursively every 8 seconds.",
+				"abilityStatusRelative": "Auto-eats every 8 seconds.",
+				"dabloons": 145,
+				"upgradeIngredients": []
+			},
+			{
+				"level": 9,
+				"abilityStatusCurrent": "Auto-eats food from your inventory and nested storage recursively every 6 seconds.",
+				"abilityStatusRelative": "Auto-eats every 6 seconds.",
+				"dabloons": 160,
+				"upgradeIngredients": []
+			},
+			{
+				"level": 10,
+				"abilityStatusCurrent": "Auto-eats food from your inventory and nested storage recursively every 4 seconds.",
+				"abilityStatusRelative": "Auto-eats every 4 seconds.",
+				"dabloons": 175,
+				"upgradeIngredients": []
+			},
+			{
+				"level": 11,
+				"abilityStatusCurrent": "Auto-eats food from your inventory and nested storage recursively every 2 seconds.",
+				"abilityStatusRelative": "Auto-eats every 2 seconds.",
+				"dabloons": 190,
+				"upgradeIngredients": []
+			},
+			{
+				"level": 12,
+				"abilityStatusCurrent": "Auto-eats food from your inventory and nested storage recursively as soon as you are hungry.",
+				"abilityStatusRelative": "Auto-eats as soon as you are hungry.",
+				"dabloons": 200,
+				"upgradeIngredients": []
+			}
+		]
+	},
+	"equippableCharm": {
+		"equipmentSlot": "feet",
+		"equippableAssetId": "auto_eating__charm"
+	}
+}

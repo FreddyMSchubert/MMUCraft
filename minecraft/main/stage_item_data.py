@@ -33,7 +33,7 @@ def validate_gameplay_toggle_references(root: Path) -> None:
 		path.read_text(encoding="utf-8")
 		for path in sorted((root.parents[1] / "services" / "api" / "drizzle").glob("*.sql"))
 	)
-	for toggle in known - {"unthemed"}:
+	for toggle in known:
 		if f"('{toggle}'," not in migrations:
 			raise ValueError(f"Gameplay toggle is not seeded by an API migration: {toggle}")
 

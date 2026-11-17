@@ -7,7 +7,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 public final class MasteryDropGates {
     private static final String[] DROPS = {"welcoming", "soaring", "imaginative", "nether", "circus",
-            "inventors", "beach-party", "void", "unthemed", "cold", "jolly", "christmas"};
+            "inventors", "beach-party", "void", "efficient", "cold", "jolly", "christmas"};
     private MasteryDropGates() {}
 
     public static int enabledMask() {

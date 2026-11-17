@@ -21,6 +21,9 @@ export interface PlayerProfile {
 	defaultColor: string;
 	customColor: string | null;
 	showDeathCounter: boolean;
+	showNicknameInNametag: boolean;
+	showPronounsInNametag: boolean;
+	showDucksInNametag: boolean;
 	updatedAtUnixMs: number;
 }
 

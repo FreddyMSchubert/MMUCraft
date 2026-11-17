@@ -452,6 +452,9 @@ public final class PlayerStatsSync {
             String pronouns,
             String colorHex,
             boolean showDeathCounter,
+            boolean showNicknameInNametag,
+            boolean showPronounsInNametag,
+            boolean showDucksInNametag,
             boolean isMember,
             boolean isCommittee,
             boolean isExternal
@@ -467,6 +470,9 @@ public final class PlayerStatsSync {
                 .setPronouns(pronouns)
                 .setColorHex(colorHex)
                 .setShowDeathCounter(showDeathCounter)
+                .setShowNicknameInNametag(showNicknameInNametag)
+                .setShowPronounsInNametag(showPronounsInNametag)
+                .setShowDucksInNametag(showDucksInNametag)
                 .setDuckCount(presentationByPlayer.get(player.getUUID()) == null
                         ? 0 : presentationByPlayer.get(player.getUUID()).getDuckCount())
                 .setMessage("Profile updated from website.")
@@ -509,13 +515,13 @@ public final class PlayerStatsSync {
         ServerStatsCounter stats = player.getStats();
         long dangerCount = (long) stats.getValue(Stats.ITEM_USED.get(Items.TOTEM_OF_UNDYING))
                 + stats.getValue(Stats.CUSTOM.get(Stats.DEATHS));
-        String nickname = presentation.getNickname().trim();
-        String pronouns = presentation.getPronouns().trim();
+        String nickname = presentation.getShowNicknameInNametag() ? presentation.getNickname().trim() : "";
+        String pronouns = presentation.getShowPronounsInNametag() ? presentation.getPronouns().trim() : "";
         String prefix = nickname.isEmpty() ? pronouns : pronouns.isEmpty() ? nickname : nickname + " - " + pronouns;
         boolean showDeathCounter = !presentation.hasShowDeathCounter() || presentation.getShowDeathCounter();
         String dangerText = showDeathCounter ? dangerCount + "☠" : "";
         String profileText = prefix + (prefix.isEmpty() || dangerText.isEmpty() ? "" : " - ") + dangerText;
-        String duckText = FeatureToggles.isEnabled(FeatureToggles.NETHER)
+        String duckText = presentation.getShowDucksInNametag() && FeatureToggles.isEnabled(FeatureToggles.NETHER)
                 ? presentation.getDuckCount() + "🦆" : "";
         String text = profileText + (profileText.isEmpty() || duckText.isEmpty() ? "" : " - ") + duckText;
         if (text.equals(renderedProfileByPlayer.put(player.getUUID(), text))) return;

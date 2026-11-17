@@ -128,6 +128,9 @@ export interface PlayerStatisticsSyncResponse {
 	pronouns: string;
 	color_hex: string;
 	show_death_counter: boolean;
+	show_nickname_in_nametag: boolean;
+	show_pronouns_in_nametag: boolean;
+	show_ducks_in_nametag: boolean;
 	previous_last_played_at_unix_ms: number;
 	first_in_any_statistic: boolean;
 	referral_reward_dabloons: number;

@@ -106,6 +106,9 @@ export const playerProfiles = sqliteTable('player_profiles', {
 	color_hex: text('color_hex'),
 	custom_emojis_json: text('emoji_override_json'),
 	show_death_counter: integer('show_death_counter').notNull().default(1),
+	show_nickname_in_nametag: integer('show_nickname_in_nametag').notNull().default(1),
+	show_pronouns_in_nametag: integer('show_pronouns_in_nametag').notNull().default(1),
+	show_ducks_in_nametag: integer('show_ducks_in_nametag').notNull().default(0),
 	updated_at_unix_ms: integer('updated_at_unix_ms').notNull(),
 });
 

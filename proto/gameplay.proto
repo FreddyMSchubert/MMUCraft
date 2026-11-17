@@ -421,6 +421,9 @@ message ApplyPlayerPresentationRequest {
   bool is_member = 6;
   bool is_committee = 7;
   bool is_external = 8;
+  bool show_nickname_in_nametag = 9;
+  bool show_pronouns_in_nametag = 10;
+  bool show_ducks_in_nametag = 11;
 }
 
 message ApplyPlayerPresentationResponse {
@@ -549,6 +552,9 @@ message SyncPlayerStatsResponse {
   int32 duck_count = 15;
   repeated DuckAward duck_new_awards = 16;
   repeated DuckAward duck_pending_items = 17;
+  bool show_nickname_in_nametag = 18;
+  bool show_pronouns_in_nametag = 19;
+  bool show_ducks_in_nametag = 20;
 }
 
 message SurprisingSaturdayReward {

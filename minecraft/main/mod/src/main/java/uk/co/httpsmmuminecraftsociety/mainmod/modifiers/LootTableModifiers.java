@@ -180,13 +180,15 @@ public class LootTableModifiers {
         UnlockBookLoot.addBookDrops(tableId, lootContext, itemStacks);
         addSnifferClover(tableId, lootContext, itemStacks);
 
+        Entity victim = lootContext.getOptional(LootContextParams.THIS_ENTITY);
+        DamageSource damageSource = lootContext.getOptional(LootContextParams.DAMAGE_SOURCE);
+        boolean killedByPlayer = victim != null
+                && damageSource != null
+                && damageSource.getEntity() instanceof Player killer
+                && !killer.getUUID().equals(victim.getUUID());
         if (Identifier.fromNamespaceAndPath("minecraft", "entities/player").equals(tableId)
-                && lootContext.getOptional(LootContextParams.THIS_ENTITY) instanceof Player victim) {
-            DamageSource damageSource = lootContext.getOptional(LootContextParams.DAMAGE_SOURCE);
-            String soulId = damageSource != null
-                    && damageSource.getEntity() instanceof Player killer
-                    && !killer.getUUID().equals(victim.getUUID())
-                    ? "soul" : "soul-shard";
+                && victim instanceof Player) {
+            String soulId = killedByPlayer ? "soul" : "soul-shard";
             int count = soulId.equals("soul-shard") ? Mth.nextInt(lootContext.getRandom(), 1, 4) : 1;
             itemStacks.add(FakeItems.createFakeItemStack(soulId, count));
         }
@@ -239,6 +241,7 @@ public class LootTableModifiers {
 
         for (Map.Entry<Identifier, List<EnchantmentSettings>> entry : EnchantmentSettingsManager.byLoottable.entrySet()) {
             if (!entry.getKey().equals(tableId)) continue;
+            if (entry.getKey().getPath().startsWith("entities/") && !killedByPlayer) continue;
             for (EnchantmentSettings enchType : entry.getValue()) {
                 float chance;
                 switch (enchType.loottableRarity) {

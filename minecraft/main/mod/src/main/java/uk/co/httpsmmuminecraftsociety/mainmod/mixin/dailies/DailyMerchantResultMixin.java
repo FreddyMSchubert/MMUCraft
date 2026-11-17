@@ -10,6 +10,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.Merchant;
 import net.minecraft.world.item.trading.MerchantOffer;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.item.enchantment.Enchantments;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -34,6 +37,12 @@ public abstract class DailyMerchantResultMixin {
         ItemStack traded = offer.getResult();
         if (LecternLibrarianTrades.isLecternCopyOffer(offer)) {
             MasteryAdvancements.grant(serverPlayer, "utility/duplicate_book");
+            ItemEnchantments enchantments = traded.getOrDefault(DataComponents.STORED_ENCHANTMENTS,
+                    ItemEnchantments.EMPTY);
+            if (enchantments.entrySet().stream().anyMatch(entry -> entry.getKey().is(Enchantments.BINDING_CURSE)
+                    || entry.getKey().is(Enchantments.VANISHING_CURSE))) {
+                MasteryAdvancements.grant(serverPlayer, "utility/shadow_wizard_money_gang");
+            }
         }
 
         if (traded.is(Items.EMERALD)) {

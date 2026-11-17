@@ -35,6 +35,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.GearEnchantmentSanitiz
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettings;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.CommitteeMembers;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.PickaxeHeaterCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfInsomniaCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.DabloonChestLoot;
@@ -128,6 +129,15 @@ public class LootTableModifiers {
             new PlayerLootAddition(List.of("MerlinSpace"), null, Items.APPLE, 1, 1, 1),
             new PlayerLootAddition(List.of("HannahLucyyy"), null, Items.BLUE_ORCHID, 1, 1, 1)
     );
+
+    public static boolean isCommitteeDrop(ItemStack stack) {
+        return !stack.isEmpty() && playerAdditions.stream().anyMatch(addition ->
+                CommitteeMembers.ALL.stream().anyMatch(member -> addition.playerNames().stream()
+                        .anyMatch(name -> name.equalsIgnoreCase(member.username())))
+                        && (addition.fakeItemId() != null
+                        ? FakeItems.isSpecificFakeItem(stack, addition.fakeItemId())
+                        : stack.is(addition.vanillaItem())));
+    }
     private static void addPlayerSpecificDrops(
             Identifier tableId,
             LootContext lootContext,

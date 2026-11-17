@@ -29,6 +29,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailyTaskManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.dailies.DailySimpleEvent;
 import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.ModEnchantments;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.ItemTags;
 
@@ -134,10 +135,18 @@ public abstract class AnvilMenuMixin {
         }
         if (player instanceof ServerPlayer serverPlayer) {
             var enchantments = serverPlayer.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
-            if (EnchantmentHelper.getItemEnchantmentLevel(enchantments.getOrThrow(ModEnchantments.SOULBOUND), carried) > 0) {
+            var soulbound = enchantments.getOrThrow(ModEnchantments.SOULBOUND);
+            if (EnchantmentHelper.getItemEnchantmentLevel(soulbound, original) == 0
+                    && EnchantmentHelper.getItemEnchantmentLevel(soulbound, carried) > 0) {
                 MasteryAdvancements.grant(serverPlayer, "utility/soulbound");
                 if (carried.is(net.minecraft.world.item.Items.RECOVERY_COMPASS)) {
                     MasteryAdvancements.grant(serverPlayer, "utility/soulbound_recovery_compass");
+                }
+                if (FakeItems.isSpecificFakeItem(carried, "charm-wallet")) {
+                    MasteryAdvancements.grant(serverPlayer, "utility/pocket_watching");
+                }
+                if (carried.is(net.minecraft.world.item.Items.PUFFERFISH_BUCKET)) {
+                    MasteryAdvancements.grant(serverPlayer, "utility/emergency_pufferfish");
                 }
             }
             if (EnchantmentHelper.getItemEnchantmentLevel(enchantments.getOrThrow(ModEnchantments.CHARM_BOOST), carried) > 0) {

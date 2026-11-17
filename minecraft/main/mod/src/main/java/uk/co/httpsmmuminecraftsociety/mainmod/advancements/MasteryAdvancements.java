@@ -2,14 +2,29 @@ package uk.co.httpsmmuminecraftsociety.mainmod.advancements;
 
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.wolf.Wolf;
+import net.minecraft.world.entity.monster.Phantom;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.server.ServerScoreboard;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
@@ -21,7 +36,10 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.EquippableC
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.GiantsBootsCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable.LeprechaunBootsCharm;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfInsomniaCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmorManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.LootTableModifiers;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.particleTrails.ParticleTrailData;
 
 import java.time.Instant;
@@ -29,15 +47,20 @@ import java.time.ZonedDateTime;
 import java.time.ZoneId;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
+import java.util.WeakHashMap;
 
 public final class MasteryAdvancements {
     private static final ZoneId BRITISH_TIME = ZoneId.of("Europe/London");
     private static final int[] COLLECTION_MILESTONES = {1, 3, 5, 10, 15, 20};
     private static final Set<String> BACKPACKS = Set.of("leather", "ingot", "magic", "bejeweled", "withered", "endless");
     private static final int[] SNIFFER_MILESTONES = {1, 3, 5, 10, 20, 50, 100, 200, 500, 1000, 10000};
+    private static final Map<ServerLevel, Map<ChunkPos, Map<UUID, Long>>> SLIME_SCANS = new WeakHashMap<>();
     private MasteryAdvancements() {}
 
     public static boolean grant(ServerPlayer player, String path) {
@@ -65,17 +88,28 @@ public final class MasteryAdvancements {
         }
         if (allDone(player, "social/join_", 2, 6)) grant(player, "social/unreasonable_hours");
         scanInventory(player);
+        checkEquippedArmor(player);
+        for (int slot = 0; slot < player.getEnderChestInventory().getContainerSize(); slot++) {
+            if (FakeItems.isSpecificFakeItem(player.getEnderChestInventory().getItem(slot), "charm-endless-backpack")) {
+                grant(player, "backpacks/enderception");
+                break;
+            }
+        }
     }
 
     public static void tick(ServerPlayer player) {
         if (player.tickCount % 20 == 0) {
-            grant(player, "root");
-            scanInventory(player);
+            if (player.getTicksFrozen() > 0
+                    && FakeItems.isSpecificFakeItem(player.getItemBySlot(EquipmentSlot.HEAD), "cosmetic-cowboy-hat")) {
+                grant(player, "cosmetics/but_wheres_the_caveman");
+            }
             if (player.getVehicle() instanceof AbstractMinecart minecart
                     && minecart.getDeltaMovement().horizontalDistance() * 20 >= 19.9) {
                 grant(player, "utility/full_speed_minecart");
             }
         }
+        // shortcut: Short holds can go unrecorded; add inventory change hooks if this matters.
+        if (player.tickCount % 200 == 0) scanInventory(player);
     }
 
     public static void grantIfAll(ServerPlayer player, String result, String... prerequisites) {
@@ -101,6 +135,72 @@ public final class MasteryAdvancements {
 
     public static void recordSnifferKill(ServerPlayer player) {
         grantMilestones(player, "mmuSnifferKills", "sniffers/control_", SNIFFER_MILESTONES);
+    }
+
+    public static void recordWrenchUse(ServerPlayer player) {
+        grant(player, "utility/wrench");
+        grantMilestones(player, "mmuWrenchUses", "utility/wrench_wrangler_", new int[]{100});
+    }
+
+    public static void recordSlimeScan(ServerPlayer player, ServerLevel level) {
+        ChunkPos chunk = player.chunkPosition();
+        long now = level.getGameTime();
+        Map<ChunkPos, Map<UUID, Long>> scans = SLIME_SCANS.computeIfAbsent(level, ignored -> new HashMap<>());
+        scans.values().forEach(users -> users.entrySet().removeIf(entry -> now - entry.getValue() > 600));
+        scans.entrySet().removeIf(entry -> entry.getValue().isEmpty());
+        Map<UUID, Long> users = scans.computeIfAbsent(chunk, ignored -> new HashMap<>());
+        users.put(player.getUUID(), now);
+        List<ServerPlayer> present = users.keySet().stream()
+                .map(id -> level.getServer().getPlayerList().getPlayer(id))
+                .filter(other -> other != null && other.level() == level && other.chunkPosition().equals(chunk))
+                .toList();
+        if (present.size() >= 3) present.forEach(other -> grant(other, "utility/peer_review"));
+    }
+
+    public static InteractionResult onAttackEntity(Player player, Level level, InteractionHand hand,
+                                                   Entity entity, EntityHitResult hit) {
+        if (player instanceof ServerPlayer attacker && entity instanceof Wolf wolf && !wolf.isTame()
+                && attacker.getMainHandItem().isEmpty()
+                && FakeItems.isSpecificFakeItem(attacker.getItemBySlot(EquipmentSlot.HEAD), "cosmetic-dog-ears")) {
+            grant(attacker, "cosmetics/who_let_the_dogs_out");
+        }
+        return InteractionResult.PASS;
+    }
+
+    public static InteractionResult onItemUse(Level level, Player player, InteractionHand hand) {
+        if (player instanceof ServerPlayer serverPlayer && player.getItemInHand(hand).is(ItemTags.SPEARS)
+                && FakeItems.isSpecificFakeItem(player.getItemBySlot(EquipmentSlot.HEAD), "cosmetic-hood-camel")) {
+            grant(serverPlayer, "cosmetics/who_needs_camels");
+        }
+        return InteractionResult.PASS;
+    }
+
+    public static void checkJokeVibe(ServerPlayer player) {
+        if (!FakeItems.isSpecificFakeItem(player.getItemBySlot(EquipmentSlot.HEAD), "cosmetic-headphones")) return;
+        BlockPos center = player.blockPosition();
+        for (BlockPos pos : BlockPos.betweenClosed(center.offset(-8, -8, -8), center.offset(8, 8, 8))) {
+            if (pos.distSqr(center) > 64 || !player.level().isLoaded(pos)) continue;
+            if (player.level().getBlockEntity(pos) instanceof JukeboxBlockEntity jukebox
+                    && jukebox.getSongPlayer().isPlaying()) {
+                grant(player, "cosmetics/you_are_a_vibe_bro");
+                return;
+            }
+        }
+    }
+
+    public static void onDeath(LivingEntity entity, DamageSource source) {
+        if (entity instanceof Phantom phantom && phantom.entityTags().contains(PotionOfInsomniaCharm.BOSS_TAG)
+                && source.getEntity() instanceof ServerPlayer killer) {
+            grantMilestones(killer, "mmuBossPhantoms", "social/potion_of_poaching_", new int[]{10});
+        }
+    }
+
+    public static void recordCommitteeDeath(ServerPlayer player) {
+        for (ItemStack stack : player.getInventory()) {
+            if (!LootTableModifiers.isCommitteeDrop(stack)) continue;
+            grant(player, "social/bootleg_committee_member");
+            break;
+        }
     }
 
     public static void recordCommitteeKill(ServerPlayer killer, ServerPlayer victim) {
@@ -275,6 +375,28 @@ public final class MasteryAdvancements {
                 && isCatCosmetic(player.getOffhandItem())
                 && isCatCosmetic(player.getItemBySlot(EquipmentSlot.HEAD))) {
             grant(player, "cosmetics/cat_stack");
+        }
+    }
+
+    public static void checkEquippedArmor(ServerPlayer player) {
+        boolean fiveCharmsEach = true;
+        boolean allMinified = true;
+        for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST,
+                EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
+            ItemStack armor = player.getItemBySlot(slot);
+            fiveCharmsEach &= CharmorManager.getStoredArmorCharms(armor).size() >= 5;
+            allMinified &= !armor.isEmpty() && CharmorManager.canMinifyArmor(armor)
+                    && CharmorManager.armorMinified(armor);
+        }
+        if (fiveCharmsEach) grant(player, "charms/cover_me_in_trinkets");
+        if (allMinified) grant(player, "cosmetics/stealth_mission");
+        if (CharmsManager.hasAbility(player.getItemBySlot(EquipmentSlot.FEET), LeprechaunBootsCharm.class)
+                && FakeItems.isSpecificFakeItem(player.getItemBySlot(EquipmentSlot.HEAD), "cosmetic-slime-head")) {
+            grant(player, "cosmetics/baby_slime_cosplay");
+        }
+        if (player.getTicksFrozen() > 0
+                && FakeItems.isSpecificFakeItem(player.getItemBySlot(EquipmentSlot.HEAD), "cosmetic-cowboy-hat")) {
+            grant(player, "cosmetics/but_wheres_the_caveman");
         }
         if (CharmsManager.hasAbility(player.getItemBySlot(EquipmentSlot.FEET), GiantsBootsCharm.class)
                 && FakeItems.isSpecificFakeItem(

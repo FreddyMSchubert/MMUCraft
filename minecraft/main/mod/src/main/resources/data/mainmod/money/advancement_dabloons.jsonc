@@ -1373,7 +1373,14 @@
 	"mainmod:mastery/cosmetics/cat_stack": 15, // Wear and hold three cat cosmetics: playful coordinated setup.
 	"mainmod:mastery/cosmetics/all_straw_hats": 10, // Buy all five straw hats.
 	"mainmod:mastery/cosmetics/solar_eclipse": 10, // Wear the Giant's Boots and the largest Sombreronn.
+	"mainmod:mastery/cosmetics/stealth_mission": 5, // Wear four minified armour pieces.
+	"mainmod:mastery/cosmetics/baby_slime_cosplay": 5, // Combine the boots and head cosmetic.
+	"mainmod:mastery/cosmetics/who_let_the_dogs_out": 5, // Punch a wild wolf with Dog Ears on.
+	"mainmod:mastery/cosmetics/who_needs_camels": 5, // Use a spear with the Camel Hood on.
+	"mainmod:mastery/cosmetics/you_are_a_vibe_bro": 5, // Read a joke near a playing jukebox.
+	"mainmod:mastery/cosmetics/but_wheres_the_caveman": 5, // Wear the Cowboy Hat while frozen.
 	"mainmod:mastery/charms/get_all": 35, // Hold every upgradeable equippable charm: substantial collection.
+	"mainmod:mastery/charms/cover_me_in_trinkets": 50, // Fill five charm slots on all four armour pieces.
 	"mainmod:mastery/charms/get_5": 5, // Hold five different charms.
 	"mainmod:mastery/charms/upgrade_5": 5, // Upgrade charms five times.
 	"mainmod:mastery/charms/upgrade_max": 25, // Max one charm: meaningful material and Dabloon investment.
@@ -1385,15 +1392,25 @@
 	"mainmod:mastery/utility/sculk_phial_full": 10, // Fill a Sculk Phial: moderate XP investment.
 	"mainmod:mastery/utility/sculk_phial_extract": 5, // Extract XP from a Sculk Phial.
 	"mainmod:mastery/utility/no_slime_bars": 5, // Find a location with no slime signal.
+	"mainmod:mastery/utility/peer_review": 10, // Coordinate three slime detector users in one chunk.
 	"mainmod:mastery/utility/duplicate_book": 5, // Duplicate an enchanted book at a lectern.
+	"mainmod:mastery/utility/shadow_wizard_money_gang": 5, // Duplicate a cursed book at a lectern.
 	"mainmod:mastery/utility/invisible_frame": 5, // Make an item frame invisible.
+	"mainmod:mastery/utility/resourceful_resource_pack": 5, // Put a small map in an item frame.
+	"mainmod:mastery/utility/band_aid_fix": 5, // Eat an Invisi-Carrot while under Darkness.
+	"mainmod:mastery/utility/yellow_chakra_get": 5, // Drink the paste near a Sulfur Cube.
+	"mainmod:mastery/utility/the_greggs_at_the_end": 10, // Craft a sausage roll in the End with a crafter.
 	"mainmod:mastery/utility/soulbound_recovery_compass": 5, // Soulbind a Recovery Compass: deliberate useful combination.
+	"mainmod:mastery/utility/pocket_watching": 5, // Soulbind a wallet.
+	"mainmod:mastery/utility/emergency_pufferfish": 5, // Soulbind a pufferfish bucket.
 	"mainmod:mastery/utility/soulbound_break": 5, // Break a Soulbound item.
+	"mainmod:mastery/utility/wrench_wrangler_100": 10, // Use the wrench one hundred times.
 	"mainmod:mastery/utility/full_speed_minecart": 10, // Reach full minecart speed: build and execute a track setup.
 	"mainmod:mastery/utility/max_reach_beacon": 25, // Build a 200-block beacon: expensive construction challenge.
 	"mainmod:mastery/glider/updraft": 5, // Ride a heat updraft: deliberate glider technique.
 	"mainmod:mastery/glider/craft": 20, // Make a glider from Phantom Membranes and Breeze Rods.
 	"mainmod:mastery/glider/amethyst_ring": 20, // Thread an amethyst ring: skill-based flight challenge.
+	"mainmod:mastery/glider/breath_of_the_wild": 30, // Glide five hundred blocks without landing.
 	"mainmod:mastery/food/sushi": 10, // Eat Sushi.
 	"mainmod:mastery/food/beer_again": 5, // Drink beer while already under its effects.
 	"mainmod:mastery/enderite/scrap": 5, // Obtain Enderite Scrap: uncommon End progression.
@@ -1404,6 +1421,8 @@
 	"mainmod:mastery/enderite/hoe": 25, // Make an Enderite hoe: costly optional dedication.
 	"mainmod:mastery/social/unreasonable_hours": 20, // Visit every unreasonable-hour window: quirky multi-session challenge.
 	"mainmod:mastery/social/committee_any": 10, // Defeat a committee member on Sunday.
+	"mainmod:mastery/social/bootleg_committee_member": 10, // Die with a committee drop in your inventory.
+	"mainmod:mastery/social/potion_of_poaching_10": 20, // Defeat ten Boss Phantoms.
 	"mainmod:mastery/social/committee/merlinspace": 15, // Defeat this committee member on Sunday.
 	"mainmod:mastery/social/committee/oderzo": 20, // Defeat this committee member on Sunday.
 	"mainmod:mastery/social/committee/hannahlucyyy": 15, // Defeat this committee member on Sunday.
@@ -1456,5 +1475,6 @@
 	"mainmod:mastery/backpacks/magic": 5, // Craft a Magic Backpack.
 	"mainmod:mastery/knowledge/read_10": 5, // Read ten knowledge pages.
 	"mainmod:mastery/backpacks/endless": 20, // Craft an Endless Backpack.
+	"mainmod:mastery/backpacks/enderception": 5, // Store an Endless Backpack in an Ender Chest.
 	"mainmod:mastery/social/pay_to_win": 100, // Become a member and receive the advertised reward.
 }

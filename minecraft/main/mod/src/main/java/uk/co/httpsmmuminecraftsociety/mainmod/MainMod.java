@@ -174,7 +174,9 @@ public class MainMod implements ModInitializer {
         ServerPlayerEvents.AFTER_RESPAWN.register(PlayerDisguises::respawned);
         ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> GearEnchantmentSanitizer.sanitizePlayer(newPlayer));
         ServerLivingEntityEvents.AFTER_DEATH.register(PlayerDisguises::died);
+        ServerLivingEntityEvents.AFTER_DEATH.register(MasteryAdvancements::onDeath);
         ItemEvents.USE.register(CharmsManager::onItemUse);
+        ItemEvents.USE.register(MasteryAdvancements::onItemUse);
         ItemEvents.USE_ON.register(CharmsManager::onItemUseOn);
         ItemEvents.USE_ON.register(DecoBlocksManager::onUseItemOn);
         ItemEvents.USE_ON.register(AnvilLogic::onUseItemOn);
@@ -188,6 +190,7 @@ public class MainMod implements ModInitializer {
         AttackBlockCallback.EVENT.register(CharmsManager::onAttackBlock);
         AttackEntityCallback.EVENT.register(CharmsManager::onAttackEntity);
         AttackEntityCallback.EVENT.register(PlayerDisguises::attack);
+        AttackEntityCallback.EVENT.register(MasteryAdvancements::onAttackEntity);
         ServerPlayerEvents.COPY_FROM.register(SoulboundEnchantment::onCopyFrom);
         LootTableEvents.MODIFY_DROPS.register(LootTableModifiers::onModifyDrops);
         DefaultItemComponentEvents.MODIFY.register(FoodModifier::onDefaultItemComponentsModify);

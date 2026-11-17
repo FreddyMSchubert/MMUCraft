@@ -35,6 +35,7 @@ public final class GliderFlight {
         int ascentGraceUntil;
         int impulseTick = Integer.MIN_VALUE;
         Vec3 previousPosition;
+        Vec3 flightStart;
         double distanceSinceUpdraft;
         ResourceKey<Level> dimension;
         Updrafts.Updraft updraft;
@@ -82,9 +83,11 @@ public final class GliderFlight {
             state.speedLimit = GLIDER_SPEED_BPS;
             state.distanceSinceUpdraft = 0;
             state.previousPosition = null;
+            state.flightStart = null;
             state.dimension = player.level().dimension();
         }
         if (!player.isFallFlying()) {
+            state.flightStart = null;
             state.updraft = null;
             state.speedLimit = GLIDER_SPEED_BPS;
             state.distanceSinceUpdraft = 0;
@@ -98,6 +101,12 @@ public final class GliderFlight {
             return;
         }
         if (glider) MasteryAdvancements.grant(player, "glider/fly");
+        if (glider && !player.onGround()) {
+            if (state.flightStart == null) state.flightStart = position;
+            if (Math.hypot(position.x - state.flightStart.x, position.z - state.flightStart.z) >= 500) {
+                MasteryAdvancements.grant(player, "glider/breath_of_the_wild");
+            }
+        } else state.flightStart = null;
         if (glider && isWet(player)) {
             player.stopFallFlying();
             STATES.remove(player);

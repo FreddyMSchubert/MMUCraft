@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.GearEnchantmentSanitizer;
+import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 
 @Mixin(LivingEntity.class)
 public class RefreshCharmOnArmorEquip
@@ -19,6 +20,13 @@ public class RefreshCharmOnArmorEquip
         if (slot.isArmor()) {
             if ((Object) this instanceof ServerPlayer) GearEnchantmentSanitizer.sanitize(newStack);
             CharmsManager.refresh(newStack);
+        }
+    }
+
+    @Inject(method = "onEquipItem", at = @At("TAIL"))
+    private void checkArmorMastery(EquipmentSlot slot, ItemStack oldStack, ItemStack newStack, CallbackInfo info) {
+        if (slot.isArmor() && (Object) this instanceof ServerPlayer player) {
+            MasteryAdvancements.checkEquippedArmor(player);
         }
     }
 }

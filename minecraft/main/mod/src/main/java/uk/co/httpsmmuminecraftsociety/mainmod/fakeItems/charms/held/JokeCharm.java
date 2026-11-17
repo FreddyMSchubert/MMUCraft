@@ -111,6 +111,7 @@ public final class JokeCharm implements UseCallbackCharm, BaseItemChangeCallback
         }
         updateName(stack, joke);
         open(player, title(joke), joke);
+        MasteryAdvancements.checkJokeVibe(player);
         if (unread) {
             DailyTaskManager.record(player, DailyTaskEvent.simple(DailySimpleEvent.READ_NEW_JOKE));
             MasteryAdvancements.recordNewJoke(player);

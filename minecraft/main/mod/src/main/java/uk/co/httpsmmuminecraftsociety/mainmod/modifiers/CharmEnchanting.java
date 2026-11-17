@@ -28,7 +28,8 @@ public class CharmEnchanting
         Triple.of("charm-redstone-remote", true, ModEnchantments.SOULBOUND)
     );
     public static final List<Triple<Item, Boolean, ResourceKey<Enchantment>>> vanillaEnchantModifications = List.of(
-            Triple.of(Items.RECOVERY_COMPASS, true, ModEnchantments.SOULBOUND)
+            Triple.of(Items.RECOVERY_COMPASS, true, ModEnchantments.SOULBOUND),
+            Triple.of(Items.PUFFERFISH_BUCKET, true, ModEnchantments.SOULBOUND)
     );
 
     public static TriState onAllowEnchanting(Holder<Enchantment> enchantmentHolder, ItemStack itemStack, EnchantingContext enchantingContext)

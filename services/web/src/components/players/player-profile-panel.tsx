@@ -166,6 +166,13 @@ export function PlayerProfileForm({
 	const [bio, setBio] = useState(player.profile.bio);
 	const [color, setColor] = useState<string | null>(player.profile.customColor);
 	const [showDeathCounter, setShowDeathCounter] = useState(player.profile.showDeathCounter);
+	const [showNicknameInNametag, setShowNicknameInNametag] = useState(
+		player.profile.showNicknameInNametag,
+	);
+	const [showPronounsInNametag, setShowPronounsInNametag] = useState(
+		player.profile.showPronounsInNametag,
+	);
+	const [showDucksInNametag, setShowDucksInNametag] = useState(player.profile.showDucksInNametag);
 	const [saving, setSaving] = useState(false);
 	const [loadingLocation, setLoadingLocation] = useState(false);
 	const displayedColor = color ?? player.profile.defaultColor;
@@ -215,6 +222,9 @@ export function PlayerProfileForm({
 					bio,
 					color,
 					showDeathCounter,
+					showNicknameInNametag,
+					showPronounsInNametag,
+					showDucksInNametag,
 				}),
 			});
 			const body = await response.json().catch(() => null);
@@ -258,7 +268,7 @@ export function PlayerProfileForm({
 			<p className="playerProfileHint">
 				Everything you enter here is visible to every society member. Be open and share a
 				little about yourself so people know who they&apos;re talking to. Your nickname and
-				pronouns are also displayed in-game.
+				pronouns can also appear below your in-game nametag.
 			</p>
 			<label>
 				<span>Nickname</span>
@@ -376,6 +386,34 @@ export function PlayerProfileForm({
 			</div>
 			<label className="settingToggle">
 				<span>
+					<strong>Show nickname in nametag</strong>
+					<small>Shows your nickname below your in-game nametag.</small>
+				</span>
+				<input
+					type="checkbox"
+					checked={showNicknameInNametag}
+					onChange={(event) => {
+						setShowNicknameInNametag(event.target.checked);
+					}}
+				/>
+				<i aria-hidden="true" />
+			</label>
+			<label className="settingToggle">
+				<span>
+					<strong>Show pronouns in nametag</strong>
+					<small>Shows your pronouns below your in-game nametag.</small>
+				</span>
+				<input
+					type="checkbox"
+					checked={showPronounsInNametag}
+					onChange={(event) => {
+						setShowPronounsInNametag(event.target.checked);
+					}}
+				/>
+				<i aria-hidden="true" />
+			</label>
+			<label className="settingToggle">
+				<span>
 					<strong>Show death counter in nametag</strong>
 					<small>Shows your death and used-totem count below your in-game nametag.</small>
 				</span>
@@ -384,6 +422,20 @@ export function PlayerProfileForm({
 					checked={showDeathCounter}
 					onChange={(event) => {
 						setShowDeathCounter(event.target.checked);
+					}}
+				/>
+				<i aria-hidden="true" />
+			</label>
+			<label className="settingToggle">
+				<span>
+					<strong>Show ducks in nametag</strong>
+					<small>Shows your duck count below your in-game nametag.</small>
+				</span>
+				<input
+					type="checkbox"
+					checked={showDucksInNametag}
+					onChange={(event) => {
+						setShowDucksInNametag(event.target.checked);
 					}}
 				/>
 				<i aria-hidden="true" />

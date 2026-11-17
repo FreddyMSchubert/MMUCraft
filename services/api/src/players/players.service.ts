@@ -198,7 +198,7 @@ export class PlayersService {
 		const target = this.requireEditablePlayer(viewer, userIdInput);
 
 		const now = Date.now();
-		const profile = normalizeProfileInput(input, this.profiles.get(target.id).showDeathCounter);
+		const profile = normalizeProfileInput(input, this.profiles.get(target.id));
 
 		const values = {
 			user_id: target.id,
@@ -212,6 +212,9 @@ export class PlayersService {
 			bio: profile.bio,
 			color_hex: profile.customColor,
 			show_death_counter: profile.showDeathCounter ? 1 : 0,
+			show_nickname_in_nametag: profile.showNicknameInNametag ? 1 : 0,
+			show_pronouns_in_nametag: profile.showPronounsInNametag ? 1 : 0,
+			show_ducks_in_nametag: profile.showDucksInNametag ? 1 : 0,
 			updated_at_unix_ms: now,
 		};
 		this.database.connection
@@ -429,6 +432,9 @@ export class PlayersService {
 				pronouns: profile.pronouns,
 				color_hex: profile.color,
 				show_death_counter: profile.showDeathCounter,
+				show_nickname_in_nametag: profile.showNicknameInNametag,
+				show_pronouns_in_nametag: profile.showPronounsInNametag,
+				show_ducks_in_nametag: profile.showDucksInNametag,
 				is_member: target.is_member === 1,
 				is_committee: target.is_super_admin === 1 || target.is_committee === 1,
 				is_external: target.responsible_user_id !== null,

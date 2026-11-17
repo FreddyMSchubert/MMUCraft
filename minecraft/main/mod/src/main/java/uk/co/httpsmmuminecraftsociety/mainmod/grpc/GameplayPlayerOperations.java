@@ -49,6 +49,9 @@ final class GameplayPlayerOperations {
                     request.getPronouns(),
                     request.getColorHex(),
                     request.getShowDeathCounter(),
+                    request.getShowNicknameInNametag(),
+                    request.getShowPronounsInNametag(),
+                    request.getShowDucksInNametag(),
                     request.getIsMember(),
                     request.getIsCommittee(),
                     request.getIsExternal()

@@ -33,6 +33,9 @@ export class PlayerProfileStorageService {
 				customColor: null,
 				customEmojisJson: null,
 				showDeathCounter: true,
+				showNicknameInNametag: true,
+				showPronounsInNametag: true,
+				showDucksInNametag: false,
 				updatedAtUnixMs: 0,
 			};
 		return {
@@ -47,6 +50,9 @@ export class PlayerProfileStorageService {
 			customColor: row.color_hex,
 			customEmojisJson: row.custom_emojis_json,
 			showDeathCounter: row.show_death_counter === 1,
+			showNicknameInNametag: row.show_nickname_in_nametag === 1,
+			showPronounsInNametag: row.show_pronouns_in_nametag === 1,
+			showDucksInNametag: row.show_ducks_in_nametag === 1,
 			updatedAtUnixMs: row.updated_at_unix_ms,
 		};
 	}

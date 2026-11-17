@@ -26,6 +26,9 @@ export interface PlayerProfile {
 	customColor: string | null;
 	customEmojisJson: string | null;
 	showDeathCounter: boolean;
+	showNicknameInNametag: boolean;
+	showPronounsInNametag: boolean;
+	showDucksInNametag: boolean;
 	updatedAtUnixMs: number;
 }
 
@@ -40,14 +43,24 @@ export interface PlayerProfileInput {
 	bio?: string;
 	color?: string | null;
 	showDeathCounter?: boolean;
+	showNicknameInNametag?: boolean;
+	showPronounsInNametag?: boolean;
+	showDucksInNametag?: boolean;
 }
 
 export function normalizeProfileInput(
 	input: PlayerProfileInput,
-	currentShowDeathCounter: boolean,
+	current: PlayerProfile,
 ): PlayerProfile {
-	if (input.showDeathCounter !== undefined && typeof input.showDeathCounter !== 'boolean') {
-		throw new BadRequestException('Show death counter must be true or false');
+	for (const [key, label] of [
+		['showDeathCounter', 'Show death counter'],
+		['showNicknameInNametag', 'Show nickname in nametag'],
+		['showPronounsInNametag', 'Show pronouns in nametag'],
+		['showDucksInNametag', 'Show ducks in nametag'],
+	] as const) {
+		if (input[key] !== undefined && typeof input[key] !== 'boolean') {
+			throw new BadRequestException(`${label} must be true or false`);
+		}
 	}
 
 	return {
@@ -73,7 +86,10 @@ export function normalizeProfileInput(
 		defaultColor: '',
 		customColor: normalizeOptionalColor(input.color),
 		customEmojisJson: null,
-		showDeathCounter: input.showDeathCounter ?? currentShowDeathCounter,
+		showDeathCounter: input.showDeathCounter ?? current.showDeathCounter,
+		showNicknameInNametag: input.showNicknameInNametag ?? current.showNicknameInNametag,
+		showPronounsInNametag: input.showPronounsInNametag ?? current.showPronounsInNametag,
+		showDucksInNametag: input.showDucksInNametag ?? current.showDucksInNametag,
 		updatedAtUnixMs: Date.now(),
 	};
 }

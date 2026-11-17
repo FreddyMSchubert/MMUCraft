@@ -10,6 +10,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Brightness;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.Display;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -47,7 +48,12 @@ public final class AnimalCrossingFishShadowDisplay {
 			ItemStack catchResult,
 			boolean genericShadow
 	) {
-        Display.ItemDisplay display = new Display.ItemDisplay(EntityTypes.ITEM_DISPLAY, level);
+        Display.ItemDisplay display = new Display.ItemDisplay(EntityTypes.ITEM_DISPLAY, level) {
+            @Override
+            public boolean shouldBeSaved() {
+                return false;
+            }
+        };
         display.setNoGravity(true);
         display.setSilent(true);
         display.setPermanentlyInvulnerable(true);
@@ -98,6 +104,22 @@ public final class AnimalCrossingFishShadowDisplay {
         accessor.mainmod$setHeight(1.6F);
         return display;
     }
+
+	public static void discardSavedShadow(Entity entity, ServerLevel level) {
+		if (!(entity instanceof Display.ItemDisplay display) || !display.shouldBeSaved()
+				|| !display.isNoGravity() || !display.isSilent()
+				|| !display.isPermanentlyInvulnerable()) return;
+
+		ItemStack stack = display.getSlot(0).get();
+		Identifier model = stack.get(DataComponents.ITEM_MODEL);
+		boolean shadowModel = model != null && model.getNamespace().equals(MainMod.MOD_ID)
+				&& (model.getPath().startsWith("fish_shadow_")
+				|| model.getPath().startsWith("fishing_shadow/"));
+		CustomModelData modelData = stack.get(DataComponents.CUSTOM_MODEL_DATA);
+		if (shadowModel || modelData != null && modelData.strings().contains(SHADOW_MODEL_MARKER)) {
+			display.discard();
+		}
+	}
 
 	private static <T> java.util.List<T> append(java.util.List<T> values, T value) {
 		java.util.ArrayList<T> copy = new java.util.ArrayList<>(values);

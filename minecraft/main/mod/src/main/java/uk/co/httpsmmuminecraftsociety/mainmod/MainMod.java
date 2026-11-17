@@ -48,6 +48,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.beacon.DynamicBeaconRange;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.DecoBlocksManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.ParticleEmission;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.fishing.AnimalCrossingFishShadowDisplay;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.LegacyFakeItemMigration;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.CharmsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable.PotionOfDisplacementCharm;
@@ -148,6 +149,7 @@ public class MainMod implements ModInitializer {
         ServerTickEvents.END_LEVEL_TICK.register(ParticleEmission::tick);
         ServerChunkEvents.CHUNK_UNLOAD.register(RedstoneRemoteCharm::onChunkUnload);
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> LegacyFakeItemMigration.migrateEntity(entity));
+        ServerEntityEvents.ENTITY_LOAD.register(AnimalCrossingFishShadowDisplay::discardSavedShadow);
         ServerEntityEvents.ENTITY_LOAD.register(PotionOfInsomniaCharm::onEntityLoad);
         ServerEntityEvents.ENTITY_UNLOAD.register(PotionOfInsomniaCharm::onEntityUnload);
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
@@ -166,6 +168,7 @@ public class MainMod implements ModInitializer {
                 FishingCatches.refreshCaughtFish(handler.player);
         });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+            if (handler.player.fishing != null) handler.player.fishing.discard();
             MarshmallowRoasting.disconnected(handler.player);
             PlayerDisguises.disconnected(handler.player);
             PotionOfDisplacementCharm.onPlayerDisconnect(handler.player);

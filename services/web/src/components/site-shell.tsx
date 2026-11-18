@@ -7,6 +7,8 @@ import { AuthPanel } from '@/components/auth-panel';
 import { SitePage } from '@/components/site-page';
 import { AdminTab } from '@/components/admin-tab';
 import { DailiesTab } from '@/components/dailies-tab';
+import { AdventTab } from '@/components/advent-tab';
+import { londonAdventDay } from '@/lib/advent';
 import { KnowledgeTab } from '@/components/knowledge-tab';
 import { MiscTab } from '@/components/misc-tab';
 import { BecomeMemberTab } from '@/components/become-member-tab';
@@ -44,6 +46,7 @@ interface OnlinePlayer {
 
 type TabId =
 	| 'dailies'
+	| 'advent'
 	| 'knowledge'
 	| 'charms'
 	| 'shop'
@@ -65,6 +68,7 @@ interface TabLink {
 
 const TAB_IDS = new Set<TabId>([
 	'dailies',
+	'advent',
 	'knowledge',
 	'charms',
 	'shop',
@@ -82,6 +86,7 @@ const SERVER_IP = 'mmuminecraftsociety.co.uk';
 const TAB_LINKS: TabLink[] = [
 	{ id: 'knowledge', label: 'Knowledge', emoji: '📖', href: '/play/knowledge' },
 	{ id: 'dailies', label: 'Dailies', emoji: '📋', href: '/play/dailies' },
+	{ id: 'advent', label: 'Advent Calendar', emoji: '🎄', href: '/play/advent' },
 	{ id: 'charms', label: 'Charms', emoji: '✨', href: '/play/charms' },
 	{ id: 'shop', label: 'Shop', emoji: '🛍️', href: '/play/shop' },
 	{ id: 'claims', label: 'Claims', emoji: '🔒', href: '/play/claims' },
@@ -116,6 +121,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	const pathname = usePathname();
 	const router = useRouter();
 	const [user, setUser] = useState<SessionUser | null | undefined>(undefined);
+	const [adventVisible, setAdventVisible] = useState(() => londonAdventDay() > 0);
 	const [ducksEnabled, setDucksEnabled] = useState<boolean | null>(null);
 	const [onlinePlayers, setOnlinePlayers] = useState<OnlinePlayer[] | null>(null);
 	const [capacity, setCapacity] = useState<{
@@ -149,10 +155,20 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 				(tab) =>
 					(tab.id !== 'admin' || isCommittee) &&
 					(tab.id !== 'membership' || user?.canBecomeMember === true) &&
-					(tab.id !== 'ducks' || ducksEnabled === true),
+					(tab.id !== 'ducks' || ducksEnabled === true) &&
+					(tab.id !== 'advent' || adventVisible),
 			),
-		[hasLiveEvent, isCommittee, ducksEnabled, user?.canBecomeMember],
+		[hasLiveEvent, isCommittee, ducksEnabled, user?.canBecomeMember, adventVisible],
 	);
+
+	useEffect(() => {
+		const timer = window.setInterval(() => {
+			setAdventVisible(londonAdventDay() > 0);
+		}, 60_000);
+		return () => {
+			window.clearInterval(timer);
+		};
+	}, []);
 
 	useEffect(() => {
 		if (!user) return;
@@ -315,6 +331,10 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 			router.replace('/play/knowledge');
 			return;
 		}
+		if (!adventVisible && activeTab === 'advent') {
+			router.replace('/play/knowledge');
+			return;
+		}
 		if (ducksEnabled === false && activeTab === 'admin' && routeDetail === 'ducks') {
 			router.replace('/play/admin/members');
 			return;
@@ -340,6 +360,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 			canonicalPath = `/play/misc/${MISC_SECTIONS.has(routeDetail ?? '') ? routeDetail : 'settings'}`;
 		else if (
 			activeTab === 'dailies' ||
+			activeTab === 'advent' ||
 			activeTab === 'charms' ||
 			activeTab === 'claims' ||
 			activeTab === 'ducks' ||
@@ -353,7 +374,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 				: `/play/${activeTab}`;
 
 		if (canonicalPath && pathname !== canonicalPath) router.replace(canonicalPath);
-	}, [activeTab, ducksEnabled, pathname, route, routeDetail, router, user]);
+	}, [activeTab, adventVisible, ducksEnabled, pathname, route, routeDetail, router, user]);
 
 	useEffect(() => {
 		let lastY = window.scrollY;
@@ -635,6 +656,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 
 					<div className="dashboardPanel">
 						{activeTab === 'dailies' && <DailiesTab />}
+						{activeTab === 'advent' && adventVisible && <AdventTab />}
 						{activeTab === 'event' && (
 							<EventsTab
 								key={routeDetail ?? 'overview'}

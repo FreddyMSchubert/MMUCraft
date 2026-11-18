@@ -31,6 +31,8 @@ service GameplayControl {
   rpc GetOnlinePlayers(GetOnlinePlayersRequest) returns (GetOnlinePlayersResponse);
   rpc GrantDailyLoginBonus(GrantDailyLoginBonusRequest) returns (GrantDailyLoginBonusResponse);
   rpc GrantGiftCodeMoney(GrantGiftCodeMoneyRequest) returns (GrantGiftCodeMoneyResponse);
+  rpc GetAdventRewards(GetAdventRewardsRequest) returns (GetAdventRewardsResponse);
+  rpc GrantAdventReward(GrantAdventRewardRequest) returns (GrantAdventRewardResponse);
   rpc GrantKnowledgeReadMoney(GrantKnowledgeReadMoneyRequest) returns (GrantKnowledgeReadMoneyResponse);
   rpc GenerateDailyTasks(GenerateDailyTasksRequest) returns (GenerateDailyTasksResponse);
   rpc ClaimDailyTask(ClaimDailyTaskRequest) returns (ClaimDailyTaskResponse);
@@ -435,6 +437,41 @@ message GrantGiftCodeMoneyRequest {
   int32 amount_dabloons = 2;
   string code = 3;
   int64 unix_ms = 4;
+}
+
+message GetAdventRewardsRequest {}
+
+message AdventRewardItem {
+  string item_id = 1;
+  int32 count = 2;
+}
+
+message AdventRewardPreview {
+  int32 day = 1;
+  string title = 2;
+  string book_text = 3;
+  repeated AdventRewardItem items = 4;
+  repeated AdventRewardItem alternate_items = 5;
+  string alternate_book_text = 6;
+}
+
+message GetAdventRewardsResponse {
+  repeated AdventRewardPreview rewards = 1;
+}
+
+message GrantAdventRewardRequest {
+  string minecraft_username = 1;
+  int32 day = 2;
+  string claim_id = 3;
+  int32 amount_dabloons = 4;
+  bool preview = 5;
+}
+
+message GrantAdventRewardResponse {
+  bool granted = 1;
+  bool already_granted = 2;
+  string message = 3;
+  int32 balance_dabloons = 4;
 }
 
 message GrantGiftCodeMoneyResponse {

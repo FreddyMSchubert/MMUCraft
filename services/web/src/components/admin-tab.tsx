@@ -22,6 +22,7 @@ import { DropAnalyticsAdminSection } from './admin/drop-analytics-admin-section'
 import { MinecraftCacheAdminSection } from './admin/minecraft-cache-admin-section';
 import { DucksAdminSection } from './admin/ducks-admin-section';
 import { BuildEventsAdminSection } from './admin/build-events-admin-section';
+import { AdventAdminSection } from './admin/advent-admin-section';
 
 export function AdminTab({
 	isSuperAdmin,
@@ -43,6 +44,7 @@ export function AdminTab({
 				ducksEnabled={ducksEnabled}
 			/>
 			{controller.activeSection === 'drops' && <DropAnalyticsAdminSection />}
+			{controller.activeSection === 'advent' && <AdventAdminSection />}
 			{controller.activeSection === 'build-events' && (
 				<BuildEventsAdminSection subroute={subroute ?? []} />
 			)}

@@ -863,6 +863,32 @@ export const buildVisits = sqliteTable('build_visits', {
 	origin_pitch: real('origin_pitch').notNull(),
 });
 
+export const adventLayouts = sqliteTable('advent_layouts', {
+	id: integer('id').primaryKey(),
+	revision: integer('revision').notNull(),
+	layout_json: text('layout_json').notNull(),
+});
+
+export const adventClaims = sqliteTable(
+	'advent_claims',
+	{
+		user_id: integer('user_id')
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		year: integer('year').notNull(),
+		day: integer('day').notNull(),
+		claim_id: text('claim_id').notNull(),
+		status: text('status').notNull(),
+		amount_dabloons: integer('amount_dabloons').notNull(),
+		streak_rate_after: integer('streak_rate_after').notNull(),
+		created_at_unix_ms: integer('created_at_unix_ms').notNull(),
+	},
+	(table) => [
+		primaryKey({ columns: [table.user_id, table.year, table.day] }),
+		uniqueIndex('advent_claim_id_unique').on(table.claim_id),
+	],
+);
+
 export type UserRow = typeof users.$inferSelect;
 export type SessionRow = typeof sessions.$inferSelect;
 export type PlayerBanRow = typeof playerBans.$inferSelect;
@@ -897,6 +923,8 @@ export type VelocityScheduleRow = typeof velocitySchedules.$inferSelect;
 export type SurprisingSaturdayEventRow = typeof surprisingSaturdayEvents.$inferSelect;
 
 export const schema = {
+	adventLayouts,
+	adventClaims,
 	users,
 	sessions,
 	externalMembershipPurchases,

@@ -19,6 +19,7 @@ const ADMIN_SECTIONS: { section: AdminSection; label: string }[] = [
 	{ section: 'dabloons', label: 'Dabloon log' },
 	{ section: 'signin-attempts', label: 'Sign-in attempts' },
 	{ section: 'dailies', label: 'Dailies' },
+	{ section: 'advent', label: 'Advent Calendar' },
 	{ section: 'drops', label: 'Drops' },
 	{ section: 'toggles', label: 'Gameplay toggles' },
 	{ section: 'bans', label: 'Ban / timeout' },

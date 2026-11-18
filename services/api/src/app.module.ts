@@ -15,6 +15,7 @@ import { FeatureTogglesModule } from './toggles/feature-toggles.module';
 import { AnnouncementsModule } from './announcements/announcements.module';
 import { LaunchModule } from './launch/launch.module';
 import { BuildEventsModule } from './build-events/build-events.module';
+import { AdventModule } from './advent/advent.module';
 
 @Module({
 	imports: [
@@ -32,6 +33,7 @@ import { BuildEventsModule } from './build-events/build-events.module';
 		AnnouncementsModule,
 		LaunchModule,
 		BuildEventsModule,
+		AdventModule,
 	],
 	controllers: [HealthController, MinecraftCacheAdminController],
 })

@@ -1,8 +1,14 @@
-import { randomUUID } from 'node:crypto';
+import { randomInt, randomUUID } from 'node:crypto';
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import type { AuthenticatedUser } from '../auth/auth-session.service';
-import { adventClaims, adventLayouts, DatabaseService } from '../database/database.service';
+import {
+	adventClaims,
+	adventLayouts,
+	adventSecretClaims,
+	adventSecrets,
+	DatabaseService,
+} from '../database/database.service';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
 import { PlayerMoneyHistoryService } from '../players/player-money-history.service';
 import {
@@ -63,7 +69,187 @@ export class AdventService {
 			today,
 			claimedDays: claims.map((claim) => claim.day),
 			streakRate: latest?.rate ?? 0,
+			secretClaimed: !!this.database.connection
+				.select({ day: adventSecretClaims.day })
+				.from(adventSecretClaims)
+				.where(
+					and(
+						eq(adventSecretClaims.user_id, user.id),
+						eq(adventSecretClaims.year, ADVENT_YEAR),
+						eq(adventSecretClaims.day, today),
+						eq(adventSecretClaims.status, 'delivered'),
+					),
+				)
+				.get(),
 		};
+	}
+
+	mine(user: AuthenticatedUser, xInput: unknown, yInput: unknown) {
+		// shortcut: Browser mining is visual. Add server pacing if automated searches become a problem.
+		const day = currentAdventDay();
+		const x = Number(xInput);
+		const y = Number(yInput);
+		const layout = this.getLayout().layout;
+		if (
+			!day ||
+			!Number.isInteger(x) ||
+			!Number.isInteger(y) ||
+			!layout.rows[y]?.[x]?.foreground.length
+		)
+			throw new BadRequestException('That block cannot be mined today.');
+		const numbered = layout.days.find((entry) => entry.x === x && entry.y === y);
+		if (numbered && numbered.day > day)
+			throw new BadRequestException('That block is still locked.');
+		const secret = this.secretForDay(day, layout);
+		if (secret.x === x && secret.y === y) {
+			const claimed = !!this.database.connection
+				.select({ day: adventSecretClaims.day })
+				.from(adventSecretClaims)
+				.where(
+					and(
+						eq(adventSecretClaims.user_id, user.id),
+						eq(adventSecretClaims.year, ADVENT_YEAR),
+						eq(adventSecretClaims.day, day),
+						eq(adventSecretClaims.status, 'delivered'),
+					),
+				)
+				.get();
+			return { secret: true, claimed, amountDabloons: Math.max(8, day) };
+		}
+		const angle = Math.atan2(secret.y - y, secret.x - x);
+		const arrows = ['➡️', '↘️', '⬇️', '↙️', '⬅️', '↖️', '⬆️', '↗️'];
+		return {
+			secret: false,
+			arrow: randomInt(20) === 0 ? arrows[(Math.round(angle / (Math.PI / 4)) + 8) % 8] : null,
+		};
+	}
+
+	async claimSecret(user: AuthenticatedUser, xInput: unknown, yInput: unknown) {
+		const day = currentAdventDay();
+		if (!day) throw new BadRequestException('There is no hidden present today.');
+		const secret = this.secretForDay(day, this.getLayout().layout);
+		if (Number(xInput) !== secret.x || Number(yInput) !== secret.y)
+			throw new BadRequestException('There is no hidden present in that block.');
+		const existing = this.database.connection
+			.select()
+			.from(adventSecretClaims)
+			.where(
+				and(
+					eq(adventSecretClaims.user_id, user.id),
+					eq(adventSecretClaims.year, ADVENT_YEAR),
+					eq(adventSecretClaims.day, day),
+				),
+			)
+			.get();
+		if (existing?.status === 'delivered')
+			throw new ConflictException('You already claimed this secret.');
+		if (existing?.status === 'pending' && Date.now() - existing.created_at_unix_ms < 15_000)
+			throw new ConflictException('This hidden present is still opening. Try again shortly.');
+		const claimId = existing?.claim_id ?? randomUUID();
+		if (!existing) {
+			const inserted = this.database.connection
+				.insert(adventSecretClaims)
+				.values({
+					user_id: user.id,
+					year: ADVENT_YEAR,
+					day,
+					claim_id: claimId,
+					status: 'pending',
+					created_at_unix_ms: Date.now(),
+				})
+				.onConflictDoNothing()
+				.run();
+			if (inserted.changes !== 1)
+				throw new ConflictException('This hidden present is being opened.');
+		}
+		const amount = Math.max(8, day);
+		const grant = await this.minecraft.gameplay<GrantResult>('GrantAdventSecret', {
+			minecraft_username: user.minecraftUsername,
+			claim_id: claimId,
+			amount_dabloons: amount,
+		});
+		if (!grant.granted && !grant.already_granted) {
+			this.database.connection
+				.delete(adventSecretClaims)
+				.where(eq(adventSecretClaims.claim_id, claimId))
+				.run();
+			throw new BadRequestException(
+				grant.message || 'Join the Minecraft server and try again.',
+			);
+		}
+		this.database.connection
+			.update(adventSecretClaims)
+			.set({ status: 'delivered' })
+			.where(eq(adventSecretClaims.claim_id, claimId))
+			.run();
+		this.moneyHistory.recordForUser(
+			user.id,
+			'advent_secret',
+			amount,
+			grant.balance_dabloons,
+			`advent-secret:${claimId}`,
+		);
+		return { claimed: true, amountDabloons: amount, message: grant.message };
+	}
+
+	async penalizeCheater(user: AuthenticatedUser, dayInput: unknown) {
+		const day = Number(dayInput);
+		const today = currentAdventDay();
+		if (!today || !Number.isInteger(day) || day <= today || day > ADVENT_DAYS)
+			throw new BadRequestException('That Advent day is not in the future.');
+		const result = await this.minecraft.gameplay<{ penalized: boolean }>(
+			'PenalizeAdventCheater',
+			{ minecraft_username: user.minecraftUsername },
+		);
+		return result.penalized
+			? {
+					penalized: true,
+					message:
+						"HEY, CHEATER! You're not allowed to open that one yet! Just for that, I just took 1 dabloon off you, and you're not getting it back! Cheaters never prosper.",
+				}
+			: { penalized: false };
+	}
+
+	private secretForDay(day: number, layout: AdventLayout) {
+		const eligible = layout.rows
+			.flatMap((row, y) => row.map((cell, x) => ({ cell, x, y })))
+			.filter(
+				({ cell, x, y }) =>
+					cell?.foreground.length &&
+					!layout.days.some((entry) => entry.x === x && entry.y === y),
+			);
+		if (!eligible.length)
+			throw new BadRequestException(
+				'The calendar needs an unnumbered block for its hidden present.',
+			);
+		const existing = this.database.connection
+			.select()
+			.from(adventSecrets)
+			.where(and(eq(adventSecrets.year, ADVENT_YEAR), eq(adventSecrets.day, day)))
+			.get();
+		if (existing && eligible.some((entry) => entry.x === existing.x && entry.y === existing.y))
+			return existing;
+		const chosen = eligible.at(randomInt(eligible.length));
+		if (!chosen) throw new BadRequestException('No hidden block is available.');
+		if (existing)
+			this.database.connection
+				.update(adventSecrets)
+				.set({ x: chosen.x, y: chosen.y })
+				.where(and(eq(adventSecrets.year, ADVENT_YEAR), eq(adventSecrets.day, day)))
+				.run();
+		else
+			this.database.connection
+				.insert(adventSecrets)
+				.values({ year: ADVENT_YEAR, day, x: chosen.x, y: chosen.y })
+				.onConflictDoNothing()
+				.run();
+		const stored = this.database.connection
+			.select()
+			.from(adventSecrets)
+			.where(and(eq(adventSecrets.year, ADVENT_YEAR), eq(adventSecrets.day, day)))
+			.get();
+		if (!stored) throw new ConflictException('The hidden block could not be selected.');
+		return stored;
 	}
 
 	async getAdmin() {
@@ -95,6 +281,24 @@ export class AdventService {
 			const previous = old
 				? (JSON.parse(old.layout_json) as AdventLayout)
 				: defaultAdventLayout();
+			const today = currentAdventDay();
+			const secret = today
+				? tx
+						.select()
+						.from(adventSecrets)
+						.where(
+							and(eq(adventSecrets.year, ADVENT_YEAR), eq(adventSecrets.day, today)),
+						)
+						.get()
+				: null;
+			if (
+				secret &&
+				(!layout.rows[secret.y]?.[secret.x]?.foreground.length ||
+					layout.days.some((day) => day.x === secret.x && day.y === secret.y))
+			)
+				throw new ConflictException(
+					'The hidden block for today is already chosen. Keep it unnumbered and mineable.',
+				);
 			if (
 				layout.days.some(
 					(day, index) => day.streakIncrease !== previous.days[index]?.streakIncrease,
@@ -259,4 +463,9 @@ function dayOffset(date: ReturnType<typeof londonDate>) {
 	return Math.round(
 		(Date.UTC(date.year, date.month - 1, date.day) - Date.UTC(ADVENT_YEAR, 11, 1)) / 86_400_000,
 	);
+}
+
+function currentAdventDay() {
+	const date = londonDate();
+	return date.year === ADVENT_YEAR && date.month === 12 && date.day <= ADVENT_DAYS ? date.day : 0;
 }

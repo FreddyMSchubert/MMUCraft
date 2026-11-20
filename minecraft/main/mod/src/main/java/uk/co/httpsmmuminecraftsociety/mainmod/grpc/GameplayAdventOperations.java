@@ -71,7 +71,7 @@ final class GameplayAdventOperations {
 
         Gift gift = gift(request.getDay(), request.getDay() == 6 && ThreadLocalRandom.current().nextBoolean());
         List<ItemStack> contents = new ArrayList<>(gift.items());
-        contents.add(book(request.getDay(), gift.title(), gift.bookText()));
+        if (!gift.bookText().isBlank()) contents.add(book(request.getDay(), gift.title(), gift.bookText()));
         ItemStack backpack = FakeItems.createFakeItemStack("charm-leather-backpack", 1);
         backpack.set(DataComponents.CUSTOM_NAME, Component.literal("Advent Day " + request.getDay()));
         backpack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(contents));
@@ -101,6 +101,40 @@ final class GameplayAdventOperations {
         return GrantAdventRewardResponse.newBuilder().setMessage(message).build();
     }
 
+    static GrantAdventRewardResponse grantSecretOnMainThread(GrantAdventSecretRequest request) {
+        MinecraftServer server = GrpcBridge.minecraftServer();
+        if (server == null) throw new IllegalStateException("Minecraft server is not available");
+        ServerPlayer player = server.getPlayerList().getPlayerByName(request.getMinecraftUsername());
+        if (player == null || player.hasDisconnected()) return rejected("Join the Minecraft server to open this present.");
+        if (request.getClaimId().isBlank() || request.getAmountDabloons() < 8 || request.getAmountDabloons() > 24)
+            return rejected("The secret Advent request is invalid.");
+        Data data = server.overworld().getDataStorage().computeIfAbsent(Data.TYPE);
+        String receipt = player.getUUID() + ":secret:" + request.getClaimId();
+        Integer previousBalance = data.delivered.get(receipt);
+        if (previousBalance != null) return GrantAdventRewardResponse.newBuilder()
+                .setAlreadyGranted(true).setBalanceDabloons(previousBalance)
+                .setMessage("This secret was already delivered.").build();
+        if (!MoneyHelper.GainMoney(player, request.getAmountDabloons()))
+            return rejected("The secret reward could not be paid.");
+        int balance = MoneyHelper.GetBalance(player);
+        data.delivered.put(receipt, balance);
+        data.setDirty();
+        MoneyHelper.SendBalanceMessage(player, request.getAmountDabloons(), "Hidden Advent present");
+        return GrantAdventRewardResponse.newBuilder().setGranted(true).setBalanceDabloons(balance)
+                .setMessage("You found the hidden present: " + request.getAmountDabloons() + " Dabloons!")
+                .build();
+    }
+
+    static PenalizeAdventCheaterResponse penalizeCheaterOnMainThread(PenalizeAdventCheaterRequest request) {
+        MinecraftServer server = GrpcBridge.minecraftServer();
+        if (server == null) throw new IllegalStateException("Minecraft server is not available");
+        ServerPlayer player = server.getPlayerList().getPlayerByName(request.getMinecraftUsername());
+        if (player == null || player.hasDisconnected() || MoneyHelper.GetBalance(player) < 1
+                || !MoneyHelper.ReduceMoney(player, 1)) return PenalizeAdventCheaterResponse.newBuilder().build();
+        return PenalizeAdventCheaterResponse.newBuilder().setPenalized(true)
+                .setBalanceDabloons(MoneyHelper.GetBalance(player)).build();
+    }
+
     private static AdventRewardItem previewItem(ItemStack stack) {
         return AdventRewardItem.newBuilder()
                 .setItemId(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString())
@@ -119,62 +153,66 @@ final class GameplayAdventOperations {
 
     private static Gift gift(int day, boolean alternate) {
         return switch (day) {
-            case 1 -> gift("Light the first candle", "The long wait starts here. Plant a tree and put a light beside it.",
+            case 1 -> gift("Light the first candle",
                     stack(Items.SPRUCE_SAPLING, 4), stack(Items.BONE_MEAL, 16), stack("red_candle", 4));
-            case 2 -> gift("Snowball delivery", "A snowball is a letter with poor handwriting. Send one to a friend.",
+            case 2 -> gift("Snowball delivery",
                     stack(Items.SNOWBALL, 32), stack(Items.SNOW_BLOCK, 8), stack(Items.LEATHER_BOOTS, 1));
-            case 3 -> gift("The miner's stocking", "Someone filled this stocking underground. At least the torches are useful.",
+            case 3 -> gift("The miner's stocking",
                     stack(Items.COAL, 16), stack(Items.TORCH, 32), stack(Items.IRON_PICKAXE, 1));
-            case 4 -> gift("A tree with no room", "Take this little forest home. The shears are for when it gets out of hand.",
+            case 4 -> gift("A tree with no room",
                     stack(Items.SPRUCE_LOG, 16), stack(Items.SPRUCE_LEAVES, 16), stack(Items.SHEARS, 1));
-            case 5 -> gift("Leave a snack out", "Saint Nicholas visits tomorrow. Leave a cookie out, if you trust the foxes.",
+            case 5 -> gift("Leave a snack out",
                     stack(Items.COOKIE, 12), stack(Items.MILK_BUCKET, 2), stack(Items.HONEY_BOTTLE, 2));
             case 6 -> alternate
                     ? gift("Saint Nicholas approves", "On 6 December, many families celebrate Saint Nicholas. Good children may find a treat in their shoes. You found apples. Put your shoes somewhere safe next year.",
                             stack(Items.APPLE, 12), stack(Items.SPRUCE_LEAVES, 8), stack("red_candle", 4))
                     : gift("Saint Nicholas has notes", "On 6 December, many families celebrate Saint Nicholas. Some stories say naughty children get coal in their shoes. You got coal. It is still useful, so the joke is on Saint Nicholas.",
                             stack(Items.COAL, 16), stack(Items.SPRUCE_LEAVES, 8), stack("red_candle", 4));
-            case 7 -> gift("String lights", "These lights need a builder. The redstone is yours to arrange.",
+            case 7 -> gift("String lights",
                     stack(Items.LANTERN, 8), stack(Items.REDSTONE, 24), stack(Items.STRING, 16));
-            case 8 -> gift("A visitor from the pines", "Give the fox some berries. It may still steal your things.",
+            case 8 -> gift("A visitor from the pines",
                     stack(Items.FOX_SPAWN_EGG, 1), stack(Items.SWEET_BERRIES, 24), stack(Items.LEAD, 2));
-            case 9 -> gift("Build a snow guard", "It is brave. It is made of snow. Keep it away from the fireplace.",
+            case 9 -> gift("Build a snow guard",
                     stack(Items.CARVED_PUMPKIN, 2), stack(Items.SNOW_BLOCK, 24), stack(Items.IRON_SHOVEL, 1));
-            case 10 -> gift("Cave rescue kit", "If you get lost, follow the torches back. That is why you brought a compass too.",
+            case 10 -> gift("Cave rescue kit", "The numbered windows are not the whole winter sky. Each day, one unmarked block keeps a second ribbon. A wall you mine may whisper a direction. Follow the whispers.",
                     stack(Items.TORCH, 64), stack(Items.BREAD, 16), stack(Items.COMPASS, 1));
-            case 11 -> gift("Cake for breakfast", "There are no rules about when to eat cake. There may be consequences.",
+            case 11 -> gift("Cake for breakfast",
                     stack(Items.CAKE, 1), stack(Items.COOKIE, 8), stack(Items.COCOA_BEANS, 16));
-            case 12 -> gift("Rehearsal at dusk", "These rockets are for a show. Pick a safe place with open sky.",
+            case 12 -> gift("Rehearsal at dusk",
                     fireworkRocket(24, FireworkExplosion.Shape.STAR, 0xD33131, 0x30A451),
                     fireworkStar(8, FireworkExplosion.Shape.STAR, 0xD33131, 0x30A451), stack("red_dye", 8));
-            case 13 -> gift("The second wreath", "The next Sunday needs a wreath. Build one with leaves, lights, and your own idea.",
+            case 13 -> gift("The second wreath",
                     stack(Items.SPRUCE_LEAVES, 24), stack("red_candle", 8), stack(Items.ITEM_FRAME, 4));
-            case 14 -> gift("Music from the cave", "Put a record on while you mine. The cave may sing back.",
+            case 14 -> gift("Music from the cave",
                     stack(Items.MUSIC_DISC_CAT, 1), stack(Items.JUKEBOX, 1), stack(Items.NOTE_BLOCK, 8));
-            case 15 -> gift("Banner workshop", "A banner tells everyone where the party is. Make a design you can spot in snow.",
+            case 15 -> gift("Banner workshop",
                     stack("red_banner", 2), stack("white_dye", 16), stack(Items.LOOM, 1));
-            case 16 -> gift("Underwater stars", "The sea has its own winter lights. Bring a way to breathe.",
+            case 16 -> gift("Underwater stars",
                     stack(Items.SEA_LANTERN, 8), stack(Items.GLOW_INK_SAC, 8),
                     PotionContents.createItemStack(Items.POTION, Potions.LONG_WATER_BREATHING));
-            case 17 -> gift("A very old present", "The sniffer egg waited a long time. Give it a good place to hatch.",
+            case 17 -> gift("A very old present",
                     stack(Items.SNIFFER_EGG, 1), stack(Items.TORCHFLOWER_SEEDS, 4), stack(Items.BONE_MEAL, 16));
-            case 18 -> gift("Winter feast", "Invite someone over. The cake is easier to share than the carrots.",
+            case 18 -> gift("Winter feast",
                     stack(Items.CAKE, 1), stack(Items.COOKED_BEEF, 16), stack(Items.GOLDEN_CARROT, 16));
-            case 19 -> gift("Two noisy guests", "A chicken and a sheep arrived early. They both think they are the present.",
+            case 19 -> gift("Two noisy guests",
                     stack(Items.CHICKEN_SPAWN_EGG, 1), stack(Items.SHEEP_SPAWN_EGG, 1), stack(Items.LEAD, 4));
-            case 20 -> gift("The last wreath", "It is the final Sunday before Christmas. Make the doorway look ready.",
+            case 20 -> gift("The last wreath",
                     stack(Items.SPRUCE_LEAVES, 24), stack(Items.GLOWSTONE, 8), stack(Items.EXPERIENCE_BOTTLE, 16));
-            case 21 -> gift("The long way home", "A compass and a spyglass can show the way. A map can tell the story.",
+            case 21 -> gift("The long way home",
                     stack(Items.COMPASS, 1), stack(Items.SPYGLASS, 1), stack(Items.MAP, 4));
-            case 22 -> gift("Stars over spawn", "Take the rockets outside. Do not point them at the tree.",
+            case 22 -> gift("Stars over spawn",
                     fireworkRocket(32, FireworkExplosion.Shape.BURST, 0x5F8CE6, 0xF9FFFF),
                     fireworkStar(12, FireworkExplosion.Shape.BURST, 0x5F8CE6, 0xF9FFFF), stack(Items.GLOWSTONE_DUST, 16));
-            case 23 -> gift("One more sleep", "Keep this for tomorrow, or use it now. You have made it this far.",
+            case 23 -> gift("One more sleep",
                     stack(Items.DIAMOND, 4), stack(Items.EMERALD, 8), stack(Items.EXPERIENCE_BOTTLE, 24));
             case 24 -> gift("Christmas morning", "You opened every door. Keep the apple for a day that deserves it. Merry Christmas.",
                     stack(Items.ENCHANTED_GOLDEN_APPLE, 1), stack(Items.DIAMOND_BLOCK, 1), stack(Items.EXPERIENCE_BOTTLE, 32));
             default -> throw new IllegalArgumentException("Advent day must be between 1 and 24");
         };
+    }
+
+    private static Gift gift(String title, ItemStack... items) {
+        return new Gift(title, "", List.of(items));
     }
 
     private static Gift gift(String title, String bookText, ItemStack... items) {

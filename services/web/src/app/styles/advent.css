@@ -4,13 +4,8 @@
 }
 
 .adventPanel {
-	padding: clamp(16px, 3vw, 32px);
-	border: 2px solid #d8efff;
-	border-radius: 14px;
-	background: linear-gradient(165deg, #123958, #0c2036 55%, #121b29);
-	box-shadow:
-		0 16px 45px #0005,
-		inset 0 0 0 5px #ffffff0b;
+	display: grid;
+	gap: 16px;
 }
 
 .adventHeader {
@@ -18,48 +13,32 @@
 	justify-content: space-between;
 	align-items: start;
 	gap: 20px;
-	margin-bottom: 22px;
 }
 
-.adventHeader h1 {
-	margin: 2px 0 10px;
-	font-size: clamp(1.8rem, 4vw, 2.8rem);
-	color: #fff4c6;
-}
-
-.adventHeader p {
-	max-width: 58ch;
+.adventHeader h3 {
 	margin: 0;
-	line-height: 1.5;
-}
-
-.adventEyebrow {
-	color: #b9e2f6;
-	font-size: 0.8rem;
-	font-weight: 800;
-	letter-spacing: 0.14em;
-	text-transform: uppercase;
+	font-size: clamp(1.55rem, 3vw, 1.8rem);
+	line-height: 1.15;
 }
 
 .adventStreak {
 	display: grid;
 	gap: 4px;
-	width: min(220px, 100%);
+	width: min(270px, 100%);
 	flex: none;
-	padding: 15px;
-	border: 2px solid #eec667;
-	border-radius: 10px;
-	background: #183828;
-	box-shadow: 4px 4px 0 #0a1720;
+	padding: 10px 12px;
+	border: 1px solid rgba(255, 209, 102, 0.5);
+	border-radius: 8px;
+	background: rgba(255, 209, 102, 0.14);
+	color: #ffd166;
 }
 
 .adventStreak strong {
-	font-size: 1.9rem;
-	color: #ffe9a1;
+	font-size: 1.4rem;
 }
 .adventStreak small {
 	line-height: 1.4;
-	color: #d4e6d9;
+	color: rgba(255, 255, 255, 0.76);
 }
 
 .adventScene {
@@ -105,10 +84,9 @@
 .adventFlake {
 	position: absolute;
 	top: -4%;
-	width: 6px;
-	height: 6px;
-	background: #fff;
-	box-shadow: 6px 6px #d9f4ff;
+	background-size: contain;
+	background-repeat: no-repeat;
+	image-rendering: pixelated;
 	animation: adventSnow linear infinite;
 	opacity: 0.78;
 }
@@ -123,9 +101,7 @@
 	position: relative;
 	z-index: 1;
 	display: grid;
-	width: min(100%, 720px);
-	min-width: 576px;
-	margin: 0 auto;
+	width: 100%;
 }
 
 .adventTile {
@@ -135,7 +111,7 @@
 	width: 100%;
 	aspect-ratio: 1;
 	padding: 0;
-	border: 1px solid #1526328c;
+	border: 0;
 	border-radius: 0;
 	background: transparent;
 	cursor: pointer;
@@ -146,11 +122,8 @@
 .adventTile.empty {
 	border-color: transparent;
 }
-.adventTile.numbered {
-	box-shadow:
-		inset 0 0 0 2px #fff6c6,
-		0 0 12px #fff3a867;
-	z-index: 2;
+.adventAdmin .adventTile {
+	box-shadow: inset 0 0 0 1px #1526328c;
 }
 .adventTile.selected {
 	outline: 3px solid #ffde6c;
@@ -187,22 +160,11 @@
 .adventTexture.grass {
 	filter: sepia(1) saturate(3) hue-rotate(60deg) brightness(0.75);
 }
-.adventTileDoor {
-	transform-origin: top center;
-	transition: transform 650ms cubic-bezier(0.22, 0.76, 0.25, 1);
-	backface-visibility: hidden;
-}
 .adventTile.numbered .adventTileDoor {
 	background: #1a3027;
 }
-.adventTile.open .adventTileDoor {
-	transform: perspective(200px) rotateX(-78deg);
-}
 .adventTile.claimed {
 	background: #194c42;
-}
-.adventTile.claimed .adventTileDoor {
-	opacity: 0.45;
 }
 
 .adventNumber {
@@ -227,6 +189,23 @@
 	place-items: center;
 	font-size: clamp(20px, 3vw, 31px);
 	background: #12261ddd;
+}
+.adventSecret,
+.adventArrow {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	font-size: clamp(18px, 3vw, 30px);
+	background: #142d37d9;
+}
+.adventArrow {
+	inset: auto 1px 1px auto;
+	width: 50%;
+	aspect-ratio: 1;
+	border-radius: 5px;
+	background: #142d37e8;
+	font-size: clamp(13px, 1.8vw, 20px);
 }
 
 .adventTile.open:not(.claimed):hover .adventPresent {
@@ -294,12 +273,6 @@
 	background: #173e2a;
 	color: #ddffe9;
 }
-.adventFootnote {
-	margin: 15px 0 0;
-	color: #c2d9e6;
-	font-size: 0.86rem;
-}
-
 .adventAdmin {
 	display: grid;
 	gap: 18px;

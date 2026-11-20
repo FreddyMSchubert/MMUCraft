@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AdventGrid } from '@/components/advent-grid';
+import { AdventGrid, type MinedBlock } from '@/components/advent-grid';
 import { DabloonAmount } from '@/components/dabloon-amount';
+import { useSiteAlert } from '@/components/site-alert';
 import type { AdventLayout } from '@/lib/advent';
 
 interface CalendarState {
@@ -11,6 +12,7 @@ interface CalendarState {
 	today: number;
 	claimedDays: number[];
 	streakRate: number;
+	secretClaimed: boolean;
 }
 
 export function AdventTab() {
@@ -18,25 +20,31 @@ export function AdventTab() {
 	const [error, setError] = useState('');
 	const [notice, setNotice] = useState('');
 	const [busy, setBusy] = useState(false);
+	const { showAlert } = useSiteAlert();
 
 	useEffect(() => {
 		let cancelled = false;
-		void fetch('/api/advent', { cache: 'no-store' })
-			.then(async (response) => {
-				if (!response.ok) throw new Error('The Advent calendar is unavailable.');
-				return (await response.json()) as CalendarState;
-			})
-			.then((value) => {
-				if (!cancelled) setCalendar(value);
-			})
-			.catch((cause: unknown) => {
-				if (!cancelled)
-					setError(
-						cause instanceof Error ? cause.message : 'Could not load the calendar.',
-					);
-			});
+		function refresh() {
+			void fetch('/api/advent', { cache: 'no-store' })
+				.then(async (response) => {
+					if (!response.ok) throw new Error('The Advent calendar is unavailable.');
+					return (await response.json()) as CalendarState;
+				})
+				.then((value) => {
+					if (!cancelled) setCalendar(value);
+				})
+				.catch((cause: unknown) => {
+					if (!cancelled)
+						setError(
+							cause instanceof Error ? cause.message : 'Could not load the calendar.',
+						);
+				});
+		}
+		refresh();
+		const timer = window.setInterval(refresh, 60_000);
 		return () => {
 			cancelled = true;
+			window.clearInterval(timer);
 		};
 	}, []);
 
@@ -61,8 +69,14 @@ export function AdventTab() {
 			});
 			const increase = calendar.layout.days[day - 1].streakIncrease;
 			setNotice(
-				`${data.message ?? `Day ${day} delivered.`}${data.amountDabloons ? ` Your streak paid ${data.amountDabloons} Dabloons${increase ? ` and grew by ${increase}` : ''}.` : ''}`,
+				increase && data.amountDabloons ? '' : (data.message ?? `Day ${day} delivered.`),
 			);
+			if (increase && data.amountDabloons)
+				void showAlert({
+					title: `Christmas streak +${increase}`,
+					message: `${data.amountDabloons} Dabloons paid. Daily rate: ${data.streakRate ?? calendar.streakRate}.`,
+					tone: 'success',
+				});
 		} catch (cause) {
 			setError(
 				cause instanceof Error ? cause.message : 'The present could not be delivered.',
@@ -72,24 +86,78 @@ export function AdventTab() {
 		}
 	}
 
+	async function mine(x: number, y: number): Promise<MinedBlock> {
+		try {
+			const response = await fetch('/api/advent/mine', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({ x, y }),
+			});
+			const result = (await response.json()) as MinedBlock & { message?: string };
+			if (!response.ok)
+				throw new Error(result.message ?? 'Could not inspect the mined block.');
+			return result;
+		} catch (cause) {
+			setError(cause instanceof Error ? cause.message : 'Could not inspect the mined block.');
+			return { secret: false };
+		}
+	}
+
+	async function claimSecret(x: number, y: number) {
+		if (!calendar || busy) return;
+		setBusy(true);
+		setError('');
+		try {
+			const response = await fetch('/api/advent/secret/claim', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({ x, y }),
+			});
+			const result = (await response.json()) as { message?: string; amountDabloons?: number };
+			if (!response.ok)
+				throw new Error(result.message ?? 'The hidden present could not be claimed.');
+			setCalendar({ ...calendar, secretClaimed: true });
+			void showAlert({
+				title: 'Hidden present found',
+				message:
+					result.message ?? `You received ${result.amountDabloons} Dabloons in game.`,
+				tone: 'success',
+			});
+		} catch (cause) {
+			setError(
+				cause instanceof Error ? cause.message : 'The hidden present could not be claimed.',
+			);
+		} finally {
+			setBusy(false);
+		}
+	}
+
+	async function futureDay(day: number) {
+		try {
+			const response = await fetch(`/api/advent/${day}/cheat`, { method: 'POST' });
+			const result = (await response.json()) as { penalized?: boolean; message?: string };
+			if (response.ok && result.penalized && result.message)
+				void showAlert({
+					title: 'Caught mining ahead',
+					message: result.message,
+					tone: 'danger',
+				});
+		} catch {
+			// A failed request never displays a penalty that was not confirmed.
+		}
+	}
+
 	return (
 		<section className="adventPanel">
 			<div className="adventHeader">
-				<div>
-					<p className="adventEyebrow">MMUCraft · December 2026</p>
-					<h1>Advent Calendar</h1>
-					<p>
-						Find a numbered block. Open its door, then take the present while you are in
-						game.
-					</p>
-				</div>
+				<h3>Advent Calendar</h3>
 				<div className="adventStreak">
 					<span>Christmas streak</span>
 					<strong>
 						<DabloonAmount amount={calendar?.streakRate ?? 0} />
 					</strong>
 					<small>
-						Earn this rate for each day you open on time. A missed day resets it.
+						Resets if you miss a day. Earned when you receive your daily gift.
 					</small>
 				</div>
 			</div>
@@ -105,18 +173,19 @@ export function AdventTab() {
 			)}
 			{calendar ? (
 				<AdventGrid
+					key={calendar.today}
 					layout={calendar.layout}
 					today={calendar.today}
 					claimedDays={calendar.claimedDays}
+					secretClaimed={calendar.secretClaimed}
 					onGift={(day) => void claim(day)}
+					onSecretGift={(x, y) => void claimSecret(x, y)}
+					onFutureDay={futureDay}
+					onFullyMined={mine}
 				/>
 			) : (
 				!error && <p>Loading the calendar...</p>
 			)}
-			<p className="adventFootnote">
-				One present per day. A late present gives its items, but it does not restore streak
-				money.
-			</p>
 		</section>
 	);
 }

@@ -184,6 +184,24 @@ private final class GameplayControlEndpoint extends GameplayControlGrpc.Gameplay
         }
 
         @Override
+        public void grantAdventSecret(
+                GrantAdventSecretRequest request,
+                StreamObserver<GrantAdventRewardResponse> responseObserver
+        ) {
+            callOnMainThread(() -> GameplayAdventOperations.grantSecretOnMainThread(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
+        public void penalizeAdventCheater(
+                PenalizeAdventCheaterRequest request,
+                StreamObserver<PenalizeAdventCheaterResponse> responseObserver
+        ) {
+            callOnMainThread(() -> GameplayAdventOperations.penalizeCheaterOnMainThread(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
         public void grantKnowledgeReadMoney(
                 GrantKnowledgeReadMoneyRequest request,
                 StreamObserver<GrantKnowledgeReadMoneyResponse> responseObserver

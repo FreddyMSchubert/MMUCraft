@@ -32,11 +32,17 @@ export interface AdventLayout {
 
 const STREAK_INCREASES = new Map([
 	[1, 3],
-	[5, 4],
-	[9, 5],
-	[13, 6],
-	[17, 7],
+	[3, 2],
+	[5, 3],
+	[7, 2],
+	[9, 2],
+	[11, 2],
+	[13, 3],
+	[15, 2],
+	[17, 2],
+	[19, 2],
 	[21, 10],
+	[23, 2],
 ]);
 
 function layer(texture: string, rotation = 0): AdventLayer {
@@ -150,6 +156,14 @@ export function validateAdventLayout(input: unknown): AdventLayout {
 			throw new BadRequestException(`Day ${index + 1} needs its own foreground block.`);
 		occupied.add(`${day.x},${day.y}`);
 	}
+	if (
+		!layout.rows.some((row, y) =>
+			row.some((cell, x) => cell?.foreground.length && !occupied.has(`${x},${y}`)),
+		)
+	)
+		throw new BadRequestException(
+			'Leave at least one unnumbered foreground block for the hidden present.',
+		);
 	const perfectTotal = layout.days.reduce(
 		(total, day) => total + day.streakIncrease * (ADVENT_DAYS - day.day + 1),
 		0,

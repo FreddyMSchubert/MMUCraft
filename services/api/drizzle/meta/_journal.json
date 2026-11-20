@@ -414,6 +414,13 @@
       "when": 1794988244695,
       "tag": "0058_windy_sersi",
       "breakpoints": true
+    },
+    {
+      "idx": 59,
+      "version": "6",
+      "when": 1795198919678,
+      "tag": "0059_shocking_hawkeye",
+      "breakpoints": true
     }
   ]
 }

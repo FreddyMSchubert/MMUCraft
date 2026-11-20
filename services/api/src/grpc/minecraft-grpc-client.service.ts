@@ -21,6 +21,8 @@ const ECONOMY_METHODS = new Set([
 	'PurchaseClaim',
 	'UpgradeCharm',
 	'GrantAdventReward',
+	'GrantAdventSecret',
+	'PenalizeAdventCheater',
 ]);
 const LOG_FIELDS =
 	'minecraft_username user_id dimension chunk_x chunk_z price_dabloons amount_dabloons amount item_id delivery_kind expected_level period_key source advancement_id bonus_reward_dabloons check_only granted claimed purchased upgraded online completed balance_dabloons new_level'.split(

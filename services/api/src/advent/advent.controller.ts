@@ -14,6 +14,27 @@ export class AdventController {
 		return this.advent.getCalendar(this.auth.requireSession(cookie));
 	}
 
+	@Post('mine')
+	mine(
+		@Headers('cookie') cookie: string | undefined,
+		@Body() body: { x?: unknown; y?: unknown } | undefined,
+	) {
+		return this.advent.mine(this.auth.requireSession(cookie), body?.x, body?.y);
+	}
+
+	@Post('secret/claim')
+	claimSecret(
+		@Headers('cookie') cookie: string | undefined,
+		@Body() body: { x?: unknown; y?: unknown } | undefined,
+	) {
+		return this.advent.claimSecret(this.auth.requireSession(cookie), body?.x, body?.y);
+	}
+
+	@Post(':day/cheat')
+	cheat(@Headers('cookie') cookie: string | undefined, @Param('day') day: string) {
+		return this.advent.penalizeCheater(this.auth.requireSession(cookie), day);
+	}
+
 	@Post(':day/claim')
 	claim(@Headers('cookie') cookie: string | undefined, @Param('day') day: string) {
 		return this.advent.claim(this.auth.requireSession(cookie), day);

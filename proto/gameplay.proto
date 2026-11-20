@@ -33,6 +33,8 @@ service GameplayControl {
   rpc GrantGiftCodeMoney(GrantGiftCodeMoneyRequest) returns (GrantGiftCodeMoneyResponse);
   rpc GetAdventRewards(GetAdventRewardsRequest) returns (GetAdventRewardsResponse);
   rpc GrantAdventReward(GrantAdventRewardRequest) returns (GrantAdventRewardResponse);
+  rpc GrantAdventSecret(GrantAdventSecretRequest) returns (GrantAdventRewardResponse);
+  rpc PenalizeAdventCheater(PenalizeAdventCheaterRequest) returns (PenalizeAdventCheaterResponse);
   rpc GrantKnowledgeReadMoney(GrantKnowledgeReadMoneyRequest) returns (GrantKnowledgeReadMoneyResponse);
   rpc GenerateDailyTasks(GenerateDailyTasksRequest) returns (GenerateDailyTasksResponse);
   rpc ClaimDailyTask(ClaimDailyTaskRequest) returns (ClaimDailyTaskResponse);
@@ -472,6 +474,21 @@ message GrantAdventRewardResponse {
   bool already_granted = 2;
   string message = 3;
   int32 balance_dabloons = 4;
+}
+
+message GrantAdventSecretRequest {
+  string minecraft_username = 1;
+  string claim_id = 2;
+  int32 amount_dabloons = 3;
+}
+
+message PenalizeAdventCheaterRequest {
+  string minecraft_username = 1;
+}
+
+message PenalizeAdventCheaterResponse {
+  bool penalized = 1;
+  int32 balance_dabloons = 2;
 }
 
 message GrantGiftCodeMoneyResponse {

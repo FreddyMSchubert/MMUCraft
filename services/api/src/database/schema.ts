@@ -889,6 +889,35 @@ export const adventClaims = sqliteTable(
 	],
 );
 
+export const adventSecrets = sqliteTable(
+	'advent_secrets',
+	{
+		year: integer('year').notNull(),
+		day: integer('day').notNull(),
+		x: integer('x').notNull(),
+		y: integer('y').notNull(),
+	},
+	(table) => [primaryKey({ columns: [table.year, table.day] })],
+);
+
+export const adventSecretClaims = sqliteTable(
+	'advent_secret_claims',
+	{
+		user_id: integer('user_id')
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		year: integer('year').notNull(),
+		day: integer('day').notNull(),
+		claim_id: text('claim_id').notNull(),
+		status: text('status').notNull(),
+		created_at_unix_ms: integer('created_at_unix_ms').notNull(),
+	},
+	(table) => [
+		primaryKey({ columns: [table.user_id, table.year, table.day] }),
+		uniqueIndex('advent_secret_claim_id_unique').on(table.claim_id),
+	],
+);
+
 export type UserRow = typeof users.$inferSelect;
 export type SessionRow = typeof sessions.$inferSelect;
 export type PlayerBanRow = typeof playerBans.$inferSelect;
@@ -925,6 +954,8 @@ export type SurprisingSaturdayEventRow = typeof surprisingSaturdayEvents.$inferS
 export const schema = {
 	adventLayouts,
 	adventClaims,
+	adventSecrets,
+	adventSecretClaims,
 	users,
 	sessions,
 	externalMembershipPurchases,

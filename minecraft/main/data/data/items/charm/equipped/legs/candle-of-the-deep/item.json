@@ -11,7 +11,7 @@
 		"description": "Gives you permanent night vision.",
 		"unlockWeight": 10,
 		"unlockMessage": "Unlocked charm: Candle of the Deep Charm. It gives permanent night vision.",
-		"gameplayToggle": "void"
+		"gameplayToggle": "efficient"
 	},
 	"charm": {
 		"charmId": 8,

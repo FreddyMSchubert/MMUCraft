@@ -196,14 +196,15 @@ public record CharmItemFeature(
             if (!next.abilityStatusRelative().isBlank()) {
                 lines.add(toAbilityComponent("Next Level: " + next.abilityStatusRelative()));
             }
-            if (!next.upgradeIngredients().isEmpty()) {
+            if (!next.upgradeIngredients().isEmpty() || next.dabloons() > 0) {
                 String upgradeVerb = current.level() == 0 ? "Repair" : "Upgrade";
+                String ingredients = formatUpgradeIngredients(next.upgradeIngredients());
                 Component upgrade = Component.literal(
-                        upgradeVerb + " on Website with: " + formatUpgradeIngredients(next.upgradeIngredients())
+                        upgradeVerb + " on Website" + (ingredients.isEmpty() ? "" : " with: " + ingredients)
                 );
                 if (next.dabloons() > 0) {
                     upgrade = upgrade.copy()
-                            .append(Component.literal(", "))
+                            .append(Component.literal(ingredients.isEmpty() ? " for " : ", "))
                             .append(MoneyHelper.FormatDabloons(next.dabloons()));
                 }
                 lines.add(upgrade.copy().withStyle(ChatFormatting.RESET).withStyle(ChatFormatting.WHITE));

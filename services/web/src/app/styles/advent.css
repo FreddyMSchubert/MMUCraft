@@ -150,10 +150,6 @@
 .adventTile.numbered .adventTileDoor {
 	background: #1a3027;
 }
-.adventTile.claimed {
-	background: #194c42;
-}
-
 .adventNumber {
 	position: absolute;
 	inset: 0;
@@ -167,34 +163,14 @@
 	paint-order: stroke fill;
 }
 
-.adventPresent {
-	position: absolute;
-	inset: 0;
-	display: grid;
-	place-items: center;
-	font-size: clamp(20px, 3vw, 31px);
-	background: #12261ddd;
-}
+.adventPresent,
 .adventSecret,
 .adventArrow {
 	position: absolute;
 	inset: 0;
 	display: grid;
 	place-items: center;
-	font-size: clamp(18px, 3vw, 30px);
-	background: #142d37d9;
-}
-.adventArrow {
-	inset: auto 1px 1px auto;
-	width: 50%;
-	aspect-ratio: 1;
-	border-radius: 5px;
-	background: #142d37e8;
-	font-size: clamp(13px, 1.8vw, 20px);
-}
-
-.adventTile.open:not(.claimed):hover .adventPresent {
-	background: #1e4c36;
+	font-size: clamp(20px, 3vw, 31px);
 }
 .adventCracks {
 	position: absolute;

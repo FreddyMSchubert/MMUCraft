@@ -443,18 +443,12 @@ message GrantGiftCodeMoneyRequest {
 
 message GetAdventRewardsRequest {}
 
-message AdventRewardItem {
-  string item_id = 1;
-  int32 count = 2;
-}
-
 message AdventRewardPreview {
+  reserved 3, 4, 5, 6;
   int32 day = 1;
   string title = 2;
-  string book_text = 3;
-  repeated AdventRewardItem items = 4;
-  repeated AdventRewardItem alternate_items = 5;
-  string alternate_book_text = 6;
+  string note = 7;
+  string alternate_note = 8;
 }
 
 message GetAdventRewardsResponse {

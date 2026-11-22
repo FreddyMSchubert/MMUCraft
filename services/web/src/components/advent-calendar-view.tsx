@@ -26,9 +26,7 @@ export function AdventCalendarView({
 					<strong>
 						<DabloonAmount amount={streakRate} />
 					</strong>
-					<small>
-						Resets if you miss a day. Earned when you receive your daily gift.
-					</small>
+					<small>Resets if you miss a day.</small>
 				</div>
 			</div>
 			{error && (

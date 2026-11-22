@@ -40,12 +40,10 @@ final class GameplayAdventOperations {
         for (int day = 1; day <= 24; day++) {
             Gift gift = gift(day, false);
             var preview = AdventRewardPreview.newBuilder().setDay(day)
-                    .setTitle(gift.title()).setBookText(gift.bookText());
-            for (ItemStack item : gift.items()) preview.addItems(previewItem(item));
+                    .setTitle(gift.title()).setNote(gift.note());
             if (day == 6) {
                 Gift alternate = gift(day, true);
-                preview.setAlternateBookText(alternate.bookText());
-                for (ItemStack item : alternate.items()) preview.addAlternateItems(previewItem(item));
+                preview.setAlternateNote(alternate.note());
             }
             response.addRewards(preview);
         }
@@ -135,12 +133,6 @@ final class GameplayAdventOperations {
                 .setBalanceDabloons(MoneyHelper.GetBalance(player)).build();
     }
 
-    private static AdventRewardItem previewItem(ItemStack stack) {
-        return AdventRewardItem.newBuilder()
-                .setItemId(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString())
-                .setCount(stack.getCount()).build();
-    }
-
     private static ItemStack book(int day, String title, String text) {
         ItemStack stack = new ItemStack(Items.WRITTEN_BOOK);
         stack.set(DataComponents.WRITTEN_BOOK_CONTENT, new WrittenBookContent(
@@ -149,7 +141,7 @@ final class GameplayAdventOperations {
         return stack;
     }
 
-    private record Gift(String title, String bookText, List<ItemStack> items) {}
+    private record Gift(String title, String note, String bookText, List<ItemStack> items) {}
 
     private static Gift gift(int day, boolean alternate) {
         return switch (day) {
@@ -178,7 +170,7 @@ final class GameplayAdventOperations {
                     stack(Items.TORCH, 64), stack(Items.BREAD, 16), stack(Items.COMPASS, 1));
             case 11 -> gift("Cake for breakfast",
                     stack(Items.CAKE, 1), stack(Items.COOKIE, 8), stack(Items.COCOA_BEANS, 16));
-            case 12 -> gift("Rehearsal at dusk",
+            case 12 -> giftWithNote("Rehearsal at dusk", "24 red and green star firework rockets, 8 matching firework stars, and 8 red dye. The fireworks have flight duration 1.",
                     fireworkRocket(24, FireworkExplosion.Shape.STAR, 0xD33131, 0x30A451),
                     fireworkStar(8, FireworkExplosion.Shape.STAR, 0xD33131, 0x30A451), stack("red_dye", 8));
             case 13 -> gift("The second wreath",
@@ -187,7 +179,7 @@ final class GameplayAdventOperations {
                     stack(Items.MUSIC_DISC_CAT, 1), stack(Items.JUKEBOX, 1), stack(Items.NOTE_BLOCK, 8));
             case 15 -> gift("Banner workshop",
                     stack("red_banner", 2), stack("white_dye", 16), stack(Items.LOOM, 1));
-            case 16 -> gift("Underwater stars",
+            case 16 -> giftWithNote("Underwater stars", "8 sea lanterns, 8 glow ink sacs, and a long water breathing potion.",
                     stack(Items.SEA_LANTERN, 8), stack(Items.GLOW_INK_SAC, 8),
                     PotionContents.createItemStack(Items.POTION, Potions.LONG_WATER_BREATHING));
             case 17 -> gift("A very old present",
@@ -200,7 +192,7 @@ final class GameplayAdventOperations {
                     stack(Items.SPRUCE_LEAVES, 24), stack(Items.GLOWSTONE, 8), stack(Items.EXPERIENCE_BOTTLE, 16));
             case 21 -> gift("The long way home",
                     stack(Items.COMPASS, 1), stack(Items.SPYGLASS, 1), stack(Items.MAP, 4));
-            case 22 -> gift("Stars over spawn",
+            case 22 -> giftWithNote("Stars over spawn", "32 blue and white burst firework rockets, 12 matching firework stars, and 16 glowstone dust. The fireworks have flight duration 1.",
                     fireworkRocket(32, FireworkExplosion.Shape.BURST, 0x5F8CE6, 0xF9FFFF),
                     fireworkStar(12, FireworkExplosion.Shape.BURST, 0x5F8CE6, 0xF9FFFF), stack(Items.GLOWSTONE_DUST, 16));
             case 23 -> gift("One more sleep",
@@ -212,11 +204,25 @@ final class GameplayAdventOperations {
     }
 
     private static Gift gift(String title, ItemStack... items) {
-        return new Gift(title, "", List.of(items));
+        return new Gift(title, summarizeItems(items), "", List.of(items));
     }
 
     private static Gift gift(String title, String bookText, ItemStack... items) {
-        return new Gift(title, bookText, List.of(items));
+        return new Gift(title, summarizeItems(items) + " Includes a written book.", bookText, List.of(items));
+    }
+
+    private static Gift giftWithNote(String title, String note, ItemStack... items) {
+        return new Gift(title, note, "", List.of(items));
+    }
+
+    private static String summarizeItems(ItemStack... items) {
+        List<String> descriptions = new ArrayList<>();
+        for (ItemStack item : items) {
+            String name = BuiltInRegistries.ITEM.getKey(item.getItem()).toString()
+                    .replace("minecraft:", "").replace('_', ' ');
+            descriptions.add(item.getCount() + " × " + name);
+        }
+        return String.join(", ", descriptions) + ".";
     }
 
     private static ItemStack stack(Item item, int count) {

@@ -66,7 +66,7 @@ export function AdventGrid({
 		if (count >= cell.foreground.length) {
 			if (revealed[key]?.secret && !revealed[key].claimed && !secretClaimed)
 				onSecretGift?.(x, y);
-			else if (day && !claimed.has(day.day)) onGift?.(day.day);
+			else if (day && day.day <= today && !claimed.has(day.day)) onGift?.(day.day);
 			return;
 		}
 		if (cell.foreground[count].url.endsWith('/bedrock.png')) return;
@@ -110,7 +110,7 @@ export function AdventGrid({
 						const isClaimed = !!day && claimed.has(day.day);
 						const discovery = revealed[key];
 						const isSecretClaimed = discovery?.claimed === true || secretClaimed;
-						const gift = day && isOpen;
+						const gift = day && isOpen && day.day <= today;
 						const bedrock =
 							!!cell?.foreground.length &&
 							(remaining[0]?.url ?? '').endsWith('/bedrock.png');

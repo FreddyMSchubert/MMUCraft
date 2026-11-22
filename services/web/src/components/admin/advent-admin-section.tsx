@@ -193,17 +193,8 @@ export function AdventAdminSection() {
 				<div>
 					{reward ? (
 						<>
-							<p>{reward.items.map(formatRewardItem).join(', ')}</p>
-							{reward.alternate_items.length > 0 && (
-								<p>
-									Alternate:{' '}
-									{reward.alternate_items.map(formatRewardItem).join(', ')}
-								</p>
-							)}
-							{reward.book_text && <p>Book: {reward.book_text}</p>}
-							{reward.alternate_book_text && (
-								<p>Alternate book: {reward.alternate_book_text}</p>
-							)}
+							<p>{reward.note}</p>
+							{reward.alternate_note && <p>Alternate: {reward.alternate_note}</p>}
 						</>
 					) : (
 						<p>Reward details are unavailable while Minecraft is offline.</p>
@@ -596,34 +587,10 @@ export function AdventAdminSection() {
 								</p>
 								{reward && (
 									<>
-										<ul>
-											{reward.items.map((item, index) => (
-												<li key={index}>
-													{item.count} ×{' '}
-													{item.item_id
-														.replace('minecraft:', '')
-														.replaceAll('_', ' ')}
-												</li>
-											))}
-										</ul>
-										{reward.alternate_items.length > 0 && (
-											<p>
-												Alternate:{' '}
-												{reward.alternate_items
-													.map(
-														(item) =>
-															`${item.count} × ${item.item_id.replace('minecraft:', '').replaceAll('_', ' ')}`,
-													)
-													.join(', ')}
-											</p>
+										<p>{reward.note}</p>
+										{reward.alternate_note && (
+											<p>Alternate: {reward.alternate_note}</p>
 										)}
-										<details>
-											<summary>Read the gift book</summary>
-											<p>{reward.book_text}</p>
-											{reward.alternate_book_text && (
-												<p>Alternate: {reward.alternate_book_text}</p>
-											)}
-										</details>
 									</>
 								)}
 								<div className="adventDayFields">
@@ -676,8 +643,4 @@ export function AdventAdminSection() {
 			</div>
 		</section>
 	);
-}
-
-function formatRewardItem(item: { item_id: string; count: number }) {
-	return `${item.count} × ${item.item_id.replace('minecraft:', '').replaceAll('_', ' ')}`;
 }

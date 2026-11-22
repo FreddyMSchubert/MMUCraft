@@ -24,10 +24,8 @@ export interface AdventLayout {
 export interface AdventRewardPreview {
 	day: number;
 	title: string;
-	book_text: string;
-	items: { item_id: string; count: number }[];
-	alternate_items: { item_id: string; count: number }[];
-	alternate_book_text: string;
+	note: string;
+	alternate_note: string;
 }
 
 export function londonAdventDay() {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ASSETS } from '@/lib/assets';
+import { Snowfall } from '@/components/snowfall';
 import type { AdventLayout } from '@/lib/advent';
 
 export interface MinedBlock {
@@ -9,28 +9,6 @@ export interface MinedBlock {
 	claimed?: boolean;
 	amountDabloons?: number;
 	arrow?: string | null;
-}
-
-function AdventSnowflake({ index }: { index: number }) {
-	const [texture, setTexture] = useState((index * 5) % 8);
-	const randomize = () => {
-		setTexture(Math.floor(Math.random() * 8));
-	};
-	return (
-		<span
-			className="adventFlake"
-			style={{
-				left: `${(index * 37) % 100}%`,
-				backgroundImage: `url("${ASSETS.minecraft.vanilla}/textures/particle/generic_${texture}.png")`,
-				animationDelay: `${-(index * 0.73)}s`,
-				animationDuration: `${6 + (index % 5)}s`,
-				width: `${8 + (index % 4) * 2}px`,
-				height: `${8 + (index % 4) * 2}px`,
-			}}
-			onAnimationStart={randomize}
-			onAnimationIteration={randomize}
-		/>
-	);
 }
 
 export function AdventGrid({
@@ -115,9 +93,7 @@ export function AdventGrid({
 			<div className="adventSky" aria-hidden="true">
 				<span className="adventCloud cloudOne" />
 				<span className="adventCloud cloudTwo" />
-				{Array.from({ length: 56 }, (_, index) => (
-					<AdventSnowflake key={index} index={index} />
-				))}
+				<Snowfall />
 			</div>
 			<div
 				className="adventWorld"

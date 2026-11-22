@@ -81,20 +81,8 @@
 	transform: scale(0.7);
 }
 
-.adventFlake {
-	position: absolute;
-	top: -4%;
-	background-size: contain;
-	background-repeat: no-repeat;
-	image-rendering: pixelated;
-	animation: adventSnow linear infinite;
-	opacity: 0.78;
-}
-
-@keyframes adventSnow {
-	to {
-		transform: translate3d(20px, 850px, 0);
-	}
+.adventSky .snowfall {
+	--snow-distance: 850px;
 }
 
 .adventWorld {
@@ -460,7 +448,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.adventFlake,
 	.adventTile.cracked .adventCracks {
 		animation: none;
 	}

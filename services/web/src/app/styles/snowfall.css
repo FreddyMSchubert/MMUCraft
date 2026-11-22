@@ -1,0 +1,28 @@
+.snowfall {
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+	pointer-events: none;
+	--snow-distance: 100dvh;
+}
+
+.snowflake {
+	position: absolute;
+	top: -4%;
+	background-repeat: no-repeat;
+	image-rendering: pixelated;
+	animation: snowFall linear infinite;
+	opacity: 0.9;
+}
+
+@keyframes snowFall {
+	to {
+		transform: translate3d(20px, var(--snow-distance), 0);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.snowflake {
+		animation: none;
+	}
+}

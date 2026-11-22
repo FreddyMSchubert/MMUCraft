@@ -8,6 +8,7 @@ import { SitePage } from '@/components/site-page';
 import { AdminTab } from '@/components/admin-tab';
 import { DailiesTab } from '@/components/dailies-tab';
 import { AdventTab } from '@/components/advent-tab';
+import { Snowfall } from '@/components/snowfall';
 import { londonAdventDay } from '@/lib/advent';
 import { KnowledgeTab } from '@/components/knowledge-tab';
 import { MiscTab } from '@/components/misc-tab';
@@ -83,6 +84,7 @@ const TAB_IDS = new Set<TabId>([
 ]);
 const MISC_SECTIONS = new Set(['settings', 'gift-codes', 'referrals']);
 const SERVER_IP = 'mmuminecraftsociety.co.uk';
+const SNOW_END_UNIX_MS = Date.UTC(2027, 0, 1);
 const TAB_LINKS: TabLink[] = [
 	{ id: 'knowledge', label: 'Knowledge', emoji: '📖', href: '/play/knowledge' },
 	{ id: 'dailies', label: 'Dailies', emoji: '📋', href: '/play/dailies' },
@@ -122,6 +124,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	const router = useRouter();
 	const [user, setUser] = useState<SessionUser | null | undefined>(undefined);
 	const [adventVisible, setAdventVisible] = useState(() => londonAdventDay() > 0);
+	const [snowVisible, setSnowVisible] = useState(() => Date.now() < SNOW_END_UNIX_MS);
 	const [ducksEnabled, setDucksEnabled] = useState<boolean | null>(null);
 	const [onlinePlayers, setOnlinePlayers] = useState<OnlinePlayer[] | null>(null);
 	const [capacity, setCapacity] = useState<{
@@ -164,6 +167,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	useEffect(() => {
 		const timer = window.setInterval(() => {
 			setAdventVisible(londonAdventDay() > 0);
+			setSnowVisible(Date.now() < SNOW_END_UNIX_MS);
 		}, 60_000);
 		return () => {
 			window.clearInterval(timer);
@@ -435,6 +439,9 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 		<SitePage
 			background={background}
 			splash={splash}
+			overlay={
+				snowVisible ? <Snowfall className="backgroundSnowfall" count={240} /> : undefined
+			}
 			className={`playPage ${menuOpen ? 'menuOpen' : ''} ${headerHidden ? 'mobileHeaderHidden' : ''}`}
 			headerActions={
 				user && (

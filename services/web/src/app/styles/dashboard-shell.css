@@ -6,6 +6,15 @@
 	font-family: 'Dabloon Symbol Noto Sans', 'Noto Sans', Arial, sans-serif;
 }
 
+.playPage .backgroundSnowfall {
+	position: fixed;
+	z-index: 1;
+}
+
+.playPage .content {
+	z-index: 2;
+}
+
 .playPage h1,
 .playPage h2,
 .playPage h3,

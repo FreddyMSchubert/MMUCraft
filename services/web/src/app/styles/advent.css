@@ -141,14 +141,28 @@
 	background-size: 100% 100%;
 	image-rendering: pixelated;
 }
-.adventTexture.leaves {
-	filter: sepia(1) saturate(3) hue-rotate(65deg) brightness(0.58);
+.adventTexture.snowCap {
+	bottom: auto;
+	height: 10%;
+	background-size: 100% auto;
+	background-position: top;
+	background-repeat: no-repeat;
 }
-.adventTexture.grass {
-	filter: sepia(1) saturate(3) hue-rotate(60deg) brightness(0.75);
+.adventTexture.spruceFoliage {
+	filter: sepia(1) saturate(3) hue-rotate(46deg) brightness(0.72);
 }
-.adventTile.numbered .adventTileDoor {
-	background: #1a3027;
+.adventTexture.sculkFrame {
+	background-size: 100% auto;
+	background-position: top;
+	background-repeat: no-repeat;
+}
+.adventTexture.christmasChest {
+	background-size: 457.143% 457.143%;
+	background-position: 28% 28%;
+	background-repeat: no-repeat;
+}
+.adventTileBackground .adventTexture.amethystBlock {
+	filter: brightness(0.65);
 }
 .adventNumber {
 	position: absolute;

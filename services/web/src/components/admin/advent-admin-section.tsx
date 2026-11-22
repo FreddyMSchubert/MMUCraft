@@ -513,7 +513,9 @@ export function AdventAdminSection() {
 					type="button"
 					onClick={() => {
 						edit((draft) => {
-							draft.rows.push(Array.from({ length: 12 }, () => null));
+							draft.rows.push(
+								Array.from({ length: draft.rows[0]?.length ?? 16 }, () => null),
+							);
 						});
 					}}
 				>

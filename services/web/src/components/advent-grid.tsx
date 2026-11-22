@@ -11,6 +11,16 @@ export interface MinedBlock {
 	arrow?: string | null;
 }
 
+function textureClassName(url: string): string {
+	if (url.endsWith('/snow.png')) return 'adventTexture snowCap';
+	if (url.endsWith('/spruce_leaves.png')) return 'adventTexture spruceFoliage';
+	if (url.endsWith('/sculk.png') || url.endsWith('/sculk_vein.png'))
+		return 'adventTexture sculkFrame';
+	if (url.endsWith('/entity/chest/christmas.png')) return 'adventTexture christmasChest';
+	if (url.endsWith('/amethyst_block.png')) return 'adventTexture amethystBlock';
+	return 'adventTexture';
+}
+
 export function AdventGrid({
 	layout,
 	today,
@@ -99,7 +109,7 @@ export function AdventGrid({
 			</div>
 			<div
 				className="adventWorld"
-				style={{ gridTemplateColumns: `repeat(${layout.rows[0]?.length ?? 12}, 1fr)` }}
+				style={{ gridTemplateColumns: `repeat(${layout.rows[0]?.length ?? 16}, 1fr)` }}
 			>
 				{layout.rows.flatMap((row, y) =>
 					row.map((cell, x) => {
@@ -143,7 +153,7 @@ export function AdventGrid({
 									{cell?.background.map((layer, index) => (
 										<span
 											key={index}
-											className={`adventTexture ${layer.url.includes('leaves') ? 'leaves' : ''} ${layer.url.includes('grass_block_top') ? 'grass' : ''}`}
+											className={textureClassName(layer.url)}
 											style={{
 												backgroundImage: `url("${layer.url}")`,
 												transform: `rotate(${layer.rotation}deg)`,
@@ -171,7 +181,7 @@ export function AdventGrid({
 										{remaining.toReversed().map((layer, index) => (
 											<span
 												key={index}
-												className={`adventTexture ${layer.url.includes('leaves') ? 'leaves' : ''} ${layer.url.includes('grass_block_top') ? 'grass' : ''}`}
+												className={textureClassName(layer.url)}
 												style={{
 													backgroundImage: `url("${layer.url}")`,
 													transform: `rotate(${layer.rotation}deg)`,

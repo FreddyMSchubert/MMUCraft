@@ -3,7 +3,7 @@
 	inset: 0;
 	overflow: hidden;
 	pointer-events: none;
-	--snow-distance: 100dvh;
+	container-type: size;
 }
 
 .snowflake {
@@ -17,12 +17,18 @@
 
 @keyframes snowFall {
 	to {
-		transform: translate3d(20px, var(--snow-distance), 0);
+		transform: translate3d(20px, calc(104cqh + 28px), 0);
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
 	.snowflake {
 		animation: none;
+	}
+}
+
+@media (max-width: 700px), (pointer: coarse) {
+	.playPage .backgroundSnowfall {
+		display: none;
 	}
 }

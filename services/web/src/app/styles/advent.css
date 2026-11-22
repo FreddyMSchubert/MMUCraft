@@ -81,10 +81,6 @@
 	transform: scale(0.7);
 }
 
-.adventSky .snowfall {
-	--snow-distance: 850px;
-}
-
 .adventWorld {
 	position: relative;
 	z-index: 1;

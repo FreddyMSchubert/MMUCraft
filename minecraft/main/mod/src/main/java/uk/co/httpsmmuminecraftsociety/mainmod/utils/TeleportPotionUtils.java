@@ -59,7 +59,9 @@ public class TeleportPotionUtils
             return "You may not teleport now; you are in powder snow.";
         if (player.isChangingDimension())
             return "You may not teleport now; you are changing dimensions.";
-        if (!player.onGround())
+        Entity groundEntity = player.isPassenger() && PlayerStatsSync.isMember(player)
+                ? player.getRootVehicle() : player;
+        if (!groundEntity.onGround())
             return "You may not teleport now; you are not on solid ground.";
         if (level.getMaxLocalRawBrightness(player.blockPosition()) < MIN_TELEPORT_LIGHT)
             return "You may not teleport now; it is too dark.";

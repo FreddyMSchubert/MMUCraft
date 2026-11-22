@@ -332,6 +332,12 @@ export class AdventService {
 		});
 	}
 
+	resetLayout(expectedRevision: unknown, confirmation: unknown, answer: unknown) {
+		if (confirmation !== 'OVERWRITE ADVENT 2026' || answer !== 384)
+			throw new BadRequestException('Confirm the layout reset and solve 16 × 24.');
+		return this.saveLayout(defaultAdventLayout(), expectedRevision);
+	}
+
 	async claim(user: AuthenticatedUser, dayInput: unknown) {
 		const day = Number(dayInput);
 		if (!Number.isInteger(day) || day < 1 || day > ADVENT_DAYS)

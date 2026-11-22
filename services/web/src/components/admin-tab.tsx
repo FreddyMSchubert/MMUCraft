@@ -44,7 +44,9 @@ export function AdminTab({
 				ducksEnabled={ducksEnabled}
 			/>
 			{controller.activeSection === 'drops' && <DropAnalyticsAdminSection />}
-			{controller.activeSection === 'advent' && <AdventAdminSection />}
+			{controller.activeSection === 'advent' && (
+				<AdventAdminSection isSuperAdmin={isSuperAdmin} />
+			)}
 			{controller.activeSection === 'build-events' && (
 				<BuildEventsAdminSection subroute={subroute ?? []} />
 			)}

@@ -105,6 +105,9 @@ export function AdventGrid({
 			<div className="adventSky" aria-hidden="true">
 				<span className="adventCloud cloudOne" />
 				<span className="adventCloud cloudTwo" />
+				<span className="adventCloud cloudThree" />
+				<span className="adventCloud cloudFour" />
+				<span className="adventCloud cloudFive" />
 				<Snowfall small />
 			</div>
 			<div

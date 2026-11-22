@@ -16,7 +16,7 @@ interface AdminCalendar {
 
 const NEW_LAYER = { url: `${ASSETS.minecraft.vanilla}/textures/block/stone.png`, rotation: 0 };
 
-export function AdventAdminSection() {
+export function AdventAdminSection({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 	const [server, setServer] = useState<AdminCalendar | null>(null);
 	const [layout, setLayout] = useState<AdventLayout | null>(null);
 	const [selected, setSelected] = useState<{ x: number; y: number }>({ x: 5, y: 3 });
@@ -26,6 +26,11 @@ export function AdventAdminSection() {
 	const [notice, setNotice] = useState('');
 	const [busyDay, setBusyDay] = useState<number | null>(null);
 	const [saving, setSaving] = useState(false);
+	const [resetOpen, setResetOpen] = useState(false);
+	const [resetPhrase, setResetPhrase] = useState('');
+	const [resetAnswer, setResetAnswer] = useState('');
+	const [resetAcknowledged, setResetAcknowledged] = useState(false);
+	const [resetting, setResetting] = useState(false);
 	const [simulatedClaims, setSimulatedClaims] = useState<number[]>([]);
 	const [simulatedSecretClaimed, setSimulatedSecretClaimed] = useState(false);
 	const { showAlert } = useSiteAlert();
@@ -122,7 +127,7 @@ export function AdventAdminSection() {
 	}
 
 	async function save() {
-		if (!layout || !server) return;
+		if (!layout || !server || resetting) return;
 		setSaving(true);
 		setError('');
 		try {
@@ -141,6 +146,49 @@ export function AdventAdminSection() {
 			setError(cause instanceof Error ? cause.message : 'Could not save the calendar.');
 		} finally {
 			setSaving(false);
+		}
+	}
+
+	async function resetLayout() {
+		if (!server || !isSuperAdmin || saving || resetting) return;
+		if (resetPhrase !== 'OVERWRITE ADVENT 2026' || resetAnswer !== '384' || !resetAcknowledged)
+			return;
+		if (!window.confirm('Final warning: replace the live Advent layout for every player?'))
+			return;
+		setResetting(true);
+		setError('');
+		setNotice('');
+		try {
+			const response = await fetch('/api/admin/advent/reset', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({
+					revision: server.revision,
+					confirmation: resetPhrase,
+					answer: Number(resetAnswer),
+				}),
+			});
+			const data = (await response.json()) as {
+				revision?: number;
+				layout?: AdventLayout;
+				message?: string;
+			};
+			if (!response.ok || !data.layout || data.revision === undefined)
+				throw new Error(data.message ?? 'Could not reset the calendar.');
+			setServer({ ...server, layout: data.layout, revision: data.revision });
+			setLayout(data.layout);
+			setSelected({ x: 7, y: 25 });
+			setSimulatedClaims([]);
+			setSimulatedSecretClaimed(false);
+			setResetOpen(false);
+			setResetPhrase('');
+			setResetAnswer('');
+			setResetAcknowledged(false);
+			setNotice('The live Advent layout now uses the code defaults.');
+		} catch (cause) {
+			setError(cause instanceof Error ? cause.message : 'Could not reset the calendar.');
+		} finally {
+			setResetting(false);
 		}
 	}
 
@@ -242,10 +290,93 @@ export function AdventAdminSection() {
 						saved layout.
 					</p>
 				</div>
-				<button type="button" onClick={() => void save()} disabled={saving}>
+				<button type="button" onClick={() => void save()} disabled={saving || resetting}>
 					{saving ? 'Saving...' : 'Save layout'}
 				</button>
 			</div>
+			{isSuperAdmin && (
+				<div className="adventReset">
+					<button
+						type="button"
+						className="adventResetTrigger"
+						disabled={saving || resetting}
+						onClick={() => {
+							setResetOpen((open) => !open);
+						}}
+					>
+						Overwrite database layout with code defaults
+					</button>
+					{resetOpen && (
+						<form
+							className="adventResetForm"
+							onSubmit={(event) => {
+								event.preventDefault();
+								void resetLayout();
+							}}
+						>
+							<strong>Reset the live calendar</strong>
+							<ul>
+								<li>
+									Every player will see the code default blocks and day numbers.
+								</li>
+								<li>
+									Saved block edits, day positions, and grace periods will be
+									lost.
+								</li>
+								<li>Unsaved changes in this editor will also be lost.</li>
+								<li>Existing claims and Minecraft gift definitions will stay.</li>
+								<li>
+									A locked streak schedule or active hidden gift can block this
+									reset.
+								</li>
+							</ul>
+							<label>
+								Type OVERWRITE ADVENT 2026
+								<input
+									value={resetPhrase}
+									onChange={(event) => {
+										setResetPhrase(event.target.value);
+									}}
+									autoComplete="off"
+								/>
+							</label>
+							<label>
+								What is 16 × 24?
+								<input
+									inputMode="numeric"
+									value={resetAnswer}
+									onChange={(event) => {
+										setResetAnswer(event.target.value);
+									}}
+								/>
+							</label>
+							<label className="adventResetAcknowledgement">
+								<input
+									type="checkbox"
+									checked={resetAcknowledged}
+									onChange={(event) => {
+										setResetAcknowledged(event.target.checked);
+									}}
+								/>
+								I understand this overwrites the shared layout now.
+							</label>
+							<button
+								type="submit"
+								className="adventResetConfirm"
+								disabled={
+									saving ||
+									resetting ||
+									resetPhrase !== 'OVERWRITE ADVENT 2026' ||
+									resetAnswer !== '384' ||
+									!resetAcknowledged
+								}
+							>
+								{resetting ? 'Replacing layout...' : 'Replace live layout'}
+							</button>
+						</form>
+					)}
+				</div>
+			)}
 			{error && (
 				<p className="authError" role="alert">
 					{error}

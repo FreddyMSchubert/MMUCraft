@@ -80,6 +80,21 @@
 	top: 10%;
 	transform: scale(0.7);
 }
+.cloudThree {
+	left: 2%;
+	top: 15%;
+	transform: scale(0.8);
+}
+.cloudFour {
+	left: 79%;
+	top: 3%;
+	transform: scale(0.9);
+}
+.cloudFive {
+	left: 77%;
+	top: 18%;
+	transform: scale(0.65);
+}
 
 .adventWorld {
 	position: relative;
@@ -173,8 +188,13 @@
 	font-size: clamp(14px, 2.4vw, 25px);
 	font-weight: 400;
 	color: #fff7cd;
-	-webkit-text-stroke: 1px #172319;
+	-webkit-text-stroke: 1.5px #101719;
 	paint-order: stroke fill;
+	text-shadow:
+		-2px 2px 0 #05090a,
+		0 2px 0 #05090a,
+		2px 2px 0 #05090a,
+		0 -2px 0 #05090a;
 }
 
 .adventPresent,
@@ -266,6 +286,31 @@
 	margin: 0;
 	color: #cbdbe3;
 }
+.adventReset {
+	display: grid;
+	gap: 12px;
+}
+.adventResetForm {
+	display: grid;
+	gap: 12px;
+	padding: 18px;
+	border: 2px solid #ff9b89;
+	border-radius: 8px;
+	background: #3d201f;
+}
+.adventResetForm ul {
+	margin: 0;
+	padding-left: 22px;
+}
+.adventResetForm label:not(.adventResetAcknowledgement) {
+	display: grid;
+	gap: 5px;
+}
+.adventResetAcknowledgement {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
 .adventAdmin button:not(.adventTile),
 .adventAdmin select,
 .adventAdmin input {
@@ -278,6 +323,20 @@
 	color: #10261b;
 	cursor: pointer;
 	font-weight: 700;
+}
+.adventAdmin button.adventResetTrigger,
+.adventAdmin button.adventResetConfirm {
+	padding: 12px 16px;
+	border-color: #ff9b89;
+	background: #5b241f;
+	color: #fff1e9;
+}
+.adventResetAcknowledgement input {
+	width: 18px;
+	height: 18px;
+	margin: 0;
+	padding: 0;
+	flex: none;
 }
 .adventAdmin button:disabled {
 	opacity: 0.5;

@@ -63,6 +63,15 @@ export class AdventAdminController {
 		return this.advent.saveLayout(body?.layout, body?.revision);
 	}
 
+	@Post('reset')
+	reset(
+		@Headers('cookie') cookie: string | undefined,
+		@Body() body: { revision?: unknown; confirmation?: unknown; answer?: unknown } | undefined,
+	) {
+		this.auth.requireSuperAdminSession(cookie);
+		return this.advent.resetLayout(body?.revision, body?.confirmation, body?.answer);
+	}
+
 	@Post(':day/mine')
 	simulateMine(
 		@Headers('cookie') cookie: string | undefined,

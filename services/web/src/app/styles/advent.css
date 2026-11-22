@@ -106,8 +106,11 @@
 .adventTile.empty {
 	border-color: transparent;
 }
-.adventAdmin .adventTile {
+.adventEditScene .adventTile {
 	box-shadow: inset 0 0 0 1px #1526328c;
+}
+.adventTile.bedrock:not(.open) {
+	cursor: not-allowed;
 }
 .adventTile.selected {
 	outline: 3px solid #ffde6c;
@@ -158,12 +161,10 @@
 	place-items: center;
 	font-family: 'Minecraft UI', sans-serif;
 	font-size: clamp(14px, 2.4vw, 25px);
+	font-weight: 400;
 	color: #fff7cd;
-	text-shadow:
-		2px 2px #172319,
-		-2px -2px #172319,
-		2px -2px #172319,
-		-2px 2px #172319;
+	-webkit-text-stroke: 1px #172319;
+	paint-order: stroke fill;
 }
 
 .adventPresent {

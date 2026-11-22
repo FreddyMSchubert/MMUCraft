@@ -15,6 +15,7 @@ import {
 	ADVENT_DAYS,
 	ADVENT_YEAR,
 	defaultAdventLayout,
+	isMineableCell,
 	type AdventLayout,
 	validateAdventLayout,
 } from './advent-layout';
@@ -87,33 +88,39 @@ export class AdventService {
 	mine(user: AuthenticatedUser, xInput: unknown, yInput: unknown) {
 		// shortcut: Browser mining is visual. Add server pacing if automated searches become a problem.
 		const day = currentAdventDay();
+		if (!day) throw new BadRequestException('There is no Advent block to mine today.');
+		return this.inspectMinedBlock(day, xInput, yInput, user.id);
+	}
+
+	simulateMine(dayInput: unknown, xInput: unknown, yInput: unknown) {
+		const day = Number(dayInput);
+		if (!Number.isInteger(day) || day < 1 || day > ADVENT_DAYS)
+			throw new BadRequestException('Choose a valid Advent day.');
+		return this.inspectMinedBlock(day, xInput, yInput);
+	}
+
+	private inspectMinedBlock(day: number, xInput: unknown, yInput: unknown, userId?: number) {
 		const x = Number(xInput);
 		const y = Number(yInput);
 		const layout = this.getLayout().layout;
-		if (
-			!day ||
-			!Number.isInteger(x) ||
-			!Number.isInteger(y) ||
-			!layout.rows[y]?.[x]?.foreground.length
-		)
-			throw new BadRequestException('That block cannot be mined today.');
-		const numbered = layout.days.find((entry) => entry.x === x && entry.y === y);
-		if (numbered && numbered.day > day)
-			throw new BadRequestException('That block is still locked.');
+		if (!Number.isInteger(x) || !Number.isInteger(y) || !isMineableCell(layout.rows[y]?.[x]))
+			throw new BadRequestException('That block cannot be mined.');
 		const secret = this.secretForDay(day, layout);
 		if (secret.x === x && secret.y === y) {
-			const claimed = !!this.database.connection
-				.select({ day: adventSecretClaims.day })
-				.from(adventSecretClaims)
-				.where(
-					and(
-						eq(adventSecretClaims.user_id, user.id),
-						eq(adventSecretClaims.year, ADVENT_YEAR),
-						eq(adventSecretClaims.day, day),
-						eq(adventSecretClaims.status, 'delivered'),
-					),
-				)
-				.get();
+			const claimed =
+				!!userId &&
+				!!this.database.connection
+					.select({ day: adventSecretClaims.day })
+					.from(adventSecretClaims)
+					.where(
+						and(
+							eq(adventSecretClaims.user_id, userId),
+							eq(adventSecretClaims.year, ADVENT_YEAR),
+							eq(adventSecretClaims.day, day),
+							eq(adventSecretClaims.status, 'delivered'),
+						),
+					)
+					.get();
 			return { secret: true, claimed, amountDabloons: Math.max(8, day) };
 		}
 		const angle = Math.atan2(secret.y - y, secret.x - x);
@@ -215,7 +222,7 @@ export class AdventService {
 			.flatMap((row, y) => row.map((cell, x) => ({ cell, x, y })))
 			.filter(
 				({ cell, x, y }) =>
-					cell?.foreground.length &&
+					isMineableCell(cell) &&
 					!layout.days.some((entry) => entry.x === x && entry.y === y),
 			);
 		if (!eligible.length)
@@ -293,7 +300,7 @@ export class AdventService {
 				: null;
 			if (
 				secret &&
-				(!layout.rows[secret.y]?.[secret.x]?.foreground.length ||
+				(!isMineableCell(layout.rows[secret.y]?.[secret.x]) ||
 					layout.days.some((day) => day.x === secret.x && day.y === secret.y))
 			)
 				throw new ConflictException(

@@ -63,6 +63,16 @@ export class AdventAdminController {
 		return this.advent.saveLayout(body?.layout, body?.revision);
 	}
 
+	@Post(':day/mine')
+	simulateMine(
+		@Headers('cookie') cookie: string | undefined,
+		@Param('day') day: string,
+		@Body() body: { x?: unknown; y?: unknown } | undefined,
+	) {
+		this.auth.requireCommitteeSession(cookie);
+		return this.advent.simulateMine(day, body?.x, body?.y);
+	}
+
 	@Post(':day/preview-gift')
 	previewGift(@Headers('cookie') cookie: string | undefined, @Param('day') day: string) {
 		this.auth.requireCommitteeSession(cookie);

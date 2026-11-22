@@ -30,6 +30,13 @@ export interface AdventLayout {
 	days: AdventDay[];
 }
 
+export function isMineableCell(cell: AdventCell | null | undefined): boolean {
+	return (
+		!!cell?.foreground.length &&
+		!cell.foreground.some((layer) => layer.url.endsWith('/bedrock.png'))
+	);
+}
+
 const STREAK_INCREASES = new Map([
 	[1, 3],
 	[3, 2],
@@ -150,7 +157,7 @@ export function validateAdventLayout(input: unknown): AdventLayout {
 			day.x >= ADVENT_WIDTH ||
 			day.y < 0 ||
 			day.y >= layout.rows.length ||
-			!layout.rows[day.y]?.[day.x]?.foreground.length ||
+			!isMineableCell(layout.rows[day.y]?.[day.x]) ||
 			occupied.has(`${day.x},${day.y}`)
 		)
 			throw new BadRequestException(`Day ${index + 1} needs its own foreground block.`);
@@ -158,7 +165,7 @@ export function validateAdventLayout(input: unknown): AdventLayout {
 	}
 	if (
 		!layout.rows.some((row, y) =>
-			row.some((cell, x) => cell?.foreground.length && !occupied.has(`${x},${y}`)),
+			row.some((cell, x) => isMineableCell(cell) && !occupied.has(`${x},${y}`)),
 		)
 	)
 		throw new BadRequestException(

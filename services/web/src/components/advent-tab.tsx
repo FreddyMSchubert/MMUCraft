@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AdventGrid, type MinedBlock } from '@/components/advent-grid';
-import { DabloonAmount } from '@/components/dabloon-amount';
+import { AdventCalendarView } from '@/components/advent-calendar-view';
+import type { MinedBlock } from '@/components/advent-grid';
 import { useSiteAlert } from '@/components/site-alert';
 import type { AdventLayout } from '@/lib/advent';
 
 interface CalendarState {
 	layout: AdventLayout;
+	revision: number;
 	year: number;
 	today: number;
 	claimedDays: number[];
@@ -78,9 +79,10 @@ export function AdventTab() {
 					tone: 'success',
 				});
 		} catch (cause) {
-			setError(
-				cause instanceof Error ? cause.message : 'The present could not be delivered.',
-			);
+			const message =
+				cause instanceof Error ? cause.message : 'The present could not be delivered.';
+			setError(message);
+			void showAlert({ title: 'Present unavailable', message, tone: 'danger' });
 		} finally {
 			setBusy(false);
 		}
@@ -124,9 +126,10 @@ export function AdventTab() {
 				tone: 'success',
 			});
 		} catch (cause) {
-			setError(
-				cause instanceof Error ? cause.message : 'The hidden present could not be claimed.',
-			);
+			const message =
+				cause instanceof Error ? cause.message : 'The hidden present could not be claimed.';
+			setError(message);
+			void showAlert({ title: 'Hidden present unavailable', message, tone: 'danger' });
 		} finally {
 			setBusy(false);
 		}
@@ -147,45 +150,23 @@ export function AdventTab() {
 		}
 	}
 
+	if (!calendar) return <p>{error || 'Loading the calendar...'}</p>;
 	return (
-		<section className="adventPanel">
-			<div className="adventHeader">
-				<h3>Advent Calendar</h3>
-				<div className="adventStreak">
-					<span>Christmas streak</span>
-					<strong>
-						<DabloonAmount amount={calendar?.streakRate ?? 0} />
-					</strong>
-					<small>
-						Resets if you miss a day. Earned when you receive your daily gift.
-					</small>
-				</div>
-			</div>
-			{error && (
-				<p className="authError" role="alert">
-					{error}
-				</p>
-			)}
-			{notice && (
-				<p className="adventNotice" role="status">
-					{notice}
-				</p>
-			)}
-			{calendar ? (
-				<AdventGrid
-					key={calendar.today}
-					layout={calendar.layout}
-					today={calendar.today}
-					claimedDays={calendar.claimedDays}
-					secretClaimed={calendar.secretClaimed}
-					onGift={(day) => void claim(day)}
-					onSecretGift={(x, y) => void claimSecret(x, y)}
-					onFutureDay={futureDay}
-					onFullyMined={mine}
-				/>
-			) : (
-				!error && <p>Loading the calendar...</p>
-			)}
-		</section>
+		<AdventCalendarView
+			streakRate={calendar.streakRate}
+			error={error}
+			notice={notice}
+			gridKey={`${calendar.today}-${calendar.revision}`}
+			grid={{
+				layout: calendar.layout,
+				today: calendar.today,
+				claimedDays: calendar.claimedDays,
+				secretClaimed: calendar.secretClaimed,
+				onGift: (day) => void claim(day),
+				onSecretGift: (x, y) => void claimSecret(x, y),
+				onFutureDay: futureDay,
+				onFullyMined: mine,
+			}}
+		/>
 	);
 }

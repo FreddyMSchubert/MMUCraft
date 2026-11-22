@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Snowfall } from '@/components/snowfall';
 import type { AdventLayout } from '@/lib/advent';
 
@@ -38,12 +38,19 @@ export function AdventGrid({
 }) {
 	const [mined, setMined] = useState<Record<string, number>>({});
 	const [revealed, setRevealed] = useState<Record<string, MinedBlock | undefined>>({});
-	const [mining, setMining] = useState<string | null>(null);
-	const [hint, setHint] = useState('');
+	const miningLocks = useRef(new Set<string>());
+	const timers = useRef<number[]>([]);
+	const [mining, setMining] = useState<Set<string>>(new Set());
 	const claimed = new Set(claimedDays);
 	const dayByCell = new Map(
 		layout.days.filter((day) => day.x >= 0).map((day) => [`${day.x},${day.y}`, day]),
 	);
+	useEffect(() => {
+		const activeTimers = timers.current;
+		return () => {
+			for (const timer of activeTimers) window.clearTimeout(timer);
+		};
+	}, []);
 
 	function clickCell(x: number, y: number) {
 		if (mode === 'edit') {
@@ -51,49 +58,44 @@ export function AdventGrid({
 			return;
 		}
 		const key = `${x},${y}`;
-		if (mining) return;
+		if (miningLocks.current.has(key)) return;
 		const cell = layout.rows[y]?.[x];
 		const day = dayByCell.get(key);
 		if (!cell?.foreground.length) return;
-		if (day && day.day > today) {
-			if (mode === 'play' && onFutureDay) {
-				setMining(key);
-				void Promise.all([
-					onFutureDay(day.day),
-					new Promise<void>((resolve) => window.setTimeout(resolve, 650)),
-				]).finally(() => {
-					setMining(null);
-				});
-			} else setHint('This block is not open yet.');
-			return;
-		}
 		const count = mined[key] ?? 0;
 		if (count >= cell.foreground.length) {
 			if (revealed[key]?.secret && !revealed[key].claimed && !secretClaimed)
 				onSecretGift?.(x, y);
-			else if (day && !claimed.has(day.day) && today <= day.day + day.lookbackDays)
-				onGift?.(day.day);
+			else if (day && !claimed.has(day.day)) onGift?.(day.day);
 			return;
 		}
-		setMining(key);
-		setHint('');
-		window.setTimeout(() => {
+		if (cell.foreground[count].url.endsWith('/bedrock.png')) return;
+		if (day && day.day > today && count === 0) void onFutureDay?.(day.day);
+		miningLocks.current.add(key);
+		setMining((current) => new Set(current).add(key));
+		const timer = window.setTimeout(() => {
 			setMined((current) => ({ ...current, [key]: count + 1 }));
-			setMining(null);
-			if (count + 1 === cell.foreground.length && mode === 'play' && onFullyMined) {
+			miningLocks.current.delete(key);
+			setMining((current) => {
+				const next = new Set(current);
+				next.delete(key);
+				return next;
+			});
+			if (count + 1 === cell.foreground.length && onFullyMined) {
 				void onFullyMined(x, y).then((result) => {
 					setRevealed((current) => ({ ...current, [key]: result }));
 				});
 			}
 		}, 650);
+		timers.current.push(timer);
 	}
 
 	return (
-		<div className="adventScene">
+		<div className={`adventScene ${mode === 'edit' ? 'adventEditScene' : ''}`}>
 			<div className="adventSky" aria-hidden="true">
 				<span className="adventCloud cloudOne" />
 				<span className="adventCloud cloudTwo" />
-				<Snowfall />
+				<Snowfall small />
 			</div>
 			<div
 				className="adventWorld"
@@ -108,12 +110,15 @@ export function AdventGrid({
 						const isClaimed = !!day && claimed.has(day.day);
 						const discovery = revealed[key];
 						const isSecretClaimed = discovery?.claimed === true || secretClaimed;
-						const gift = day && isOpen && today <= day.day + day.lookbackDays;
+						const gift = day && isOpen;
+						const bedrock =
+							!!cell?.foreground.length &&
+							(remaining[0]?.url ?? '').endsWith('/bedrock.png');
 						return (
 							<button
 								key={key}
 								type="button"
-								className={`adventTile ${cell ? '' : 'empty'} ${day ? 'numbered' : ''} ${isOpen ? 'open' : ''} ${isClaimed ? 'claimed' : ''} ${mining === key && remaining.length ? 'cracked' : ''} ${selected?.x === x && selected.y === y ? 'selected' : ''}`}
+								className={`adventTile ${cell ? '' : 'empty'} ${day ? 'numbered' : ''} ${isOpen ? 'open' : ''} ${isClaimed ? 'claimed' : ''} ${mining.has(key) && remaining.length ? 'cracked' : ''} ${bedrock ? 'bedrock' : ''} ${selected?.x === x && selected.y === y ? 'selected' : ''}`}
 								aria-label={
 									mode === 'edit'
 										? `Edit block at column ${x + 1}, row ${y + 1}${day ? `, day ${day.day}` : ''}`
@@ -182,11 +187,6 @@ export function AdventGrid({
 					}),
 				)}
 			</div>
-			{hint && (
-				<p className="adventHint" role="status">
-					{hint}
-				</p>
-			)}
 		</div>
 	);
 }

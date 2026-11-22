@@ -10,10 +10,10 @@ const WEATHER_FLAKES = [
 	[23, 19],
 ] as const;
 
-function Snowflake({ index }: { index: number }) {
+function Snowflake({ index, small }: { index: number; small: boolean }) {
 	const [texture, setTexture] = useState(index % WEATHER_FLAKES.length);
 	const [x, y] = WEATHER_FLAKES[texture] ?? WEATHER_FLAKES[0];
-	const size = 12 + (index % 4) * 3;
+	const size = small ? 6 + (index % 4) * 2 : 16 + (index % 4) * 3;
 	const scale = size / 3;
 	const randomize = () => {
 		setTexture(Math.floor(Math.random() * WEATHER_FLAKES.length));
@@ -37,11 +37,19 @@ function Snowflake({ index }: { index: number }) {
 	);
 }
 
-export function Snowfall({ className = '', count = 160 }: { className?: string; count?: number }) {
+export function Snowfall({
+	className = '',
+	count = 160,
+	small = false,
+}: {
+	className?: string;
+	count?: number;
+	small?: boolean;
+}) {
 	return (
 		<div className={`snowfall ${className}`.trim()} aria-hidden="true">
 			{Array.from({ length: count }, (_, index) => (
-				<Snowflake key={index} index={index} />
+				<Snowflake key={index} index={index} small={small} />
 			))}
 		</div>
 	);

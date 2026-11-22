@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AdventGrid } from '@/components/advent-grid';
+import { AdventCalendarView } from '@/components/advent-calendar-view';
+import { AdventGrid, type MinedBlock } from '@/components/advent-grid';
+import { useSiteAlert } from '@/components/site-alert';
 import { ASSETS } from '@/lib/assets';
 import { perfectStreakTotal, type AdventLayout, type AdventRewardPreview } from '@/lib/advent';
 
@@ -24,6 +26,9 @@ export function AdventAdminSection() {
 	const [notice, setNotice] = useState('');
 	const [busyDay, setBusyDay] = useState<number | null>(null);
 	const [saving, setSaving] = useState(false);
+	const [simulatedClaims, setSimulatedClaims] = useState<number[]>([]);
+	const [simulatedSecretClaimed, setSimulatedSecretClaimed] = useState(false);
+	const { showAlert } = useSiteAlert();
 
 	useEffect(() => {
 		let cancelled = false;
@@ -129,6 +134,8 @@ export function AdventAdminSection() {
 			const data = (await response.json()) as { revision?: number; message?: string };
 			if (!response.ok) throw new Error(data.message ?? 'Could not save the calendar.');
 			setServer({ ...server, layout, revision: data.revision ?? server.revision + 1 });
+			setSimulatedClaims([]);
+			setSimulatedSecretClaimed(false);
 			setNotice('Calendar layout saved for everyone.');
 		} catch (cause) {
 			setError(cause instanceof Error ? cause.message : 'Could not save the calendar.');
@@ -156,6 +163,70 @@ export function AdventAdminSection() {
 		} finally {
 			setBusyDay(null);
 		}
+	}
+
+	async function simulateMine(x: number, y: number): Promise<MinedBlock> {
+		try {
+			const response = await fetch(`/api/admin/advent/${simulatedDay}/mine`, {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({ x, y }),
+			});
+			const result = (await response.json()) as MinedBlock & { message?: string };
+			if (!response.ok) throw new Error(result.message ?? 'Could not inspect the block.');
+			return result;
+		} catch (cause) {
+			setError(cause instanceof Error ? cause.message : 'Could not inspect the block.');
+			return { secret: false };
+		}
+	}
+
+	function simulateGift(day: number) {
+		const reward = server?.rewards?.rewards.find((entry) => entry.day === day);
+		const settings = server?.layout.days[day - 1];
+		const available =
+			!!settings && day <= simulatedDay && simulatedDay <= day + settings.lookbackDays;
+		if (available) setSimulatedClaims((current) => [...current, day]);
+		void showAlert({
+			title: `Day ${day}: ${reward?.title ?? 'Present'}`,
+			message: (
+				<div>
+					{reward ? (
+						<>
+							<p>{reward.items.map(formatRewardItem).join(', ')}</p>
+							{reward.alternate_items.length > 0 && (
+								<p>
+									Alternate:{' '}
+									{reward.alternate_items.map(formatRewardItem).join(', ')}
+								</p>
+							)}
+							{reward.book_text && <p>Book: {reward.book_text}</p>}
+							{reward.alternate_book_text && (
+								<p>Alternate book: {reward.alternate_book_text}</p>
+							)}
+						</>
+					) : (
+						<p>Reward details are unavailable while Minecraft is offline.</p>
+					)}
+					<p>Streak boost: +{settings?.streakIncrease ?? 0} Dabloons.</p>
+					<p>
+						{available
+							? 'This gift is claimable on the simulated day.'
+							: 'This gift is outside its claim window on the simulated day.'}
+					</p>
+					<p>Simulation only. No backpack or money was granted.</p>
+				</div>
+			),
+		});
+	}
+
+	function simulateSecret() {
+		setSimulatedSecretClaimed(true);
+		void showAlert({
+			title: 'Hidden present found',
+			message: `This would award ${Math.max(8, simulatedDay)} Dabloons. Simulation only: no money was granted.`,
+			tone: 'success',
+		});
 	}
 
 	if (!layout)
@@ -225,22 +296,52 @@ export function AdventAdminSection() {
 								setSimulatedDay(
 									Math.max(1, Math.min(24, Number(event.target.value) || 1)),
 								);
+								setSimulatedClaims([]);
+								setSimulatedSecretClaimed(false);
 							}}
 						/>
 					</label>
 				)}
 				<span>Perfect streak: {perfectTotal} / 400 Dabloons</span>
 			</div>
-			<AdventGrid
-				key={`${mode}-${simulatedDay}`}
-				layout={layout}
-				mode={mode}
-				today={simulatedDay}
-				selected={mode === 'edit' ? selected : null}
-				onSelect={(x, y) => {
-					setSelected({ x, y });
-				}}
-			/>
+			{mode === 'simulate' ? (
+				<AdventCalendarView
+					gridKey={`${simulatedDay}-${server?.revision ?? 0}`}
+					streakRate={
+						simulatedClaims.includes(simulatedDay)
+							? (server?.layout.days[simulatedDay - 1]?.streakIncrease ?? 0)
+							: 0
+					}
+					grid={{
+						layout: server?.layout ?? layout,
+						mode: 'simulate',
+						today: simulatedDay,
+						claimedDays: simulatedClaims,
+						secretClaimed: simulatedSecretClaimed,
+						onGift: simulateGift,
+						onSecretGift: simulateSecret,
+						onFutureDay: () =>
+							showAlert({
+								title: 'Caught mining ahead',
+								message:
+									"HEY, CHEATER! You're not allowed to open that one yet! Just for that, I just took 1 dabloon off you, and you're not getting it back! Cheaters never prosper. Simulation only: no Dabloon was taken.",
+								tone: 'danger',
+							}).then(() => undefined),
+						onFullyMined: simulateMine,
+					}}
+				/>
+			) : (
+				<AdventGrid
+					key="edit"
+					layout={layout}
+					mode="edit"
+					today={simulatedDay}
+					selected={selected}
+					onSelect={(x, y) => {
+						setSelected({ x, y });
+					}}
+				/>
+			)}
 			{mode === 'edit' && (
 				<div className="adventEditorPanel">
 					<h3>
@@ -575,4 +676,8 @@ export function AdventAdminSection() {
 			</div>
 		</section>
 	);
+}
+
+function formatRewardItem(item: { item_id: string; count: number }) {
+	return `${item.count} × ${item.item_id.replace('minecraft:', '').replaceAll('_', ' ')}`;
 }

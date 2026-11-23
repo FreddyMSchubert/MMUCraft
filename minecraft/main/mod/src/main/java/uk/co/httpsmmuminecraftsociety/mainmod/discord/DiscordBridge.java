@@ -70,10 +70,10 @@ public final class DiscordBridge {
         });
     }
 
-    public static void advancement(ServerPlayer player, String action, String title, int dabloons) {
+    public static void advancement(ServerPlayer player, String action, String title, int dabloons, boolean bigBoss) {
         String content = action + " [" + title + "]"
                 + (dabloons > 0 ? " and earned " + dabloons + " Dabloons." : ".");
-        publish("advancement", player, content);
+        publish(bigBoss ? "big_boss" : "advancement", player, content);
     }
 
     public static void playerEvent(String type, ServerPlayer player, String content) {

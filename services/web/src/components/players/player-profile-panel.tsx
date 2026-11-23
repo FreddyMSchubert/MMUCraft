@@ -2,7 +2,7 @@
 
 import { useState, type ReactElement } from 'react';
 import { MiniFishCompendium } from '@/components/fishing-tab';
-import { PlayerName } from '@/components/player-name';
+import { PlayerName, useBigBossName } from '@/components/player-name';
 import { apiMessage } from '@/lib/api-response';
 import { PlayerHead } from './player-table-cells';
 import { PlayerStatsList } from './player-statistics-list';
@@ -78,10 +78,12 @@ export function PlayerProfilePanel({
 }
 
 function PlayerEmojiDetails({ player }: { player: PlayerSummary }) {
+	const isBigBoss = useBigBossName().toLowerCase() === player.minecraftUsername.toLowerCase();
 	const emojis = [
-		player.isCommittee ? { emoji: '🛠️', explanation: 'Committee' } : null,
-		player.isMember ? { emoji: '⭐', explanation: 'Society member' } : null,
-		player.isExternal ? { emoji: '💼', explanation: 'External player' } : null,
+		isBigBoss ? { emoji: '👑', explanation: 'The Big Boss' } : null,
+		!isBigBoss && player.isCommittee ? { emoji: '🛠️', explanation: 'Committee' } : null,
+		!isBigBoss && player.isMember ? { emoji: '⭐', explanation: 'Society member' } : null,
+		!isBigBoss && player.isExternal ? { emoji: '💼', explanation: 'External player' } : null,
 		...player.customEmojis,
 		player.ducks
 			? {
@@ -173,6 +175,7 @@ export function PlayerProfileForm({
 		player.profile.showPronounsInNametag,
 	);
 	const [showDucksInNametag, setShowDucksInNametag] = useState(player.profile.showDucksInNametag);
+	const [bigBossOptOut, setBigBossOptOut] = useState(player.profile.bigBossOptOut);
 	const [saving, setSaving] = useState(false);
 	const [loadingLocation, setLoadingLocation] = useState(false);
 	const displayedColor = color ?? player.profile.defaultColor;
@@ -225,6 +228,7 @@ export function PlayerProfileForm({
 					showNicknameInNametag,
 					showPronounsInNametag,
 					showDucksInNametag,
+					bigBossOptOut,
 				}),
 			});
 			const body = await response.json().catch(() => null);
@@ -436,6 +440,23 @@ export function PlayerProfileForm({
 					checked={showDucksInNametag}
 					onChange={(event) => {
 						setShowDucksInNametag(event.target.checked);
+					}}
+				/>
+				<i aria-hidden="true" />
+			</label>
+			<label className="settingToggle">
+				<span>
+					<strong>Opt out of Big Boss</strong>
+					<small>
+						You cannot win the title through kills or random assignment. An admin can
+						override this setting.
+					</small>
+				</span>
+				<input
+					type="checkbox"
+					checked={bigBossOptOut}
+					onChange={(event) => {
+						setBigBossOptOut(event.target.checked);
 					}}
 				/>
 				<i aria-hidden="true" />

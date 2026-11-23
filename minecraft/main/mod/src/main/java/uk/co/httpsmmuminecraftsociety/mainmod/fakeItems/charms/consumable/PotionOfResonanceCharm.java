@@ -1,6 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.consumable;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -12,6 +13,10 @@ import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.ConsumableCallbacksCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.hopper.HopperFilter;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
+import uk.co.httpsmmuminecraftsociety.mainmod.bigboss.BigBossManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.mixin.respawn.RespawnPositionFinder;
 
 import java.util.List;
 
@@ -45,6 +50,33 @@ public class PotionOfResonanceCharm implements Charm, ConsumableCallbacksCharm
             return false;
         }
 
+        if (FakeItems.isSpecificFakeItem(key, "charm-potion-resonance")) {
+            ServerPlayer target = BigBossManager.onlineBoss(level.getServer());
+            if (target == null || target == player) {
+                player.sendSystemMessage(BigBossManager.linked("The Big Boss is not online right now."));
+                return false;
+            }
+            if (ClaimsManager.isClaimed(target.level(), target.blockPosition())) {
+                player.sendSystemMessage(BigBossManager.linked("The Big Boss is inside a protected claim."));
+                return false;
+            }
+            BlockPos landing = RespawnPositionFinder.find(player, target.level(), target.blockPosition());
+            if (landing == null) {
+                player.sendSystemMessage(BigBossManager.linked("No safe position near the Big Boss was found."));
+                return false;
+            }
+            if (!TeleportPotionUtils.teleportWithCompanions("resonance", player, target.level(),
+                    landing.getX() + 0.5, landing.getY() + 0.1, landing.getZ() + 0.5,
+                    player.getYRot(), player.getXRot())) return false;
+            player.fallDistance = 0;
+            shareEffect(player, target, level);
+            player.sendSystemMessage(BigBossManager.linked("You resonated near the Big Boss."));
+            target.sendSystemMessage(BigBossManager.linked(player.getName().getString() + " resonated nearby."));
+            stack.consume(1, player);
+            key.consume(1, player);
+            return true;
+        }
+
         List<ServerPlayer> candidates = level.getServer().getPlayerList().getPlayers().stream()
                 .filter(candidate -> candidate != player)
                 .filter(candidate -> holdsMatchingItem(candidate, key))
@@ -69,10 +101,7 @@ public class PotionOfResonanceCharm implements Charm, ConsumableCallbacksCharm
         );
 
         player.fallDistance = 0.0F;
-        Holder<MobEffect> sharedEffect = RESONANCE_EFFECTS.get(level.getRandom().nextInt(RESONANCE_EFFECTS.size()));
-        int sharedEffectDurationTicks = (10 + level.getRandom().nextInt(21)) * 20;
-        player.addEffect(new MobEffectInstance(sharedEffect, sharedEffectDurationTicks, RESONANCE_EFFECT_AMPLIFIER));
-        target.addEffect(new MobEffectInstance(sharedEffect, sharedEffectDurationTicks, RESONANCE_EFFECT_AMPLIFIER));
+        shareEffect(player, target, level);
 
         player.sendSystemMessage(Component.literal("You resonated with " + target.getName().getString() + "."));
         target.sendSystemMessage(Component.literal(player.getName().getString() + " resonated with you."));
@@ -82,6 +111,13 @@ public class PotionOfResonanceCharm implements Charm, ConsumableCallbacksCharm
 
     private static boolean holdsMatchingItem(ServerPlayer player, ItemStack key) {
         return matchesItemType(player.getMainHandItem(), key) || matchesItemType(player.getOffhandItem(), key);
+    }
+
+    private static void shareEffect(ServerPlayer player, ServerPlayer target, ServerLevel level) {
+        Holder<MobEffect> effect = RESONANCE_EFFECTS.get(level.getRandom().nextInt(RESONANCE_EFFECTS.size()));
+        int duration = (10 + level.getRandom().nextInt(21)) * 20;
+        player.addEffect(new MobEffectInstance(effect, duration, RESONANCE_EFFECT_AMPLIFIER));
+        target.addEffect(new MobEffectInstance(effect, duration, RESONANCE_EFFECT_AMPLIFIER));
     }
 
     public static boolean matchesItemType(ItemStack candidate, ItemStack key) {

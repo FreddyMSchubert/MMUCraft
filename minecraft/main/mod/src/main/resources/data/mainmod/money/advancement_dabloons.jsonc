@@ -1477,4 +1477,19 @@
 	"mainmod:mastery/backpacks/endless": 20, // Craft an Endless Backpack.
 	"mainmod:mastery/backpacks/enderception": 5, // Store an Endless Backpack in an Ender Chest.
 	"mainmod:mastery/social/pay_to_win": 100, // Become a member and receive the advertised reward.
+	"mainmod:mastery/big_boss/become": 50,
+	"mainmod:mastery/big_boss/stop": 0,
+	"mainmod:mastery/big_boss/win_2": 20,
+	"mainmod:mastery/big_boss/win_5": 60,
+	"mainmod:mastery/big_boss/hours_1": 10,
+	"mainmod:mastery/big_boss/hours_3": 15,
+	"mainmod:mastery/big_boss/hours_5": 20,
+	"mainmod:mastery/big_boss/hours_10": 25,
+	"mainmod:mastery/big_boss/hours_15": 30,
+	"mainmod:mastery/big_boss/hours_20": 35,
+	"mainmod:mastery/big_boss/hours_25": 40,
+	"mainmod:mastery/big_boss/hours_30": 45,
+	"mainmod:mastery/big_boss/hours_35": 50,
+	"mainmod:mastery/big_boss/hours_40": 55,
+	"mainmod:mastery/big_boss/hours_42": 60,
 }

@@ -1,4 +1,9 @@
-import type { CSSProperties, ReactNode } from 'react';
+'use client';
+
+import { createContext, useContext, type CSSProperties, type ReactNode } from 'react';
+
+export const BigBossNameContext = createContext('');
+export const useBigBossName = () => useContext(BigBossNameContext);
 
 export interface PlayerEmoji {
 	emoji: string;
@@ -19,10 +24,12 @@ export function PlayerName({
 	customEmojis?: readonly PlayerEmoji[];
 	children?: ReactNode;
 }) {
+	const isBigBoss = useBigBossName().toLowerCase() === name.toLowerCase();
 	const nameEmojis = customEmojis.filter(({ showInName }) => showInName);
 	return (
-		<span className="playerName" style={playerNameStyle(color)}>
-			{(isCommittee || nameEmojis.length > 0) && (
+		<span className="playerName" style={playerNameStyle(isBigBoss ? '#B35CFF' : color)}>
+			{isBigBoss && <span className="bigBossNamePrefix">[The Big Boss] </span>}
+			{!isBigBoss && (isCommittee || nameEmojis.length > 0) && (
 				<>
 					{isCommittee ? '🛠️' : ''}
 					{nameEmojis.map(({ emoji }) => emoji).join('')}{' '}

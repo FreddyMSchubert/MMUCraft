@@ -36,6 +36,7 @@ export class PlayerProfileStorageService {
 				showNicknameInNametag: true,
 				showPronounsInNametag: true,
 				showDucksInNametag: false,
+				bigBossOptOut: false,
 				updatedAtUnixMs: 0,
 			};
 		return {
@@ -53,6 +54,7 @@ export class PlayerProfileStorageService {
 			showNicknameInNametag: row.show_nickname_in_nametag === 1,
 			showPronounsInNametag: row.show_pronouns_in_nametag === 1,
 			showDucksInNametag: row.show_ducks_in_nametag === 1,
+			bigBossOptOut: row.big_boss_opt_out === 1,
 			updatedAtUnixMs: row.updated_at_unix_ms,
 		};
 	}

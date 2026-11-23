@@ -34,6 +34,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 import uk.co.httpsmmuminecraftsociety.mainmod.advancements.MasteryAdvancements;
 import uk.co.httpsmmuminecraftsociety.mainmod.playerpotions.PlayerDisguises;
+import uk.co.httpsmmuminecraftsociety.mainmod.bigboss.BigBossManager;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -337,6 +338,7 @@ public final class PlayerStatsSync {
     }
 
     public static int colorFor(net.minecraft.world.entity.player.Player player) {
+        if (player instanceof ServerPlayer serverPlayer && BigBossManager.isBoss(serverPlayer)) return BigBossManager.COLOR;
         Integer color = colorByPlayer.get(player.getUUID());
         if (color != null) return color;
         PlayerTeam team = player.getTeam();
@@ -348,6 +350,8 @@ public final class PlayerStatsSync {
     }
 
     public static int colorFor(MinecraftServer server, UUID playerId) {
+        ServerPlayer online = server.getPlayerList().getPlayer(playerId);
+        if (online != null && BigBossManager.isBoss(online)) return BigBossManager.COLOR;
         Integer color = colorByPlayer.get(playerId);
         if (color != null) return color;
         PlayerTeam team = server.getScoreboard().getPlayerTeam(teamName(playerId));
@@ -359,6 +363,7 @@ public final class PlayerStatsSync {
     }
 
     public static DiscordPresentation discordPresentation(ServerPlayer player) {
+        if (BigBossManager.isBoss(player)) return new DiscordPresentation("The Big Boss", "", "", "#B35CFF");
         SyncPlayerStatsResponse response = presentationByPlayer.get(player.getUUID());
         if (response == null) return new DiscordPresentation("Player", "", "", "#E6E6E6");
         String role = response.getAccountLinked() && response.getIsCommittee() ? "Committee"
@@ -386,8 +391,9 @@ public final class PlayerStatsSync {
         colorByPlayer.put(player.getUUID(), color);
         refreshLocatorColor(player);
         PlayerTeam team = playerTeam(player);
-        team.setDisplayName(Component.literal(player.getScoreboardName()).withColor(color));
-        team.setColor(Optional.of(PlayerColors.closestTeamColor(color)));
+        int displayColor = BigBossManager.isBoss(player) ? BigBossManager.COLOR : color;
+        team.setDisplayName(Component.literal(player.getScoreboardName()).withColor(displayColor));
+        team.setColor(Optional.of(PlayerColors.closestTeamColor(displayColor)));
         player.level().getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(
                 ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME, player
         ));
@@ -500,12 +506,34 @@ public final class PlayerStatsSync {
 
     private static void updateTeam(ServerPlayer player, SyncPlayerStatsResponse response) {
         PlayerTeam team = playerTeam(player);
+        if (BigBossManager.isBoss(player)) {
+            team.setPlayerPrefix(Component.literal("[The Big Boss] ").withColor(BigBossManager.COLOR));
+            team.setPlayerSuffix(Component.empty());
+            return;
+        }
+        team.setPlayerPrefix(Component.empty());
         String label = response.getAccountLinked() && response.getIsCommittee() ? " [Committee]"
                 : response.getAccountLinked() && response.getIsExternal() ? " [External]"
                 : response.getAccountLinked() && response.getIsMember() ? " [Member]" : "";
         ChatFormatting labelColor = response.getIsCommittee() ? ChatFormatting.AQUA
                 : response.getIsExternal() ? ChatFormatting.GRAY : ChatFormatting.GREEN;
         team.setPlayerSuffix(Component.literal(label).withStyle(labelColor));
+    }
+
+    public static void refreshBossLabels(MinecraftServer server) {
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            SyncPlayerStatsResponse response = presentationByPlayer.get(player.getUUID());
+            if (response != null) updateTeam(player, response);
+            else {
+                PlayerTeam team = playerTeam(player);
+                team.setPlayerPrefix(BigBossManager.isBoss(player)
+                        ? Component.literal("[The Big Boss] ").withColor(BigBossManager.COLOR)
+                        : Component.empty());
+                team.setPlayerSuffix(Component.empty());
+            }
+            applyColor(player, colorByPlayer.getOrDefault(player.getUUID(), PlayerColors.defaultColor(player.getUUID())));
+        }
+        refreshPlayerList(server);
     }
 
     private static void updateBelowName(ServerPlayer player) {

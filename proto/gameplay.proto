@@ -25,6 +25,10 @@ service GameplayEvents {
   rpc MarkAnnouncementsRead(MarkAnnouncementsReadRequest) returns (MarkAnnouncementsReadResponse);
   rpc RecordDuckEvent(RecordDuckEventRequest) returns (RecordDuckEventResponse);
   rpc AckDuckDelivery(AckDuckDeliveryRequest) returns (AckDuckDeliveryResponse);
+  rpc BigBossHeartbeat(BigBossHeartbeatRequest) returns (BigBossStateResponse);
+  rpc BigBossJoin(BigBossPlayerRequest) returns (BigBossStateResponse);
+  rpc BigBossLeave(BigBossPlayerRequest) returns (BigBossStateResponse);
+  rpc RecordBigBossKill(BigBossKillRequest) returns (BigBossKillResponse);
 }
 
 service GameplayControl {
@@ -60,6 +64,71 @@ service GameplayControl {
   rpc BroadcastAnnouncement(BroadcastAnnouncementRequest) returns (BroadcastAnnouncementResponse);
   rpc TryGrantAdvancement(TryGrantAdvancementRequest) returns (TryGrantAdvancementResponse);
   rpc ApplyDuckUpdate(ApplyDuckUpdateRequest) returns (ApplyDuckUpdateResponse);
+  rpc BroadcastBigBossNotice(BigBossNoticeRequest) returns (BigBossNoticeResponse);
+}
+
+message BigBossPlayerRequest {
+  string minecraft_username = 1;
+  string dimension = 2;
+  sint32 x = 3;
+  sint32 y = 4;
+  sint32 z = 5;
+  bool in_claim = 6;
+}
+
+message BigBossHeartbeatRequest {
+  string holder_username = 1;
+  int64 reign_started_at_unix_ms = 2;
+  string session_id = 3;
+  int64 qualifying_ms = 4;
+  bool online = 5;
+  string dimension = 6;
+  sint32 x = 7;
+  sint32 y = 8;
+  sint32 z = 9;
+  bool in_claim = 10;
+}
+
+message BigBossStateResponse {
+  string holder_username = 1;
+  int64 reign_started_at_unix_ms = 2;
+  int64 qualifying_ms = 3;
+  int32 win_count = 4;
+  bool has_lost_kill_won_reign = 5;
+}
+
+message BigBossKillRequest {
+  string event_id = 1;
+  string victim_username = 2;
+  string killer_username = 3;
+  string death_message = 4;
+  string victim_session_id = 5;
+  int64 victim_qualifying_ms = 6;
+  int64 victim_reign_started_at_unix_ms = 7;
+}
+
+message BigBossKillResponse {
+  bool transferred = 1;
+  string holder_username = 2;
+  int64 reign_started_at_unix_ms = 3;
+  int32 killer_win_count = 4;
+  bool victim_had_kill_won_reign = 5;
+  int64 victim_total_qualifying_ms = 6;
+}
+
+message BigBossNoticeRequest {
+  string previous_username = 1;
+  string next_username = 2;
+  string message = 3;
+  string next_private_message = 4;
+  string previous_private_message = 5;
+  bool presence_only = 6;
+  bool previous_earned_stop = 7;
+  int64 reign_started_at_unix_ms = 8;
+}
+
+message BigBossNoticeResponse {
+  bool applied = 1;
 }
 
 message DuckAward {

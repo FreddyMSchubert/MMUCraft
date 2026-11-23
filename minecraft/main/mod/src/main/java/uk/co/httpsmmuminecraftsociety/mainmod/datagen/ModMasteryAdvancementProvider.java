@@ -66,7 +66,8 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
         if (definition.parent != null) builder.parent(save(definition.parent, consumer));
         builder.display(new DisplayInfo(icon(definition.icon), Component.literal(definition.title),
                 Component.literal(definition.description),
-                path.equals("root") ? Optional.of(new ClientAsset.ResourceTexture(Identifier.parse("minecraft:block/enderite_block"))) : Optional.empty(),
+                path.equals("root") || path.equals("big_boss/become")
+                        ? Optional.of(new ClientAsset.ResourceTexture(Identifier.parse("minecraft:block/purple_concrete"))) : Optional.empty(),
                 AdvancementType.valueOf(definition.frame.toUpperCase(java.util.Locale.ROOT)),
                 !path.equals("root"), !path.equals("root"), hidden(path)));
         builder.addCriterion("done", CriteriaTriggers.IMPOSSIBLE.createCriterion(new ImpossibleTrigger.TriggerInstance()));
@@ -109,7 +110,8 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
                     && !path.equals("cosmetics/all_straw_hats") && !path.equals("cosmetics/all_villager_hats")
                     && !path.equals("cosmetics/cat_stack") && !path.equals("cosmetics/solar_eclipse");
         }
-        return path.startsWith("fishing/species/") || path.equals("fishing/matrix_fish") || path.equals("fishing/spook_fish");
+        return path.startsWith("fishing/species/")
+                || path.equals("fishing/matrix_fish") || path.equals("fishing/spook_fish");
     }
 
     private void add(String path, String title, String description, String icon, String parent, String frame) {
@@ -141,6 +143,19 @@ public final class ModMasteryAdvancementProvider extends FabricAdvancementProvid
     }
 
     private void defineAdvancements() {
+        add("big_boss/become", "The Big Boss", "Kill the Big Boss and take the title.", "minecraft:netherite_helmet:glint", null, "goal");
+        add("big_boss/stop", "Former Big Boss", "Lose a title that you won in combat.", "minecraft:clock", "big_boss/become", "task");
+        add("big_boss/win_2", "Again?", "Take the Big Boss title twice.", "minecraft:netherite_sword", "big_boss/become", "goal");
+        add("big_boss/win_5", "Frequent Flyer", "Take the Big Boss title five times.", "minecraft:netherite_sword:glint", "big_boss/win_2", "challenge");
+        String previousBossHour = "big_boss/become";
+        for (int hours : new int[]{1, 3, 5, 10, 15, 20, 25, 30, 35, 40, 42}) {
+            String path = "big_boss/hours_" + hours;
+            add(path, hours + (hours == 1 ? " hour" : " hours") + " as Big Boss",
+                    "Spend " + hours + (hours == 1 ? " cumulative hour" : " cumulative hours")
+                            + " online outside claims as the Big Boss.",
+                    "minecraft:clock", previousBossHour, hours >= 40 ? "challenge" : hours >= 10 ? "goal" : "task");
+            previousBossHour = path;
+        }
         add("root", "Welcome! Your journey starts now.", "Master every corner of MMUCraft.", "fake:deco-mmu-dirt", null, "task");
         add("charms/cover_me_in_trinkets", "Cover me in Trinkets", "Wear five charms on each piece of armour.", "minecraft:netherite_chestplate:glint", "charms/apply_boost", "challenge");
         add("utility/peer_review", "Peer Review", "Have three players use slime detectors in the same chunk.", "minecraft:slime_ball", "utility/slime_detector", "goal");

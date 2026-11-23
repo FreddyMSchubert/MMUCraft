@@ -15,6 +15,7 @@ import { CommandLogsService } from '../database/command-logs.service';
 import { DabloonInteractionsService } from '../database/dabloon-interactions.service';
 import { AnnouncementsService } from '../announcements/announcements.service';
 import { DucksService } from '../ducks/ducks.service';
+import { BigBossService, type BossHeartbeat, type BossKill } from '../big-boss/big-boss.service';
 import {
 	FeatureTogglesService,
 	type FeatureTogglesSnapshot,
@@ -73,6 +74,7 @@ export class GameplayGrpcService implements OnModuleInit {
 		private readonly featureToggles: FeatureTogglesService,
 		private readonly announcements: AnnouncementsService,
 		private readonly ducks: DucksService,
+		private readonly bigBoss: BigBossService,
 	) {}
 
 	onModuleInit() {
@@ -97,7 +99,73 @@ export class GameplayGrpcService implements OnModuleInit {
 			MarkAnnouncementsRead: this.markAnnouncementsRead.bind(this),
 			RecordDuckEvent: this.recordDuckEvent.bind(this),
 			AckDuckDelivery: this.ackDuckDelivery.bind(this),
+			BigBossHeartbeat: this.bigBossHeartbeat.bind(this),
+			BigBossJoin: this.bigBossJoin.bind(this),
+			BigBossLeave: this.bigBossLeave.bind(this),
+			RecordBigBossKill: this.recordBigBossKill.bind(this),
 		});
+	}
+
+	private bigBossHeartbeat(
+		call: grpc.ServerUnaryCall<BossHeartbeat, ReturnType<BigBossService['publicState']>>,
+		callback: UnaryCallback<Awaited<ReturnType<BigBossService['heartbeat']>>>,
+	) {
+		void this.bigBoss.heartbeat(call.request).then(
+			(result) => {
+				callback(null, result);
+			},
+			(error: unknown) => {
+				callback(
+					error as grpc.ServiceError,
+					{} as Awaited<ReturnType<BigBossService['heartbeat']>>,
+				);
+			},
+		);
+	}
+
+	private bigBossJoin(
+		call: grpc.ServerUnaryCall<
+			{
+				minecraft_username: string;
+				dimension: string;
+				x: number;
+				y: number;
+				z: number;
+				in_claim: boolean;
+			},
+			object
+		>,
+		callback: UnaryCallback<Awaited<ReturnType<BigBossService['joined']>>>,
+	) {
+		void this.bigBoss.joined(call.request).then(
+			(result) => {
+				callback(null, result);
+			},
+			(error: unknown) => {
+				callback(
+					error as grpc.ServiceError,
+					{} as Awaited<ReturnType<BigBossService['joined']>>,
+				);
+			},
+		);
+	}
+
+	private bigBossLeave(
+		call: grpc.ServerUnaryCall<{ minecraft_username: string }, object>,
+		callback: UnaryCallback<ReturnType<BigBossService['left']>>,
+	) {
+		callback(null, this.bigBoss.left(call.request.minecraft_username));
+	}
+
+	private recordBigBossKill(
+		call: grpc.ServerUnaryCall<BossKill, object>,
+		callback: UnaryCallback<ReturnType<BigBossService['recordKill']>>,
+	) {
+		try {
+			callback(null, this.bigBoss.recordKill(call.request));
+		} catch (error) {
+			callback(error as grpc.ServiceError, {} as ReturnType<BigBossService['recordKill']>);
+		}
 	}
 
 	private getAnnouncements(

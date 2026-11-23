@@ -1,0 +1,227 @@
+.bigBossTab {
+	--big-boss: #b35cff;
+	color: #eee9f5;
+}
+.bigBossNamePrefix {
+	color: #b35cff;
+	font-weight: 700;
+}
+
+.bigBossHeading,
+.bigBossCard,
+.bigBossStatus,
+.bigBossReign,
+.bigBossTransition {
+	display: flex;
+	align-items: center;
+}
+
+.bigBossHeading {
+	justify-content: space-between;
+	gap: 1rem;
+}
+.bigBossHeading h1,
+.bigBossTab h2 {
+	color: var(--big-boss);
+}
+.bigBossHeading h1 {
+	margin: 0 0 1rem;
+}
+.bigBossRules {
+	position: relative;
+	align-self: flex-start;
+	max-width: 30rem;
+}
+.bigBossRules summary {
+	display: grid;
+	place-items: center;
+	width: 2rem;
+	height: 2rem;
+	border: 1px solid var(--big-boss);
+	border-radius: 50%;
+	color: var(--big-boss);
+	cursor: pointer;
+	list-style: none;
+}
+.bigBossRules[open] {
+	z-index: 2;
+}
+.bigBossRules[open] p {
+	position: relative;
+	margin: 0;
+	padding: 0.65rem 1rem;
+	background: #1d152c;
+	border-left: 1px solid var(--big-boss);
+}
+.bigBossRules[open] p:last-child {
+	border-bottom: 1px solid var(--big-boss);
+}
+.bigBossCard {
+	gap: 1.4rem;
+	max-width: 36rem;
+	padding: 1.3rem;
+	border: 2px solid var(--big-boss);
+	border-radius: 1rem;
+	background: linear-gradient(130deg, #342048, #161923 75%);
+	box-shadow: 0 0 2rem #b35cff30;
+	color: inherit;
+	text-decoration: none;
+}
+.bigBossCard:hover {
+	border-color: #d2a1ff;
+}
+.bigBossHead {
+	display: grid;
+	place-items: center;
+	flex: 0 0 2.6rem;
+	width: 2.6rem;
+	height: 2.6rem;
+	border: 1px solid var(--big-boss);
+	border-radius: 0.45rem;
+	background: #281d38;
+	overflow: hidden;
+}
+.bigBossHead.large {
+	flex-basis: 6.5rem;
+	width: 6.5rem;
+	height: 6.5rem;
+	border-radius: 0.75rem;
+}
+.bigBossHead img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	image-rendering: pixelated;
+}
+.bigBossIdentity {
+	display: grid;
+	gap: 0.2rem;
+}
+.bigBossIdentity strong {
+	color: white;
+	font-size: 1.5rem;
+}
+.bigBossTitle {
+	color: var(--big-boss);
+	font-size: 0.85rem;
+	font-weight: 800;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+}
+.bigBossStatus {
+	flex-wrap: wrap;
+	gap: 0.55rem;
+	margin: 1rem 0 2rem;
+}
+.bigBossStatus strong {
+	color: var(--big-boss);
+}
+.bigBossDot {
+	width: 0.7rem;
+	height: 0.7rem;
+	border-radius: 50%;
+	background: #7d7e87;
+}
+.bigBossDot.online {
+	background: #ff5858;
+	box-shadow: 0 0 0.7rem #ff5858;
+}
+.bigBossClaim {
+	padding: 0.2rem 0.55rem;
+	border: 1px solid #b35cff70;
+	border-radius: 99px;
+}
+.bigBossHistory {
+	display: grid;
+	gap: 0.6rem;
+}
+.bigBossReign {
+	gap: 1rem;
+	padding: 0.7rem;
+	border: 1px solid #b35cff70;
+	border-radius: 0.6rem;
+	background: #b35cff12;
+}
+.bigBossReign > div,
+.bigBossTransition > div {
+	display: grid;
+	gap: 0.2rem;
+}
+.bigBossReign small,
+.bigBossTransition small {
+	color: #b8afc3;
+}
+.bigBossTransition {
+	gap: 1.8rem;
+	margin: 0.55rem 0 0.55rem 1.4rem;
+	color: var(--big-boss);
+}
+.bigBossTransition span {
+	font-size: 0.9rem;
+}
+.bigBossAdmin {
+	display: grid;
+	gap: 0.7rem;
+	margin-top: 2rem;
+	padding: 1rem;
+	border: 1px solid #b35cff70;
+	border-radius: 0.6rem;
+}
+.bigBossAdmin h2 {
+	margin: 0;
+}
+.bigBossAdmin label {
+	display: grid;
+	gap: 0.25rem;
+}
+.bigBossAdmin input {
+	max-width: 25rem;
+	padding: 0.5rem;
+	border: 1px solid #b35cff90;
+	border-radius: 0.4rem;
+	background: #191424;
+	color: white;
+}
+.bigBossAdmin button {
+	margin: 0.25rem 0.5rem 0.25rem 0;
+	padding: 0.45rem 0.7rem;
+	border: 1px solid var(--big-boss);
+	border-radius: 0.35rem;
+	background: #512c70;
+	color: white;
+	cursor: pointer;
+}
+.bigBossAdmin button:disabled {
+	opacity: 0.5;
+	cursor: default;
+}
+.bigBossError {
+	color: #ff9898;
+}
+.bigBossVacant {
+	padding: 1.5rem;
+	border: 1px dashed var(--big-boss);
+	border-radius: 0.6rem;
+}
+
+@media (max-width: 600px) {
+	.bigBossHeading {
+		align-items: flex-start;
+	}
+	.bigBossHeading h1 {
+		font-size: 1.4rem;
+	}
+	.bigBossCard {
+		gap: 0.8rem;
+		padding: 0.8rem;
+	}
+	.bigBossHead.large {
+		flex-basis: 4rem;
+		width: 4rem;
+		height: 4rem;
+	}
+	.bigBossIdentity strong {
+		font-size: 1.1rem;
+	}
+}

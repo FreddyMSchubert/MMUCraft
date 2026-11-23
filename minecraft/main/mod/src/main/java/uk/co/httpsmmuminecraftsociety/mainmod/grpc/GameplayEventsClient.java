@@ -31,6 +31,24 @@ final class GameplayEventsClient {
         gameplayEvents = null;
     }
 
+    CompletableFuture<BigBossStateResponse> bigBossHeartbeat(BigBossHeartbeatRequest request) {
+        return call(client -> client.withDeadlineAfter(5, TimeUnit.SECONDS).bigBossHeartbeat(request));
+    }
+
+    CompletableFuture<BigBossStateResponse> bigBossJoin(BigBossPlayerRequest request) {
+        return call(client -> client.withDeadlineAfter(5, TimeUnit.SECONDS).bigBossJoin(
+                request));
+    }
+
+    CompletableFuture<BigBossStateResponse> bigBossLeave(String username) {
+        return call(client -> client.withDeadlineAfter(5, TimeUnit.SECONDS).bigBossLeave(
+                BigBossPlayerRequest.newBuilder().setMinecraftUsername(username).build()));
+    }
+
+    CompletableFuture<BigBossKillResponse> recordBigBossKill(BigBossKillRequest request) {
+        return call(client -> client.withDeadlineAfter(5, TimeUnit.SECONDS).recordBigBossKill(request));
+    }
+
     CompletableFuture<RefreshApiCachesResponse> refreshApiCaches() {
         CompletableFuture<Void> flushed = new CompletableFuture<>();
         GrpcBridge.runOnMainThread(() -> DailyTaskManager.flush().whenComplete((done, error) -> {

@@ -29,6 +29,7 @@ export interface PlayerProfile {
 	showNicknameInNametag: boolean;
 	showPronounsInNametag: boolean;
 	showDucksInNametag: boolean;
+	bigBossOptOut: boolean;
 	updatedAtUnixMs: number;
 }
 
@@ -46,6 +47,7 @@ export interface PlayerProfileInput {
 	showNicknameInNametag?: boolean;
 	showPronounsInNametag?: boolean;
 	showDucksInNametag?: boolean;
+	bigBossOptOut?: boolean;
 }
 
 export function normalizeProfileInput(
@@ -57,6 +59,7 @@ export function normalizeProfileInput(
 		['showNicknameInNametag', 'Show nickname in nametag'],
 		['showPronounsInNametag', 'Show pronouns in nametag'],
 		['showDucksInNametag', 'Show ducks in nametag'],
+		['bigBossOptOut', 'Opt out of Big Boss'],
 	] as const) {
 		if (input[key] !== undefined && typeof input[key] !== 'boolean') {
 			throw new BadRequestException(`${label} must be true or false`);
@@ -90,6 +93,7 @@ export function normalizeProfileInput(
 		showNicknameInNametag: input.showNicknameInNametag ?? current.showNicknameInNametag,
 		showPronounsInNametag: input.showPronounsInNametag ?? current.showPronounsInNametag,
 		showDucksInNametag: input.showDucksInNametag ?? current.showDucksInNametag,
+		bigBossOptOut: input.bigBossOptOut ?? current.bigBossOptOut,
 		updatedAtUnixMs: Date.now(),
 	};
 }

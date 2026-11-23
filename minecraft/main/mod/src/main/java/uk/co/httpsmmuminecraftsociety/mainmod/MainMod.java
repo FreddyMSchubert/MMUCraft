@@ -87,6 +87,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.thunder.ThunderRitual;
 import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.TeleportPotionUtils;
 import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
+import uk.co.httpsmmuminecraftsociety.mainmod.bigboss.BigBossManager;
 
 import java.util.List;
 
@@ -156,6 +157,7 @@ public class MainMod implements ModInitializer {
             if (entity instanceof net.minecraft.server.level.ServerPlayer player) GearEnchantmentSanitizer.sanitizePlayer(player);
         });
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            BigBossManager.joined(handler.player);
             GearEnchantmentSanitizer.sanitizePlayer(handler.player);
             if (FeatureToggles.isEnabled(FeatureToggles.CIRCUS)) {
                 SkinColors.prefetch(handler.player.getGameProfile());
@@ -168,6 +170,7 @@ public class MainMod implements ModInitializer {
                 FishingCatches.refreshCaughtFish(handler.player);
         });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+            BigBossManager.left(handler.player);
             if (handler.player.fishing != null) handler.player.fishing.discard();
             MarshmallowRoasting.disconnected(handler.player);
             PlayerDisguises.disconnected(handler.player);
@@ -229,6 +232,7 @@ public class MainMod implements ModInitializer {
             GrpcBridge.stop();
         });
         ServerTickEvents.END_SERVER_TICK.register(server -> {
+            BigBossManager.tick(server);
             PlayerDisguises.tick(server);
             LegacyFakeItemMigration.tick(server);
             MetricsServer.update(server);

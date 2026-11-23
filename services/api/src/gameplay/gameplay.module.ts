@@ -13,6 +13,7 @@ import { AnnouncementsModule } from '../announcements/announcements.module';
 import { DropAnalyticsModule } from './drop-analytics/drop-analytics.module';
 import { VelocityModule } from '../velocity/velocity.module';
 import { DucksModule } from '../ducks/ducks.module';
+import { BigBossModule } from '../big-boss/big-boss.module';
 
 @Module({
 	imports: [
@@ -29,6 +30,7 @@ import { DucksModule } from '../ducks/ducks.module';
 		DropAnalyticsModule,
 		VelocityModule,
 		DucksModule,
+		BigBossModule,
 	],
 	providers: [GameplayGrpcService],
 })

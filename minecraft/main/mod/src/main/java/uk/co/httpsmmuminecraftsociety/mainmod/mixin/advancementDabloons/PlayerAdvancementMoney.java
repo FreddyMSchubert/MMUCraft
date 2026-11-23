@@ -21,6 +21,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementAnnouncements;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.AdvancementMoney;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
 import uk.co.httpsmmuminecraftsociety.mainmod.discord.DiscordBridge;
+import uk.co.httpsmmuminecraftsociety.mainmod.bigboss.BigBossManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.glider.GliderCharm;
 
 @Mixin(PlayerAdvancements.class)
@@ -117,7 +118,8 @@ public class PlayerAdvancementMoney {
                     rewardedPlayer,
                     discordAction(display),
                     display.title().getString(),
-                    awardedReward
+                    awardedReward,
+                    isBigBossAdvancement(advancementHolder)
             );
         }
 
@@ -150,8 +152,12 @@ public class PlayerAdvancementMoney {
             case GOAL -> "reached the goal";
             case CHALLENGE -> "completed the challenge";
         };
-        Component advancementName = Advancement.name(advancementHolder);
+        boolean bossAdvancement = isBigBossAdvancement(advancementHolder);
+        Component advancementName = bossAdvancement
+                ? Advancement.name(advancementHolder).copy().withColor(BigBossManager.COLOR)
+                : Advancement.name(advancementHolder);
         Component privateMessage = Component.literal("You " + action + " ")
+                .withColor(bossAdvancement ? BigBossManager.COLOR : 0xFFFFFF)
                 .append(advancementName.copy());
 
         if (reward > 0) {
@@ -166,13 +172,18 @@ public class PlayerAdvancementMoney {
 
         Component publicMessage = Component.empty()
                 .append(rewardedPlayer.getDisplayName())
-                .append(Component.literal(" " + action + " "))
+                .append(Component.literal(" " + action + " ").withColor(bossAdvancement ? BigBossManager.COLOR : 0xFFFFFF))
                 .append(advancementName.copy());
         for (ServerPlayer viewer : rewardedPlayer.level().getServer().getPlayerList().getPlayers()) {
             if (!viewer.getUUID().equals(rewardedPlayer.getUUID())) {
                 MoneyHelper.SendSystemMessage(viewer, publicMessage);
             }
         }
+    }
+
+    private boolean isBigBossAdvancement(AdvancementHolder holder) {
+        return holder.id().getNamespace().equals(MainMod.MOD_ID)
+                && holder.id().getPath().startsWith("mastery/big_boss/");
     }
 
     private String discordAction(DisplayInfo display) {

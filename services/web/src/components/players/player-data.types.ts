@@ -24,6 +24,7 @@ export interface PlayerProfile {
 	showNicknameInNametag: boolean;
 	showPronounsInNametag: boolean;
 	showDucksInNametag: boolean;
+	bigBossOptOut: boolean;
 	updatedAtUnixMs: number;
 }
 

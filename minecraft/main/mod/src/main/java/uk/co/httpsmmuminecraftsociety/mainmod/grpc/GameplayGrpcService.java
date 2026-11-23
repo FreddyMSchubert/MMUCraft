@@ -6,6 +6,7 @@ import io.grpc.stub.StreamObserver;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 import uk.co.httpsmmuminecraftsociety.mainmod.magic.MagicFoodEffects;
+import uk.co.httpsmmuminecraftsociety.mainmod.bigboss.BigBossManager;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -15,6 +16,22 @@ public final class GameplayGrpcService extends GrpcHandler {
     private final GameplayEventsClient eventsClient = new GameplayEventsClient();
 
     private GameplayGrpcService() {}
+
+    public static CompletableFuture<BigBossStateResponse> bigBossHeartbeat(BigBossHeartbeatRequest request) {
+        return INSTANCE.eventsClient.bigBossHeartbeat(request);
+    }
+
+    public static CompletableFuture<BigBossStateResponse> bigBossJoin(BigBossPlayerRequest request) {
+        return INSTANCE.eventsClient.bigBossJoin(request);
+    }
+
+    public static CompletableFuture<BigBossStateResponse> bigBossLeave(String username) {
+        return INSTANCE.eventsClient.bigBossLeave(username);
+    }
+
+    public static CompletableFuture<BigBossKillResponse> recordBigBossKill(BigBossKillRequest request) {
+        return INSTANCE.eventsClient.recordBigBossKill(request);
+    }
 
     public static CompletableFuture<UnlockNextKnowledgeResponse> unlockNextKnowledge(
             String minecraftUsername, String minecraftUuid, String sourceItemId
@@ -138,6 +155,15 @@ public final class GameplayGrpcService extends GrpcHandler {
     }
 
 private final class GameplayControlEndpoint extends GameplayControlGrpc.GameplayControlImplBase {
+        @Override
+        public void broadcastBigBossNotice(BigBossNoticeRequest request,
+                                           StreamObserver<BigBossNoticeResponse> responseObserver) {
+            callOnMainThread(() -> {
+                BigBossManager.notice(request);
+                return BigBossNoticeResponse.newBuilder().setApplied(true).build();
+            }).whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
         @Override
         public void getOnlinePlayers(
                 GetOnlinePlayersRequest request,

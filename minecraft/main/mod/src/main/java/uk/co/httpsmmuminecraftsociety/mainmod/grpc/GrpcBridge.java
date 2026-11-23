@@ -93,7 +93,7 @@ public final class GrpcBridge {
         return minecraftServer;
     }
 
-    static void runOnMainThread(Runnable task) {
+    public static void runOnMainThread(Runnable task) {
         mainThreadTasks.add(task);
     }
 }

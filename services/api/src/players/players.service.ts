@@ -215,6 +215,7 @@ export class PlayersService {
 			show_nickname_in_nametag: profile.showNicknameInNametag ? 1 : 0,
 			show_pronouns_in_nametag: profile.showPronounsInNametag ? 1 : 0,
 			show_ducks_in_nametag: profile.showDucksInNametag ? 1 : 0,
+			big_boss_opt_out: profile.bigBossOptOut ? 1 : 0,
 			updated_at_unix_ms: now,
 		};
 		this.database.connection

@@ -109,7 +109,49 @@ export const playerProfiles = sqliteTable('player_profiles', {
 	show_nickname_in_nametag: integer('show_nickname_in_nametag').notNull().default(1),
 	show_pronouns_in_nametag: integer('show_pronouns_in_nametag').notNull().default(1),
 	show_ducks_in_nametag: integer('show_ducks_in_nametag').notNull().default(0),
+	big_boss_opt_out: integer('big_boss_opt_out').notNull().default(0),
 	updated_at_unix_ms: integer('updated_at_unix_ms').notNull(),
+});
+
+export const bigBossState = sqliteTable('big_boss_state', {
+	id: integer('id').primaryKey(),
+	holder_username: text('holder_username'),
+	reign_started_at_unix_ms: integer('reign_started_at_unix_ms'),
+	acquired_by_kill: integer('acquired_by_kill').notNull().default(0),
+	activity_day: text('activity_day').notNull(),
+	activity_ms: integer('activity_ms').notNull().default(0),
+	last_sample_at_unix_ms: integer('last_sample_at_unix_ms'),
+	last_dimension: text('last_dimension'),
+	last_x: integer('last_x'),
+	last_y: integer('last_y'),
+	last_z: integer('last_z'),
+	last_in_claim: integer('last_in_claim').notNull().default(0),
+});
+
+export const bigBossTransitions = sqliteTable('big_boss_transitions', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	event_id: text('event_id').unique(),
+	at_unix_ms: integer('at_unix_ms').notNull(),
+	previous_username: text('previous_username'),
+	next_username: text('next_username'),
+	reason: text('reason').notNull(),
+	detail: text('detail').notNull().default(''),
+	admin_user_id: integer('admin_user_id').references(() => users.id),
+});
+
+export const bigBossProgress = sqliteTable('big_boss_progress', {
+	minecraft_username: text('minecraft_username').primaryKey(),
+	qualifying_ms: integer('qualifying_ms').notNull().default(0),
+	win_count: integer('win_count').notNull().default(0),
+	stopped_after_win: integer('stopped_after_win').notNull().default(0),
+	last_held_at_unix_ms: integer('last_held_at_unix_ms').notNull().default(0),
+});
+
+export const bigBossSessions = sqliteTable('big_boss_sessions', {
+	id: text('id').primaryKey(),
+	reign_started_at_unix_ms: integer('reign_started_at_unix_ms').notNull(),
+	minecraft_username: text('minecraft_username').notNull(),
+	qualifying_ms: integer('qualifying_ms').notNull().default(0),
 });
 
 export const claims = sqliteTable(
@@ -928,6 +970,8 @@ export type PlayerProfileRow = typeof playerProfiles.$inferSelect;
 export type ClaimRow = typeof claims.$inferSelect;
 export type ClaimMemberRow = typeof claimMembers.$inferSelect;
 export type PlayerStatsRow = typeof playerStats.$inferSelect;
+export type BigBossStateRow = typeof bigBossState.$inferSelect;
+export type BigBossTransitionRow = typeof bigBossTransitions.$inferSelect;
 export type PlayerMoneyEventRow = typeof playerMoneyEvents.$inferSelect;
 export type FishCatchRow = typeof fishCatches.$inferSelect;
 export type KnowledgeUnlockRow = typeof knowledgeUnlocks.$inferSelect;
@@ -964,6 +1008,10 @@ export const schema = {
 	emailWhitelist,
 	pendingMemberships,
 	playerProfiles,
+	bigBossState,
+	bigBossTransitions,
+	bigBossProgress,
+	bigBossSessions,
 	claims,
 	claimMembers,
 	playerStats,

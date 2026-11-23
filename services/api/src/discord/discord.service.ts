@@ -13,7 +13,7 @@ import {
 	type Snowflake,
 } from 'discord.js';
 import { ADMIN_SIGNUP_EMAIL } from '../auth/auth.util';
-import { DatabaseService, velocityServers } from '../database/database.service';
+import { DatabaseService, velocityServers, bigBossState } from '../database/database.service';
 import { eq } from 'drizzle-orm';
 import { CommandLogsService } from '../database/command-logs.service';
 import { MinecraftIdentityService } from '../database/minecraft-identity.service';
@@ -49,6 +49,7 @@ export function formatDiscordWebhookMessage(event: MinecraftDiscordEvent, maxPla
 		fish_first: '🐟 👶',
 		duck: '🦆',
 		duck_final: '🦆 👑',
+		big_boss: '👑',
 	};
 	const isServer = type !== 'chat' || !event.minecraft_username;
 	const label = roleLabel(event.role);
@@ -81,6 +82,8 @@ export function formatDiscordWebhookMessage(event: MinecraftDiscordEvent, maxPla
 
 function roleLabel(role: string) {
 	switch (role) {
+		case 'The Big Boss':
+			return ' [The Big Boss]';
 		case 'Committee':
 			return ' [Committee]';
 		case 'Member':
@@ -93,6 +96,7 @@ function roleLabel(role: string) {
 }
 
 function roleColor(role: string) {
+	if (role === 'The Big Boss') return 35;
 	if (role === 'Committee') return 36;
 	if (role === 'Member') return 32;
 	if (role === 'External') return 30;
@@ -286,7 +290,7 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		const presentation = event.minecraft_uuid
 			? this.playerPresence.discordPresentation(event.minecraft_uuid)
 			: null;
-		const currentEvent = presentation
+		let currentEvent = presentation
 			? {
 					...event,
 					minecraft_username: presentation.minecraftUsername || event.minecraft_username,
@@ -296,6 +300,13 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 					color_hex: presentation.colorHex,
 				}
 			: event;
+		const boss = this.database.connection
+			.select({ holder: bigBossState.holder_username })
+			.from(bigBossState)
+			.where(eq(bigBossState.id, 1))
+			.get()?.holder;
+		if (boss?.toLowerCase() === currentEvent.minecraft_username.toLowerCase())
+			currentEvent = { ...currentEvent, role: 'The Big Boss', color_hex: '#B35CFF' };
 		const maxPlayers = currentEvent.type.endsWith('join')
 			? this.database.connection
 					.select()
@@ -317,7 +328,20 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 		await webhook.send({
 			username: message.username,
 			avatarURL,
-			content: message.content,
+			content: currentEvent.type === 'big_boss' ? '' : message.content,
+			embeds:
+				currentEvent.type === 'big_boss'
+					? [
+							{
+								description:
+									`👑 ${currentEvent.minecraft_username ? `${currentEvent.minecraft_username}${roleLabel(currentEvent.role)} ` : ''}${currentEvent.content.replaceAll('/play/big-boss', 'https://mmuminecraftsociety.co.uk/play/big-boss')}`.slice(
+										0,
+										4_000,
+									),
+								color: 0xb35cff,
+							},
+						]
+					: [],
 			allowedMentions: { parse: [] },
 		});
 		return true;

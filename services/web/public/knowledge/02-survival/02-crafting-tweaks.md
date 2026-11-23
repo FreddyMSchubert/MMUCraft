@@ -18,6 +18,7 @@ tips:
 - You can get your hands on mud blocks way way easier than usual by throwing dirt blocks into a cauldron filled with water. The dirt blocks will turn into mud blocks instantly!
 - Hoppers can be crafted more easily by using copper ingots instead of iron ingots as well.
 - You can always look forwards in a minecart by going to settings -> Accessibility Settings -> Rotate with Minecarts, which is really fun! Your head will rotate whenever the minecart rotates.
+- You can make buckets more easily using copper! The iron recipe still works though.
 ====
 
 # Crafting Tweaks
@@ -117,3 +118,23 @@ To make sure everyone can use comparators before the Nether opens up, you can no
 Many many recipes give more output items when you craft them. This is because it's convenient & less grindy.
 
 ![Example of a recipe giving more output](/assets/knowledge/survival/crafting-tweaks/more.png)
+
+## Copper Buckets
+
+Pretty simple, you can make buckets with copper instead of iron:
+
+![Buckets crafted with copper ingots](/assets/knowledge/survival/crafting-tweaks/copper_bucket.png)
+
+:::recipe-items
+[Copper Ingot](https://minecraft.wiki/w/Copper_Ingot) (CL, CR, BC) → [Bucket](https://minecraft.wiki/w/Bucket)
+:::
+
+## Mossy Stone from Pale Moss
+
+All the normal moss recipes now work with their pale moss equivalents:
+
+![Mossy Cobblestone from Pale Moss](/assets/knowledge/survival/crafting-tweaks/pale_mossy.png)
+
+:::recipe-items
+[Cobblestone](https://minecraft.wiki/w/Cobblestone) · [Pale Moss Block](https://minecraft.wiki/w/Pale_Moss_Block) → [Mossy Cobblestone](https://minecraft.wiki/w/Mossy_Cobblestone)
+:::

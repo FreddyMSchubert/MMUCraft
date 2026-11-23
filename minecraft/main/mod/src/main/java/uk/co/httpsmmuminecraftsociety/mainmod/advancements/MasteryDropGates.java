@@ -31,6 +31,7 @@ public final class MasteryDropGates {
         }
         if (path.startsWith("glider/")) return FeatureToggles.SOARING;
         if (path.startsWith("enderite/")) return FeatureToggles.VOID;
+        if (path.startsWith("big_boss/")) return FeatureToggles.VOID;
         if (path.startsWith("sniffers/")) return FeatureToggles.WELCOMING;
         if (path.startsWith("fishing/nether/")) return FeatureToggles.NETHER;
         return switch (path) {

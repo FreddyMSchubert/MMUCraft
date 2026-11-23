@@ -24,6 +24,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GrpcBridge;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -46,17 +47,32 @@ public final class BigBossManager {
     private static long ticks;
     private static boolean heartbeatInFlight;
 
+    public static void init() {
+        FeatureToggles.listen(FeatureToggles.VOID, enabled -> {
+            holder = "";
+            reignStarted = 0;
+            sessionId = UUID.randomUUID().toString();
+            sessionQualifyingMs = 0;
+            lastSampleMs = 0;
+            MinecraftServer server = GrpcBridge.minecraftServer();
+            if (server != null) PlayerStatsSync.refreshBossLabels(server);
+        });
+    }
+
     private BigBossManager() {}
 
     public static boolean isBoss(ServerPlayer player) {
-        return !holder.isEmpty() && holder.equalsIgnoreCase(player.getName().getString());
+        return FeatureToggles.isEnabled(FeatureToggles.VOID)
+                && !holder.isEmpty() && holder.equalsIgnoreCase(player.getName().getString());
     }
 
     public static ServerPlayer onlineBoss(MinecraftServer server) {
-        return holder.isEmpty() ? null : server.getPlayerList().getPlayerByName(holder);
+        return !FeatureToggles.isEnabled(FeatureToggles.VOID) || holder.isEmpty()
+                ? null : server.getPlayerList().getPlayerByName(holder);
     }
 
     public static void joined(ServerPlayer player) {
+        if (!FeatureToggles.isEnabled(FeatureToggles.VOID)) return;
         long sentAt = System.currentTimeMillis();
         BlockPos pos = player.blockPosition();
         GameplayGrpcService.bigBossJoin(BigBossPlayerRequest.newBuilder()
@@ -71,6 +87,7 @@ public final class BigBossManager {
     }
 
     public static void left(ServerPlayer player) {
+        if (!FeatureToggles.isEnabled(FeatureToggles.VOID)) return;
         var flushed = isBoss(player) ? GameplayGrpcService.bigBossHeartbeat(BigBossHeartbeatRequest.newBuilder()
                 .setHolderUsername(holder).setReignStartedAtUnixMs(reignStarted)
                 .setSessionId(sessionId).setQualifyingMs(sessionQualifyingMs).setOnline(false).build())
@@ -84,6 +101,7 @@ public final class BigBossManager {
     }
 
     public static void tick(MinecraftServer server) {
+        if (!FeatureToggles.isEnabled(FeatureToggles.VOID)) return;
         ticks++;
         ServerPlayer boss = onlineBoss(server);
         long now = System.currentTimeMillis();
@@ -110,6 +128,7 @@ public final class BigBossManager {
     }
 
     public static void notice(BigBossNoticeRequest notice) {
+        if (!FeatureToggles.isEnabled(FeatureToggles.VOID)) return;
         MinecraftServer server = GrpcBridge.minecraftServer();
         if (server == null) return;
         if (!notice.getPresenceOnly() && !notice.getNextUsername().isEmpty()) holder = notice.getNextUsername();

@@ -63,46 +63,48 @@ export function PlayerStatsList({
 					/>
 				)}
 			</div>
-			<div className="playerStatsCore">
-				<StatLine
-					label="Current Big Boss"
-					value={player.stats.bigBoss.isBigBoss ? 'Yes' : 'No'}
-				/>
-				<StatLine
-					label="Big Boss Reigns"
-					value={player.stats.bigBoss.reigns.toLocaleString()}
-					rank={player.ranks['boss.reigns']}
-					rankLabel="Big Boss Reigns"
-				/>
-				<StatLine
-					label="Big Boss Kills"
-					value={player.stats.bigBoss.wins.toLocaleString()}
-					rank={player.ranks['boss.wins']}
-					rankLabel="Big Boss Kills"
-				/>
-				<StatLine
-					label="Time as Big Boss"
-					value={formatBossDuration(player.stats.bigBoss.timeHeldMs)}
-					rank={player.ranks['boss.timeHeldMs']}
-					rankLabel="Time as Big Boss"
-				/>
-				<StatLine
-					label="Days as Big Boss"
-					value={player.stats.bigBoss.daysHeld.toFixed(2)}
-					rank={player.ranks['boss.daysHeld']}
-					rankLabel="Days as Big Boss"
-				/>
-				<StatLine
-					label="Big Boss Play Time"
-					value={formatBossDuration(player.stats.bigBoss.qualifyingMs)}
-					rank={player.ranks['boss.qualifyingMs']}
-					rankLabel="Big Boss Play Time"
-				/>
-				<StatLine
-					label="Last Reign Ended"
-					value={formatTimestamp(player.stats.bigBoss.lastHeldAtUnixMs)}
-				/>
-			</div>
+			{statOptions.some((option) => option.group === 'boss') && (
+				<div className="playerStatsCore">
+					<StatLine
+						label="Current Big Boss"
+						value={player.stats.bigBoss.isBigBoss ? 'Yes' : 'No'}
+					/>
+					<StatLine
+						label="Big Boss Reigns"
+						value={player.stats.bigBoss.reigns.toLocaleString()}
+						rank={player.ranks['boss.reigns']}
+						rankLabel="Big Boss Reigns"
+					/>
+					<StatLine
+						label="Big Boss Kills"
+						value={player.stats.bigBoss.wins.toLocaleString()}
+						rank={player.ranks['boss.wins']}
+						rankLabel="Big Boss Kills"
+					/>
+					<StatLine
+						label="Time as Big Boss"
+						value={formatBossDuration(player.stats.bigBoss.timeHeldMs)}
+						rank={player.ranks['boss.timeHeldMs']}
+						rankLabel="Time as Big Boss"
+					/>
+					<StatLine
+						label="Days as Big Boss"
+						value={player.stats.bigBoss.daysHeld.toFixed(2)}
+						rank={player.ranks['boss.daysHeld']}
+						rankLabel="Days as Big Boss"
+					/>
+					<StatLine
+						label="Big Boss Play Time"
+						value={formatBossDuration(player.stats.bigBoss.qualifyingMs)}
+						rank={player.ranks['boss.qualifyingMs']}
+						rankLabel="Big Boss Play Time"
+					/>
+					<StatLine
+						label="Last Reign Ended"
+						value={formatTimestamp(player.stats.bigBoss.lastHeldAtUnixMs)}
+					/>
+				</div>
+			)}
 			<div className="playerStatsCore">
 				{(['charms', 'cosmetics', 'knowledge'] as const).map((type) => {
 					const progress = player.unlocks[type];

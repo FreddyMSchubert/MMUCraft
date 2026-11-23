@@ -144,7 +144,7 @@ export class PlayersService {
 		return {
 			currentUserId: viewer.id,
 			currentUserMinecraftUsername: viewer.minecraftUsername,
-			statOptions: buildStatOptions(stats),
+			statOptions: buildStatOptions(stats, this.featureToggles.enabledKeys().has('void')),
 			players,
 			selectedPlayer,
 			requestedPlayer: selectedMinecraftUsername || null,
@@ -168,7 +168,10 @@ export class PlayersService {
 		const statsContext = this.getStatsContext();
 		return {
 			currentUserId: viewer.id,
-			statOptions: buildStatOptions([this.playerStatistics.getForUser(user.id)]),
+			statOptions: buildStatOptions(
+				[this.playerStatistics.getForUser(user.id)],
+				this.featureToggles.enabledKeys().has('void'),
+			),
 			player: this.serializePlayer(user, viewer, undefined, statsContext),
 		};
 	}
@@ -317,43 +320,45 @@ export class PlayersService {
 				.map((row) => [row.userId, normalizeStatsJson(row.json)] as const),
 		);
 		const stats = new Map(userIds.map((id) => [id, storedStats.get(id) ?? defaultStats()]));
-		const bossState = this.database.connection.select().from(bigBossState).limit(1).get();
-		const bossProgress = new Map(
-			this.database.connection
-				.select()
-				.from(bigBossProgress)
-				.all()
-				.map((row) => [row.minecraft_username.toLowerCase(), row]),
-		);
-		const now = Date.now();
-		const bossReigns = new Map(
-			this.database.connection
-				.select({
-					username: sql<string>`lower(${bigBossTransitions.next_username})`,
-					count: sql<number>`count(*)`,
-					milliseconds: sql<number>`sum(max(0, coalesce((select later.at_unix_ms from big_boss_transitions later where later.id > ${bigBossTransitions.id} order by later.id limit 1), ${now}) - ${bigBossTransitions.at_unix_ms}))`,
-				})
-				.from(bigBossTransitions)
-				.where(sql`${bigBossTransitions.next_username} is not null`)
-				.groupBy(sql`lower(${bigBossTransitions.next_username})`)
-				.all()
-				.map((row) => [row.username, row]),
-		);
-		for (const user of userRows) {
-			const playerStats = stats.get(user.id);
-			if (!playerStats) continue;
-			const key = user.username.toLowerCase();
-			const progress = bossProgress.get(key);
-			const reigns = bossReigns.get(key);
-			playerStats.bigBoss = {
-				isBigBoss: bossState?.holder_username?.toLowerCase() === key,
-				reigns: reigns?.count ?? 0,
-				wins: progress?.win_count ?? 0,
-				timeHeldMs: reigns?.milliseconds ?? 0,
-				daysHeld: (reigns?.milliseconds ?? 0) / 86_400_000,
-				qualifyingMs: progress?.qualifying_ms ?? 0,
-				lastHeldAtUnixMs: progress?.last_held_at_unix_ms ?? null,
-			};
+		if (this.featureToggles.enabledKeys().has('void')) {
+			const bossState = this.database.connection.select().from(bigBossState).limit(1).get();
+			const bossProgress = new Map(
+				this.database.connection
+					.select()
+					.from(bigBossProgress)
+					.all()
+					.map((row) => [row.minecraft_username.toLowerCase(), row]),
+			);
+			const now = Date.now();
+			const bossReigns = new Map(
+				this.database.connection
+					.select({
+						username: sql<string>`lower(${bigBossTransitions.next_username})`,
+						count: sql<number>`count(*)`,
+						milliseconds: sql<number>`sum(max(0, coalesce((select later.at_unix_ms from big_boss_transitions later where later.id > ${bigBossTransitions.id} order by later.id limit 1), ${now}) - ${bigBossTransitions.at_unix_ms}))`,
+					})
+					.from(bigBossTransitions)
+					.where(sql`${bigBossTransitions.next_username} is not null`)
+					.groupBy(sql`lower(${bigBossTransitions.next_username})`)
+					.all()
+					.map((row) => [row.username, row]),
+			);
+			for (const user of userRows) {
+				const playerStats = stats.get(user.id);
+				if (!playerStats) continue;
+				const key = user.username.toLowerCase();
+				const progress = bossProgress.get(key);
+				const reigns = bossReigns.get(key);
+				playerStats.bigBoss = {
+					isBigBoss: bossState?.holder_username?.toLowerCase() === key,
+					reigns: reigns?.count ?? 0,
+					wins: progress?.win_count ?? 0,
+					timeHeldMs: reigns?.milliseconds ?? 0,
+					daysHeld: (reigns?.milliseconds ?? 0) / 86_400_000,
+					qualifyingMs: progress?.qualifying_ms ?? 0,
+					lastHeldAtUnixMs: progress?.last_held_at_unix_ms ?? null,
+				};
+			}
 		}
 		const loginDays = new Map<number, string[]>();
 		for (const claim of this.database.connection

@@ -13,7 +13,12 @@ import {
 	type Snowflake,
 } from 'discord.js';
 import { ADMIN_SIGNUP_EMAIL } from '../auth/auth.util';
-import { DatabaseService, velocityServers, bigBossState } from '../database/database.service';
+import {
+	DatabaseService,
+	velocityServers,
+	bigBossState,
+	featureToggles,
+} from '../database/database.service';
 import { eq } from 'drizzle-orm';
 import { CommandLogsService } from '../database/command-logs.service';
 import { MinecraftIdentityService } from '../database/minecraft-identity.service';
@@ -300,11 +305,19 @@ export class DiscordService implements OnApplicationBootstrap, OnModuleDestroy {
 					color_hex: presentation.colorHex,
 				}
 			: event;
-		const boss = this.database.connection
-			.select({ holder: bigBossState.holder_username })
-			.from(bigBossState)
-			.where(eq(bigBossState.id, 1))
-			.get()?.holder;
+		const bossEnabled =
+			this.database.connection
+				.select({ enabled: featureToggles.enabled })
+				.from(featureToggles)
+				.where(eq(featureToggles.key, 'void'))
+				.get()?.enabled === 1;
+		const boss = bossEnabled
+			? this.database.connection
+					.select({ holder: bigBossState.holder_username })
+					.from(bigBossState)
+					.where(eq(bigBossState.id, 1))
+					.get()?.holder
+			: null;
 		if (boss?.toLowerCase() === currentEvent.minecraft_username.toLowerCase())
 			currentEvent = { ...currentEvent, role: 'The Big Boss', color_hex: '#B35CFF' };
 		const maxPlayers = currentEvent.type.endsWith('join')

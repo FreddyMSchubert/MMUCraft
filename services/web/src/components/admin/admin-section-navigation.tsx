@@ -32,9 +32,11 @@ const ADMIN_SECTIONS: { section: AdminSection; label: string }[] = [
 export function AdminSectionNavigation({
 	activeSection,
 	ducksEnabled,
+	bossEnabled,
 }: {
 	activeSection: AdminSection;
 	ducksEnabled: boolean;
+	bossEnabled: boolean;
 }) {
 	const hostname = useSyncExternalStore(
 		() => () => undefined,
@@ -45,17 +47,19 @@ export function AdminSectionNavigation({
 
 	return (
 		<nav className="adminSubTabs" aria-label="Admin sections">
-			{ADMIN_SECTIONS.filter(({ section }) => section !== 'ducks' || ducksEnabled).map(
-				({ section, label }) => (
-					<Link
-						key={section}
-						className={activeSection === section ? 'active' : ''}
-						href={`/play/admin/${section}`}
-					>
-						{label}
-					</Link>
-				),
-			)}
+			{ADMIN_SECTIONS.filter(
+				({ section }) =>
+					(section !== 'ducks' || ducksEnabled) &&
+					(section !== 'big-boss' || bossEnabled),
+			).map(({ section, label }) => (
+				<Link
+					key={section}
+					className={activeSection === section ? 'active' : ''}
+					href={`/play/admin/${section}`}
+				>
+					{label}
+				</Link>
+			))}
 			<a href="/grafana/" target="_blank" rel="noopener noreferrer">
 				Statistics
 			</a>

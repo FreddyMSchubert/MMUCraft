@@ -23,6 +23,7 @@ import { DiscordService } from '../discord/discord.service';
 import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.service';
 import { currentDailyPeriodKey } from '../gameplay/dailies/daily-task-rules';
 import { playerAvatarUrl } from '../players/player-color';
+import { FeatureTogglesService } from '../toggles/feature-toggles.service';
 
 const REQUIRED_MS = 30 * 60_000;
 const REIGN_LIMIT_MS = 7 * 24 * 60 * 60_000;
@@ -106,37 +107,72 @@ export class BigBossService implements OnModuleInit, OnModuleDestroy {
 	private onlineNamesAt = 0;
 	private onlineNames: Set<string> | null = null;
 	private onlineNamesPending: Promise<Set<string> | null> | null = null;
+	private activated = false;
 
 	constructor(
 		private readonly database: DatabaseService,
 		private readonly minecraft: MinecraftGrpcClientService,
 		private readonly discord: DiscordService,
-	) {
+		private readonly toggles: FeatureTogglesService,
+	) {}
+
+	isOpen() {
+		return this.toggles.enabledKeys().has('void');
+	}
+
+	private requireOpen() {
+		if (!this.isOpen()) throw new NotFoundException('The Big Boss is not available yet');
+		this.activate();
+	}
+
+	private activate() {
+		if (this.activated) return;
+		const launched = this.database.connection
+			.select({ id: bigBossTransitions.id })
+			.from(bigBossTransitions)
+			.where(eq(bigBossTransitions.event_id, 'big-boss-launch'))
+			.get();
+		if (launched) {
+			this.activated = true;
+			return;
+		}
 		const now = Date.now();
-		this.database.connection
-			.insert(bigBossState)
-			.values({
-				id: 1,
-				holder_username: 'BigBeanBaka',
-				reign_started_at_unix_ms: now,
-				activity_day: currentDailyPeriodKey(new Date(now)),
-			})
-			.onConflictDoNothing()
-			.run();
-		if (
-			this.database.connection.select().from(bigBossTransitions).limit(1).all().length === 0
-		) {
-			this.database.connection
-				.insert(bigBossTransitions)
+		this.database.connection.transaction((tx) => {
+			tx.insert(bigBossState)
 				.values({
-					event_id: 'big-boss-seed',
+					id: 1,
+					holder_username: 'BigBeanBaka',
+					reign_started_at_unix_ms: now,
+					activity_day: currentDailyPeriodKey(new Date(now)),
+				})
+				.onConflictDoUpdate({
+					target: bigBossState.id,
+					set: {
+						holder_username: 'BigBeanBaka',
+						reign_started_at_unix_ms: now,
+						acquired_by_kill: 0,
+						activity_day: currentDailyPeriodKey(new Date(now)),
+						activity_ms: 0,
+						last_sample_at_unix_ms: null,
+						last_dimension: null,
+						last_x: null,
+						last_y: null,
+						last_z: null,
+						last_in_claim: 0,
+					},
+				})
+				.run();
+			tx.insert(bigBossTransitions)
+				.values({
+					event_id: 'big-boss-launch',
 					at_unix_ms: now,
 					previous_username: null,
 					next_username: 'BigBeanBaka',
 					reason: 'seed',
 				})
 				.run();
-		}
+		});
+		this.activated = true;
 	}
 
 	onModuleInit() {
@@ -156,6 +192,16 @@ export class BigBossService implements OnModuleInit, OnModuleDestroy {
 			.get();
 		if (!state) throw new Error('Big Boss state is missing');
 		return state;
+	}
+
+	private unavailableResponse() {
+		return {
+			holder_username: '',
+			reign_started_at_unix_ms: 0,
+			qualifying_ms: 0,
+			win_count: 0,
+			has_lost_kill_won_reign: false,
+		};
 	}
 
 	private progress(username: string) {
@@ -209,6 +255,8 @@ export class BigBossService implements OnModuleInit, OnModuleDestroy {
 	}
 
 	async heartbeat(input: BossHeartbeat) {
+		if (!this.isOpen()) return this.unavailableResponse();
+		this.activate();
 		if (
 			!/^[0-9a-f-]{36}$/i.test(input.session_id) ||
 			!Number.isSafeInteger(input.qualifying_ms) ||
@@ -294,6 +342,8 @@ export class BigBossService implements OnModuleInit, OnModuleDestroy {
 	}
 
 	async joined(input: BossPlayer) {
+		if (!this.isOpen()) return this.unavailableResponse();
+		this.activate();
 		if (!USERNAME.test(input.minecraft_username) || !this.validPosition(input))
 			throw new BadRequestException('Invalid boss join');
 		const username = input.minecraft_username;
@@ -352,6 +402,8 @@ export class BigBossService implements OnModuleInit, OnModuleDestroy {
 	}
 
 	left(username: string) {
+		if (!this.isOpen()) return this.unavailableResponse();
+		this.activate();
 		const state = this.state();
 		if (state.holder_username?.toLowerCase() === username.toLowerCase())
 			this.database.connection
@@ -363,6 +415,16 @@ export class BigBossService implements OnModuleInit, OnModuleDestroy {
 	}
 
 	recordKill(input: BossKill) {
+		if (!this.isOpen())
+			return {
+				transferred: false,
+				holder_username: '',
+				reign_started_at_unix_ms: 0,
+				killer_win_count: 0,
+				victim_had_kill_won_reign: false,
+				victim_total_qualifying_ms: 0,
+			};
+		this.activate();
 		if (
 			typeof input.victim_username !== 'string' ||
 			typeof input.killer_username !== 'string' ||
@@ -523,6 +585,8 @@ export class BigBossService implements OnModuleInit, OnModuleDestroy {
 	}
 
 	async reconcile() {
+		if (!this.isOpen()) return;
+		this.activate();
 		if (this.reconciliation) return this.reconciliation;
 		const work = this.reconcileNow();
 		this.reconciliation = work;
@@ -641,6 +705,7 @@ export class BigBossService implements OnModuleInit, OnModuleDestroy {
 	}
 
 	setByAdmin(admin: AuthenticatedUser, targetUsername: string | null, detailInput: string) {
+		this.requireOpen();
 		if (
 			typeof detailInput !== 'string' ||
 			(targetUsername !== null && typeof targetUsername !== 'string')
@@ -675,6 +740,7 @@ export class BigBossService implements OnModuleInit, OnModuleDestroy {
 	}
 
 	adminWarnings(targetUsername: string) {
+		this.requireOpen();
 		const target = this.account(targetUsername);
 		if (!target) throw new NotFoundException('Player not found');
 		const profile = this.database.connection
@@ -689,6 +755,7 @@ export class BigBossService implements OnModuleInit, OnModuleDestroy {
 	}
 
 	holderName() {
+		this.requireOpen();
 		return { minecraftUsername: this.state().holder_username ?? '' };
 	}
 
@@ -718,6 +785,7 @@ export class BigBossService implements OnModuleInit, OnModuleDestroy {
 	}
 
 	async publicState() {
+		this.requireOpen();
 		const onlineNames = await this.currentOnlineNames();
 		const state = this.state();
 		const account = state.holder_username ? this.account(state.holder_username) : null;
@@ -772,6 +840,7 @@ export class BigBossService implements OnModuleInit, OnModuleDestroy {
 	}
 
 	history(cursorInput?: string) {
+		this.requireOpen();
 		const cursor = cursorInput === undefined ? null : Number(cursorInput);
 		if (cursorInput !== undefined && (!Number.isSafeInteger(cursor) || Number(cursor) <= 0))
 			throw new BadRequestException('Invalid history cursor');

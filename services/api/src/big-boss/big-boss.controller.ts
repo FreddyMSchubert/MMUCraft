@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Header, Headers, Param, Post, Query } from '@nestjs/common';
 import { AuthSessionService } from '../auth/auth-session.service';
 import { BigBossService } from './big-boss.service';
 
@@ -8,6 +8,12 @@ export class BigBossController {
 		private readonly auth: AuthSessionService,
 		private readonly boss: BigBossService,
 	) {}
+
+	@Get('availability')
+	@Header('Cache-Control', 'no-store')
+	availability() {
+		return { enabled: this.boss.isOpen() };
+	}
 
 	@Get()
 	get(@Headers('cookie') cookie: string | undefined) {

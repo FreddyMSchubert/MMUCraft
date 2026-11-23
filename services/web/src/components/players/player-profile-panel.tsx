@@ -34,6 +34,7 @@ export function PlayerProfilePanel({
 			{editing && player.canEditProfile ? (
 				<PlayerProfileForm
 					player={player}
+					bossEnabled={statOptions.some((option) => option.group === 'boss')}
 					onCancel={() => {
 						setEditing(false);
 					}}
@@ -149,11 +150,13 @@ export function ProfileFacts({ player }: { player: PlayerSummary }) {
 
 export function PlayerProfileForm({
 	player,
+	bossEnabled,
 	onCancel,
 	onSaved,
 	onError,
 }: {
 	player: PlayerSummary;
+	bossEnabled: boolean;
 	onCancel: () => void;
 	onSaved: () => void;
 	onError: (message: string) => void;
@@ -444,23 +447,25 @@ export function PlayerProfileForm({
 				/>
 				<i aria-hidden="true" />
 			</label>
-			<label className="settingToggle">
-				<span>
-					<strong>Opt out of Big Boss</strong>
-					<small>
-						You cannot win the title through kills or random assignment. An admin can
-						override this setting.
-					</small>
-				</span>
-				<input
-					type="checkbox"
-					checked={bigBossOptOut}
-					onChange={(event) => {
-						setBigBossOptOut(event.target.checked);
-					}}
-				/>
-				<i aria-hidden="true" />
-			</label>
+			{bossEnabled && (
+				<label className="settingToggle">
+					<span>
+						<strong>Opt out of Big Boss</strong>
+						<small>
+							You cannot win the title through kills or random assignment. An admin
+							can override this setting.
+						</small>
+					</span>
+					<input
+						type="checkbox"
+						checked={bigBossOptOut}
+						onChange={(event) => {
+							setBigBossOptOut(event.target.checked);
+						}}
+					/>
+					<i aria-hidden="true" />
+				</label>
+			)}
 		</form>
 	);
 }

@@ -17,6 +17,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.bigboss.BigBossManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.mixin.respawn.RespawnPositionFinder;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 import java.util.List;
 
@@ -50,7 +51,8 @@ public class PotionOfResonanceCharm implements Charm, ConsumableCallbacksCharm
             return false;
         }
 
-        if (FakeItems.isSpecificFakeItem(key, "charm-potion-resonance")) {
+        if (FeatureToggles.isEnabled(FeatureToggles.VOID)
+                && FakeItems.isSpecificFakeItem(key, "charm-potion-resonance")) {
             ServerPlayer target = BigBossManager.onlineBoss(level.getServer());
             if (target == null || target == player) {
                 player.sendSystemMessage(BigBossManager.linked("The Big Boss is not online right now."));

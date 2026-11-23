@@ -30,11 +30,13 @@ export function AdminTab({
 	section,
 	subroute,
 	ducksEnabled,
+	bossEnabled,
 }: {
 	isSuperAdmin: boolean;
 	section?: string;
 	subroute?: string[];
 	ducksEnabled: boolean;
+	bossEnabled: boolean;
 }) {
 	const controller = useAdminTabController({ isSuperAdmin, section });
 
@@ -43,9 +45,10 @@ export function AdminTab({
 			<AdminSectionNavigation
 				activeSection={controller.activeSection}
 				ducksEnabled={ducksEnabled}
+				bossEnabled={bossEnabled}
 			/>
 			{controller.activeSection === 'drops' && <DropAnalyticsAdminSection />}
-			{controller.activeSection === 'big-boss' && (
+			{controller.activeSection === 'big-boss' && bossEnabled && (
 				<BigBossAdminSection players={controller.players} />
 			)}
 			{controller.activeSection === 'advent' && (

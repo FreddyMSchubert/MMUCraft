@@ -182,7 +182,10 @@ const KNOWN_OPTIONS: StatOption[] = [
 	}),
 ];
 
-export function buildStatOptions(playerStatistics: PlayerStats[]): StatOption[] {
+export function buildStatOptions(
+	playerStatistics: PlayerStats[],
+	bossEnabled: boolean,
+): StatOption[] {
 	const byKey = new Map(KNOWN_OPTIONS.map((option) => [option.key, option]));
 	for (const stats of playerStatistics) {
 		for (const stat of Object.values(stats.minecraft.stats)) {
@@ -194,11 +197,13 @@ export function buildStatOptions(playerStatistics: PlayerStats[]): StatOption[] 
 			});
 		}
 	}
-	return [...byKey.values()].sort(
-		(left, right) =>
-			groupRank(left.group) - groupRank(right.group) ||
-			left.label.localeCompare(right.label, 'en'),
-	);
+	return [...byKey.values()]
+		.filter((option) => bossEnabled || option.group !== 'boss')
+		.sort(
+			(left, right) =>
+				groupRank(left.group) - groupRank(right.group) ||
+				left.label.localeCompare(right.label, 'en'),
+		);
 }
 
 export function normalizeMinecraftStat(

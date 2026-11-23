@@ -138,6 +138,7 @@ public class MainMod implements ModInitializer {
         MetricsServer.init();
         DiscordBridge.init();
         ClaimsManager.init();
+        BigBossManager.init();
         DailyEvents.register();
         MainModRecipes.register();
         GliderFlight.init();

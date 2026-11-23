@@ -128,6 +128,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	const router = useRouter();
 	const [user, setUser] = useState<SessionUser | null | undefined>(undefined);
 	const [bossUsername, setBossUsername] = useState('');
+	const [bossEnabled, setBossEnabled] = useState<boolean | null>(null);
 	const [adventVisible, setAdventVisible] = useState(() => londonAdventDay() > 0);
 	const [snowVisible, setSnowVisible] = useState(() => Date.now() < SNOW_END_UNIX_MS);
 	const [ducksEnabled, setDucksEnabled] = useState<boolean | null>(null);
@@ -164,9 +165,17 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 					(tab.id !== 'admin' || isCommittee) &&
 					(tab.id !== 'membership' || user?.canBecomeMember === true) &&
 					(tab.id !== 'ducks' || ducksEnabled === true) &&
+					(tab.id !== 'big-boss' || bossEnabled === true) &&
 					(tab.id !== 'advent' || adventVisible),
 			),
-		[hasLiveEvent, isCommittee, ducksEnabled, user?.canBecomeMember, adventVisible],
+		[
+			hasLiveEvent,
+			isCommittee,
+			ducksEnabled,
+			bossEnabled,
+			user?.canBecomeMember,
+			adventVisible,
+		],
 	);
 
 	useEffect(() => {
@@ -174,13 +183,27 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 		let cancelled = false;
 		async function refreshBoss() {
 			try {
+				const availability = await fetch('/api/big-boss/availability', {
+					cache: 'no-store',
+				});
+				if (!availability.ok) throw new Error('Big Boss availability unavailable');
+				const { enabled } = (await availability.json()) as { enabled: boolean };
+				if (!cancelled) setBossEnabled(enabled);
+				if (!enabled) {
+					if (!cancelled) setBossUsername('');
+					return;
+				}
 				const response = await fetch('/api/big-boss/holder', { cache: 'no-store' });
-				if (response.ok && !cancelled) {
+				if (!response.ok) throw new Error('Big Boss holder unavailable');
+				if (!cancelled) {
 					const state = (await response.json()) as { minecraftUsername?: string };
 					setBossUsername(state.minecraftUsername ?? '');
 				}
 			} catch {
-				/* The next poll will retry. */
+				if (!cancelled) {
+					setBossEnabled(false);
+					setBossUsername('');
+				}
 			}
 		}
 		void refreshBoss();
@@ -344,6 +367,8 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 		setMenuOpen(false);
 		setUser(null);
 		setDucksEnabled(null);
+		setBossEnabled(null);
+		setBossUsername('');
 		setOnlinePlayers(null);
 		setCapacity(null);
 	}
@@ -362,11 +387,19 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 			router.replace('/play/knowledge');
 			return;
 		}
+		if (bossEnabled === false && activeTab === 'big-boss') {
+			router.replace('/play/knowledge');
+			return;
+		}
 		if (!adventVisible && activeTab === 'advent') {
 			router.replace('/play/knowledge');
 			return;
 		}
 		if (ducksEnabled === false && activeTab === 'admin' && routeDetail === 'ducks') {
+			router.replace('/play/admin/members');
+			return;
+		}
+		if (bossEnabled === false && activeTab === 'admin' && routeDetail === 'big-boss') {
 			router.replace('/play/admin/members');
 			return;
 		}
@@ -405,7 +438,17 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 				: `/play/${activeTab}`;
 
 		if (canonicalPath && pathname !== canonicalPath) router.replace(canonicalPath);
-	}, [activeTab, adventVisible, ducksEnabled, pathname, route, routeDetail, router, user]);
+	}, [
+		activeTab,
+		adventVisible,
+		ducksEnabled,
+		bossEnabled,
+		pathname,
+		route,
+		routeDetail,
+		router,
+		user,
+	]);
 
 	useEffect(() => {
 		let lastY = window.scrollY;
@@ -735,13 +778,14 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 							{activeTab === 'players' && (
 								<PlayersTab playerName={routeDetail} onSelectPlayer={openPlayer} />
 							)}
-							{activeTab === 'big-boss' && <BigBossTab />}
+							{activeTab === 'big-boss' && bossEnabled === true && <BigBossTab />}
 							{activeTab === 'admin' && user.isCommittee && (
 								<AdminTab
 									isSuperAdmin={user.isSuperAdmin}
 									section={routeDetail}
 									subroute={route.slice(2)}
 									ducksEnabled={ducksEnabled === true}
+									bossEnabled={bossEnabled === true}
 								/>
 							)}
 							{activeTab === 'misc' && <MiscTab section={routeDetail} />}

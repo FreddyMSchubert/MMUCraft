@@ -56,7 +56,27 @@ Some particularly strong fish are able to survive in the lava of the Nether! Sad
 [Blaze Rod](https://minecraft.wiki/w/Blaze_Rod) (TR, C, BL) · [String](https://minecraft.wiki/w/String) → Blazing Fishing Rod
 :::
 
-Since there's a lot of trash whirling around in the lava of the Nether, to get to the fish, it's important you learn...
+Since there's a lot of trash whirling around in the lava of the Nether, to get to the fish, it's important to use worms (See below).
+
+:::end-drop
+
+:::drop void
+## Fishing in the End
+
+:::drop-indicator
+
+![Fishing in the End](/assets/knowledge/survival/fishing/end_fishing.png)
+
+The fish in the end have gone through trillions more years of evolution than common overworld fish, allowing them to swim straight through the air and to obscure their appearance by shapeshifting their scales to look like the void.
+To catch them, you'll therefore need a stronger rod:
+
+![Breezy fishing rod recipe](/assets/knowledge/survival/fishing/breezy_recipe.png)
+
+:::recipe-items
+[Breeze Rod](https://minecraft.wiki/w/Breeze_rod) (TR, C, BL) · [String](https://minecraft.wiki/w/String) → Breezy Fishing Rod
+:::
+
+Since there's a lot of trash whirling around in the lava of the End, to get to the fish, it's important you learn...
 
 :::end-drop
 

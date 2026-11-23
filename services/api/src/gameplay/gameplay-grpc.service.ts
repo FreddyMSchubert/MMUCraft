@@ -16,6 +16,7 @@ import { DabloonInteractionsService } from '../database/dabloon-interactions.ser
 import { AnnouncementsService } from '../announcements/announcements.service';
 import { DucksService } from '../ducks/ducks.service';
 import { BigBossService, type BossHeartbeat, type BossKill } from '../big-boss/big-boss.service';
+import { PresentsService } from '../presents/presents.service';
 import {
 	FeatureTogglesService,
 	type FeatureTogglesSnapshot,
@@ -75,12 +76,14 @@ export class GameplayGrpcService implements OnModuleInit {
 		private readonly announcements: AnnouncementsService,
 		private readonly ducks: DucksService,
 		private readonly bigBoss: BigBossService,
+		private readonly presents: PresentsService,
 	) {}
 
 	onModuleInit() {
 		const gameplayProto = this.grpcServer.loadProto<GameplayProtoRoot>('gameplay.proto');
 
 		this.grpcServer.addService(gameplayProto.mcstack.gameplay.v1.GameplayEvents.service, {
+			GetPresentJoinStatus: this.getPresentJoinStatus.bind(this),
 			UnlockNextKnowledge: this.unlockNextKnowledge.bind(this),
 			GetKnowledgeTip: this.getKnowledgeTip.bind(this),
 			GetUnlockAvailability: this.getUnlockAvailability.bind(this),
@@ -105,6 +108,13 @@ export class GameplayGrpcService implements OnModuleInit {
 			GetBigBossTarget: this.getBigBossTarget.bind(this),
 			RecordBigBossKill: this.recordBigBossKill.bind(this),
 		});
+	}
+
+	private getPresentJoinStatus(
+		call: grpc.ServerUnaryCall<{ minecraft_username: string }, { pending_count: number }>,
+		callback: UnaryCallback<{ pending_count: number }>,
+	) {
+		callback(null, this.presents.joinStatus(call.request.minecraft_username));
 	}
 
 	private bigBossHeartbeat(

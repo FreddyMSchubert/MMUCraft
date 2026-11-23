@@ -14,6 +14,7 @@ import { DropAnalyticsModule } from './drop-analytics/drop-analytics.module';
 import { VelocityModule } from '../velocity/velocity.module';
 import { DucksModule } from '../ducks/ducks.module';
 import { BigBossModule } from '../big-boss/big-boss.module';
+import { PresentsModule } from '../presents/presents.module';
 
 @Module({
 	imports: [
@@ -31,6 +32,7 @@ import { BigBossModule } from '../big-boss/big-boss.module';
 		VelocityModule,
 		DucksModule,
 		BigBossModule,
+		PresentsModule,
 	],
 	providers: [GameplayGrpcService],
 })

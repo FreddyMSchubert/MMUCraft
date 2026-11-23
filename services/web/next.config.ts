@@ -5,6 +5,7 @@ if (existsSync('../../.env')) process.loadEnvFile('../../.env');
 
 const nextConfig: NextConfig = {
 	agentRules: false,
+	allowedDevOrigins: ['127.0.0.1'],
 	output: 'standalone',
 	turbopack: { root: process.cwd() },
 	rewrites() {

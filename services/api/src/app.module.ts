@@ -17,6 +17,7 @@ import { LaunchModule } from './launch/launch.module';
 import { BuildEventsModule } from './build-events/build-events.module';
 import { AdventModule } from './advent/advent.module';
 import { BigBossModule } from './big-boss/big-boss.module';
+import { PresentsModule } from './presents/presents.module';
 
 @Module({
 	imports: [
@@ -36,6 +37,7 @@ import { BigBossModule } from './big-boss/big-boss.module';
 		BuildEventsModule,
 		AdventModule,
 		BigBossModule,
+		PresentsModule,
 	],
 	controllers: [HealthController, MinecraftCacheAdminController],
 })

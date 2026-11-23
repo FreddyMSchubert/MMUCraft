@@ -62,6 +62,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.SoulboundEnchantment;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.GearEnchantmentSanitizer;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.vanilla.EnchantmentSettingsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GrpcBridge;
+import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.PlayerStatsSync;
 import uk.co.httpsmmuminecraftsociety.mainmod.hopper.HopperFilter;
 import uk.co.httpsmmuminecraftsociety.mainmod.inventoryview.InventoryViewCommands;
@@ -158,6 +159,7 @@ public class MainMod implements ModInitializer {
             if (entity instanceof net.minecraft.server.level.ServerPlayer player) GearEnchantmentSanitizer.sanitizePlayer(player);
         });
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+			GameplayGrpcService.notifyPresentsOnJoin(handler.player);
             BigBossManager.joined(handler.player);
             GearEnchantmentSanitizer.sanitizePlayer(handler.player);
             if (FeatureToggles.isEnabled(FeatureToggles.CIRCUS)) {

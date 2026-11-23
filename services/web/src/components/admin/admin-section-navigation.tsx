@@ -21,6 +21,7 @@ const ADMIN_SECTIONS: { section: AdminSection; label: string }[] = [
 	{ section: 'signin-attempts', label: 'Sign-in attempts' },
 	{ section: 'dailies', label: 'Dailies' },
 	{ section: 'advent', label: 'Advent Calendar' },
+	{ section: 'presents', label: 'Christmas presents' },
 	{ section: 'drops', label: 'Drops' },
 	{ section: 'toggles', label: 'Gameplay toggles' },
 	{ section: 'bans', label: 'Ban / timeout' },

@@ -7,6 +7,7 @@ option java_package = "uk.co.httpsmmuminecraftsociety.mainmod.grpc";
 option java_outer_classname = "GameplayProto";
 
 service GameplayEvents {
+  rpc GetPresentJoinStatus(PresentPlayerRequest) returns (PresentJoinStatusResponse);
   rpc UnlockNextKnowledge(UnlockNextKnowledgeRequest) returns (UnlockNextKnowledgeResponse);
   rpc GetKnowledgeTip(GetKnowledgeTipRequest) returns (GetKnowledgeTipResponse);
   rpc GetUnlockAvailability(GetUnlockAvailabilityRequest) returns (GetUnlockAvailabilityResponse);
@@ -33,6 +34,9 @@ service GameplayEvents {
 }
 
 service GameplayControl {
+	  rpc PreviewPresentHand(PresentPlayerRequest) returns (PresentItemResponse);
+	  rpc CapturePresentHand(CapturePresentRequest) returns (PresentItemResponse);
+	  rpc DeliverPresentItem(DeliverPresentRequest) returns (DeliverPresentResponse);
   rpc GetOnlinePlayers(GetOnlinePlayersRequest) returns (GetOnlinePlayersResponse);
   rpc GrantDailyLoginBonus(GrantDailyLoginBonusRequest) returns (GrantDailyLoginBonusResponse);
   rpc GrantGiftCodeMoney(GrantGiftCodeMoneyRequest) returns (GrantGiftCodeMoneyResponse);
@@ -66,6 +70,32 @@ service GameplayControl {
   rpc TryGrantAdvancement(TryGrantAdvancementRequest) returns (TryGrantAdvancementResponse);
   rpc ApplyDuckUpdate(ApplyDuckUpdateRequest) returns (ApplyDuckUpdateResponse);
   rpc BroadcastBigBossNotice(BigBossNoticeRequest) returns (BigBossNoticeResponse);
+}
+
+message PresentPlayerRequest { string minecraft_username = 1; }
+message PresentJoinStatusResponse { int32 pending_count = 1; }
+message CapturePresentRequest {
+  string minecraft_username = 1;
+  string present_id = 2;
+  bool recover_only = 3;
+}
+message PresentItemResponse {
+  bool success = 1;
+  string message = 2;
+  bytes item_data = 3;
+  string item_name = 4;
+  int32 item_count = 5;
+}
+message DeliverPresentRequest {
+  string minecraft_username = 1;
+  string receipt_id = 2;
+  bytes item_data = 3;
+  string message = 4;
+}
+message DeliverPresentResponse {
+  bool delivered = 1;
+  bool already_delivered = 2;
+  string message = 3;
 }
 
 message BigBossPlayerRequest {

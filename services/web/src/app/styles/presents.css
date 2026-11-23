@@ -1,0 +1,360 @@
+.presentsPage {
+	--present-red: #9f2631;
+	--present-green: #235746;
+	--present-ink: #402a28;
+	color: #f8f0e3;
+	max-width: 1040px;
+	margin: 0 auto;
+	padding: 24px 18px 80px;
+}
+
+.presentsHero {
+	text-align: center;
+	padding: 28px 16px 34px;
+	background: radial-gradient(circle at 50% 0, #a8414166, transparent 65%);
+}
+
+.presentsHeroIcon {
+	display: block;
+	font-size: 3.5rem;
+	filter: drop-shadow(0 7px 9px #160706);
+}
+.presentsEyebrow {
+	text-transform: uppercase;
+	letter-spacing: 0.19em;
+	font-size: 0.72rem;
+	font-weight: 800;
+}
+.presentsHero h1 {
+	margin: 0.3em 0;
+	font-family: Georgia, serif;
+	font-size: clamp(2rem, 6vw, 3.5rem);
+	color: #fff4e3;
+}
+.presentsHero p {
+	max-width: 660px;
+	margin: 12px auto;
+	line-height: 1.55;
+}
+.presentsTestClock {
+	color: #ffe89e;
+	font-weight: 700;
+}
+.presentsError,
+.presentsNotice {
+	padding: 12px 16px;
+	border-radius: 10px;
+	margin: 12px auto;
+	max-width: 680px;
+}
+.presentsError {
+	background: #642022;
+	color: #fff;
+}
+.presentsNotice {
+	background: #235746;
+	color: #fff;
+}
+
+.presentsCompose {
+	max-width: 640px;
+	margin: 12px auto 62px;
+	text-align: center;
+}
+.presentEnvelope {
+	position: relative;
+	padding: 20px 22px 40px;
+	background: linear-gradient(145deg, #9d2934, #6f1e29);
+	border: 2px solid #c87962;
+	border-radius: 15px;
+	box-shadow:
+		0 25px 55px #170707a8,
+		inset 0 -12px 22px #450d1d77;
+	perspective: 900px;
+	transition:
+		transform 0.7s ease,
+		opacity 0.7s ease;
+}
+.presentEnvelope::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 95px;
+	background: linear-gradient(145deg, #b43a41, #80232c);
+	clip-path: polygon(0 0, 50% 74%, 100% 0, 100% 100%, 0 100%);
+	pointer-events: none;
+}
+.presentEnvelopeFlap {
+	position: absolute;
+	z-index: 3;
+	left: 0;
+	right: 0;
+	top: 0;
+	height: 145px;
+	background: linear-gradient(#c04a49, #922b33);
+	clip-path: polygon(0 0, 100% 0, 50% 100%);
+	transform-origin: top;
+	transform: rotateX(170deg);
+	backface-visibility: hidden;
+	transition: transform 0.65s ease;
+	pointer-events: none;
+}
+.presentPaper {
+	position: relative;
+	z-index: 2;
+	text-align: left;
+	padding: clamp(18px, 5vw, 38px);
+	color: var(--present-ink);
+	background: repeating-linear-gradient(#f5e8d0 0 29px, #ebdcc1 30px 31px);
+	border: 1px solid #e1caa7;
+	border-radius: 3px;
+	box-shadow: 0 11px 26px #360e14a6;
+	transition:
+		transform 0.6s ease,
+		opacity 0.45s ease;
+}
+.presentPaper > .presentsEyebrow {
+	color: var(--present-red);
+	margin-top: 0;
+}
+.presentPaper label:not(.presentsCheck) {
+	display: block;
+	margin: 16px 0;
+	font-weight: 800;
+}
+.presentPaper input:not([type='checkbox']) {
+	box-sizing: border-box;
+	display: block;
+	width: 100%;
+	margin-top: 7px;
+	padding: 11px 12px;
+	font: inherit;
+	font-weight: 500;
+	color: #35211f;
+	background: #fffaf0;
+	border: 1px solid #b99777;
+	border-radius: 6px;
+}
+.presentsOptional {
+	font-weight: 400;
+	font-size: 0.8rem;
+}
+.presentsCheck {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 14px 0;
+}
+.presentsCheck input {
+	accent-color: var(--present-green);
+	width: 18px;
+	height: 18px;
+}
+.presentItemSlot {
+	background: #fff9e9bb;
+	border: 2px dashed #b98a69;
+	padding: 15px;
+	border-radius: 8px;
+}
+.presentItemSlot p {
+	margin: 7px 0 13px;
+}
+.presentsActions,
+.presentsSendActions {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+.presentsPage button {
+	cursor: pointer;
+	padding: 10px 16px;
+	border: 1px solid #d6b88d;
+	border-radius: 8px;
+	background: var(--present-green);
+	color: white;
+	font: inherit;
+	font-weight: 700;
+}
+.presentsPage button:hover {
+	filter: brightness(1.12);
+}
+.presentsPage button:focus-visible {
+	outline: 3px solid #f8b84a;
+	outline-offset: 3px;
+}
+.presentsPage button:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+.presentPaper .presentsHint {
+	font-size: 0.85rem;
+	line-height: 1.4;
+}
+.presentPaper .presentsSeal {
+	display: block;
+	margin: 20px auto 0;
+	background: var(--present-red);
+}
+.presentEnvelopeClosed .presentPaper {
+	transform: translateY(60px) scaleY(0.75);
+	opacity: 0;
+	pointer-events: none;
+}
+.presentEnvelopeClosed .presentEnvelopeFlap {
+	transform: rotateX(0);
+}
+.presentEnvelopeSending {
+	transform: translate(140px, -90px) rotate(16deg) scale(0.25);
+	opacity: 0;
+}
+.presentsSendActions {
+	justify-content: center;
+	margin: 22px 0;
+}
+.presentsSendActions button:last-child {
+	background: var(--present-red);
+	box-shadow: 0 5px 0 #56131c;
+}
+.presentsAllowance {
+	color: #e6d9c7;
+	font-size: 0.86rem;
+}
+
+.presentsList {
+	margin: 44px 0;
+}
+.presentsList h2 {
+	font-family: Georgia, serif;
+	color: #fff2d9;
+	font-size: 1.8rem;
+}
+.presentCards {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+	gap: 20px;
+}
+.presentCard {
+	position: relative;
+	padding: 50px 23px 24px;
+	min-height: 220px;
+	text-align: center;
+	color: var(--present-ink);
+	background: linear-gradient(150deg, #f9edda, #e8cfab);
+	border-radius: 7px;
+	box-shadow: 0 12px 28px #100b0baa;
+	transition: transform 0.4s ease;
+}
+.presentCard::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 50%;
+	width: 34px;
+	height: 100%;
+	transform: translateX(-50%);
+	background: #9a28331f;
+	pointer-events: none;
+}
+.presentCardOpening {
+	animation: letterOpen 0.8s ease;
+}
+@keyframes letterOpen {
+	0% {
+		transform: scale(0.86) rotateY(-22deg);
+	}
+	60% {
+		transform: scale(1.05) rotateY(8deg);
+	}
+	100% {
+		transform: none;
+	}
+}
+.presentCardSeal {
+	position: absolute;
+	top: 12px;
+	left: calc(50% - 17px);
+	display: grid;
+	place-items: center;
+	width: 34px;
+	height: 34px;
+	border-radius: 50%;
+	color: #fbe7af;
+	background: #9c2631;
+	box-shadow: 0 3px 4px #5d2f2f66;
+}
+.presentCard h3 {
+	font-family: Georgia, serif;
+	font-size: 1.35rem;
+}
+.presentCardItem {
+	padding: 12px;
+	background: #fff8e8;
+	border-radius: 6px;
+	font-weight: 800;
+}
+.presentSentList {
+	display: grid;
+	gap: 9px;
+}
+.presentSentList > div {
+	display: flex;
+	justify-content: space-between;
+	gap: 10px;
+	flex-wrap: wrap;
+	padding: 12px 16px;
+	background: #331e20bb;
+	border: 1px solid #8f5252;
+	border-radius: 7px;
+}
+.presentSentList small {
+	flex-basis: 100%;
+}
+
+.presentAdminClock,
+.presentAdminRow {
+	padding: 16px;
+	margin: 14px 0;
+	border: 1px solid #8f6660;
+	border-radius: 8px;
+	background: #281f20;
+}
+.presentAdminClock input,
+.presentAdminRow input {
+	padding: 9px;
+	color: #241919;
+}
+.presentAdminClock form,
+.presentAdminActions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px;
+}
+.presentAdminSearch {
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+.presentAdminSearch input {
+	padding: 9px;
+}
+.presentAdminRow p {
+	margin: 7px 0;
+}
+.presentAdminRow button,
+.presentAdminClock button {
+	margin: 3px;
+	padding: 8px 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.presentEnvelope,
+	.presentPaper,
+	.presentEnvelopeFlap,
+	.presentCard {
+		transition: none;
+		animation: none;
+	}
+}

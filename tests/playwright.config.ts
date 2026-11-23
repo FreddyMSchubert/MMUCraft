@@ -13,12 +13,15 @@ export default defineConfig({
 		baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'http://127.0.0.1:3100',
 		trace: 'retain-on-failure',
 		screenshot: 'only-on-failure',
-		video: 'retain-on-failure',
+		video: process.env.PLAYWRIGHT_USE_CHROME ? 'off' : 'retain-on-failure',
 	},
 	projects: [
 		{
 			name: 'chromium',
-			use: { ...devices['Desktop Chrome'] },
+			use: {
+				...devices['Desktop Chrome'],
+				channel: process.env.PLAYWRIGHT_USE_CHROME ? 'chrome' : undefined,
+			},
 		},
 	],
 });

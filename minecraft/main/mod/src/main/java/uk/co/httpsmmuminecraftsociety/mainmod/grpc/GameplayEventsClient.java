@@ -31,6 +31,11 @@ final class GameplayEventsClient {
         gameplayEvents = null;
     }
 
+    CompletableFuture<PresentJoinStatusResponse> getPresentJoinStatus(String username) {
+        return call(client -> client.withDeadlineAfter(5, TimeUnit.SECONDS).getPresentJoinStatus(
+                PresentPlayerRequest.newBuilder().setMinecraftUsername(username).build()));
+    }
+
     CompletableFuture<BigBossStateResponse> bigBossHeartbeat(BigBossHeartbeatRequest request) {
         return call(client -> client.withDeadlineAfter(5, TimeUnit.SECONDS).bigBossHeartbeat(request));
     }

@@ -3,6 +3,8 @@ package uk.co.httpsmmuminecraftsociety.mainmod.grpc;
 import io.grpc.BindableService;
 import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
 import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 import uk.co.httpsmmuminecraftsociety.mainmod.magic.MagicFoodEffects;
@@ -16,6 +18,20 @@ public final class GameplayGrpcService extends GrpcHandler {
     private final GameplayEventsClient eventsClient = new GameplayEventsClient();
 
     private GameplayGrpcService() {}
+
+    public static void notifyPresentsOnJoin(net.minecraft.server.level.ServerPlayer player) {
+        INSTANCE.eventsClient.getPresentJoinStatus(player.getName().getString()).thenAccept(status -> {
+            var server = player.level().getServer();
+            if (server == null) return;
+            server.execute(() -> {
+                if (player.hasDisconnected() || status.getPendingCount() == 0) return;
+                player.sendSystemMessage(Component.literal("Christmas presents are here! ")
+                        .withStyle(ChatFormatting.RED)
+                        .append(Component.literal("Check the Presents tab to open yours.")
+                                .withStyle(ChatFormatting.GREEN)));
+            });
+        }).exceptionally(error -> null);
+    }
 
     public static CompletableFuture<BigBossStateResponse> bigBossHeartbeat(BigBossHeartbeatRequest request) {
         return INSTANCE.eventsClient.bigBossHeartbeat(request);
@@ -159,6 +175,23 @@ public final class GameplayGrpcService extends GrpcHandler {
     }
 
 private final class GameplayControlEndpoint extends GameplayControlGrpc.GameplayControlImplBase {
+        @Override
+        public void previewPresentHand(PresentPlayerRequest request, StreamObserver<PresentItemResponse> responseObserver) {
+            callOnMainThread(() -> GameplayPresentOperations.preview(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
+        public void capturePresentHand(CapturePresentRequest request, StreamObserver<PresentItemResponse> responseObserver) {
+            callOnMainThread(() -> GameplayPresentOperations.capture(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
+
+        @Override
+        public void deliverPresentItem(DeliverPresentRequest request, StreamObserver<DeliverPresentResponse> responseObserver) {
+            callOnMainThread(() -> GameplayPresentOperations.deliver(request))
+                    .whenComplete((response, error) -> complete(responseObserver, response, error));
+        }
         @Override
         public void broadcastBigBossNotice(BigBossNoticeRequest request,
                                            StreamObserver<BigBossNoticeResponse> responseObserver) {

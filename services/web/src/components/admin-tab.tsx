@@ -24,6 +24,7 @@ import { DucksAdminSection } from './admin/ducks-admin-section';
 import { BuildEventsAdminSection } from './admin/build-events-admin-section';
 import { AdventAdminSection } from './admin/advent-admin-section';
 import { BigBossAdminSection } from './admin/big-boss-admin-section';
+import { PresentsAdminSection } from './admin/presents-admin-section';
 
 export function AdminTab({
 	isSuperAdmin,
@@ -54,6 +55,7 @@ export function AdminTab({
 			{controller.activeSection === 'advent' && (
 				<AdventAdminSection isSuperAdmin={isSuperAdmin} />
 			)}
+			{controller.activeSection === 'presents' && <PresentsAdminSection />}
 			{controller.activeSection === 'build-events' && (
 				<BuildEventsAdminSection subroute={subroute ?? []} />
 			)}

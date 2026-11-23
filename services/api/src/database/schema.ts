@@ -960,6 +960,38 @@ export const adventSecretClaims = sqliteTable(
 	],
 );
 
+export const christmasPresents = sqliteTable(
+	'christmas_presents',
+	{
+		id: text('id').primaryKey(),
+		sender_user_id: integer('sender_user_id')
+			.notNull()
+			.references(() => users.id),
+		recipient_user_id: integer('recipient_user_id').references(() => users.id),
+		anonymous: integer('anonymous').notNull().default(0),
+		title: text('title'),
+		item_data: text('item_data'),
+		item_name: text('item_name'),
+		item_count: integer('item_count'),
+		status: text('status').notNull().default('draft'),
+		admin_reason: text('admin_reason'),
+		created_at_unix_ms: integer('created_at_unix_ms').notNull(),
+		sent_at_unix_ms: integer('sent_at_unix_ms'),
+		opened_at_unix_ms: integer('opened_at_unix_ms'),
+		claimed_at_unix_ms: integer('claimed_at_unix_ms'),
+		admin_copy_at_unix_ms: integer('admin_copy_at_unix_ms'),
+	},
+	(table) => [
+		index('christmas_presents_sender_idx').on(table.sender_user_id),
+		index('christmas_presents_recipient_idx').on(table.recipient_user_id),
+	],
+);
+
+export const christmasPresentSettings = sqliteTable('christmas_present_settings', {
+	id: integer('id').primaryKey(),
+	simulated_at_unix_ms: integer('simulated_at_unix_ms'),
+});
+
 export type UserRow = typeof users.$inferSelect;
 export type SessionRow = typeof sessions.$inferSelect;
 export type PlayerBanRow = typeof playerBans.$inferSelect;
@@ -996,6 +1028,8 @@ export type VelocityScheduleRow = typeof velocitySchedules.$inferSelect;
 export type SurprisingSaturdayEventRow = typeof surprisingSaturdayEvents.$inferSelect;
 
 export const schema = {
+	christmasPresents,
+	christmasPresentSettings,
 	adventLayouts,
 	adventClaims,
 	adventSecrets,

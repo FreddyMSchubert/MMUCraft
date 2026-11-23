@@ -8,6 +8,7 @@ import { SitePage } from '@/components/site-page';
 import { AdminTab } from '@/components/admin-tab';
 import { DailiesTab } from '@/components/dailies-tab';
 import { AdventTab } from '@/components/advent-tab';
+import { PresentsTab } from '@/components/presents-tab';
 import { Snowfall } from '@/components/snowfall';
 import { londonAdventDay } from '@/lib/advent';
 import { KnowledgeTab } from '@/components/knowledge-tab';
@@ -49,6 +50,7 @@ interface OnlinePlayer {
 type TabId =
 	| 'dailies'
 	| 'advent'
+	| 'presents'
 	| 'knowledge'
 	| 'charms'
 	| 'shop'
@@ -72,6 +74,7 @@ interface TabLink {
 const TAB_IDS = new Set<TabId>([
 	'dailies',
 	'advent',
+	'presents',
 	'knowledge',
 	'charms',
 	'shop',
@@ -92,6 +95,7 @@ const TAB_LINKS: TabLink[] = [
 	{ id: 'knowledge', label: 'Knowledge', emoji: '📖', href: '/play/knowledge' },
 	{ id: 'dailies', label: 'Dailies', emoji: '📋', href: '/play/dailies' },
 	{ id: 'advent', label: 'Advent Calendar', emoji: '🎄', href: '/play/advent' },
+	{ id: 'presents', label: 'Presents', emoji: '🎁', href: '/play/presents' },
 	{ id: 'charms', label: 'Charms', emoji: '✨', href: '/play/charms' },
 	{ id: 'shop', label: 'Shop', emoji: '🛍️', href: '/play/shop' },
 	{ id: 'claims', label: 'Claims', emoji: '🔒', href: '/play/claims' },
@@ -130,6 +134,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	const [bossUsername, setBossUsername] = useState('');
 	const [bossEnabled, setBossEnabled] = useState<boolean | null>(null);
 	const [adventVisible, setAdventVisible] = useState(() => londonAdventDay() > 0);
+	const [presentsVisible, setPresentsVisible] = useState<boolean | null>(null);
 	const [snowVisible, setSnowVisible] = useState(() => Date.now() < SNOW_END_UNIX_MS);
 	const [ducksEnabled, setDucksEnabled] = useState<boolean | null>(null);
 	const [onlinePlayers, setOnlinePlayers] = useState<OnlinePlayer[] | null>(null);
@@ -166,7 +171,8 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 					(tab.id !== 'membership' || user?.canBecomeMember === true) &&
 					(tab.id !== 'ducks' || ducksEnabled === true) &&
 					(tab.id !== 'big-boss' || bossEnabled === true) &&
-					(tab.id !== 'advent' || adventVisible),
+					(tab.id !== 'advent' || adventVisible) &&
+					(tab.id !== 'presents' || presentsVisible),
 			),
 		[
 			hasLiveEvent,
@@ -175,8 +181,31 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 			bossEnabled,
 			user?.canBecomeMember,
 			adventVisible,
+			presentsVisible,
 		],
 	);
+
+	useEffect(() => {
+		if (!user) return;
+		let cancelled = false;
+		const refresh = () =>
+			void fetch('/api/presents', { cache: 'no-store' })
+				.then((response) =>
+					response.ok ? (response.json() as Promise<{ visible?: boolean }>) : null,
+				)
+				.then((state: { visible?: boolean } | null) => {
+					if (!cancelled) setPresentsVisible(state?.visible === true);
+				})
+				.catch(() => {
+					if (!cancelled) setPresentsVisible(null);
+				});
+		refresh();
+		const timer = window.setInterval(refresh, 30_000);
+		return () => {
+			cancelled = true;
+			window.clearInterval(timer);
+		};
+	}, [user]);
 
 	useEffect(() => {
 		if (!user) return;
@@ -395,6 +424,10 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 			router.replace('/play/knowledge');
 			return;
 		}
+		if (presentsVisible === false && activeTab === 'presents') {
+			router.replace('/play/knowledge');
+			return;
+		}
 		if (ducksEnabled === false && activeTab === 'admin' && routeDetail === 'ducks') {
 			router.replace('/play/admin/members');
 			return;
@@ -425,6 +458,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 		else if (
 			activeTab === 'dailies' ||
 			activeTab === 'advent' ||
+			activeTab === 'presents' ||
 			activeTab === 'charms' ||
 			activeTab === 'claims' ||
 			activeTab === 'ducks' ||
@@ -441,6 +475,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 	}, [
 		activeTab,
 		adventVisible,
+		presentsVisible,
 		ducksEnabled,
 		bossEnabled,
 		pathname,
@@ -741,6 +776,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 						<div className="dashboardPanel">
 							{activeTab === 'dailies' && <DailiesTab />}
 							{activeTab === 'advent' && adventVisible && <AdventTab />}
+							{activeTab === 'presents' && presentsVisible && <PresentsTab />}
 							{activeTab === 'event' && (
 								<EventsTab
 									key={routeDetail ?? 'overview'}

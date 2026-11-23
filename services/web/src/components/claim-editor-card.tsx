@@ -5,6 +5,7 @@ import { useState, type CSSProperties, type ReactNode } from 'react';
 import { PlayerName, type PlayerEmoji } from '@/components/player-name';
 import { PlayerSelector } from '@/components/player-selector';
 import { useSiteAlert } from '@/components/site-alert';
+import { formatDimension } from '@/lib/dimension-name';
 
 export interface ClaimPerson {
 	id: number;
@@ -487,10 +488,6 @@ function ClaimAppearanceForm({
 			</button>
 		</form>
 	);
-}
-
-export function formatDimension(dimension: string) {
-	return dimension.replace('minecraft:', '').replaceAll('_', ' ');
 }
 
 export function formatClaimArea(

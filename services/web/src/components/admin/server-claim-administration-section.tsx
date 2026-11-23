@@ -4,12 +4,12 @@ import { useCallback, useEffect, useState } from 'react';
 import {
 	ClaimEditorCard,
 	formatClaimArea,
-	formatDimension,
 	type EditableClaim,
 	type ClaimSettingsChange,
 } from '@/components/claim-editor-card';
 import { useSiteAlert } from '@/components/site-alert';
 import { apiMessage } from '@/lib/api-response';
+import { formatDimension } from '@/lib/dimension-name';
 import type { AdminTabController } from './use-admin-tab-controller';
 
 interface CurrentChunk {
@@ -131,7 +131,7 @@ export function ServerClaimAdministrationSection({
 		if (
 			!(await confirm({
 				title: 'Delete this server claim?',
-				message: `“${claim.name}” at ${formatClaimArea(claim)} in ${formatDimension(claim.dimension)} will lose all protection.`,
+				message: `“${claim.name}” at ${formatClaimArea(claim)} in the ${formatDimension(claim.dimension)} will lose all protection.`,
 				confirmLabel: 'Delete claim',
 				confirmTone: 'danger',
 				tone: 'danger',
@@ -417,7 +417,7 @@ function describeArea(area: AreaInput) {
 	const x2 = Math.max(area.chunkX, area.oppositeChunkX);
 	const z2 = Math.max(area.chunkZ, area.oppositeChunkZ);
 	const count = (x2 - x1 + 1) * (z2 - z1 + 1);
-	return `${formatClaimArea({ chunkX: x1, chunkZ: z1, chunkXEnd: x2, chunkZEnd: z2 })} in ${formatDimension(area.dimension)} (${count} ${count === 1 ? 'chunk' : 'chunks'})`;
+	return `${formatClaimArea({ chunkX: x1, chunkZ: z1, chunkXEnd: x2, chunkZEnd: z2 })} in the ${formatDimension(area.dimension)} (${count} ${count === 1 ? 'chunk' : 'chunks'})`;
 }
 
 async function request<T = Record<string, unknown>>(url: string, init?: RequestInit): Promise<T> {

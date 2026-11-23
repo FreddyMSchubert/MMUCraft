@@ -14,6 +14,7 @@ import { PlayerName } from '@/components/player-name';
 import { fuzzyFilter, PlayerSelector } from '@/components/player-selector';
 import { useSiteAlert } from '@/components/site-alert';
 import { apiMessage } from '@/lib/api-response';
+import { formatDimension } from '@/lib/dimension-name';
 import type { AdminClaim } from './admin-data.types';
 import type { AdminTabController } from './use-admin-tab-controller';
 
@@ -205,9 +206,7 @@ export function ClaimAdministrationSection({ controller }: { controller: AdminTa
 												/>
 											</td>
 											<td>{claim.name}</td>
-											<td>
-												<code>{claim.dimension}</code>
-											</td>
+											<td>{formatDimension(claim.dimension)}</td>
 											<td>
 												<code>
 													({claim.chunkX}, {claim.chunkZ})

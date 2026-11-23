@@ -165,7 +165,21 @@ public final class BigBossManager {
                     .setVictimSessionId(sessionId).setVictimQualifyingMs(sessionQualifyingMs)
                     .setVictimReignStartedAtUnixMs(reignStarted)
                     .build()).get(6, TimeUnit.SECONDS);
-            if (!response.getTransferred()) return false;
+            if (!response.getTransferred()) {
+                String reason = switch (response.getBlockedReason()) {
+                    case "opted_out" -> "You killed the Big Boss, but you opted out of holding the title in your profile. They keep the crown.";
+                    case "cooldown" -> "You killed the Big Boss, but you held the title within the last hour. They keep the crown.";
+                    case "not_linked" -> "You killed the Big Boss, but you must link your Minecraft account to take the title. They keep the crown.";
+                    case "ineligible" -> "You killed the Big Boss, but your account cannot hold the title. They keep the crown.";
+                    default -> "";
+                };
+                if (!reason.isEmpty()) {
+                    killer.sendSystemMessage(linked(reason));
+                    victim.sendSystemMessage(linked("You are still the Big Boss. "
+                            + killer.getName().getString() + " could not take the title."));
+                }
+                return false;
+            }
             victim.addTag(KEEP_TAG);
             deathTransfers.put(victim.getUUID(), new Transfer(killer.getName().getString(),
                     response.getKillerWinCount(), response.getVictimHadKillWonReign(),

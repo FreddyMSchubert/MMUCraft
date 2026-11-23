@@ -31,6 +31,19 @@ const COOLDOWN_MS = 60 * 60_000;
 const BIG_BOSS_URL = '/play/big-boss';
 const USERNAME = /^[A-Za-z0-9_]{3,16}$/;
 
+function dimensionName(dimension: string) {
+	switch (dimension) {
+		case 'minecraft:overworld':
+			return 'the Overworld';
+		case 'minecraft:the_nether':
+			return 'the Nether';
+		case 'minecraft:the_end':
+			return 'the End';
+		default:
+			return dimension;
+	}
+}
+
 function offlinePosition(username: string, x: number, y: number, z: number) {
 	const day = new Intl.DateTimeFormat('en-CA', {
 		year: 'numeric',
@@ -228,18 +241,40 @@ export class BigBossService implements OnModuleInit, OnModuleDestroy {
 	}
 
 	private eligible(username: string, now: number) {
-		if (!USERNAME.test(username) || username.toLowerCase() === 'mmu_admin') return false;
+		return this.ineligibleReason(username, now) === '';
+	}
+
+	private ineligibleReason(username: string, now: number) {
+		if (!USERNAME.test(username) || username.toLowerCase() === 'mmu_admin') return 'ineligible';
 		const account = this.account(username);
-		if (!account) return false;
+		if (!account) return 'not_linked';
 		const profile = this.database.connection
 			.select({ optedOut: playerProfiles.big_boss_opt_out })
 			.from(playerProfiles)
 			.where(eq(playerProfiles.user_id, account.id))
 			.get();
-		return (
-			profile?.optedOut !== 1 &&
-			now - this.progress(account.minecraft_username).last_held_at_unix_ms >= COOLDOWN_MS
-		);
+		if (profile?.optedOut === 1) return 'opted_out';
+		if (now - this.progress(account.minecraft_username).last_held_at_unix_ms < COOLDOWN_MS)
+			return 'cooldown';
+		return '';
+	}
+
+	teleportTarget() {
+		this.requireOpen();
+		const state = this.state();
+		return {
+			available:
+				!!state.holder_username &&
+				!!state.last_dimension &&
+				state.last_x !== null &&
+				state.last_y !== null &&
+				state.last_z !== null,
+			holder_username: state.holder_username ?? '',
+			dimension: state.last_dimension ?? '',
+			x: state.last_x ?? 0,
+			y: state.last_y ?? 0,
+			z: state.last_z ?? 0,
+		};
 	}
 
 	private response(username = '') {
@@ -364,7 +399,7 @@ export class BigBossService implements OnModuleInit, OnModuleDestroy {
 				.where(eq(bigBossState.id, 1))
 				.run();
 			if (before?.toLowerCase() === username.toLowerCase()) {
-				const message = `${state.holder_username}, the Big Boss, joined at ${input.x}, ${input.y}, ${input.z} in ${input.dimension}. Go get them: ${BIG_BOSS_URL}`;
+				const message = `${state.holder_username}, the Big Boss, joined at ${input.x}, ${input.y}, ${input.z} in ${dimensionName(input.dimension)}. Go get them: ${BIG_BOSS_URL}`;
 				void this.discord.publishServer('big_boss', message).catch((error: unknown) => {
 					this.logger.warn(`Could not announce Big Boss join: ${String(error)}`);
 				});
@@ -464,12 +499,12 @@ export class BigBossService implements OnModuleInit, OnModuleDestroy {
 		}
 		const now = Date.now();
 		const state = this.state();
-		if (
-			state.holder_username?.toLowerCase() !== victim.toLowerCase() ||
-			!this.eligible(killer, now)
-		)
+		const victimIsBoss = state.holder_username?.toLowerCase() === victim.toLowerCase();
+		const blockedReason = victimIsBoss ? this.ineligibleReason(killer, now) : '';
+		if (!victimIsBoss || blockedReason)
 			return {
 				transferred: false,
+				blocked_reason: blockedReason,
 				holder_username: state.holder_username ?? '',
 				reign_started_at_unix_ms: state.reign_started_at_unix_ms ?? 0,
 				killer_win_count: 0,

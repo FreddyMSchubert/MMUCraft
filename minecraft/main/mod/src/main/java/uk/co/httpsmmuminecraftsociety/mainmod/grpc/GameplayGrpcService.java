@@ -29,6 +29,10 @@ public final class GameplayGrpcService extends GrpcHandler {
         return INSTANCE.eventsClient.bigBossLeave(username);
     }
 
+    public static CompletableFuture<BigBossTargetResponse> getBigBossTarget() {
+        return INSTANCE.eventsClient.getBigBossTarget();
+    }
+
     public static CompletableFuture<BigBossKillResponse> recordBigBossKill(BigBossKillRequest request) {
         return INSTANCE.eventsClient.recordBigBossKill(request);
     }

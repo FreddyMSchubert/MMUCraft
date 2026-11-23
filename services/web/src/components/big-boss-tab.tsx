@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
+import { formatDimension } from '@/lib/dimension-name';
 
 const TIME = new Intl.DateTimeFormat('en-GB', {
 	day: 'numeric',
@@ -297,32 +298,42 @@ export function BigBossTab() {
 				</button>
 				<h2>The crown is yours to take.</h2>
 				<p className="bigBossRulesLead">
-					One player rules as the Big Boss. Kill them and claim the title. Your name and
-					location go on display for the whole server. Hold the crown for as long as you
-					can.
-				</p>
-				<h3>How do I keep it?</h3>
-				<p>
-					Play for 30 minutes outside claims each day. The day ends at 4 am London time. A
-					reign lasts at most seven days.
-				</p>
-				<h3>Why might a kill not pass the title?</h3>
-				<p>
-					If you opted out in your profile or held the crown within the last hour, the
-					kill is a normal death.
+					One player wears the crown. Kill the Big Boss and the title passes to you. Then
+					it is your turn to survive the entire server coming for you.
 				</p>
 				<h3>How do I find the Big Boss?</h3>
+				<ol>
+					<li>Watch this page. It shows their location.</li>
+					<li>
+						Drinking a Potion of Resonance with another in your offhand will teleport
+						you close to them, even if they are offline.
+					</li>
+				</ol>
+				<h3>Why not hide in a claim?</h3>
 				<p>
-					Watch this page, or drink a Potion of Resonance with another in your offhand to
-					travel near them. The potion cannot find them while they are offline or inside a
-					protected claim. Claims still stop projectiles, but they cannot stop a player
-					from striking the Big Boss.
+					Other players can strike the Big Boss in melee combat, even inside a claim. The
+					big boss must also spend at least 30 minutes a day outside of claims in order to
+					keep their title, this is to give people a chance to hunt them down.
 				</p>
-				<h3>What happens to my gear?</h3>
-				<p>
-					When a kill passes the title, the former boss keeps their inventory and
-					experience. Their head and soul still drop.
-				</p>
+				<h3>Worth knowing</h3>
+				<ul>
+					<li>The day ends at 4 am London time.</li>
+					<li>A reign lasts at most seven days.</li>
+					<li>You can opt out of ever becoming the big boss in your profile settings.</li>
+					<li>
+						You cannot take the title through a kill if you opted out in your profile or
+						held it within the last hour.
+					</li>
+					<li>
+						When a kill passes the title, the former Big Boss keeps their items and
+						experience. Their head and soul still drop.
+					</li>
+					<li>
+						The big boss cannot hide their locator bar position from others using
+						methods such as carved pumpkins or potions of invisibility, they will always
+						be shown to others.
+					</li>
+				</ul>
 			</dialog>
 			{error && (
 				<p role="alert" className="bigBossError">
@@ -349,7 +360,7 @@ export function BigBossTab() {
 										<span>
 											{state.online ? '' : 'Roughly '}
 											{position.x}, {position.y}, {position.z} ·{' '}
-											{position.dimension.replace('minecraft:', '')}
+											{formatDimension(position.dimension)}
 										</span>
 									)}
 									{state.online && position && (

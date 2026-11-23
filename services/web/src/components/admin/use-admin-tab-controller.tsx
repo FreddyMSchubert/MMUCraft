@@ -5,6 +5,7 @@ import { PlayerName } from '@/components/player-name';
 import { DabloonAmount } from '@/components/dabloon-amount';
 import { useSiteAlert } from '@/components/site-alert';
 import { formatDabloons, formatDabloonWord } from '@/lib/dabloons';
+import { formatDimension } from '@/lib/dimension-name';
 import {
 	apiBody,
 	apiMessage,
@@ -455,7 +456,7 @@ export function useAdminTabController({
 		if (
 			!(await confirm({
 				title: 'Delete this player claim?',
-				message: `${claim.minecraftUsername}’s claim “${claim.name}” at ${claim.dimension} (${claim.chunkX}, ${claim.chunkZ}) will lose all protection. The player will not receive a refund.`,
+				message: `${claim.minecraftUsername}’s claim “${claim.name}” in the ${formatDimension(claim.dimension)} (${claim.chunkX}, ${claim.chunkZ}) will lose all protection. The player will not receive a refund.`,
 				confirmLabel: 'Delete claim',
 				confirmTone: 'danger',
 				tone: 'danger',

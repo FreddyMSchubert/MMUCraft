@@ -28,6 +28,7 @@ service GameplayEvents {
   rpc BigBossHeartbeat(BigBossHeartbeatRequest) returns (BigBossStateResponse);
   rpc BigBossJoin(BigBossPlayerRequest) returns (BigBossStateResponse);
   rpc BigBossLeave(BigBossPlayerRequest) returns (BigBossStateResponse);
+  rpc GetBigBossTarget(GetBigBossTargetRequest) returns (BigBossTargetResponse);
   rpc RecordBigBossKill(BigBossKillRequest) returns (BigBossKillResponse);
 }
 
@@ -97,6 +98,17 @@ message BigBossStateResponse {
   bool has_lost_kill_won_reign = 5;
 }
 
+message GetBigBossTargetRequest {}
+
+message BigBossTargetResponse {
+  bool available = 1;
+  string holder_username = 2;
+  string dimension = 3;
+  sint32 x = 4;
+  sint32 y = 5;
+  sint32 z = 6;
+}
+
 message BigBossKillRequest {
   string event_id = 1;
   string victim_username = 2;
@@ -114,6 +126,7 @@ message BigBossKillResponse {
   int32 killer_win_count = 4;
   bool victim_had_kill_won_reign = 5;
   int64 victim_total_qualifying_ms = 6;
+  string blocked_reason = 7;
 }
 
 message BigBossNoticeRequest {

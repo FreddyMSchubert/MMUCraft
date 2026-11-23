@@ -7,6 +7,7 @@ import { createPortal } from 'react-dom';
 import { PlayerName, type PlayerEmoji } from './player-name';
 import { useSiteAlert } from './site-alert';
 import { EventDescription, ObfuscatedEventName } from './surprising-saturday-tab';
+import { formatDimension } from '@/lib/dimension-name';
 
 export type BuildStage = 'upcoming' | 'building' | 'preparing' | 'voting' | 'visiting' | 'ended';
 
@@ -116,7 +117,7 @@ function remainingTime(target: number, now: number) {
 }
 
 function buildCoordinates(position: NonNullable<BuildSubmission['position']>) {
-	return `${position.dimension} at ${position.x}, ${position.y}, ${position.z}`;
+	return `${formatDimension(position.dimension)} at ${position.x}, ${position.y}, ${position.z}`;
 }
 
 export function BuildTeam({ members }: { members: BuildMember[] }) {

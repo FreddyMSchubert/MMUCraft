@@ -400,7 +400,8 @@ public final class PlayerStatsSync {
     }
 
     public static void refreshLocatorColor(ServerPlayer player) {
-        int color = PlayerDisguises.locatorColor(player, colorFor(player));
+        int color = BigBossManager.isBoss(player) ? BigBossManager.COLOR
+                : PlayerDisguises.locatorColor(player, colorFor(player));
         if (player.waypointIcon().color.equals(Optional.of(color))) return;
         var waypoints = player.level().getWaypointManager();
         waypoints.untrackWaypoint(player);
@@ -532,6 +533,9 @@ public final class PlayerStatsSync {
                 team.setPlayerSuffix(Component.empty());
             }
             applyColor(player, colorByPlayer.getOrDefault(player.getUUID(), PlayerColors.defaultColor(player.getUUID())));
+            var waypoints = player.level().getWaypointManager();
+            waypoints.untrackWaypoint(player);
+            if (player.isTransmittingWaypoint()) waypoints.trackWaypoint(player);
         }
         refreshPlayerList(server);
     }

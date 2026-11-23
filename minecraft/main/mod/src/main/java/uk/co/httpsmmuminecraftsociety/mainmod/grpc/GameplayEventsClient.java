@@ -45,6 +45,11 @@ final class GameplayEventsClient {
                 BigBossPlayerRequest.newBuilder().setMinecraftUsername(username).build()));
     }
 
+    CompletableFuture<BigBossTargetResponse> getBigBossTarget() {
+        return call(client -> client.withDeadlineAfter(5, TimeUnit.SECONDS).getBigBossTarget(
+                GetBigBossTargetRequest.getDefaultInstance()));
+    }
+
     CompletableFuture<BigBossKillResponse> recordBigBossKill(BigBossKillRequest request) {
         return call(client -> client.withDeadlineAfter(5, TimeUnit.SECONDS).recordBigBossKill(request));
     }

@@ -5,7 +5,6 @@ import {
 	ClaimEditorCard,
 	ClaimMembersEditor,
 	ClaimMembersSummary,
-	formatDimension,
 	type ClaimPerson,
 	type ClaimCopySource,
 	type ClaimSettingsChange,
@@ -15,6 +14,7 @@ import { DabloonAmount } from '@/components/dabloon-amount';
 import { useSiteAlert } from '@/components/site-alert';
 import { apiMessage } from '@/lib/api-response';
 import { formatDabloons, formatDabloonWord } from '@/lib/dabloons';
+import { formatDimension } from '@/lib/dimension-name';
 
 interface Claim extends EditableClaim {
 	members: ClaimPerson[];
@@ -90,7 +90,7 @@ export function ClaimsTab() {
 			const current = await request<CurrentChunkResponse>('/api/claims/current');
 			const confirmed = await confirm({
 				title: 'Buy this chunk claim?',
-				message: `Chunk ${current.chunkX}, ${current.chunkZ} in ${formatDimension(current.dimension)} costs ${formatDabloonWord(current.priceDabloons)}. Your current balance is ${formatDabloonWord(current.balanceDabloons)}.\n\nStay online and remain inside this chunk until the purchase finishes.`,
+				message: `Chunk ${current.chunkX}, ${current.chunkZ} in the ${formatDimension(current.dimension)} costs ${formatDabloonWord(current.priceDabloons)}. Your current balance is ${formatDabloonWord(current.balanceDabloons)}.\n\nStay online and remain inside this chunk until the purchase finishes.`,
 				confirmLabel: `Buy for ${formatDabloons(current.priceDabloons)}`,
 			});
 			if (!confirmed) return;

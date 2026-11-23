@@ -102,6 +102,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			BigBossHeartbeat: this.bigBossHeartbeat.bind(this),
 			BigBossJoin: this.bigBossJoin.bind(this),
 			BigBossLeave: this.bigBossLeave.bind(this),
+			GetBigBossTarget: this.getBigBossTarget.bind(this),
 			RecordBigBossKill: this.recordBigBossKill.bind(this),
 		});
 	}
@@ -155,6 +156,20 @@ export class GameplayGrpcService implements OnModuleInit {
 		callback: UnaryCallback<ReturnType<BigBossService['left']>>,
 	) {
 		callback(null, this.bigBoss.left(call.request.minecraft_username));
+	}
+
+	private getBigBossTarget(
+		_call: grpc.ServerUnaryCall<object, object>,
+		callback: UnaryCallback<ReturnType<BigBossService['teleportTarget']>>,
+	) {
+		try {
+			callback(null, this.bigBoss.teleportTarget());
+		} catch (error) {
+			callback(
+				error as grpc.ServiceError,
+				{} as ReturnType<BigBossService['teleportTarget']>,
+			);
+		}
 	}
 
 	private recordBigBossKill(

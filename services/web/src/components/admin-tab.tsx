@@ -23,6 +23,7 @@ import { MinecraftCacheAdminSection } from './admin/minecraft-cache-admin-sectio
 import { DucksAdminSection } from './admin/ducks-admin-section';
 import { BuildEventsAdminSection } from './admin/build-events-admin-section';
 import { AdventAdminSection } from './admin/advent-admin-section';
+import { BigBossAdminSection } from './admin/big-boss-admin-section';
 
 export function AdminTab({
 	isSuperAdmin,
@@ -44,6 +45,9 @@ export function AdminTab({
 				ducksEnabled={ducksEnabled}
 			/>
 			{controller.activeSection === 'drops' && <DropAnalyticsAdminSection />}
+			{controller.activeSection === 'big-boss' && (
+				<BigBossAdminSection players={controller.players} />
+			)}
 			{controller.activeSection === 'advent' && (
 				<AdventAdminSection isSuperAdmin={isSuperAdmin} />
 			)}

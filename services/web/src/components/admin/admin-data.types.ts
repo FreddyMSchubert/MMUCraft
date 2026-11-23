@@ -2,6 +2,7 @@ import type { PlayerEmoji } from '@/components/player-name';
 
 export type AdminSection =
 	| 'advent'
+	| 'big-boss'
 	| 'drops'
 	| 'members'
 	| 'pending-memberships'
@@ -117,6 +118,7 @@ export const ADMIN_PAGE_SIZE = 42;
 
 export function normalizeAdminSection(section: string | undefined): AdminSection {
 	return section === 'drops' ||
+		section === 'big-boss' ||
 		section === 'advent' ||
 		section === 'pending-memberships' ||
 		section === 'membership-import' ||

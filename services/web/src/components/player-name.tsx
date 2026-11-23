@@ -26,15 +26,10 @@ export function PlayerName({
 }) {
 	const isBigBoss = useBigBossName().toLowerCase() === name.toLowerCase();
 	const nameEmojis = customEmojis.filter(({ showInName }) => showInName);
+	const emojis = `${isBigBoss ? '👑' : isCommittee ? '🛠️' : ''}${nameEmojis.map(({ emoji }) => emoji).join('')}`;
 	return (
 		<span className="playerName" style={playerNameStyle(isBigBoss ? '#B35CFF' : color)}>
-			{isBigBoss && <span className="bigBossNamePrefix">[The Big Boss] </span>}
-			{!isBigBoss && (isCommittee || nameEmojis.length > 0) && (
-				<>
-					{isCommittee ? '🛠️' : ''}
-					{nameEmojis.map(({ emoji }) => emoji).join('')}{' '}
-				</>
-			)}
+			{emojis && <>{emojis} </>}
 			{children ?? name}
 		</span>
 	);

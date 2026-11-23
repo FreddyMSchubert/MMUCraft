@@ -735,9 +735,7 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 							{activeTab === 'players' && (
 								<PlayersTab playerName={routeDetail} onSelectPlayer={openPlayer} />
 							)}
-							{activeTab === 'big-boss' && (
-								<BigBossTab isCommittee={user.isCommittee} />
-							)}
+							{activeTab === 'big-boss' && <BigBossTab />}
 							{activeTab === 'admin' && user.isCommittee && (
 								<AdminTab
 									isSuperAdmin={user.isSuperAdmin}

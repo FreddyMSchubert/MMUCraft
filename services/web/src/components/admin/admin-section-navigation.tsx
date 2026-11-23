@@ -8,6 +8,7 @@ const ADMIN_SECTIONS: { section: AdminSection; label: string }[] = [
 	{ section: 'membership-import', label: 'Import memberships' },
 	{ section: 'launch', label: 'Launch' },
 	{ section: 'announcements', label: 'Announcements' },
+	{ section: 'big-boss', label: 'Big Boss' },
 	{ section: 'emojis', label: 'Emojis' },
 	{ section: 'claims', label: 'Player claims' },
 	{ section: 'ducks', label: 'Ducks' },

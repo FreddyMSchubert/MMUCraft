@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Param, Post, Query } from '@nestjs/common';
 import { AuthSessionService } from '../auth/auth-session.service';
 import { BigBossService } from './big-boss.service';
 
@@ -19,6 +19,12 @@ export class BigBossController {
 	holder(@Headers('cookie') cookie: string | undefined) {
 		this.auth.requireSession(cookie);
 		return this.boss.holderName();
+	}
+
+	@Get('history')
+	history(@Headers('cookie') cookie: string | undefined, @Query('cursor') cursor?: string) {
+		this.auth.requireSession(cookie);
+		return this.boss.history(cursor);
 	}
 
 	@Get('admin/:username/warnings')

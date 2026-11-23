@@ -47,6 +47,7 @@ import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.LeverBlock;
 import net.minecraft.world.level.block.PoweredRailBlock;
 import net.minecraft.world.level.block.TrapDoorBlock;
+import uk.co.httpsmmuminecraftsociety.mainmod.bigboss.BigBossManager;
 import net.minecraft.world.Container;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
@@ -339,6 +340,7 @@ public final class ClaimsManager {
     }
 
     public static boolean allowEntityAttack(Player player, Entity entity) {
+        if (entity instanceof ServerPlayer target && BigBossManager.isBoss(target)) return true;
         int permission = entity instanceof LivingEntity living ? damagePermission(living)
                 : entity instanceof AbstractMinecart ? MINECARTS : OTHER_ENTITY_DAMAGE;
         return checkDirect(player, entity.level(), entity.blockPosition(), permission);
@@ -458,6 +460,8 @@ public final class ClaimsManager {
 
     private static boolean allowPlayerDamage(LivingEntity target, DamageSource source, float amount) {
         if (!(source.getEntity() instanceof ServerPlayer player)) return true;
+        if (target instanceof ServerPlayer victim && BigBossManager.isBoss(victim)
+                && source.getDirectEntity() == player) return true;
         boolean allowed = canPerform(player, target.level(), target.blockPosition(), damagePermission(target));
         if (!allowed) notifyDenied(player);
         return allowed;

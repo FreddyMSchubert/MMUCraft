@@ -31,6 +31,7 @@ export function useAdminSectionData(
 		if (
 			[
 				'members',
+				'big-boss',
 				'emojis',
 				'claims',
 				'whitelist',

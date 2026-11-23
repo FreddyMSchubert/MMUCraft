@@ -9,6 +9,16 @@ import { dabloonizeWords, formatDabloons } from '@/lib/dabloons';
 import { formatManchesterDateTime } from '@/lib/date-time';
 
 export function formatColumnValue(player: PlayerSummary, option: StatOption) {
+	if (option.key === 'boss.isBigBoss') return player.stats.bigBoss.isBigBoss ? 'Yes' : 'No';
+	if (option.key === 'boss.reigns') return formatNumber(player.stats.bigBoss.reigns);
+	if (option.key === 'boss.wins') return formatNumber(player.stats.bigBoss.wins);
+	if (option.key === 'boss.timeHeldMs')
+		return formatBossDuration(player.stats.bigBoss.timeHeldMs);
+	if (option.key === 'boss.qualifyingMs')
+		return formatBossDuration(player.stats.bigBoss.qualifyingMs);
+	if (option.key === 'boss.daysHeld') return player.stats.bigBoss.daysHeld.toFixed(2);
+	if (option.key === 'boss.lastHeldAtUnixMs')
+		return formatTimestamp(player.stats.bigBoss.lastHeldAtUnixMs);
 	if (option.key === 'profile.playerName') return player.minecraftUsername;
 	if (option.key === 'profile.isMember') return player.isMember ? 'Yes' : 'No';
 	if (option.key === 'profile.isCommittee') return player.isCommittee ? 'Yes' : 'No';
@@ -77,6 +87,13 @@ export function rankPlayers(sortedPlayers: PlayerSummary[], option: StatOption) 
 }
 
 export function getSortValue(player: PlayerSummary, option: StatOption): number | string | null {
+	if (option.key === 'boss.isBigBoss') return Number(player.stats.bigBoss.isBigBoss);
+	if (option.key === 'boss.reigns') return player.stats.bigBoss.reigns;
+	if (option.key === 'boss.wins') return player.stats.bigBoss.wins;
+	if (option.key === 'boss.timeHeldMs') return player.stats.bigBoss.timeHeldMs;
+	if (option.key === 'boss.daysHeld') return player.stats.bigBoss.daysHeld;
+	if (option.key === 'boss.qualifyingMs') return player.stats.bigBoss.qualifyingMs;
+	if (option.key === 'boss.lastHeldAtUnixMs') return player.stats.bigBoss.lastHeldAtUnixMs;
 	if (option.key === 'profile.playerName') return player.minecraftUsername;
 	if (option.key === 'profile.isMember') return player.isMember ? 1 : 0;
 	if (option.key === 'profile.isCommittee') return player.isCommittee ? 1 : 0;
@@ -97,6 +114,16 @@ export function getSortValue(player: PlayerSummary, option: StatOption): number 
 		return player.stats.minecraft.lastPlayedAtUnixMs;
 
 	return player.stats.minecraft.stats[option.key]?.value ?? 0;
+}
+
+export function formatBossDuration(ms: number) {
+	const minutes = Math.floor(ms / 60_000);
+	const days = Math.floor(minutes / 1440);
+	const hours = Math.floor((minutes % 1440) / 60);
+	const rest = minutes % 60;
+	return [days && `${days}d`, hours && `${hours}h`, (rest || (!days && !hours)) && `${rest}m`]
+		.filter(Boolean)
+		.join(' ');
 }
 
 export function deathsAndTotemPops(player: PlayerSummary) {
@@ -201,6 +228,11 @@ export function groupStatOptions(options: StatOption[]) {
 			key: 'dailies',
 			label: 'Dailies',
 			options: displayOptions.filter((option) => option.group === 'dailies'),
+		},
+		{
+			key: 'boss',
+			label: 'Big Boss',
+			options: displayOptions.filter((option) => option.group === 'boss'),
 		},
 		{
 			key: 'minecraft-session',

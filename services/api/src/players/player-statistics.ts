@@ -3,7 +3,7 @@ const STATS_VERSION = 1;
 export interface StatOption {
 	key: string;
 	label: string;
-	group: 'profile' | 'money' | 'fishing' | 'dailies' | 'minecraft';
+	group: 'profile' | 'money' | 'fishing' | 'dailies' | 'boss' | 'minecraft';
 	category?: string;
 }
 
@@ -27,6 +27,15 @@ export interface MinecraftProfile {
 
 export interface PlayerStats {
 	version: number;
+	bigBoss: {
+		isBigBoss: boolean;
+		reigns: number;
+		wins: number;
+		timeHeldMs: number;
+		daysHeld: number;
+		qualifyingMs: number;
+		lastHeldAtUnixMs: number | null;
+	};
 	money: {
 		earnedDabloons: number;
 		balanceDabloons: number | null;
@@ -116,6 +125,13 @@ const ENTITY_IDS = `
 
 const KNOWN_OPTIONS: StatOption[] = [
 	...PROFILE_OPTIONS,
+	{ key: 'boss.isBigBoss', label: 'Current Big Boss', group: 'boss' },
+	{ key: 'boss.reigns', label: 'Big Boss Reigns', group: 'boss' },
+	{ key: 'boss.wins', label: 'Big Boss Kills', group: 'boss' },
+	{ key: 'boss.timeHeldMs', label: 'Time as Big Boss', group: 'boss' },
+	{ key: 'boss.daysHeld', label: 'Days as Big Boss', group: 'boss' },
+	{ key: 'boss.qualifyingMs', label: 'Big Boss Play Time', group: 'boss' },
+	{ key: 'boss.lastHeldAtUnixMs', label: 'Last Reign Ended', group: 'boss' },
 	{ key: 'money.earnedDabloons', label: 'Dabloons Earned', group: 'money' },
 	{ key: 'unlocks.charms', label: 'Charms Unlocked', group: 'money' },
 	{ key: 'unlocks.cosmetics', label: 'Cosmetics Unlocked', group: 'money' },
@@ -209,6 +225,15 @@ export function normalizeMinecraftStat(
 export function defaultStats(): PlayerStats {
 	return {
 		version: STATS_VERSION,
+		bigBoss: {
+			isBigBoss: false,
+			reigns: 0,
+			wins: 0,
+			timeHeldMs: 0,
+			daysHeld: 0,
+			qualifyingMs: 0,
+			lastHeldAtUnixMs: null,
+		},
 		money: {
 			earnedDabloons: 0,
 			balanceDabloons: null,
@@ -369,5 +394,5 @@ function titleCase(value: string): string {
 }
 
 function groupRank(group: StatOption['group']): number {
-	return { profile: 0, money: 1, fishing: 2, dailies: 3, minecraft: 4 }[group];
+	return { profile: 0, money: 1, fishing: 2, dailies: 3, boss: 4, minecraft: 5 }[group];
 }

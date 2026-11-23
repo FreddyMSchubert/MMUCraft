@@ -13,6 +13,9 @@ import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.servic
 import {
 	DatabaseService,
 	UserRow,
+	bigBossProgress,
+	bigBossState,
+	bigBossTransitions,
 	dailyClaims,
 	duckAwards,
 	knowledgeUnlocks,
@@ -297,7 +300,12 @@ export class PlayersService {
 
 	private getStatsContext() {
 		const userRows = this.database.connection
-			.select({ id: users.id, email: users.email, isMember: users.is_member })
+			.select({
+				id: users.id,
+				email: users.email,
+				isMember: users.is_member,
+				username: users.minecraft_username,
+			})
 			.from(users)
 			.all();
 		const userIds = userRows.map((user) => user.id);
@@ -309,6 +317,44 @@ export class PlayersService {
 				.map((row) => [row.userId, normalizeStatsJson(row.json)] as const),
 		);
 		const stats = new Map(userIds.map((id) => [id, storedStats.get(id) ?? defaultStats()]));
+		const bossState = this.database.connection.select().from(bigBossState).limit(1).get();
+		const bossProgress = new Map(
+			this.database.connection
+				.select()
+				.from(bigBossProgress)
+				.all()
+				.map((row) => [row.minecraft_username.toLowerCase(), row]),
+		);
+		const now = Date.now();
+		const bossReigns = new Map(
+			this.database.connection
+				.select({
+					username: sql<string>`lower(${bigBossTransitions.next_username})`,
+					count: sql<number>`count(*)`,
+					milliseconds: sql<number>`sum(max(0, coalesce((select later.at_unix_ms from big_boss_transitions later where later.id > ${bigBossTransitions.id} order by later.id limit 1), ${now}) - ${bigBossTransitions.at_unix_ms}))`,
+				})
+				.from(bigBossTransitions)
+				.where(sql`${bigBossTransitions.next_username} is not null`)
+				.groupBy(sql`lower(${bigBossTransitions.next_username})`)
+				.all()
+				.map((row) => [row.username, row]),
+		);
+		for (const user of userRows) {
+			const playerStats = stats.get(user.id);
+			if (!playerStats) continue;
+			const key = user.username.toLowerCase();
+			const progress = bossProgress.get(key);
+			const reigns = bossReigns.get(key);
+			playerStats.bigBoss = {
+				isBigBoss: bossState?.holder_username?.toLowerCase() === key,
+				reigns: reigns?.count ?? 0,
+				wins: progress?.win_count ?? 0,
+				timeHeldMs: reigns?.milliseconds ?? 0,
+				daysHeld: (reigns?.milliseconds ?? 0) / 86_400_000,
+				qualifyingMs: progress?.qualifying_ms ?? 0,
+				lastHeldAtUnixMs: progress?.last_held_at_unix_ms ?? null,
+			};
+		}
 		const loginDays = new Map<number, string[]>();
 		for (const claim of this.database.connection
 			.select({ userId: dailyClaims.user_id, periodKey: dailyClaims.period_key })
@@ -342,6 +388,13 @@ export class PlayersService {
 			const progress = unlocks.get(id);
 			if (!playerStats || !progress) continue;
 			values.set(id, {
+				'boss.isBigBoss': Number(playerStats.bigBoss.isBigBoss),
+				'boss.reigns': playerStats.bigBoss.reigns,
+				'boss.wins': playerStats.bigBoss.wins,
+				'boss.timeHeldMs': playerStats.bigBoss.timeHeldMs,
+				'boss.daysHeld': playerStats.bigBoss.daysHeld,
+				'boss.qualifyingMs': playerStats.bigBoss.qualifyingMs,
+				'boss.lastHeldAtUnixMs': playerStats.bigBoss.lastHeldAtUnixMs ?? 0,
 				'money.earnedDabloons': playerStats.money.earnedDabloons,
 				'dailies.streakDuration': streaks.get(id) ?? 0,
 				'minecraft.deathsAndTotemPops':

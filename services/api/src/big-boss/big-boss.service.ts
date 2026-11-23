@@ -6,8 +6,8 @@ import {
 	OnModuleDestroy,
 	OnModuleInit,
 } from '@nestjs/common';
-import { eq, desc, sql } from 'drizzle-orm';
-import { randomUUID } from 'node:crypto';
+import { asc, desc, eq, gt, lt, sql } from 'drizzle-orm';
+import { createHmac, randomUUID } from 'node:crypto';
 import {
 	DatabaseService,
 	bigBossProgress,
@@ -29,6 +29,23 @@ const REIGN_LIMIT_MS = 7 * 24 * 60 * 60_000;
 const COOLDOWN_MS = 60 * 60_000;
 const BIG_BOSS_URL = '/play/big-boss';
 const USERNAME = /^[A-Za-z0-9_]{3,16}$/;
+
+function offlinePosition(username: string, x: number, y: number, z: number) {
+	const day = new Intl.DateTimeFormat('en-CA', {
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+		timeZone: 'Europe/London',
+	}).format(new Date());
+	const hash = createHmac('sha256', process.env.AUTH_CODE_SECRET ?? 'dev-change-me')
+		.update(`${day}:${username.toLowerCase()}`)
+		.digest();
+	return {
+		x: x + (hash.readUInt8(0) % 85) - 42,
+		y: y + (hash.readUInt8(1) % 85) - 42,
+		z: z + (hash.readUInt8(2) % 85) - 42,
+	};
+}
 
 function periodStartMs(period: string) {
 	const utcFour = Date.parse(`${period}T04:00:00Z`);
@@ -86,6 +103,9 @@ export class BigBossService implements OnModuleInit, OnModuleDestroy {
 	private readonly logger = new Logger(BigBossService.name);
 	private timer: ReturnType<typeof setInterval> | null = null;
 	private reconciliation: Promise<void> | null = null;
+	private onlineNamesAt = 0;
+	private onlineNames: Set<string> | null = null;
+	private onlineNamesPending: Promise<Set<string> | null> | null = null;
 
 	constructor(
 		private readonly database: DatabaseService,
@@ -672,77 +692,140 @@ export class BigBossService implements OnModuleInit, OnModuleDestroy {
 		return { minecraftUsername: this.state().holder_username ?? '' };
 	}
 
-	publicState() {
+	private async currentOnlineNames() {
+		if (Date.now() - this.onlineNamesAt < 4_000) return this.onlineNames;
+		if (this.onlineNamesPending) return this.onlineNamesPending;
+		this.onlineNamesPending = this.minecraft
+			.gameplay<{ players: { minecraft_username: string }[] }>(
+				'GetOnlinePlayers',
+				{},
+				{ deadline: Date.now() + 4_000 },
+			)
+			.then(
+				(result) =>
+					new Set(
+						result.players.map((player) => player.minecraft_username.toLowerCase()),
+					),
+			)
+			.catch(() => null)
+			.then((names) => {
+				this.onlineNames = names;
+				this.onlineNamesAt = Date.now();
+				this.onlineNamesPending = null;
+				return names;
+			});
+		return this.onlineNamesPending;
+	}
+
+	async publicState() {
+		const onlineNames = await this.currentOnlineNames();
 		const state = this.state();
-		const accounts = this.database.connection.select().from(users).all();
-		const profiles = this.database.connection.select().from(playerProfiles).all();
-		const byName = new Map(
-			accounts.map((user) => [user.minecraft_username.toLowerCase(), user]),
-		);
-		const byId = new Map(profiles.map((profile) => [profile.user_id, profile]));
-		const person = (username: string | null) => {
-			if (!username) return null;
-			const account = byName.get(username.toLowerCase());
-			const profile = account ? byId.get(account.id) : null;
-			return {
-				minecraftUsername: username,
-				userId: account?.id ?? null,
-				avatarUrl: playerAvatarUrl(account?.minecraft_uuid ?? null),
-				nickname: profile?.preferred_name ?? '',
-			};
-		};
-		const transitions = this.database.connection
-			.select()
+		const account = state.holder_username ? this.account(state.holder_username) : null;
+		const latest = this.database.connection
+			.select({ id: bigBossTransitions.id })
 			.from(bigBossTransitions)
-			.orderBy(desc(bigBossTransitions.at_unix_ms), desc(bigBossTransitions.id))
-			.all();
-		let endedAt: number | null = null;
-		const reigns = [] as {
-			holder: ReturnType<typeof person>;
-			startedAtUnixMs: number;
-			endedAtUnixMs: number | null;
-			transitionId: number;
-		}[];
-		for (const transition of transitions) {
-			if (transition.next_username)
-				reigns.push({
-					holder: person(transition.next_username),
-					startedAtUnixMs: transition.at_unix_ms,
-					endedAtUnixMs: endedAt,
-					transitionId: transition.id,
-				});
-			endedAt = transition.at_unix_ms;
-		}
+			.orderBy(desc(bigBossTransitions.id))
+			.limit(1)
+			.get();
+		const sampledRecently =
+			!!state.last_sample_at_unix_ms && Date.now() - state.last_sample_at_unix_ms < 10_000;
+		const isOnline = state.holder_username
+			? onlineNames
+				? onlineNames.has(state.holder_username.toLowerCase())
+				: sampledRecently
+			: false;
+		const coordinates =
+			!isOnline &&
+			state.holder_username &&
+			state.last_x !== null &&
+			state.last_y !== null &&
+			state.last_z !== null
+				? offlinePosition(state.holder_username, state.last_x, state.last_y, state.last_z)
+				: { x: state.last_x, y: state.last_y, z: state.last_z };
 		return {
-			holder: person(state.holder_username),
+			holder: state.holder_username
+				? {
+						minecraftUsername: state.holder_username,
+						userId: account?.id ?? null,
+						avatarUrl: playerAvatarUrl(account?.minecraft_uuid ?? null),
+					}
+				: null,
 			reignStartedAtUnixMs: state.reign_started_at_unix_ms,
-			online:
-				!!state.last_sample_at_unix_ms &&
-				Date.now() - state.last_sample_at_unix_ms < 10_000,
+			latestTransitionId: latest?.id ?? 0,
+			online: isOnline,
 			position:
+				(!isOnline || sampledRecently) &&
 				state.last_dimension &&
-				state.last_x !== null &&
-				state.last_y !== null &&
-				state.last_z !== null
+				coordinates.x !== null &&
+				coordinates.y !== null &&
+				coordinates.z !== null
 					? {
 							dimension: state.last_dimension,
-							x: state.last_x,
-							y: state.last_y,
-							z: state.last_z,
+							x: coordinates.x,
+							y: coordinates.y,
+							z: coordinates.z,
 							inClaim: state.last_in_claim === 1,
 							sampledAtUnixMs: state.last_sample_at_unix_ms,
 						}
 					: null,
-			transitions: transitions.map((entry) => ({
-				id: entry.id,
-				atUnixMs: entry.at_unix_ms,
-				previous: person(entry.previous_username),
-				next: person(entry.next_username),
-				reason: entry.reason,
-				detail: entry.detail,
-				adminUserId: entry.admin_user_id,
-			})),
-			reigns,
+		};
+	}
+
+	history(cursorInput?: string) {
+		const cursor = cursorInput === undefined ? null : Number(cursorInput);
+		if (cursorInput !== undefined && (!Number.isSafeInteger(cursor) || Number(cursor) <= 0))
+			throw new BadRequestException('Invalid history cursor');
+		const rows = this.database.connection
+			.select()
+			.from(bigBossTransitions)
+			.where(cursor === null ? undefined : lt(bigBossTransitions.id, cursor))
+			.orderBy(desc(bigBossTransitions.id))
+			.limit(51)
+			.all();
+		const page = rows.slice(0, 50);
+		const first = page[0];
+		if (!first) return { entries: [], nextCursor: null };
+		const accounts = this.database.connection.select().from(users).all();
+		const byName = new Map(
+			accounts.map((user) => [user.minecraft_username.toLowerCase(), user]),
+		);
+		const person = (username: string | null) => {
+			if (!username) return null;
+			const account = byName.get(username.toLowerCase());
+			return {
+				minecraftUsername: username,
+				userId: account?.id ?? null,
+				avatarUrl: playerAvatarUrl(account?.minecraft_uuid ?? null),
+			};
+		};
+		const newer = this.database.connection
+			.select({ atUnixMs: bigBossTransitions.at_unix_ms })
+			.from(bigBossTransitions)
+			.where(gt(bigBossTransitions.id, first.id))
+			.orderBy(asc(bigBossTransitions.id))
+			.limit(1)
+			.get();
+		return {
+			entries: page.map((entry, index) => {
+				const endedAt = page[index - 1]?.at_unix_ms ?? newer?.atUnixMs;
+				return {
+					id: entry.id,
+					atUnixMs: entry.at_unix_ms,
+					previous: person(entry.previous_username),
+					next: person(entry.next_username),
+					reason: entry.reason,
+					detail: entry.detail,
+					reign:
+						entry.next_username && endedAt !== undefined
+							? {
+									holder: person(entry.next_username),
+									startedAtUnixMs: entry.at_unix_ms,
+									endedAtUnixMs: endedAt,
+								}
+							: null,
+				};
+			}),
+			nextCursor: rows.length > 50 ? (page.at(-1)?.id ?? null) : null,
 		};
 	}
 }

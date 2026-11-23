@@ -2,11 +2,6 @@
 	--big-boss: #b35cff;
 	color: #eee9f5;
 }
-.bigBossNamePrefix {
-	color: #b35cff;
-	font-weight: 700;
-}
-
 .bigBossHeading,
 .bigBossCard,
 .bigBossStatus,
@@ -27,34 +22,52 @@
 .bigBossHeading h1 {
 	margin: 0 0 1rem;
 }
-.bigBossRules {
-	position: relative;
-	align-self: flex-start;
-	max-width: 30rem;
-}
-.bigBossRules summary {
+.bigBossRulesButton {
 	display: grid;
 	place-items: center;
 	width: 2rem;
 	height: 2rem;
 	border: 1px solid var(--big-boss);
 	border-radius: 50%;
+	background: #1d152c;
 	color: var(--big-boss);
 	cursor: pointer;
-	list-style: none;
 }
-.bigBossRules[open] {
-	z-index: 2;
-}
-.bigBossRules[open] p {
-	position: relative;
-	margin: 0;
-	padding: 0.65rem 1rem;
+.bigBossRulesDialog {
+	width: min(34rem, calc(100vw - 2rem));
+	max-height: min(80vh, 46rem);
+	padding: 1.5rem;
+	border: 1px solid var(--big-boss);
+	border-radius: 0.9rem;
 	background: #1d152c;
-	border-left: 1px solid var(--big-boss);
+	color: #eee9f5;
+	box-shadow: 0 1.5rem 4rem #000a;
 }
-.bigBossRules[open] p:last-child {
-	border-bottom: 1px solid var(--big-boss);
+.bigBossRulesDialog::backdrop {
+	background: #080511cf;
+}
+.bigBossRulesDialog h2 {
+	margin: 0 2rem 0.6rem 0;
+	color: var(--big-boss);
+}
+.bigBossRulesDialog h3 {
+	margin: 1.25rem 0 0.3rem;
+	color: var(--big-boss);
+}
+.bigBossRulesDialog p {
+	margin: 0;
+	line-height: 1.5;
+}
+.bigBossRulesLead {
+	font-size: 1.05rem;
+}
+.bigBossRulesClose {
+	float: right;
+	border: 0;
+	background: transparent;
+	color: #eee9f5;
+	font-size: 1.7rem;
+	cursor: pointer;
 }
 .bigBossCard {
 	gap: 1.4rem;
@@ -97,6 +110,7 @@
 .bigBossIdentity {
 	display: grid;
 	gap: 0.2rem;
+	min-width: 0;
 }
 .bigBossIdentity strong {
 	color: white;
@@ -112,9 +126,9 @@
 .bigBossStatus {
 	flex-wrap: wrap;
 	gap: 0.55rem;
-	margin: 1rem 0 2rem;
+	margin-top: 0.4rem;
 }
-.bigBossStatus strong {
+.bigBossStatus b {
 	color: var(--big-boss);
 }
 .bigBossDot {
@@ -153,14 +167,11 @@
 	color: #b8afc3;
 }
 .bigBossTransition {
-	gap: 1.8rem;
-	margin: 0.55rem 0 0.55rem 1.4rem;
+	margin: 0.55rem 0 0.55rem 1rem;
 	color: var(--big-boss);
 }
-.bigBossTransition span {
-	font-size: 0.9rem;
-}
 .bigBossAdmin {
+	--big-boss: #b35cff;
 	display: grid;
 	gap: 0.7rem;
 	margin-top: 2rem;

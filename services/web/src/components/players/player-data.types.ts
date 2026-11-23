@@ -1,6 +1,6 @@
 import type { PlayerEmoji } from '@/components/player-name';
 
-export type StatGroup = 'profile' | 'money' | 'fishing' | 'dailies' | 'minecraft';
+export type StatGroup = 'profile' | 'money' | 'fishing' | 'dailies' | 'boss' | 'minecraft';
 export type SortDirection = 'desc' | 'asc';
 
 export interface StatOption {
@@ -48,6 +48,15 @@ interface MinecraftProfile {
 
 export interface PlayerStats {
 	version: number;
+	bigBoss: {
+		isBigBoss: boolean;
+		reigns: number;
+		wins: number;
+		timeHeldMs: number;
+		daysHeld: number;
+		qualifyingMs: number;
+		lastHeldAtUnixMs: number | null;
+	};
 	money: {
 		earnedDabloons: number;
 		balanceDabloons: number | null;

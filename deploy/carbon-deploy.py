@@ -113,10 +113,10 @@ def plan():
     assert 0 <= warning <= 60
     with urlopen(Request(FORECAST, headers={"User-Agent": "MMUCraft-CATS-deploy/1"}), timeout=20) as response:
         rows = json.load(response)
-    start, deadline, current, best = choose(rows, datetime.now(UTC))
+    start, _, current, best = choose(rows, datetime.now(UTC))
     payload = dict(repository=REPO, run_id=int(os.environ["GITHUB_RUN_ID"]), requester=os.environ["GITHUB_ACTOR"],
                    target=target, version=version, source_ref=source_ref, warning_minutes=warning,
-                   force=os.environ["PLAN_FORCE"] == "true", execute_at=start.isoformat(), deadline=deadline.isoformat())
+                   force=os.environ["PLAN_FORCE"] == "true", execute_at=start.isoformat())
     Path(os.environ["PLAN_OUTPUT"]).write_text(json.dumps(payload))
     line = (f"CATS chose {start.astimezone(UK):%Y-%m-%d %H:%M %Z} for {target} / {version}; "
             f"forecast {current:.1f} now, {best:.1f} gCO2e/kWh then. "
@@ -133,16 +133,12 @@ def dispatch():
         plan_data = load(artifact)
         if plan_data is None:
             continue
-        deadline = datetime.fromisoformat(plan_data["deadline"])
-        if now >= deadline:
-            print(f"Missed 07:00 UK deadline for {artifact['name']}")
-            delete(artifact)
-        elif now >= datetime.fromisoformat(plan_data["execute_at"]):
+        if now >= datetime.fromisoformat(plan_data["execute_at"]):
             if any(run["display_title"].startswith(f"Deploy planned #{artifact['id']} ") for run in runs):
                 continue
             github(f"/repos/{REPO}/dispatches", method="POST",
                    body={"event_type": "carbon-aware-deploy", "client_payload": {"artifact_id": artifact["id"], "target": plan_data["target"]}})
-            print(f"Dispatched {artifact['name']} ({artifact['id']})")
+            print(f"Dispatched {artifact['name']} ({artifact['id']}); planned for {plan_data['execute_at']}")
 
 
 def claim(artifact_id, target):
@@ -156,10 +152,6 @@ def claim(artifact_id, target):
     assert data["target"] == target
     now = datetime.now(UTC)
     assert now >= datetime.fromisoformat(data["execute_at"])
-    if now >= datetime.fromisoformat(data["deadline"]):
-        delete(artifact)
-        print("Plan missed the 07:00 UK deadline")
-        return
     delete(artifact)
     with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
         for key in ("target", "version", "source_ref", "warning_minutes", "force"):

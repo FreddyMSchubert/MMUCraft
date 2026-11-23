@@ -17,6 +17,8 @@ The `checks-tests-images` workflow runs on pushes to every branch, when a releas
 
 The `deploy` workflow has these manual inputs. Its run summary shows the resolved image tag and deployment files ref. If an image is unavailable, the preflight log names it before any server changes.
 
+A carbon-aware request saves the time CATS chose for the deploy. The workflow asks GitHub to check every five minutes. The first check at or after that time starts the deploy, even if it is after 07:00 UK time. GitHub can delay or drop checks, so the deploy can start late.
+
 | Deploy input | Default | Meaning |
 | --- | --- | --- |
 | `target` | `dev` | Server to update: `dev` or `production`. |

@@ -41,6 +41,27 @@ Not every fish can be caught in every scenario. Some fish may only be catchable 
 
 The full overview of every fish catchable and caught is the [fishing compendium](/play/fishing). It also explains the conditions required to catch each individual fish.
 
+:::drop inventors
+## Showing off your fish
+
+:::drop-indicator
+
+If you wish to present your amazing catches, you can do so true-to-size with fish plaques!
+
+![Fishing Plaque Example](/assets/knowledge/survival/fishing/fishing_plaques.png)
+
+You can craft fish plaques using any wood type, by combining that wood types shelf with that wood types stripped log:
+
+![Fishing Plaque Crafting Recipe](/assets/knowledge/survival/fishing/plaque_recipe.png)
+
+:::recipe-items
+[Any Shelf](https://minecraft.wiki/w/Shelf) · [Any Stripped Log / Stem of the same Wood Type](https://minecraft.wiki/w/Stripped_Log) → Fish Plaque of that Wood Type
+:::
+
+You can then combine that fish plaque with any caught fish in a crafting table to present it on the plaque. By placing a combined plaque in a crafting table, you can seperate the fish from the plaque again.
+
+:::end-drop
+
 :::drop nether
 ## Fishing in the Nether
 

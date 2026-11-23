@@ -7,7 +7,7 @@
 	"tooltips": ["Its green fins fold like a closing portal."],
 	"fish": {
 		"dimension": "end",
-		"angle": "TR",
+		"angle": "BL",
 		"plaque_right_angle": "BL",
 		"tags": ["sparse_void", "small_end_islands"],
 		"size": {

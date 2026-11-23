@@ -7,7 +7,7 @@
 	"tooltips": ["Its dark fins hide in the lower void. Its red tail gives it away."],
 	"fish": {
 		"dimension": "end",
-		"angle": "TR",
+		"angle": "BL",
 		"plaque_right_angle": "BL",
 		"tags": ["dense_void", "end_barrens"],
 		"size": {

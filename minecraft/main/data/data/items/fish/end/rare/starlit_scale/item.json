@@ -7,7 +7,7 @@
 	"tooltips": ["Gold light runs along its scales above the End Highlands."],
 	"fish": {
 		"dimension": "end",
-		"angle": "TR",
+		"angle": "BL",
 		"plaque_right_angle": "BL",
 		"tags": ["equivoid", "end_highlands"],
 		"size": {

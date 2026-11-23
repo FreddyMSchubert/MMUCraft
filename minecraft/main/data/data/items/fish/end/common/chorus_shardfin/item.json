@@ -7,7 +7,7 @@
 	"tooltips": ["Its pale fins resemble fresh chorus petals."],
 	"fish": {
 		"dimension": "end",
-		"angle": "TR",
+		"angle": "BL",
 		"plaque_right_angle": "BL",
 		"tags": [],
 		"size": {

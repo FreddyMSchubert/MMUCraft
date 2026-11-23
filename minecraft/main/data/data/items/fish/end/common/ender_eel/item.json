@@ -7,7 +7,7 @@
 	"tooltips": ["It loops through the air above the End Barrens."],
 	"fish": {
 		"dimension": "end",
-		"angle": "TR",
+		"angle": "BL",
 		"plaque_right_angle": "R",
 		"tags": ["sparse_void", "end_barrens"],
 		"size": {

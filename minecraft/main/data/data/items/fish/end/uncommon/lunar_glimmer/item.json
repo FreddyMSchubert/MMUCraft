@@ -7,7 +7,7 @@
 	"tooltips": ["Bright bands run across its body as it drifts near the upper build limit."],
 	"fish": {
 		"dimension": "end",
-		"angle": "TR",
+		"angle": "BL",
 		"plaque_right_angle": "BL",
 		"tags": ["sparse_void"],
 		"size": {

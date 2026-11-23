@@ -7,7 +7,7 @@
 	"tooltips": ["Its pale snout catches light above the End Highlands."],
 	"fish": {
 		"dimension": "end",
-		"angle": "L",
+		"angle": "BL",
 		"plaque_right_angle": "BL",
 		"tags": ["sparse_void", "end_highlands"],
 		"size": {

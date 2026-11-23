@@ -6,39 +6,24 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.level.Level;
 
 public final class AnimalCrossingFishingBobberEffects {
     private AnimalCrossingFishingBobberEffects() {}
 
-    public static void playFishArrival(ServerLevel level, FishingHook hook, Display.ItemDisplay display, boolean nether) {
-        if (nether) {
-            playNetherSound(level, hook, SoundEvents.FIRECHARGE_USE, 0.65F, 1.2F);
-        } else if (level.dimension() == Level.END) {
-            level.playSound(null, hook.getX(), hook.getY(), hook.getZ(),
-                    SoundEvents.BREEZE_IDLE_AIR, SoundSource.PLAYERS, 0.5F, 1.1F);
-            level.sendParticles(ParticleTypes.PORTAL, display.getX(), display.getY(), display.getZ(),
-                    8, 0.2D, 0.2D, 0.2D, 0.02D);
-        } else {
-            level.playSound(null, display.getX(), display.getY(), display.getZ(),
-                    SoundEvents.FISH_SWIM, SoundSource.PLAYERS, 0.20F, 0.82F);
-        }
-    }
-
     public static void playBounce(ServerLevel level, FishingHook hook) {
         if (isNetherFishing(level)) {
-            playNetherSound(level, hook, SoundEvents.LAVA_POP, 0.7F, 1.2F);
+            playNetherSound(level, hook, SoundEvents.LAVA_POP, 0.4F, 1.2F);
             level.sendParticles(ParticleTypes.SMOKE, hook.getX(), hook.getY() + 0.1D, hook.getZ(),
                     3, 0.1D, 0.01D, 0.1D, 0.01D);
             return;
         }
         if (level.dimension() == Level.END) {
             level.playSound(null, hook.getX(), hook.getY(), hook.getZ(),
-                    SoundEvents.BREEZE_SLIDE, SoundSource.PLAYERS, 0.5F, 1.2F);
+                    SoundEvents.BREEZE_SLIDE, SoundSource.PLAYERS, 0.28F, 1.2F);
             level.sendParticles(ParticleTypes.SMALL_GUST, hook.getX(), hook.getY(), hook.getZ(),
-                    3, 0.1D, 0.1D, 0.1D, 0.01D);
+                    1, 0.1D, 0.1D, 0.1D, 0.01D);
             return;
         }
         level.playSound(null, hook.getX(), hook.getY(), hook.getZ(), SoundEvents.FISH_SWIM,
@@ -51,27 +36,29 @@ public final class AnimalCrossingFishingBobberEffects {
 
     public static void playBite(ServerLevel level, FishingHook hook) {
         if (isNetherFishing(level)) {
-            playNetherSound(level, hook, SoundEvents.BLAZE_SHOOT, 0.9F, 0.85F);
-            playNetherSound(level, hook, SoundEvents.LAVA_EXTINGUISH, 0.55F, 1.15F);
+            playNetherSound(level, hook, SoundEvents.BLAZE_SHOOT, 0.7F, 0.85F);
+            playNetherSound(level, hook, SoundEvents.LAVA_EXTINGUISH, 0.35F, 1.15F);
             level.sendParticles(ParticleTypes.LAVA, hook.getX(), hook.getY() + 0.12D, hook.getZ(),
                     12, 0.28D, 0.02D, 0.28D, 0.02D);
             return;
         }
         if (level.dimension() == Level.END) {
             level.playSound(null, hook.getX(), hook.getY(), hook.getZ(),
-                    SoundEvents.BREEZE_SHOOT, SoundSource.PLAYERS, 0.9F, 1.1F);
-            level.sendParticles(ParticleTypes.GUST, hook.getX(), hook.getY(), hook.getZ(),
-                    12, 0.3D, 0.2D, 0.3D, 0.02D);
+                    SoundEvents.BREEZE_SHOOT, SoundSource.PLAYERS, 0.38F, 1.1F);
+            level.sendParticles(ParticleTypes.SMALL_GUST, hook.getX(), hook.getY(), hook.getZ(),
+                    3, 0.2D, 0.1D, 0.2D, 0.01D);
+            level.sendParticles(ParticleTypes.REVERSE_PORTAL, hook.getX(), hook.getY(), hook.getZ(),
+                    5, 0.24D, 0.12D, 0.24D, 0.01D);
             return;
         }
         level.playSound(null, hook.getX(), hook.getY(), hook.getZ(), SoundEvents.GENERIC_SPLASH,
-                SoundSource.PLAYERS, 0.95F, Mth.nextFloat(hook.getRandom(), 1.05F, 1.18F));
+                SoundSource.PLAYERS, 0.7F, Mth.nextFloat(hook.getRandom(), 1.05F, 1.18F));
         level.playSound(null, hook.getX(), hook.getY(), hook.getZ(), SoundEvents.FISH_SWIM,
-                SoundSource.PLAYERS, 0.72F, 0.65F);
+                SoundSource.PLAYERS, 0.4F, 0.65F);
         level.sendParticles(ParticleTypes.SPLASH, hook.getX(), hook.getY() + 0.12D, hook.getZ(),
-                24, 0.36D, 0.06D, 0.36D, 0.095D);
+                36, 0.36D, 0.06D, 0.36D, 0.095D);
         level.sendParticles(ParticleTypes.FISHING, hook.getX(), hook.getY() + 0.10D, hook.getZ(),
-                12, 0.28D, 0.025D, 0.28D, 0.04D);
+                18, 0.28D, 0.025D, 0.28D, 0.04D);
     }
 
     public static void playBiteTick(ServerLevel level, FishingHook hook) {
@@ -82,7 +69,7 @@ public final class AnimalCrossingFishingBobberEffects {
         }
         if (level.dimension() == Level.END) {
             level.sendParticles(ParticleTypes.REVERSE_PORTAL, hook.getX(), hook.getY(), hook.getZ(),
-                    2, 0.08D, 0.08D, 0.08D, 0.0D);
+                    1, 0.08D, 0.08D, 0.08D, 0.0D);
             return;
         }
         level.sendParticles(ParticleTypes.BUBBLE, hook.getX(), hook.getY() + 0.04D, hook.getZ(),
@@ -97,17 +84,19 @@ public final class AnimalCrossingFishingBobberEffects {
             level.sendParticles(ParticleTypes.LAVA, hook.getX(), hook.getY() + 0.1D, hook.getZ(),
                     4, 0.2D, 0.02D, 0.2D, 0.02D);
             if (animationTicks % 4 == 0) {
-                playNetherSound(level, hook, SoundEvents.LAVA_POP, 0.52F,
+                playNetherSound(level, hook, SoundEvents.LAVA_POP, 0.32F,
                         Mth.nextFloat(hook.getRandom(), 1.25F, 1.5F));
             }
             return;
         }
         if (level.dimension() == Level.END) {
-            level.sendParticles(ParticleTypes.SMALL_GUST, hook.getX(), hook.getY(), hook.getZ(),
-                    4, 0.2D, 0.2D, 0.2D, 0.02D);
-            if (animationTicks % 4 == 0) {
+            level.sendParticles(ParticleTypes.REVERSE_PORTAL, hook.getX(), hook.getY(), hook.getZ(),
+                    2, 0.16D, 0.12D, 0.16D, 0.01D);
+            if (animationTicks % 8 == 0) {
+                level.sendParticles(ParticleTypes.SMALL_GUST, hook.getX(), hook.getY(), hook.getZ(),
+                        1, 0.12D, 0.12D, 0.12D, 0.01D);
                 level.playSound(null, hook.getX(), hook.getY(), hook.getZ(),
-                        SoundEvents.BREEZE_WHIRL, SoundSource.PLAYERS, 0.4F, 1.3F);
+                        SoundEvents.BREEZE_WHIRL, SoundSource.PLAYERS, 0.16F, 1.3F);
             }
             return;
         }
@@ -118,22 +107,22 @@ public final class AnimalCrossingFishingBobberEffects {
         if ((animationTicks & 1) != 0) return;
 
         level.playSound(null, hook.getX(), hook.getY(), hook.getZ(), SoundEvents.GENERIC_SPLASH,
-                SoundSource.PLAYERS, 0.34F, 1.45F);
+                SoundSource.PLAYERS, 0.28F, 1.45F);
         level.sendParticles(ParticleTypes.SPLASH, hook.getX(), hook.getY() + 0.08D, hook.getZ(),
-                14, 0.34D, 0.05D, 0.34D, 0.055D);
+                20, 0.34D, 0.05D, 0.34D, 0.055D);
         level.sendParticles(ParticleTypes.FISHING, hook.getX(), hook.getY() + 0.08D, hook.getZ(),
-                8, 0.26D, 0.02D, 0.26D, 0.035D);
+                12, 0.26D, 0.02D, 0.26D, 0.035D);
     }
 
     public static void playScurry(ServerLevel level, FishingHook hook) {
         if (isNetherFishing(level)) {
-            playNetherSound(level, hook, SoundEvents.FIRE_EXTINGUISH, 0.65F, 1.25F);
+            playNetherSound(level, hook, SoundEvents.FIRE_EXTINGUISH, 0.3F, 1.25F);
         } else if (level.dimension() == Level.END) {
             level.playSound(null, hook.getX(), hook.getY(), hook.getZ(),
-                    SoundEvents.BREEZE_SLIDE, SoundSource.PLAYERS, 0.65F, 1.4F);
+                    SoundEvents.BREEZE_SLIDE, SoundSource.PLAYERS, 0.3F, 1.4F);
         } else {
             level.playSound(null, hook.getX(), hook.getY(), hook.getZ(),
-                    SoundEvents.FISH_SWIM, SoundSource.PLAYERS, 0.65F, 1.55F);
+                    SoundEvents.FISH_SWIM, SoundSource.PLAYERS, 0.3F, 1.55F);
         }
     }
 

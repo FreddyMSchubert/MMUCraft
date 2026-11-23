@@ -7,7 +7,7 @@
 	"tooltips": ["A bright ring shines through its body as it floats across the End."],
 	"fish": {
 		"dimension": "end",
-		"angle": "TR",
+		"angle": "BL",
 		"plaque_right_angle": "BL",
 		"tags": [],
 		"size": {

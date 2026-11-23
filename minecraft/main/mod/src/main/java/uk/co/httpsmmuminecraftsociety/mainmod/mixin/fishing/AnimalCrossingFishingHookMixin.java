@@ -123,10 +123,10 @@ public abstract class AnimalCrossingFishingHookMixin implements FishingRodCast {
             hook.discard();
             return;
         }
-        if (hook.tickCount % 4 == 0) {
+        if (hook.tickCount % 8 == 0) {
             level.sendParticles(PowerParticleOption.create(ParticleTypes.DRAGON_BREATH, 1.0F),
                     hook.getX(), hook.getY() + 0.02D, hook.getZ(),
-                    3, 0.3D, 0.03D, 0.3D, 0.01D);
+                    1, 0.3D, 0.03D, 0.3D, 0.01D);
         }
         mainmod$tickFishing(level, hook, hook.blockPosition());
     }
@@ -339,7 +339,6 @@ public abstract class AnimalCrossingFishingHookMixin implements FishingRodCast {
         this.mainmod$fishShadow = display;
         mainmod$positionFish(hook);
         level.addFreshEntity(display);
-		AnimalCrossingFishingBobberEffects.playFishArrival(level, hook, display, mainmod$nether);
     }
 
     @Unique

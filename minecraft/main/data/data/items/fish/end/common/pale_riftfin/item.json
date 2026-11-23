@@ -7,7 +7,7 @@
 	"tooltips": ["Its light body fades against End stone."],
 	"fish": {
 		"dimension": "end",
-		"angle": "TR",
+		"angle": "BL",
 		"plaque_right_angle": "BL",
 		"tags": [],
 		"size": {

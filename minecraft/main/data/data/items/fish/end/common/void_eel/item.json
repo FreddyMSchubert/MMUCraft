@@ -7,7 +7,7 @@
 	"tooltips": ["Its thin body slips through the lowest air above the void."],
 	"fish": {
 		"dimension": "end",
-		"angle": "TR",
+		"angle": "BL",
 		"plaque_right_angle": "BL",
 		"tags": ["dense_void"],
 		"size": {

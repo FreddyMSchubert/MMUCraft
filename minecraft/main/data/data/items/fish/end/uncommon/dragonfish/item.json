@@ -7,7 +7,7 @@
 	"tooltips": ["Its long body curls as it descends into the dense void."],
 	"fish": {
 		"dimension": "end",
-		"angle": "BR",
+		"angle": "BL",
 		"plaque_right_angle": "L",
 		"tags": ["dense_void", "end_highlands"],
 		"size": {

@@ -6,6 +6,10 @@
 .playPage:has(.presentsPage:not(.adminSection)) {
 	overflow-x: clip;
 }
+.playPage .dashboard:has(.presentsPage:not(.adminSection)) {
+	overflow-x: clip;
+	overflow-clip-margin: border-box;
+}
 .presentsPage:not(.adminSection)::before {
 	content: '';
 	position: absolute;

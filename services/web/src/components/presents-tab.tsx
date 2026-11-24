@@ -187,7 +187,19 @@ export function PresentsTab() {
 	}
 
 	async function closeLetter() {
-		if (busy || !validRecipient || !hasContent) return;
+		if (busy) return;
+		if (!validRecipient) {
+			window.alert(
+				recipient.trim()
+					? 'Choose a recipient from the list.'
+					: 'Choose a recipient first.',
+			);
+			return;
+		}
+		if (!hasContent) {
+			window.alert('Write a message or add a gift before closing the letter.');
+			return;
+		}
 		setBusy(true);
 		try {
 			applyState(await save());
@@ -283,7 +295,7 @@ export function PresentsTab() {
 								>
 									<section
 										className="presentFormPage"
-										aria-label="Recipient and color"
+										aria-label="Recipient and colour"
 										aria-hidden={page !== 0}
 										inert={page !== 0}
 									>
@@ -291,13 +303,13 @@ export function PresentsTab() {
 											A letter from you · 1 of 3
 										</p>
 										<label>
-											To
+											<span className="presentFieldHeading">Recipient</span>
 											<PlayerSelector
 												options={state.players}
 												datalistId="present-recipients"
 												value={recipient}
 												onChange={setRecipient}
-												placeholder="Choose a player"
+												placeholder="Choose a recipient"
 												disabled={busy}
 												required
 											/>
@@ -314,7 +326,7 @@ export function PresentsTab() {
 											Send anonymously
 										</label>
 										<fieldset className="presentColors">
-											<legend>Letter color</legend>
+											<legend>Letter colour</legend>
 											<div className="presentColorOptions">
 												{Object.entries(LETTER_COLORS).map(
 													([key, option]) => (
@@ -350,7 +362,7 @@ export function PresentsTab() {
 									>
 										<p className="presentsEyebrow">Your words · 2 of 3</p>
 										<label>
-											Title <span className="presentsOptional">optional</span>
+											<span className="presentFieldHeading">Title</span>
 											<input
 												value={title}
 												maxLength={80}
@@ -366,8 +378,7 @@ export function PresentsTab() {
 											/>
 										</label>
 										<label className="presentBodyLabel">
-											Message{' '}
-											<span className="presentsOptional">optional</span>
+											<span className="presentFieldHeading">Message</span>
 											<textarea
 												value={body}
 												maxLength={5000}
@@ -446,6 +457,7 @@ export function PresentsTab() {
 						{closed ? (
 							<>
 								<button
+									className="presentPrevious"
 									type="button"
 									onClick={() => {
 										setClosed(false);
@@ -461,6 +473,7 @@ export function PresentsTab() {
 						) : (
 							<>
 								<button
+									className="presentPrevious"
 									type="button"
 									onClick={() => {
 										setPage((current) => Math.max(0, current - 1));
@@ -484,7 +497,7 @@ export function PresentsTab() {
 									<button
 										type="button"
 										onClick={() => void closeLetter()}
-										disabled={busy || !validRecipient || !hasContent}
+										disabled={busy}
 									>
 										Close letter
 									</button>

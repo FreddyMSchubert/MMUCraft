@@ -3,6 +3,9 @@
 	isolation: isolate;
 	transition: --letter-color 400ms ease;
 }
+.playPage:has(.presentsPage:not(.adminSection)) {
+	overflow-x: clip;
+}
 .presentsPage:not(.adminSection)::before {
 	content: '';
 	position: absolute;
@@ -10,19 +13,44 @@
 	top: -16px;
 	left: 50%;
 	width: 100vw;
-	height: 2300px;
+	height: calc(100% + 16px);
 	transform: translateX(-50%);
-	background: radial-gradient(
-		ellipse 650px 2300px at 50% 0,
-		color-mix(in srgb, color-mix(in srgb, var(--letter-color) 45%, #1c1117) 92%, transparent),
-		color-mix(in srgb, color-mix(in srgb, var(--letter-color) 30%, #1c1117) 80%, transparent)
-			42%,
-		color-mix(in srgb, color-mix(in srgb, var(--letter-color) 22%, #1c1117) 50%, transparent)
-			70%,
-		transparent 100%
-	);
-	mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+	background:
+		radial-gradient(
+			circle clamp(480px, 45vw, 700px) at 50% var(--glow-small-y, 150px),
+			color-mix(
+				in srgb,
+				color-mix(in srgb, var(--letter-color) 45%, #1c1117) 94%,
+				transparent
+			),
+			color-mix(
+					in srgb,
+					color-mix(in srgb, var(--letter-color) 35%, #1c1117) 55%,
+					transparent
+				)
+				60%,
+			transparent 100%
+		),
+		radial-gradient(
+			circle clamp(900px, 100vw, 1300px) at 50% var(--glow-large-y, 550px),
+			color-mix(
+				in srgb,
+				color-mix(in srgb, var(--letter-color) 25%, #1c1117) 35%,
+				transparent
+			),
+			transparent 100%
+		);
+	mask-image: linear-gradient(#000 72%, transparent 100%);
 	pointer-events: none;
+}
+
+@media (max-width: 700px) {
+	.presentsPage:not(.adminSection)::before {
+		--glow-small-y: calc(210px + env(safe-area-inset-top));
+		--glow-large-y: calc(610px + env(safe-area-inset-top));
+		top: calc(-76px - env(safe-area-inset-top));
+		height: calc(100% + 76px + env(safe-area-inset-top));
+	}
 }
 
 @property --letter-color {
@@ -156,7 +184,17 @@
 .presentFormPage label:not(.presentsCheck) {
 	display: block;
 	margin: 14px 0;
-	font-weight: 800;
+}
+.presentFieldHeading,
+.presentColors legend,
+.presentFormPage h2 {
+	font-family: Georgia, serif;
+	font-size: 1.5rem;
+	font-weight: 700;
+	line-height: 1.2;
+}
+.presentFieldHeading {
+	display: block;
 }
 .presentFormPage input:not([type='checkbox']),
 .presentFormPage textarea {
@@ -166,7 +204,8 @@
 	margin-top: 7px;
 	padding: 7px 12px;
 	font: inherit;
-	font-weight: 500;
+	font-family: 'Playpen Sans', 'Noto Sans', sans-serif;
+	font-weight: 400;
 	color: #35211f;
 	background: #fffaf044;
 	border: 1px solid #9e8069;
@@ -188,10 +227,6 @@
 	min-height: 0;
 	line-height: 31px;
 	resize: none;
-}
-.presentsOptional {
-	font-weight: 400;
-	font-size: 0.8rem;
 }
 .presentsCheck {
 	display: flex;
@@ -241,7 +276,6 @@
 }
 .presentFormPage h2 {
 	margin: 4px 0 8px;
-	font-family: Georgia, serif;
 }
 .presentFormPage > button {
 	align-self: flex-start;
@@ -297,6 +331,9 @@
 .presentsSendActions button:last-child {
 	background: var(--letter-color);
 	box-shadow: 0 5px 0 #32171b;
+}
+.presentsPage .presentPrevious {
+	background: color-mix(in srgb, var(--letter-color) 55%, #171016);
 }
 .presentsList {
 	margin: 44px 0;
@@ -361,6 +398,7 @@
 	overflow-wrap: anywhere;
 }
 .presentCardBody {
+	font-family: 'Playpen Sans', 'Noto Sans', sans-serif;
 	padding-top: 12px;
 	border-top: 1px solid #b99777;
 	text-align: left;

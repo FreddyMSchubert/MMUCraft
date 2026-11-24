@@ -86,8 +86,8 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 			.where(
 				and(
 					eq(christmasPresents.recipient_user_id, user.id),
-					sql`${christmasPresents.status} in ('sent', 'claiming')`,
-					sql`${christmasPresents.item_data} is not null`,
+					sql`${christmasPresents.status} in ('sent', 'claiming', 'claimed')`,
+					sql`${christmasPresents.opened_at_unix_ms} is null`,
 				),
 			)
 			.all();
@@ -180,7 +180,6 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 				.select({ id: users.id, minecraftUsername: users.minecraft_username })
 				.from(users)
 				.all()
-				.filter((player) => player.id !== user.id)
 				.map((player) => ({ ...player, color: '#ffffff' })),
 		};
 	}
@@ -215,7 +214,6 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 			: null;
 		if (recipientName && !recipient)
 			throw new BadRequestException('Choose a player from the list.');
-		if (recipient?.id === user.id) throw new BadRequestException('Choose another player.');
 		if (typeof input.title !== 'string' || input.title.length > 80)
 			throw new BadRequestException('The title must be 80 characters or fewer.');
 		if (typeof input.anonymous !== 'boolean')
@@ -223,7 +221,7 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 		if (typeof input.body !== 'string' || input.body.length > 5000)
 			throw new BadRequestException('The message must be 5000 characters or fewer.');
 		if (typeof input.color !== 'string' || !LETTER_COLORS.includes(input.color))
-			throw new BadRequestException('Choose a letter color.');
+			throw new BadRequestException('Choose a letter colour.');
 		const draft = this.draft(user.id);
 		this.database.connection
 			.update(christmasPresents)

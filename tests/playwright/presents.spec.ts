@@ -109,7 +109,7 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 	await expect(
 		page.getByRole('heading', { name: 'Send a little Christmas magic' }),
 	).toBeVisible();
-	await page.getByPlaceholder('Choose a player').fill('Bob');
+	await page.getByPlaceholder('Choose a recipient').fill('Bob');
 	await page.getByRole('button', { name: 'Green' }).click();
 	await page.getByRole('button', { name: 'Next', exact: true }).click();
 	await page.getByPlaceholder('Letter from you').fill('A small surprise');

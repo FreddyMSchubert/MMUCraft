@@ -5,10 +5,11 @@ import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
-import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
-import uk.co.httpsmmuminecraftsociety.mainmod.magic.MagicFoodEffects;
+import uk.co.httpsmmuminecraftsociety.mainmod.WebsiteCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.bigboss.BigBossManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.magic.MagicFoodEffects;
+import uk.co.httpsmmuminecraftsociety.mainmod.toggles.FeatureToggles;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -25,10 +26,11 @@ public final class GameplayGrpcService extends GrpcHandler {
             if (server == null) return;
             server.execute(() -> {
                 if (player.hasDisconnected() || status.getPendingCount() == 0) return;
-                player.sendSystemMessage(Component.literal("Christmas presents are here! ")
+                int count = status.getPendingCount();
+                player.sendSystemMessage(Component.literal("You have " + count + " unread Christmas "
+                                + (count == 1 ? "letter" : "letters") + ". ")
                         .withStyle(ChatFormatting.RED)
-                        .append(Component.literal("Check the Presents tab to open yours.")
-                                .withStyle(ChatFormatting.GREEN)));
+                        .append(WebsiteCommand.takeMeThere("presents", "Open your letters", ChatFormatting.GREEN)));
             });
         }).exceptionally(error -> null);
     }

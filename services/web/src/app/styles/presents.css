@@ -1,7 +1,34 @@
-.dashboardPanel:has(> .presentsPage:not(.adminSection)) {
-	background:
-		radial-gradient(ellipse 72% 950px at 50% 0, #7d2b3659, transparent 100%),
-		linear-gradient(180deg, #2d171a 0%, #27181c 35%, transparent 100%);
+.presentsPage:not(.adminSection) {
+	position: relative;
+	isolation: isolate;
+	transition: --letter-color 400ms ease;
+}
+.presentsPage:not(.adminSection)::before {
+	content: '';
+	position: absolute;
+	z-index: -1;
+	top: -16px;
+	left: 50%;
+	width: 100vw;
+	height: 2300px;
+	transform: translateX(-50%);
+	background: radial-gradient(
+		ellipse 650px 2300px at 50% 0,
+		color-mix(in srgb, color-mix(in srgb, var(--letter-color) 45%, #1c1117) 92%, transparent),
+		color-mix(in srgb, color-mix(in srgb, var(--letter-color) 30%, #1c1117) 80%, transparent)
+			42%,
+		color-mix(in srgb, color-mix(in srgb, var(--letter-color) 22%, #1c1117) 50%, transparent)
+			70%,
+		transparent 100%
+	);
+	mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+	pointer-events: none;
+}
+
+@property --letter-color {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #a82f3d;
 }
 
 .presentsPage {
@@ -216,17 +243,11 @@
 	margin: 4px 0 8px;
 	font-family: Georgia, serif;
 }
+.presentFormPage > button {
+	align-self: flex-start;
+}
 .presentFormPage > p:not(.presentsEyebrow) {
 	line-height: 1.5;
-}
-.presentItemSlot {
-	background: #fff9e9bb;
-	border: 2px dashed #b98a69;
-	padding: 15px;
-	border-radius: 8px;
-}
-.presentItemSlot p {
-	margin: 7px 0 13px;
 }
 .presentLimit {
 	margin: 4px 0;
@@ -422,6 +443,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+	.presentsPage,
 	.presentEnvelope,
 	.presentPaper,
 	.presentEnvelopeFlap,

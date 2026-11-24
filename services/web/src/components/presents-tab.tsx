@@ -246,12 +246,12 @@ export function PresentsTab() {
 
 	if (!state)
 		return (
-			<section className="presentsPage">
+			<section className="presentsPage" style={letterStyle(color)}>
 				<p>Loading your letters...</p>
 			</section>
 		);
 	return (
-		<section className="presentsPage">
+		<section className="presentsPage" style={letterStyle(color)}>
 			<header className="presentsHero">
 				<span className="presentsHeroIcon" aria-hidden="true">
 					🎁
@@ -270,7 +270,7 @@ export function PresentsTab() {
 			</header>
 
 			{state.clock.sending && (
-				<div className="presentsCompose" style={letterStyle(color)}>
+				<div className="presentsCompose">
 					<div
 						className={`presentEnvelope ${closed ? 'presentEnvelopeClosed' : ''} ${sending ? 'presentEnvelopeSending' : ''}`}
 					>
@@ -366,7 +366,8 @@ export function PresentsTab() {
 											/>
 										</label>
 										<label className="presentBodyLabel">
-											Message
+											Message{' '}
+											<span className="presentsOptional">optional</span>
 											<textarea
 												value={body}
 												maxLength={5000}
@@ -385,18 +386,18 @@ export function PresentsTab() {
 									</section>
 									<section
 										className="presentFormPage"
-										aria-label="Optional gift"
+										aria-label="Gift"
 										aria-hidden={page !== 2}
 										inert={page !== 2}
 									>
-										<p className="presentsEyebrow">A little extra · 3 of 3</p>
+										<p className="presentsEyebrow">Gift · 3 of 3</p>
 										<h2>Add a gift</h2>
 										<p>
-											Want to send a gift too? Hold it in your main hand in
-											Minecraft, then add it to your letter.
+											Hold it in your main hand in Minecraft, then click the
+											“Add gift” button.
 										</p>
-										<div className="presentItemSlot">
-											{state.draft?.itemName ? (
+										{state.draft?.itemName ? (
+											<>
 												<p>
 													<strong>
 														{state.draft.itemName} ×{' '}
@@ -404,13 +405,6 @@ export function PresentsTab() {
 													</strong>{' '}
 													is in your letter.
 												</p>
-											) : (
-												<p>
-													No gift added yet. Your message can be sent on
-													its own.
-												</p>
-											)}
-											{state.draft?.itemName ? (
 												<button
 													type="button"
 													disabled={busy}
@@ -425,24 +419,24 @@ export function PresentsTab() {
 												>
 													Remove gift
 												</button>
-											) : (
-												<button
-													type="button"
-													disabled={busy}
-													onClick={() =>
-														void run(async () => {
-															await save();
-															return api<PresentsState>(
-																'/api/presents/draft/capture',
-																'POST',
-															);
-														})
-													}
-												>
-													Add gift
-												</button>
-											)}
-										</div>
+											</>
+										) : (
+											<button
+												type="button"
+												disabled={busy}
+												onClick={() =>
+													void run(async () => {
+														await save();
+														return api<PresentsState>(
+															'/api/presents/draft/capture',
+															'POST',
+														);
+													})
+												}
+											>
+												Add gift
+											</button>
+										)}
 									</section>
 								</div>
 							</div>

@@ -242,9 +242,9 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 	async capture(user: AuthenticatedUser) {
 		this.requireSending();
 		const draft = this.draft(user.id);
-		if (draft.item_data) throw new ConflictException('Take the current stack out first.');
+		if (draft.item_data) throw new ConflictException('Remove the current gift first.');
 		if (!['draft', 'capturing'].includes(draft.status))
-			throw new ConflictException('This stack is being returned. Try again shortly.');
+			throw new ConflictException('This gift is being returned. Try again shortly.');
 		if (draft.status === 'draft')
 			this.database.connection
 				.update(christmasPresents)
@@ -271,7 +271,7 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 			throw new BadRequestException(result.message);
 		}
 		if (!result.item_data?.length || result.item_data.length > 2_097_152)
-			throw new BadRequestException('The stack could not be stored. Try again.');
+			throw new BadRequestException('The gift could not be added. Try again.');
 		this.database.connection
 			.update(christmasPresents)
 			.set({

@@ -57,9 +57,9 @@ final class GameplayPresentOperations {
         } else {
             if (request.getRecoverOnly()) return itemError("No stack was captured for this letter.");
             ServerPlayer player = player(request.getMinecraftUsername());
-            if (player == null) return itemError("Join the Minecraft server to insert a stack.");
+            if (player == null) return itemError("Join the Minecraft server to add a gift.");
             stack = player.getMainHandItem();
-            if (stack.isEmpty()) return itemError("Hold a stack in your main hand.");
+            if (stack.isEmpty()) return itemError("Hold a gift in your main hand, then click Add gift.");
             bytes = encode(player.registryAccess(), stack);
             data.escrow.put(key, ByteBuffer.wrap(bytes));
             data.setDirty();

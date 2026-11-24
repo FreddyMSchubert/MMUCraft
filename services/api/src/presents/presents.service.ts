@@ -13,6 +13,7 @@ import {
 	christmasPresents,
 	christmasPresentSettings,
 	DatabaseService,
+	playerProfiles,
 	SUPER_ADMIN_MINECRAFT_UUID,
 	users,
 } from '../database/database.service';
@@ -177,10 +178,19 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 			returned,
 			pendingReturns,
 			players: this.database.connection
-				.select({ id: users.id, minecraftUsername: users.minecraft_username })
+				.select({
+					id: users.id,
+					minecraftUsername: users.minecraft_username,
+					nickname: playerProfiles.preferred_name,
+				})
 				.from(users)
+				.leftJoin(playerProfiles, eq(playerProfiles.user_id, users.id))
 				.all()
-				.map((player) => ({ ...player, color: '#ffffff' })),
+				.map((player) => ({
+					...player,
+					nickname: player.nickname?.trim() ?? '',
+					color: '#ffffff',
+				})),
 		};
 	}
 

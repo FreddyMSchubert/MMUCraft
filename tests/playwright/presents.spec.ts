@@ -1,10 +1,12 @@
 import { expect, test } from '@playwright/test';
 
 test('a player can compose a letter and later open a present', async ({ page }) => {
+	test.setTimeout(60_000);
 	let receiving = false;
 	let draft: Record<string, unknown> | null = null;
 	let opened = false;
 	let claimed = false;
+	let sent = false;
 	const letter = {
 		id: 'letter-1',
 		from: 'Alice',
@@ -41,10 +43,10 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 					},
 				]
 			: [],
-		sent: [],
+		sent: sent ? [letter] : [],
 		returned: [],
 		pendingReturns: [],
-		players: [{ id: 2, minecraftUsername: 'Bob', color: '#ffffff' }],
+		players: [{ id: 2, minecraftUsername: 'Bob', nickname: 'Bobby', color: '#ffffff' }],
 	});
 	await page.route('**/api/**', async (route) => {
 		const url = new URL(route.request().url());
@@ -85,6 +87,7 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 			draft = { ...draft, itemName: 'Red present', itemCount: 4 };
 			json = state();
 		} else if (path === '/api/presents/draft/send') {
+			sent = true;
 			draft = null;
 			json = state();
 		} else if (path === '/api/presents/preview')
@@ -106,9 +109,16 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 
 	await page.setViewportSize({ width: 390, height: 844 });
 	await page.goto('/play/presents');
-	await expect(
-		page.getByRole('heading', { name: 'Send a little Christmas magic' }),
-	).toBeVisible();
+	await expect(page.getByRole('button', { name: 'Write a letter' })).toBeVisible();
+	await expect(page.getByRole('heading', { name: 'Letters you sent' })).toHaveCount(0);
+	await page.getByRole('button', { name: 'Write a letter' }).click();
+	await expect(page.getByRole('button', { name: 'Open the letter to write' })).toBeVisible();
+	await page.screenshot({ path: 'tests/test-results/presents-envelope-mobile.png' });
+	await page.getByRole('button', { name: 'Send letter' }).click();
+	await expect(page.locator('.presentComposeError')).toContainText(
+		'Write a message or add a gift',
+	);
+	await page.getByRole('button', { name: 'Open the letter to write' }).click();
 	await page.getByPlaceholder('Choose a recipient').fill('Bob');
 	await page.getByRole('button', { name: 'Green' }).click();
 	await page.getByRole('button', { name: 'Next', exact: true }).click();
@@ -123,9 +133,30 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 	await page.getByRole('button', { name: 'Add gift' }).click();
 	await expect(page.getByText('Red present × 4')).toBeVisible();
 	await page.screenshot({ path: 'tests/test-results/presents-compose.png', fullPage: true });
-	await page.getByRole('button', { name: 'Close letter' }).click();
-	await page.getByRole('button', { name: 'Stamp and send' }).click();
-	await expect(page.getByText('1 / 3')).toBeVisible();
+	await page.getByRole('button', { name: 'Finish writing' }).click();
+	await expect(page.locator('.presentEnvelopeLetter')).toContainText('A small surprise');
+	await page.getByRole('button', { name: 'Put down letter' }).click();
+	await page.reload();
+	await page.getByRole('button', { name: 'Write a letter' }).click();
+	await expect(page.locator('.presentEnvelopeLetter')).toContainText('A small surprise');
+	await page.setViewportSize({ width: 1280, height: 800 });
+	await page.screenshot({ path: 'tests/test-results/presents-envelope-desktop.png' });
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.getByRole('button', { name: 'Send letter' }).click();
+	await expect(page.locator('.presentEnvelopeObject.isSending')).toBeVisible();
+	await page.waitForTimeout(1350);
+	await page.screenshot({ path: 'tests/test-results/presents-fold-one.png' });
+	await page.waitForTimeout(650);
+	await page.screenshot({ path: 'tests/test-results/presents-fold-two.png' });
+	await page.waitForTimeout(900);
+	await page.screenshot({ path: 'tests/test-results/presents-inserting.png' });
+	await page.waitForTimeout(1100);
+	await page.screenshot({ path: 'tests/test-results/presents-sealed.png' });
+	await page.waitForTimeout(1800);
+	await page.screenshot({ path: 'tests/test-results/presents-posting-mobile.png' });
+	await expect(page.getByRole('heading', { name: 'Letters you sent' })).toBeVisible({
+		timeout: 10000,
+	});
 
 	receiving = true;
 	await page.reload();

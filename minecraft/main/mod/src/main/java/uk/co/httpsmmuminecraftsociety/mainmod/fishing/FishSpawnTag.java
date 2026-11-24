@@ -96,7 +96,10 @@ public enum FishSpawnTag {
         // Climate tags deliberately describe Overworld biomes, never dimensions.
         if (level.dimension() == Level.OVERWORLD) {
             if (temperature >= 0.95F) active.add(WARM);
-            if (temperature < 0.15F) active.add(COLD);
+            if (temperature < 0.15F || biome.is(Biomes.COLD_OCEAN)
+                    || biome.is(Biomes.DEEP_COLD_OCEAN)
+                    || biome.is(Biomes.DEEP_FROZEN_OCEAN)
+                    || biome.is(Biomes.STONY_SHORE)) active.add(COLD);
         } else if (level.dimension() == Level.NETHER) {
             if (biome.is(Biomes.NETHER_WASTES)) active.add(NETHER_WASTES);
             if (biome.is(Biomes.SOUL_SAND_VALLEY)) active.add(SOUL_SAND_VALLEY);

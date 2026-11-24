@@ -776,7 +776,9 @@ export function SiteShell({ background, splash }: { background: string; splash: 
 						<div className="dashboardPanel">
 							{activeTab === 'dailies' && <DailiesTab />}
 							{activeTab === 'advent' && adventVisible && <AdventTab />}
-							{activeTab === 'presents' && presentsVisible && <PresentsTab />}
+							{activeTab === 'presents' && presentsVisible && (
+								<PresentsTab senderName={user.minecraftUsername} />
+							)}
 							{activeTab === 'event' && (
 								<EventsTab
 									key={routeDetail ?? 'overview'}

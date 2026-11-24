@@ -10,6 +10,8 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 		from: 'Alice',
 		to: 'Bob',
 		title: 'A small surprise',
+		body: 'Merry Christmas, Bob!',
+		color: 'green',
 		anonymous: false,
 		itemName: 'Red present',
 		itemCount: 4,
@@ -42,7 +44,6 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 		sent: [],
 		returned: [],
 		pendingReturns: [],
-		remainingToday: 3,
 		players: [{ id: 2, minecraftUsername: 'Bob', color: '#ffffff' }],
 	});
 	await page.route('**/api/**', async (route) => {
@@ -75,6 +76,8 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 				itemCount: draft?.itemCount ?? null,
 				to: body?.recipient ?? null,
 				title: body?.title ?? '',
+				body: body?.body ?? '',
+				color: body?.color ?? 'red',
 				anonymous: body?.anonymous ?? false,
 			};
 			json = state();
@@ -101,28 +104,38 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 		await route.fulfill({ json });
 	});
 
+	await page.setViewportSize({ width: 390, height: 844 });
 	await page.goto('/play/presents');
 	await expect(
 		page.getByRole('heading', { name: 'Send a little Christmas magic' }),
 	).toBeVisible();
 	await page.getByPlaceholder('Choose a player').fill('Bob');
+	await page.getByRole('button', { name: 'Green' }).click();
+	await page.getByRole('button', { name: 'Next', exact: true }).click();
 	await page.getByPlaceholder('Letter from you').fill('A small surprise');
-	await page.getByRole('button', { name: 'Insert full stack' }).click();
-	await expect(page.getByText('Red present × 4 is inside the letter.')).toBeVisible();
+	await page.getByPlaceholder('Write your letter here...').fill('Merry Christmas, Bob!');
+	await page.waitForTimeout(650);
+	await page.screenshot({
+		path: 'tests/test-results/presents-message-mobile.png',
+		fullPage: true,
+	});
+	await page.getByRole('button', { name: 'Next', exact: true }).click();
+	await page.getByRole('button', { name: 'Add gift' }).click();
+	await expect(page.getByText('Red present × 4')).toBeVisible();
 	await page.screenshot({ path: 'tests/test-results/presents-compose.png', fullPage: true });
 	await page.getByRole('button', { name: 'Close letter' }).click();
 	await page.getByRole('button', { name: 'Stamp and send' }).click();
-	await expect(page.getByText('Your letter is on its way.')).toBeVisible();
+	await expect(page.getByText('1 / 3')).toBeVisible();
 
 	receiving = true;
 	await page.reload();
 	await expect(page.getByRole('heading', { name: 'Christmas presents are here!' })).toBeVisible();
 	await page.getByRole('button', { name: 'Open letter' }).click();
+	await expect(page.getByText('Merry Christmas, Bob!')).toBeVisible();
 	await expect(page.getByText('Red present × 4')).toBeVisible();
 	await page.getByRole('button', { name: 'Receive gift' }).click();
-	await expect(page.getByText('Received in Minecraft')).toBeVisible();
+	await expect(page.getByText('Gift received in Minecraft')).toBeVisible();
 	await page.screenshot({ path: 'tests/test-results/presents-received.png', fullPage: true });
-	await page.setViewportSize({ width: 390, height: 844 });
 	await page.reload();
 	await expect(page.getByRole('heading', { name: 'Christmas presents are here!' })).toBeVisible();
 	await expect

@@ -7,7 +7,7 @@ import {
 	OnModuleDestroy,
 	OnModuleInit,
 } from '@nestjs/common';
-import { and, eq, getTableColumns, gte, lt, or, sql } from 'drizzle-orm';
+import { and, eq, getTableColumns, or, sql } from 'drizzle-orm';
 import type { AuthenticatedUser } from '../auth/auth-session.service';
 import {
 	christmasPresents,
@@ -20,7 +20,7 @@ import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.servic
 
 const START = Date.UTC(2026, 11, 1);
 const RELEASE = Date.UTC(2026, 11, 25, 9);
-const DAY_MS = 86_400_000;
+const LETTER_COLORS = ['red', 'green', 'yellow', 'orange', 'blue', 'light-blue', 'purple', 'pink'];
 type Present = typeof christmasPresents.$inferSelect;
 type PresentSummary = Omit<Present, 'item_data'>;
 const { item_data: _itemData, ...presentColumns } = getTableColumns(christmasPresents);
@@ -87,6 +87,7 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 				and(
 					eq(christmasPresents.recipient_user_id, user.id),
 					sql`${christmasPresents.status} in ('sent', 'claiming')`,
+					sql`${christmasPresents.item_data} is not null`,
 				),
 			)
 			.all();
@@ -161,14 +162,6 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 					!row.admin_reason,
 			)
 			.map((row) => ({ id: row.id, itemName: row.item_name }));
-		const dayStart = Math.floor(clock.now / DAY_MS) * DAY_MS;
-		const sentToday = rows.filter(
-			(row) =>
-				row.sender_user_id === user.id &&
-				row.sent_at_unix_ms !== null &&
-				row.sent_at_unix_ms >= dayStart &&
-				row.sent_at_unix_ms < dayStart + DAY_MS,
-		).length;
 		return {
 			clock,
 			visible:
@@ -183,7 +176,6 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 			sent,
 			returned,
 			pendingReturns,
-			remainingToday: Math.max(0, 3 - sentToday),
 			players: this.database.connection
 				.select({ id: users.id, minecraftUsername: users.minecraft_username })
 				.from(users)
@@ -204,7 +196,13 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 
 	saveDraft(
 		user: AuthenticatedUser,
-		input: { recipient?: unknown; anonymous?: unknown; title?: unknown },
+		input: {
+			recipient?: unknown;
+			anonymous?: unknown;
+			title?: unknown;
+			body?: unknown;
+			color?: unknown;
+		},
 	) {
 		this.requireSending();
 		const recipientName = typeof input.recipient === 'string' ? input.recipient.trim() : '';
@@ -222,6 +220,10 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 			throw new BadRequestException('The title must be 80 characters or fewer.');
 		if (typeof input.anonymous !== 'boolean')
 			throw new BadRequestException('Choose whether to send anonymously.');
+		if (typeof input.body !== 'string' || input.body.length > 5000)
+			throw new BadRequestException('The message must be 5000 characters or fewer.');
+		if (typeof input.color !== 'string' || !LETTER_COLORS.includes(input.color))
+			throw new BadRequestException('Choose a letter color.');
 		const draft = this.draft(user.id);
 		this.database.connection
 			.update(christmasPresents)
@@ -229,6 +231,8 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 				recipient_user_id: recipient?.id ?? null,
 				anonymous: input.anonymous ? 1 : 0,
 				title: input.title.trim() || null,
+				body: input.body.trim() || null,
+				color: input.color,
 			})
 			.where(eq(christmasPresents.id, draft.id))
 			.run();
@@ -338,6 +342,8 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 						recipient_user_id: draft.recipient_user_id,
 						anonymous: draft.anonymous,
 						title: draft.title,
+						body: draft.body,
+						color: draft.color,
 						created_at_unix_ms: Date.now(),
 					})
 					.run();
@@ -347,7 +353,6 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 
 	send(user: AuthenticatedUser) {
 		const now = this.requireSending();
-		const dayStart = Math.floor(now / DAY_MS) * DAY_MS;
 		this.database.connection.transaction((tx) => {
 			const draft = tx
 				.select()
@@ -359,21 +364,9 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 					),
 				)
 				.get();
-			if (!draft?.item_data || !draft.recipient_user_id)
-				throw new BadRequestException('Choose a recipient and insert one full stack.');
-			const sentToday = tx
-				.select({ id: christmasPresents.id })
-				.from(christmasPresents)
-				.where(
-					and(
-						eq(christmasPresents.sender_user_id, user.id),
-						gte(christmasPresents.sent_at_unix_ms, dayStart),
-						lt(christmasPresents.sent_at_unix_ms, dayStart + DAY_MS),
-					),
-				)
-				.all().length;
-			if (sentToday >= 3)
-				throw new ConflictException('You have sent all three letters for today.');
+			if (!draft?.recipient_user_id) throw new BadRequestException('Choose a recipient.');
+			if (!draft.body?.trim() && !draft.item_data)
+				throw new BadRequestException('Write a message or add a gift before sending.');
 			tx.update(christmasPresents)
 				.set({ status: 'sent', sent_at_unix_ms: now })
 				.where(eq(christmasPresents.id, draft.id))
@@ -413,6 +406,8 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 			throw new BadRequestException('Letters arrive at 9am on Christmas Day.');
 		const present = this.incoming(user.id, id);
 		if (!present.opened_at_unix_ms) throw new BadRequestException('Open the letter first.');
+		if (!present.item_data)
+			throw new BadRequestException('This letter has no gift to receive.');
 		if (present.status === 'claimed')
 			throw new ConflictException('You already received this stack.');
 		if (present.status === 'sent') {
@@ -467,6 +462,7 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 			.get();
 		if (!row?.sent_at_unix_ms) throw new NotFoundException('Present not found.');
 		if (action === 'copy') {
+			if (!row.item_data) throw new BadRequestException('This letter has no gift to copy.');
 			if (row.admin_copy_at_unix_ms)
 				throw new ConflictException('MMU admin already has a copy.');
 			const admin = this.database.connection
@@ -514,7 +510,10 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 				throw new BadRequestException('Write a return reason of 1 to 300 characters.');
 			const changed = this.database.connection
 				.update(christmasPresents)
-				.set({ status: 'returning', admin_reason: reason.trim() })
+				.set({
+					status: row.item_data ? 'returning' : 'returned',
+					admin_reason: reason.trim(),
+				})
 				.where(
 					and(
 						eq(christmasPresents.id, id),
@@ -710,6 +709,8 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 							? 'A Christmas letter'
 							: `Letter from ${sender}`)),
 			anonymous: !!row.anonymous,
+			body: !recipient || admin || row.opened_at_unix_ms ? row.body : null,
+			color: row.color,
 			itemName: !recipient || admin || row.opened_at_unix_ms ? row.item_name : null,
 			itemCount: !recipient || admin || row.opened_at_unix_ms ? row.item_count : null,
 			status: row.status,

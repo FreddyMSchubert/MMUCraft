@@ -970,6 +970,8 @@ export const christmasPresents = sqliteTable(
 		recipient_user_id: integer('recipient_user_id').references(() => users.id),
 		anonymous: integer('anonymous').notNull().default(0),
 		title: text('title'),
+		body: text('body'),
+		color: text('color').notNull().default('red'),
 		item_data: text('item_data'),
 		item_name: text('item_name'),
 		item_count: integer('item_count'),

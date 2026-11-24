@@ -12,7 +12,7 @@ const {
 } = require('../services/api/dist/database/database.service');
 const { PresentsService } = require('../services/api/dist/presents/presents.service');
 
-test('Christmas letters enforce the shared daily limit and deliver one stack once', async () => {
+test('Christmas letters send messages or gifts and deliver each gift once', async () => {
 	const database = new DatabaseService();
 	for (const [name, id] of [
 		['Alice', '1'.repeat(32)],
@@ -58,25 +58,38 @@ test('Christmas letters enforce the shared daily limit and deliver one stack onc
 	});
 	try {
 		service.setClock('2026-12-01T12:00');
-		for (let i = 0; i < 3; i++) {
-			service.saveDraft(alice, { recipient: 'Bob', anonymous: i === 0, title: '' });
-			await service.capture(alice);
+		for (let i = 0; i < 4; i++) {
+			service.saveDraft(alice, {
+				recipient: 'Bob',
+				anonymous: i === 0,
+				title: '',
+				body: i === 3 ? 'Merry Christmas, Bob!' : '',
+				color: i === 3 ? 'green' : 'red',
+			});
+			if (i < 3) await service.capture(alice);
 			service.send(alice);
 		}
-		assert.equal(service.get(alice).remainingToday, 0);
-		service.saveDraft(alice, { recipient: 'Bob', anonymous: false, title: '' });
+		service.saveDraft(alice, {
+			recipient: 'Bob',
+			anonymous: false,
+			title: '',
+			body: '',
+			color: 'red',
+		});
+		assert.throws(() => service.send(alice), /message or add a gift/);
 		await service.capture(alice);
-		assert.throws(() => service.send(alice), /three letters/);
 		await service.takeOut(alice);
 		assert.equal(receipts.size, 1);
 		service.setClock('2026-12-25T08:59');
 		assert.equal(service.get(bob).incoming.length, 0);
 		service.setClock('2026-12-25T09:00');
 		const incoming = service.get(bob).incoming;
-		assert.equal(incoming.length, 3);
+		assert.equal(incoming.length, 4);
 		assert.equal(incoming[0].from, null);
 		assert.equal(incoming[0].title, 'A Christmas letter');
 		assert.equal(incoming[0].itemName, null);
+		assert.equal(incoming[3].body, null);
+		assert.equal(incoming[3].color, 'green');
 		assert.equal(service.open(bob, incoming[0].id).firstOpen, true);
 		assert.equal(service.open(bob, incoming[0].id).firstOpen, false);
 		await service.claim(bob, incoming[0].id);
@@ -91,11 +104,13 @@ test('Christmas letters enforce the shared daily limit and deliver one stack onc
 		);
 		await assert.rejects(service.adminAction(second.id, 'copy'), /already has a copy/);
 		await service.adminAction(second.id, 'delete');
-		assert.equal(service.get(bob).incoming.length, 2);
-		await service.adminAction(second.id, 'undo');
 		assert.equal(service.get(bob).incoming.length, 3);
+		await service.adminAction(second.id, 'undo');
+		assert.equal(service.get(bob).incoming.length, 4);
+		assert.equal(service.open(bob, incoming[3].id).present.body, 'Merry Christmas, Bob!');
+		await assert.rejects(service.claim(bob, incoming[3].id), /no gift/);
 		await service.adminAction(incoming[2].id, 'return', 'Unsafe item');
-		assert.equal(service.get(bob).incoming.length, 2);
+		assert.equal(service.get(bob).incoming.length, 3);
 		assert.equal(service.get(alice).returned.at(-1).reason, 'Unsafe item');
 	} finally {
 		database.onModuleDestroy();

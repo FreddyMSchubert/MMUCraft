@@ -1,13 +1,34 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import { PlayerSelector } from './player-selector';
+
+const LETTER_COLORS = {
+	red: { label: 'Red', value: '#a82f3d' },
+	green: { label: 'Green', value: '#286b51' },
+	yellow: { label: 'Yellow', value: '#d9a83b' },
+	orange: { label: 'Orange', value: '#c56c32' },
+	blue: { label: 'Blue', value: '#345b95' },
+	'light-blue': { label: 'Light blue', value: '#5a9fba' },
+	purple: { label: 'Purple', value: '#704b8b' },
+	pink: { label: 'Pink', value: '#c16b8f' },
+} as const;
+type LetterColor = keyof typeof LETTER_COLORS;
+const letterStyle = (color: string): CSSProperties =>
+	({
+		'--letter-color':
+			color in LETTER_COLORS
+				? LETTER_COLORS[color as LetterColor].value
+				: LETTER_COLORS.red.value,
+	}) as CSSProperties;
 
 export interface PresentView {
 	id: string;
 	from: string | null;
 	to: string | null;
 	title: string;
+	body: string | null;
+	color: LetterColor;
 	anonymous: boolean;
 	itemName: string | null;
 	itemCount: number | null;
@@ -25,7 +46,6 @@ interface PresentsState {
 	sent: PresentView[];
 	returned: { id: string; reason: string }[];
 	pendingReturns: { id: string; itemName: string | null }[];
-	remainingToday: number;
 	players: { id: number; minecraftUsername: string; color: string }[];
 }
 
@@ -41,42 +61,66 @@ async function api<T>(path: string, method = 'GET', body?: object): Promise<T> {
 	return value as T;
 }
 
+function alertError(cause: unknown, fallback: string) {
+	window.alert(cause instanceof Error ? cause.message : fallback);
+}
+
 export function PresentsTab() {
 	const [state, setState] = useState<PresentsState | null>(null);
 	const [recipient, setRecipient] = useState('');
 	const [title, setTitle] = useState('');
+	const [body, setBody] = useState('');
+	const [color, setColor] = useState<LetterColor>('red');
 	const [anonymous, setAnonymous] = useState(false);
-	const [preview, setPreview] = useState('');
+	const [page, setPage] = useState(0);
 	const [closed, setClosed] = useState(false);
 	const [sending, setSending] = useState(false);
 	const [opening, setOpening] = useState('');
 	const [busy, setBusy] = useState(false);
-	const [error, setError] = useState('');
-	const [notice, setNotice] = useState('');
 	const draftId = useRef<string | null>(null);
+	const initialized = useRef(false);
+	const seenReturns = useRef(new Set<string>());
 	const applyState = useCallback((next: PresentsState) => {
-		if ((next.draft?.id ?? null) !== draftId.current) {
-			draftId.current = next.draft?.id ?? null;
+		const nextId = next.draft?.id ?? null;
+		if (!initialized.current || (draftId.current !== null && nextId === null)) {
 			setRecipient(next.draft?.to ?? '');
 			setTitle(next.draft?.title ?? '');
+			setBody(next.draft?.body ?? '');
+			setColor(next.draft?.color ?? 'red');
 			setAnonymous(next.draft?.anonymous ?? false);
 			setClosed(false);
+			setPage(0);
+		}
+		draftId.current = nextId;
+		if (!initialized.current) {
+			for (const item of next.returned) seenReturns.current.add(item.id);
+			initialized.current = true;
+		}
+		for (const item of next.returned) {
+			if (!seenReturns.current.has(item.id)) {
+				seenReturns.current.add(item.id);
+				window.alert(`An admin returned your letter: ${item.reason}`);
+			}
 		}
 		setState(next);
 	}, []);
 
 	useEffect(() => {
 		let active = true;
+		let failed = false;
 		const refresh = () =>
 			void api<PresentsState>('/api/presents')
 				.then((next) => {
-					if (active) applyState(next);
+					if (active) {
+						failed = false;
+						applyState(next);
+					}
 				})
 				.catch((cause: unknown) => {
-					if (active)
-						setError(
-							cause instanceof Error ? cause.message : 'Could not load presents.',
-						);
+					if (active && !failed) {
+						failed = true;
+						alertError(cause, 'Could not load letters.');
+					}
 				});
 		refresh();
 		const timer = window.setInterval(refresh, 30_000);
@@ -86,18 +130,27 @@ export function PresentsTab() {
 		};
 	}, [applyState]);
 
-	const validRecipient =
-		!recipient ||
-		!!state?.players.some(
-			(player) => player.minecraftUsername.toLowerCase() === recipient.trim().toLowerCase(),
-		);
+	const validRecipient = !!state?.players.some(
+		(player) => player.minecraftUsername.toLowerCase() === recipient.trim().toLowerCase(),
+	);
+	const hasContent = !!body.trim() || !!state?.draft?.itemName;
+	const hasDraft = !!state?.draft;
+	const draftInput = { recipient, title, body, color, anonymous };
+
 	useEffect(() => {
-		if (!state?.clock.sending || !validRecipient || busy || closed) return;
+		if (!state?.clock.sending || (recipient && !validRecipient) || busy || closed) return;
+		if (!hasDraft && !recipient && !title && !body && color === 'red' && !anonymous) return;
 		const timer = window.setTimeout(() => {
-			void api<PresentsState>('/api/presents/draft', 'PATCH', { recipient, title, anonymous })
+			void api<PresentsState>('/api/presents/draft', 'PATCH', {
+				recipient,
+				title,
+				body,
+				color,
+				anonymous,
+			})
 				.then(applyState)
 				.catch((cause: unknown) => {
-					setError(cause instanceof Error ? cause.message : 'Could not save the letter.');
+					alertError(cause, 'Could not save the letter.');
 				});
 		}, 600);
 		return () => {
@@ -106,52 +159,41 @@ export function PresentsTab() {
 	}, [
 		recipient,
 		title,
+		body,
+		color,
 		anonymous,
 		validRecipient,
 		state?.clock.sending,
-		state?.draft?.id,
+		hasDraft,
 		busy,
 		closed,
 		applyState,
 	]);
 
-	async function run(action: () => Promise<PresentsState>, success: string) {
+	async function save() {
+		return api<PresentsState>('/api/presents/draft', 'PATCH', draftInput);
+	}
+
+	async function run(action: () => Promise<PresentsState>) {
 		if (busy) return;
 		setBusy(true);
-		setError('');
-		setNotice('');
 		try {
 			applyState(await action());
-			setNotice(success);
 		} catch (cause) {
-			setError(cause instanceof Error ? cause.message : 'The letter could not be updated.');
+			alertError(cause, 'The letter could not be updated.');
 		} finally {
 			setBusy(false);
 		}
 	}
 
-	function save() {
-		return api<PresentsState>('/api/presents/draft', 'PATCH', { recipient, title, anonymous });
-	}
-
-	async function capture() {
-		await run(async () => {
-			await save();
-			return api<PresentsState>('/api/presents/draft/capture', 'POST');
-		}, 'The full stack is safe inside your letter.');
-		setPreview('');
-	}
-
 	async function closeLetter() {
-		if (busy) return;
+		if (busy || !validRecipient || !hasContent) return;
 		setBusy(true);
-		setError('');
 		try {
 			applyState(await save());
 			setClosed(true);
-			setNotice('Your letter is saved.');
 		} catch (cause) {
-			setError(cause instanceof Error ? cause.message : 'Could not save the letter.');
+			alertError(cause, 'Could not save the letter.');
 		} finally {
 			setBusy(false);
 		}
@@ -160,25 +202,23 @@ export function PresentsTab() {
 	async function send() {
 		if (busy) return;
 		setBusy(true);
-		setError('');
 		try {
+			await save();
 			const next = await api<PresentsState>('/api/presents/draft/send', 'POST');
 			setSending(true);
 			window.setTimeout(() => {
 				applyState(next);
 				setSending(false);
 				setClosed(false);
-				setNotice('Your letter is on its way.');
 				setBusy(false);
 			}, 750);
 		} catch (cause) {
-			setError(cause instanceof Error ? cause.message : 'Could not send the letter.');
+			alertError(cause, 'Could not send the letter.');
 			setBusy(false);
 		}
 	}
 
 	async function open(present: PresentView) {
-		setError('');
 		try {
 			const result = await api<{ firstOpen: boolean; present: PresentView }>(
 				`/api/presents/${present.id}/open`,
@@ -200,7 +240,7 @@ export function PresentsTab() {
 					setOpening('');
 				}, 800);
 		} catch (cause) {
-			setError(cause instanceof Error ? cause.message : 'Could not open the letter.');
+			alertError(cause, 'Could not open the letter.');
 		}
 	}
 
@@ -208,7 +248,6 @@ export function PresentsTab() {
 		return (
 			<section className="presentsPage">
 				<p>Loading your letters...</p>
-				{error && <p role="alert">{error}</p>}
 			</section>
 		);
 	return (
@@ -225,177 +264,240 @@ export function PresentsTab() {
 				</h1>
 				<p>
 					{state.clock.receiving
-						? 'Your letters have arrived. Open one, then join the Minecraft server to receive its stack.'
-						: 'Pick a player, put one full stack in a letter, and send it for free. Letters arrive at 9am on Christmas Day.'}
+						? 'Your letters have arrived. Open them to read your messages and find your gifts.'
+						: 'Send letters to anyone on the server. They will be delivered on Christmas Day.'}
 				</p>
-				{state.clock.simulatedAt !== null && (
-					<p className="presentsTestClock">Admin test time is active for everyone.</p>
-				)}
 			</header>
 
-			{error && (
-				<p className="presentsError" role="alert">
-					{error}
-				</p>
-			)}
-			{notice && (
-				<p className="presentsNotice" role="status">
-					{notice}
-				</p>
-			)}
-			{state.returned.map((item) => (
-				<p className="presentsError" key={item.id}>
-					An admin returned a present you sent: {item.reason}
-				</p>
-			))}
-			{state.pendingReturns.map((item) => (
-				<p className="presentsNotice" key={item.id}>
-					{item.itemName ?? 'Your captured stack'} is waiting to be returned. Join the
-					Minecraft server to receive it.
-				</p>
-			))}
-
 			{state.clock.sending && (
-				<div className="presentsCompose">
+				<div className="presentsCompose" style={letterStyle(color)}>
 					<div
 						className={`presentEnvelope ${closed ? 'presentEnvelopeClosed' : ''} ${sending ? 'presentEnvelopeSending' : ''}`}
 					>
 						<div className="presentEnvelopeFlap" aria-hidden="true" />
 						<div className="presentPaper">
-							<p className="presentsEyebrow">A letter from you</p>
-							<label>
-								To
-								<PlayerSelector
-									options={state.players}
-									datalistId="present-recipients"
-									value={recipient}
-									onChange={setRecipient}
-									placeholder="Choose a player"
-									disabled={busy}
-									required
-								/>
-							</label>
-							<label>
-								Title{' '}
-								<span className="presentsOptional">optional, 80 characters</span>
-								<input
-									value={title}
-									maxLength={80}
-									onChange={(event) => {
-										setTitle(event.target.value);
-									}}
-									placeholder={
-										anonymous ? 'A Christmas letter' : 'Letter from you'
-									}
-									disabled={busy}
-								/>
-							</label>
-							<label className="presentsCheck">
-								<input
-									type="checkbox"
-									checked={anonymous}
-									onChange={(event) => {
-										setAnonymous(event.target.checked);
-									}}
-									disabled={busy}
-								/>{' '}
-								Send anonymously
-							</label>
-							<div className="presentItemSlot">
-								<strong>One full stack per letter</strong>
-								<p>
-									{state.draft?.itemName
-										? `${state.draft.itemName} × ${state.draft.itemCount} is inside the letter.`
-										: preview ||
-											'Hold the stack in your Minecraft main hand, then insert it here.'}
-								</p>
-								<div className="presentsActions">
-									<button
-										type="button"
-										disabled={busy}
-										onClick={() =>
-											void api<{ itemName: string; itemCount: number }>(
-												'/api/presents/preview',
-											)
-												.then((item) => {
-													setPreview(
-														`Currently holding ${item.itemName} × ${item.itemCount}.`,
-													);
-													setError('');
-												})
-												.catch((cause: unknown) => {
-													setError(
-														cause instanceof Error
-															? cause.message
-															: 'Could not check your hand.',
-													);
-												})
-										}
+							<div className="presentFormViewport">
+								<div
+									className="presentFormTrack"
+									style={{ transform: `translateY(-${(page * 100) / 3}%)` }}
+								>
+									<section
+										className="presentFormPage"
+										aria-label="Recipient and color"
+										aria-hidden={page !== 0}
+										inert={page !== 0}
 									>
-										Refresh main hand
-									</button>
-									{state.draft?.itemName ? (
-										<button
-											type="button"
-											disabled={busy}
-											onClick={() =>
-												void run(
-													() =>
-														api<PresentsState>(
-															'/api/presents/draft/take-out',
-															'POST',
-														),
-													'The stack is back in your inventory.',
-												)
-											}
-										>
-											Take stack out
-										</button>
-									) : (
-										<button
-											type="button"
-											disabled={busy}
-											onClick={() => void capture()}
-										>
-											Insert full stack
-										</button>
-									)}
+										<p className="presentsEyebrow">
+											A letter from you · 1 of 3
+										</p>
+										<label>
+											To
+											<PlayerSelector
+												options={state.players}
+												datalistId="present-recipients"
+												value={recipient}
+												onChange={setRecipient}
+												placeholder="Choose a player"
+												disabled={busy}
+												required
+											/>
+										</label>
+										<label className="presentsCheck">
+											<input
+												type="checkbox"
+												checked={anonymous}
+												onChange={(event) => {
+													setAnonymous(event.target.checked);
+												}}
+												disabled={busy}
+											/>{' '}
+											Send anonymously
+										</label>
+										<fieldset className="presentColors">
+											<legend>Letter color</legend>
+											<div className="presentColorOptions">
+												{Object.entries(LETTER_COLORS).map(
+													([key, option]) => (
+														<button
+															key={key}
+															type="button"
+															className="presentColorOption"
+															style={
+																{
+																	'--swatch-color': option.value,
+																} as CSSProperties
+															}
+															aria-label={option.label}
+															aria-pressed={color === key}
+															onClick={() => {
+																setColor(key as LetterColor);
+															}}
+															disabled={busy}
+														>
+															<span aria-hidden="true" />
+															{option.label}
+														</button>
+													),
+												)}
+											</div>
+										</fieldset>
+									</section>
+									<section
+										className="presentFormPage"
+										aria-label="Letter message"
+										aria-hidden={page !== 1}
+										inert={page !== 1}
+									>
+										<p className="presentsEyebrow">Your words · 2 of 3</p>
+										<label>
+											Title <span className="presentsOptional">optional</span>
+											<input
+												value={title}
+												maxLength={80}
+												onChange={(event) => {
+													setTitle(event.target.value);
+												}}
+												placeholder={
+													anonymous
+														? 'A Christmas letter'
+														: 'Letter from you'
+												}
+												disabled={busy}
+											/>
+										</label>
+										<label className="presentBodyLabel">
+											Message
+											<textarea
+												value={body}
+												maxLength={5000}
+												onChange={(event) => {
+													setBody(event.target.value);
+												}}
+												placeholder="Write your letter here..."
+												disabled={busy}
+											/>
+										</label>
+										{body.length === 5000 && (
+											<p className="presentLimit" role="status">
+												Your message has reached the 5000 character limit.
+											</p>
+										)}
+									</section>
+									<section
+										className="presentFormPage"
+										aria-label="Optional gift"
+										aria-hidden={page !== 2}
+										inert={page !== 2}
+									>
+										<p className="presentsEyebrow">A little extra · 3 of 3</p>
+										<h2>Add a gift</h2>
+										<p>
+											Want to send a gift too? Hold it in your main hand in
+											Minecraft, then add it to your letter.
+										</p>
+										<div className="presentItemSlot">
+											{state.draft?.itemName ? (
+												<p>
+													<strong>
+														{state.draft.itemName} ×{' '}
+														{state.draft.itemCount}
+													</strong>{' '}
+													is in your letter.
+												</p>
+											) : (
+												<p>
+													No gift added yet. Your message can be sent on
+													its own.
+												</p>
+											)}
+											{state.draft?.itemName ? (
+												<button
+													type="button"
+													disabled={busy}
+													onClick={() =>
+														void run(() =>
+															api<PresentsState>(
+																'/api/presents/draft/take-out',
+																'POST',
+															),
+														)
+													}
+												>
+													Remove gift
+												</button>
+											) : (
+												<button
+													type="button"
+													disabled={busy}
+													onClick={() =>
+														void run(async () => {
+															await save();
+															return api<PresentsState>(
+																'/api/presents/draft/capture',
+																'POST',
+															);
+														})
+													}
+												>
+													Add gift
+												</button>
+											)}
+										</div>
+									</section>
 								</div>
 							</div>
-							<p className="presentsHint">
-								Want to include a message? Put a signed book with your gift inside a
-								shulker box or backpack, then send that container as your stack.
-							</p>
-							<button
-								className="presentsSeal"
-								type="button"
-								disabled={busy || !state.draft?.itemName}
-								onClick={() => void closeLetter()}
-							>
-								Close letter
-							</button>
 						</div>
 					</div>
-					{closed && (
-						<div className="presentsSendActions">
-							<button
-								type="button"
-								onClick={() => {
-									setClosed(false);
-								}}
-								disabled={busy}
-							>
-								Reopen and edit
-							</button>
-							<button type="button" onClick={() => void send()} disabled={busy}>
-								Stamp and send
-							</button>
-						</div>
-					)}
-					<p className="presentsAllowance">
-						{state.remainingToday} of 3 free letters left today. The limit resets at
-						midnight London time.
-					</p>
+					<div className="presentsSendActions">
+						{closed ? (
+							<>
+								<button
+									type="button"
+									onClick={() => {
+										setClosed(false);
+									}}
+									disabled={busy}
+								>
+									Reopen and edit
+								</button>
+								<button type="button" onClick={() => void send()} disabled={busy}>
+									Stamp and send
+								</button>
+							</>
+						) : (
+							<>
+								<button
+									type="button"
+									onClick={() => {
+										setPage((current) => Math.max(0, current - 1));
+									}}
+									disabled={busy || page === 0}
+								>
+									Previous
+								</button>
+								<span aria-live="polite">{page + 1} / 3</span>
+								{page < 2 ? (
+									<button
+										type="button"
+										onClick={() => {
+											setPage((current) => Math.min(2, current + 1));
+										}}
+										disabled={busy || (page === 0 && !validRecipient)}
+									>
+										Next
+									</button>
+								) : (
+									<button
+										type="button"
+										onClick={() => void closeLetter()}
+										disabled={busy || !validRecipient || !hasContent}
+									>
+										Close letter
+									</button>
+								)}
+							</>
+						)}
+					</div>
 				</div>
 			)}
 
@@ -406,43 +508,59 @@ export function PresentsTab() {
 						{state.incoming.map((present) => (
 							<article
 								className={`presentCard ${opening === present.id ? 'presentCardOpening' : ''}`}
+								style={letterStyle(present.color)}
 								key={present.id}
 							>
-								<span className="presentCardSeal" aria-hidden="true">
-									✦
-								</span>
-								<h3>{present.title}</h3>
-								<p>From {present.from ?? 'a secret sender'}</p>
-								{!present.opened ? (
-									<button type="button" onClick={() => void open(present)}>
-										Open letter
-									</button>
-								) : (
-									<>
-										<p className="presentCardItem">
-											{present.itemName} × {present.itemCount}
-										</p>
-										{present.status === 'claimed' ? (
-											<p>Received in Minecraft</p>
-										) : (
+								<div className="presentCardPaper">
+									<span className="presentCardSeal" aria-hidden="true">
+										✦
+									</span>
+									<h3>{present.title}</h3>
+									<p>From {present.from ?? 'a secret sender'}</p>
+									{present.opened && (
+										<>
+											{present.body && (
+												<p className="presentCardBody">{present.body}</p>
+											)}
+											{present.itemName && (
+												<p className="presentCardItem">
+													{present.itemName} × {present.itemCount}
+												</p>
+											)}
+										</>
+									)}
+								</div>
+								{(!present.opened || present.itemName) && (
+									<div className="presentCardActions">
+										{!present.opened ? (
 											<button
 												type="button"
-												disabled={busy}
-												onClick={() =>
-													void run(
-														() =>
+												onClick={() => void open(present)}
+											>
+												Open letter
+											</button>
+										) : (
+											present.itemName &&
+											(present.status === 'claimed' ? (
+												<p>Gift received in Minecraft</p>
+											) : (
+												<button
+													type="button"
+													disabled={busy}
+													onClick={() =>
+														void run(() =>
 															api<PresentsState>(
 																`/api/presents/${present.id}/claim`,
 																'POST',
 															),
-														'Your stack has been delivered in Minecraft.',
-													)
-												}
-											>
-												Receive gift
-											</button>
+														)
+													}
+												>
+													Receive gift
+												</button>
+											))
 										)}
-									</>
+									</div>
 								)}
 							</article>
 						))}
@@ -455,11 +573,9 @@ export function PresentsTab() {
 					<h2>Letters you sent</h2>
 					<div className="presentSentList">
 						{state.sent.map((present) => (
-							<div key={present.id}>
+							<div key={present.id} style={letterStyle(present.color)}>
 								<strong>{present.title}</strong>
-								<span>
-									To {present.to} · {present.status}
-								</span>
+								<span>To {present.to}</span>
 								{present.adminReason && (
 									<small>Returned by an admin: {present.adminReason}</small>
 								)}

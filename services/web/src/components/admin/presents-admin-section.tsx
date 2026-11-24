@@ -85,7 +85,7 @@ export function PresentsAdminSection() {
 			(present) =>
 				present.from?.toLowerCase().includes(from.trim().toLowerCase()) &&
 				present.to?.toLowerCase().includes(to.trim().toLowerCase()) &&
-				`${present.title} ${present.itemName} ${present.status}`
+				`${present.title} ${present.body} ${present.itemName} ${present.status}`
 					.toLowerCase()
 					.includes(query.trim().toLowerCase()),
 		) ?? [];
@@ -170,7 +170,7 @@ export function PresentsAdminSection() {
 						onChange={(event) => {
 							setQuery(event.target.value);
 						}}
-						placeholder="Title, item or status"
+						placeholder="Title, message, item or status"
 					/>
 				</label>
 				<label>
@@ -202,14 +202,18 @@ export function PresentsAdminSection() {
 						From {present.from} to {present.to}
 						{present.anonymous ? ' · anonymous to the recipient' : ''}
 					</p>
+					{present.body && <p className="presentAdminBody">{present.body}</p>}
 					<p>
-						{present.itemName} × {present.itemCount} · {present.status}
+						{present.itemName
+							? `${present.itemName} × ${present.itemCount}`
+							: 'Message only'}{' '}
+						· {present.status}
 					</p>
 					{present.adminReason && <p>Return reason: {present.adminReason}</p>}
 					<div className="presentAdminActions">
 						<button
 							type="button"
-							disabled={busy || !!present.adminCopyAt}
+							disabled={busy || !!present.adminCopyAt || !present.itemName}
 							onClick={() =>
 								void change(
 									`/api/admin/presents/${present.id}/copy`,

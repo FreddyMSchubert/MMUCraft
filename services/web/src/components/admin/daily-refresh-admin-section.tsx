@@ -42,7 +42,7 @@ export function DailyRefreshAdminSection({ controller }: { controller: AdminTabC
 						<label>
 							Player
 							<PlayerSelector
-								datalistId="daily-refresh-players"
+								listboxId="daily-refresh-players"
 								options={players}
 								value={dailyPlayerId}
 								onChange={setDailyPlayerId}

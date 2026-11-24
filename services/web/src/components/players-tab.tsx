@@ -296,7 +296,7 @@ export function PlayersTab({
 
 			<div className="playerDirectorySearch">
 				<PlayerSelector
-					datalistId="player-directory-search"
+					listboxId="player-directory-search"
 					options={[]}
 					value={search}
 					onChange={(value) => {

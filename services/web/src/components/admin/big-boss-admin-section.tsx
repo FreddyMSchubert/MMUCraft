@@ -95,7 +95,7 @@ export function BigBossAdminSection({ players }: { players: AdminPlayer[] }) {
 			<label>
 				New holder
 				<PlayerSelector
-					datalistId="big-boss-admin-players"
+					listboxId="big-boss-admin-players"
 					options={players}
 					value={target}
 					onChange={(value) => {

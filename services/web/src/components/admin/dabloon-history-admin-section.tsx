@@ -200,7 +200,7 @@ export function DabloonHistoryAdminSection({ controller }: { controller: AdminTa
 				<label>
 					<span>Player</span>
 					<PlayerSelector
-						datalistId="dabloon-log-players"
+						listboxId="dabloon-log-players"
 						options={players}
 						value={draft.playerName}
 						onChange={(playerName) => {

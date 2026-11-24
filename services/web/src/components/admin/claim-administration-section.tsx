@@ -172,7 +172,7 @@ export function ClaimAdministrationSection({ controller }: { controller: AdminTa
 						</p>
 					</div>
 					<PlayerSelector
-						datalistId="player-claim-players"
+						listboxId="player-claim-players"
 						options={players}
 						value={search}
 						onChange={(value) => {

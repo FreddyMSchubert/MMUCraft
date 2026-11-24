@@ -182,7 +182,7 @@ export function MemberAccessAdminSection({ controller }: { controller: AdminTabC
 						</ul>
 					</div>
 					<PlayerSelector
-						datalistId="member-list-players"
+						listboxId="member-list-players"
 						options={players}
 						value={search}
 						onChange={setSearch}

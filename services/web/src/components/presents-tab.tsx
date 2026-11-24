@@ -306,7 +306,7 @@ export function PresentsTab() {
 											<span className="presentFieldHeading">Recipient</span>
 											<PlayerSelector
 												options={state.players}
-												datalistId="present-recipients"
+												listboxId="present-recipients"
 												value={recipient}
 												onChange={setRecipient}
 												placeholder="Choose a recipient"

@@ -527,7 +527,7 @@ function SubmissionEditor({
 							onChange={(memberSearch) => {
 								setDraft({ ...draft, memberSearch });
 							}}
-							datalistId="build-team-player-search"
+							listboxId="build-team-player-search"
 							ariaLabel="Search server players"
 						/>
 						<button

@@ -149,7 +149,7 @@ export function CommandHistoryAdminSection({ controller }: { controller: AdminTa
 				<label>
 					<span>Player</span>
 					<PlayerSelector
-						datalistId="command-log-players"
+						listboxId="command-log-players"
 						options={players}
 						value={draft.playerName}
 						onChange={(playerName) => {

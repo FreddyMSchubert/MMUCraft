@@ -65,7 +65,7 @@ export function PlayerEmojiAdminSection({ controller }: { controller: AdminTabCo
 				</p>
 			</div>
 			<PlayerSelector
-				datalistId="emoji-list-players"
+				listboxId="emoji-list-players"
 				options={players}
 				value={search}
 				onChange={setSearch}

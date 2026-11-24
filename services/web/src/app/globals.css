@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@400;500&display=swap');
 @import './styles/base.css';
+@import './styles/player-selector.css';
 @import './styles/site-alert.css';
 @import './styles/landing-page.css';
 @import './styles/snowfall.css';

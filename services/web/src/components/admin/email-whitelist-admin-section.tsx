@@ -64,7 +64,7 @@ export function EmailWhitelistAdminSection({ controller }: { controller: AdminTa
 						<label>
 							Responsible user
 							<PlayerSelector
-								datalistId="whitelist-responsible-player"
+								listboxId="whitelist-responsible-player"
 								options={players.filter((player) => !player.isExternal)}
 								value={responsibleUsername}
 								onChange={setResponsibleUsername}
@@ -76,7 +76,7 @@ export function EmailWhitelistAdminSection({ controller }: { controller: AdminTa
 						<button disabled={updatingWhitelist}>Add email</button>
 					</form>
 					<PlayerSelector
-						datalistId="email-whitelist-players"
+						listboxId="email-whitelist-players"
 						options={players}
 						value={search}
 						onChange={setSearch}

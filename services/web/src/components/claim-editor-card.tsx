@@ -385,7 +385,7 @@ export function ClaimMembersEditor({
 				}}
 			>
 				<PlayerSelector
-					datalistId={`claim-candidates-${claimId}`}
+					listboxId={`claim-candidates-${claimId}`}
 					options={available}
 					value={search}
 					onChange={setSearch}

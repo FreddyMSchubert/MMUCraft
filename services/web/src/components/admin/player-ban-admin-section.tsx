@@ -49,7 +49,7 @@ export function PlayerBanAdminSection({ controller }: { controller: AdminTabCont
 						<label>
 							Player
 							<PlayerSelector
-								datalistId="ban-players"
+								listboxId="ban-players"
 								options={players}
 								value={banPlayerId}
 								onChange={setBanPlayerId}

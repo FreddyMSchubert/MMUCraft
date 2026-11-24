@@ -1,0 +1,48 @@
+.playerSelector {
+	position: relative;
+	flex: 1;
+	min-width: 0;
+}
+
+.playerSelector > input {
+	box-sizing: border-box;
+	width: 100%;
+}
+
+.playerSelectorList {
+	position: absolute;
+	z-index: 50;
+	top: calc(100% + 4px);
+	right: 0;
+	left: 0;
+	max-height: 240px;
+	overflow-y: auto;
+	padding: 4px;
+	border: 1px solid #ac9780;
+	border-radius: 6px;
+	background: #fffaf0;
+	box-shadow: 0 12px 24px #0007;
+	color: #30221d;
+}
+
+.playerSelectorList[hidden] {
+	display: none;
+}
+
+.playerSelector .playerSelectorOption {
+	display: block;
+	width: 100%;
+	padding: 8px 10px;
+	border: 0;
+	border-radius: 4px;
+	background: transparent;
+	color: inherit;
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+}
+
+.playerSelector .playerSelectorOption:hover,
+.playerSelector .playerSelectorOption[aria-selected='true'] {
+	background: #e9d8bd;
+}

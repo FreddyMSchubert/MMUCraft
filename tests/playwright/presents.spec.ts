@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test('a player can compose a letter and later open a present', async ({ page }) => {
-	test.setTimeout(60_000);
+	test.setTimeout(75_000);
 	await page.addInitScript(() => {
 		const original = window.setInterval.bind(window);
 		window.setInterval = ((handler: TimerHandler, timeout?: number, ...args: unknown[]) =>
@@ -185,6 +185,12 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 	await page.getByRole('button', { name: 'Add gift' }).click();
 	await expect(page.getByText('Red present × 4')).toBeVisible();
 	await page.screenshot({ path: 'tests/test-results/presents-compose.png', fullPage: true });
+	await page.evaluate(() => {
+		document.addEventListener('animationstart', (event) => {
+			if (event.animationName === 'presentInkIn')
+				document.documentElement.dataset.presentInkStarted = 'yes';
+		});
+	});
 	await page.getByRole('button', { name: 'Finish writing' }).click();
 	await page.waitForTimeout(350);
 	await expect(page.locator('.presentWritingView .presentFormViewport')).toBeHidden();
@@ -193,6 +199,7 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 	await page.screenshot({ path: 'tests/test-results/presents-writing-shrink.png' });
 	await expect(page.locator('.presentWritingView')).not.toBeVisible();
 	await page.waitForTimeout(250);
+	await expect(page.locator('html')).toHaveAttribute('data-present-ink-started', 'yes');
 	await page.screenshot({ path: 'tests/test-results/presents-writing-insert.png' });
 	await expect(page.locator('.presentEnvelopeLetter')).toContainText('A small surprise');
 	await page.getByRole('button', { name: 'Put down letter' }).click();
@@ -218,6 +225,19 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 	);
 	await page.setViewportSize({ width: 1280, height: 800 });
 	await page.screenshot({ path: 'tests/test-results/presents-envelope-desktop.png' });
+	await page.getByRole('button', { name: 'Open the letter to write' }).click();
+	await page.waitForTimeout(300);
+	await page.screenshot({ path: 'tests/test-results/presents-lift-desktop.png' });
+	await expect(page.locator('.presentWritingView')).toBeVisible();
+	await page.waitForTimeout(150);
+	await expect(page.locator('.presentWritingView .presentFormViewport')).toBeHidden();
+	await page.screenshot({ path: 'tests/test-results/presents-expand-desktop.png' });
+	await page.getByRole('button', { name: 'Finish writing' }).click();
+	await page.waitForTimeout(500);
+	await expect(page.locator('.presentWritingView .presentFormViewport')).toBeHidden();
+	await expect(page.locator('.presentEnvelopeView')).toHaveCSS('opacity', '0');
+	await page.screenshot({ path: 'tests/test-results/presents-shrink-desktop.png' });
+	await expect(page.locator('.presentWritingView')).not.toBeVisible();
 	await page.setViewportSize({ width: 390, height: 844 });
 	await page.getByRole('button', { name: 'Open the letter to write' }).click();
 	await expect(page.locator('.presentWritingView')).toBeVisible();
@@ -242,7 +262,16 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 	await page.waitForTimeout(1500);
 	await page.screenshot({ path: 'tests/test-results/presents-flight.png' });
 	await expect(page.locator('.presentComposeDialog')).not.toBeVisible({ timeout: 20000 });
-	await expect(page.getByRole('heading', { name: 'Letters you sent' })).toHaveCount(0);
+	await expect(page.getByRole('heading', { name: 'Letters you sent' })).toBeVisible();
+	await expect(page.getByText('To Bob')).toBeVisible();
+	await expect(page.locator('.presentSentEnvelope .presentSentStamp')).toBeVisible();
+	await expect(page.locator('.presentsPage')).toHaveClass(/isGlowReturning/);
+	await page.screenshot({ path: 'tests/test-results/presents-sent-page.png', fullPage: true });
+	await expect(page.locator('.presentsPage')).not.toHaveClass(/isGlowReturning/);
+	await page.screenshot({
+		path: 'tests/test-results/presents-sent-page-settled.png',
+		fullPage: true,
+	});
 
 	receiving = true;
 	await page.reload();

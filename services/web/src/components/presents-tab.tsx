@@ -81,11 +81,26 @@ function alertError(cause: unknown, fallback: string) {
 }
 
 function paperTransform(from: DOMRect, to: DOMRect) {
-	const scale = from.width / to.width;
-	return `translate(${from.left - to.left}px, ${from.top - to.top + (from.height - to.height * scale) / 2}px) scale(${scale})`;
+	return `translate(${from.left - to.left}px, ${from.top - to.top}px) scale(${from.width / to.width}, ${from.height / to.height})`;
 }
 
-const PAPER_LIFT = 0.32;
+function restingPaperRect(paper: HTMLElement) {
+	const envelope = paper.closest('.presentEnvelopeObject');
+	if (!(envelope instanceof HTMLElement)) return paper.getBoundingClientRect();
+	const rect = envelope.getBoundingClientRect();
+	return new DOMRect(
+		rect.left + paper.offsetLeft,
+		rect.top + paper.offsetTop,
+		paper.offsetWidth,
+		paper.offsetHeight,
+	);
+}
+
+function paperLift(paper: HTMLElement) {
+	const envelope = paper.closest('.presentEnvelopeObject');
+	if (!(envelope instanceof HTMLElement)) return paper.offsetHeight * 0.4;
+	return Math.max(0, paper.offsetTop + paper.offsetHeight - envelope.offsetHeight * 0.32 + 12);
+}
 
 export function PresentsTab({ senderName }: { senderName: string }) {
 	const [state, setState] = useState<PresentsState | null>(null);
@@ -98,6 +113,8 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 	const [mode, setMode] = useState<'list' | 'envelope' | 'writing'>('list');
 	const [writerReady, setWriterReady] = useState(false);
 	const [sending, setSending] = useState(false);
+	const [revealing, setRevealing] = useState(false);
+	const [glowReturning, setGlowReturning] = useState<LetterColor | null>(null);
 	const [opening, setOpening] = useState('');
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState('');
@@ -108,6 +125,7 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 	const writingAnimation = useRef<Animation | null>(null);
 	const liftAnimation = useRef<Animation | null>(null);
 	const insertionAnimation = useRef<Animation | null>(null);
+	const liftDistance = useRef(0);
 	const returningPaper = useRef(false);
 	const sendingInProgress = useRef(false);
 	const saveQueue = useRef<Promise<void>>(Promise.resolve());
@@ -184,14 +202,16 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 		if (mode !== 'envelope' || !returningPaper.current || !previewPaper.current) return;
 		returningPaper.current = false;
 		const animation = previewPaper.current.animate(
-			[{ transform: `translateY(-${PAPER_LIFT * 100}%)` }, { transform: 'none' }],
+			[{ transform: `translateY(-${liftDistance.current}px)` }, { transform: 'none' }],
 			{ duration: 650, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' },
 		);
 		insertionAnimation.current = animation;
 		animation.onfinish = () => {
+			setRevealing(false);
 			setBusy(false);
 		};
 		animation.oncancel = () => {
+			setRevealing(false);
 			setBusy(false);
 		};
 	}, [mode]);
@@ -325,6 +345,7 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 		if (busy) return;
 		setError('');
 		setPage(0);
+		setRevealing(false);
 		setWriterReady(false);
 		previewRect.current = null;
 		const paper = previewPaper.current;
@@ -333,9 +354,13 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 			return;
 		}
 		const currentTransform = getComputedStyle(paper).transform;
+		liftDistance.current = paperLift(paper);
 		setBusy(true);
 		const animation = paper.animate(
-			[{ transform: currentTransform }, { transform: `translateY(-${PAPER_LIFT * 100}%)` }],
+			[
+				{ transform: currentTransform },
+				{ transform: `translateY(-${liftDistance.current}px)` },
+			],
 			{ duration: 550, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'forwards' },
 		);
 		liftAnimation.current = animation;
@@ -370,10 +395,11 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 			) {
 				await new Promise<void>((resolve) => window.setTimeout(resolve, 280));
 				const paper = writingPaper.current;
-				const resting = previewPaper.current.getBoundingClientRect();
+				const resting = restingPaperRect(previewPaper.current);
+				liftDistance.current = paperLift(previewPaper.current);
 				const raised = new DOMRect(
 					resting.x,
-					resting.y - resting.height * PAPER_LIFT,
+					resting.y - liftDistance.current,
 					resting.width,
 					resting.height,
 				);
@@ -387,6 +413,7 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 				await transition.finished;
 				returningPaper.current = true;
 				inserting = true;
+				setRevealing(true);
 			}
 			setMode('envelope');
 		} catch (cause) {
@@ -417,10 +444,14 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 			window.setTimeout(
 				() => {
 					sendingInProgress.current = false;
+					setGlowReturning(color);
 					applyState(next);
 					setSending(false);
 					setMode('list');
 					setBusy(false);
+					window.setTimeout(() => {
+						setGlowReturning(null);
+					}, 1400);
 				},
 				window.matchMedia('(prefers-reduced-motion: reduce)').matches
 					? 250
@@ -482,7 +513,17 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 	const hasPreview = Boolean(title.trim() || body.trim() || state.draft?.itemName);
 	const previewByline = anonymous ? 'By someone' : 'By ' + senderName;
 	return (
-		<section className="presentsPage" style={letterStyle(color)}>
+		<section
+			className={'presentsPage' + (glowReturning ? ' isGlowReturning' : '')}
+			style={
+				{
+					...letterStyle(color),
+					'--glow-previous-color': glowReturning
+						? LETTER_COLORS[glowReturning].value
+						: undefined,
+				} as CSSProperties
+			}
+		>
 			<header className="presentsHero">
 				<span className="presentsHeroIcon" aria-hidden="true">
 					🎁
@@ -764,7 +805,8 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 					className={
 						'presentEnvelopeView' +
 						(sending ? ' isSending' : '') +
-						(mode === 'writing' ? ' isWriting' : '')
+						(mode === 'writing' ? ' isWriting' : '') +
+						(revealing ? ' isRevealing' : '')
 					}
 					inert={mode === 'writing'}
 					aria-hidden={mode === 'writing'}
@@ -851,6 +893,36 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 					</div>
 				</div>
 			</dialog>
+			{state.sent.length > 0 && (
+				<section className="presentsList presentSentList">
+					<h2>Letters you sent</h2>
+					<ul className="presentSentGrid">
+						{state.sent.map((present) => (
+							<li
+								className="presentSentEnvelope"
+								key={present.id}
+								style={letterStyle(present.color)}
+								aria-label={`${present.title}, to ${present.to ?? 'a friend'}, ${present.status}`}
+							>
+								<span className="presentSentStamp" aria-hidden="true">
+									<span>✦</span>
+									<small>MMU POST</small>
+								</span>
+								<span className="presentSentAddress">
+									To {present.to ?? 'a friend'}
+								</span>
+								{['returned', 'deleted'].includes(present.status) && (
+									<span className="presentSentStatus">
+										{present.status === 'returned'
+											? 'Returned'
+											: 'Held by admins'}
+									</span>
+								)}
+							</li>
+						))}
+					</ul>
+				</section>
+			)}
 
 			{state.incoming.length > 0 && (
 				<section className="presentsList">

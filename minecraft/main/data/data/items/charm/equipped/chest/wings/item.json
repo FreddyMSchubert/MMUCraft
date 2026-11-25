@@ -8,7 +8,7 @@
 	"shopPurchasable": {
 		"membersOnly": false,
 		"priceDabloons": 300,
-		"description": "Turns a chestplate into an elytra.",
+		"description": "Turns a chestplate into an armored elytra when combined.",
 		"unlockWeight": 15,
 		"unlockMessage": "Unlocked charm: Wings Charm. Turn a chestplate into an elytra.",
 		"gameplayToggle": "efficient"

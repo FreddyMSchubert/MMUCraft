@@ -1,7 +1,7 @@
 .presentsPage:not(.adminSection) {
 	position: relative;
 	isolation: isolate;
-	transition: --letter-color 400ms ease;
+	transition: --letter-color 700ms ease;
 }
 .playPage:has(.presentsPage:not(.adminSection)) {
 	overflow-x: clip;
@@ -10,7 +10,8 @@
 	overflow-x: clip;
 	overflow-clip-margin: border-box;
 }
-.presentsPage:not(.adminSection)::before {
+.presentsPage:not(.adminSection)::before,
+.presentsPage.isGlowReturning::after {
 	content: '';
 	position: absolute;
 	z-index: -1;
@@ -21,25 +22,25 @@
 	transform: translateX(-50%);
 	background:
 		radial-gradient(
-			circle clamp(420px, 40vw, 620px) at 50% var(--glow-small-y, 150px),
+			circle clamp(300px, 32vw, 500px) at 50% var(--glow-small-y, 150px),
 			color-mix(
 				in srgb,
-				color-mix(in srgb, var(--letter-color) 45%, #1c1117) 94%,
+				color-mix(in srgb, var(--glow-color, var(--letter-color)) 45%, #1c1117) 94%,
 				transparent
 			),
 			color-mix(
 					in srgb,
-					color-mix(in srgb, var(--letter-color) 35%, #1c1117) 55%,
+					color-mix(in srgb, var(--glow-color, var(--letter-color)) 35%, #1c1117) 55%,
 					transparent
 				)
 				60%,
 			transparent 100%
 		),
 		radial-gradient(
-			circle clamp(820px, 90vw, 1180px) at 50% var(--glow-large-y, 550px),
+			circle clamp(600px, 70vw, 950px) at 50% var(--glow-large-y, 550px),
 			color-mix(
 				in srgb,
-				color-mix(in srgb, var(--letter-color) 25%, #1c1117) 35%,
+				color-mix(in srgb, var(--glow-color, var(--letter-color)) 25%, #1c1117) 35%,
 				transparent
 			),
 			transparent 100%
@@ -47,9 +48,22 @@
 	mask-image: linear-gradient(#000 72%, transparent 100%);
 	pointer-events: none;
 }
+.presentsPage.isGlowReturning::after {
+	--glow-color: var(--glow-previous-color);
+	animation: presentGlowReturn 1.4s ease-out both;
+}
+@keyframes presentGlowReturn {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
 
 @media (max-width: 700px) {
-	.presentsPage:not(.adminSection)::before {
+	.presentsPage:not(.adminSection)::before,
+	.presentsPage.isGlowReturning::after {
 		--glow-small-y: calc(210px + env(safe-area-inset-top));
 		--glow-large-y: calc(610px + env(safe-area-inset-top));
 		top: calc(-76px - env(safe-area-inset-top));
@@ -182,7 +196,6 @@
 }
 .presentFormTrack {
 	height: calc(var(--page-height) * 3);
-	background: repeating-linear-gradient(#f5e8d0 0 29px, #ebdcc1 30px 31px);
 	transition: transform 0.62s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .presentFormPage {
@@ -360,6 +373,71 @@
 	font-family: Georgia, serif;
 	color: #fff2d9;
 	font-size: 1.8rem;
+}
+.presentSentList {
+	max-width: 900px;
+	margin: 34px auto;
+}
+.presentSentGrid {
+	list-style: none;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+	gap: 18px;
+}
+.presentSentEnvelope {
+	position: relative;
+	box-sizing: border-box;
+	aspect-ratio: 1.42;
+	border: 2px solid color-mix(in srgb, var(--letter-color) 55%, #f2cda4);
+	border-radius: 6px;
+	background: linear-gradient(
+		155deg,
+		color-mix(in srgb, var(--letter-color) 78%, #f6d2a1),
+		var(--letter-color) 75%
+	);
+	box-shadow:
+		inset 0 0 0 9px #fff1,
+		0 12px 24px #100b0baa;
+	color: #fff5db;
+}
+.presentSentStamp {
+	position: absolute;
+	top: 9%;
+	right: 7%;
+	display: grid;
+	place-items: center;
+	align-content: center;
+	gap: 2px;
+	box-sizing: border-box;
+	width: 58px;
+	height: 68px;
+	border: 4px dotted #f9e9ce;
+	background: color-mix(in srgb, var(--letter-color) 45%, #ead6b4);
+	box-shadow: 0 4px 8px #22101866;
+	transform: rotate(-8deg);
+}
+.presentSentStamp > span {
+	font-size: 1.8rem;
+}
+.presentSentStamp small {
+	font-size: 0.45rem;
+	letter-spacing: 0.04em;
+	white-space: nowrap;
+}
+.presentSentAddress {
+	position: absolute;
+	left: 10%;
+	bottom: 14%;
+	font-family: 'Playpen Sans', 'Segoe Print', cursive;
+	font-size: clamp(1rem, 2.5vw, 1.3rem);
+	overflow-wrap: anywhere;
+}
+.presentSentStatus {
+	position: absolute;
+	right: 7%;
+	bottom: 5%;
+	font-size: 0.75rem;
 }
 .presentCards {
 	display: grid;
@@ -546,8 +624,13 @@
 	align-items: center;
 	justify-content: center;
 	gap: 12px;
-	padding: 150px 18px 96px;
+	padding: 230px 18px 16px;
 	text-align: center;
+	transition: opacity 300ms ease;
+}
+.presentEnvelopeView.isWriting {
+	opacity: 0;
+	transition-duration: 120ms;
 }
 .presentsPage .presentEnvelopeAction {
 	display: block;
@@ -640,6 +723,7 @@
 	height: 110%;
 	filter: drop-shadow(0 5px 7px #351c2870);
 	background-color: #f8ecd3;
+	background-image: repeating-linear-gradient(to bottom, transparent 0 18px, #e7d7b8 18px 19px);
 	color: #42302a;
 	text-align: left;
 	transform-origin: center 70%;
@@ -674,22 +758,25 @@
 	padding: 10px 16px;
 	border-left: 1px solid #d3b889;
 	border-right: 1px solid #d3b889;
-	background-color: #f8ecd3;
-	background-image: repeating-linear-gradient(transparent 0 17px, #e7d7b8 18px 19px);
-	background-position-y: 5px;
+	background-color: transparent;
 	backface-visibility: hidden;
 	overflow: hidden;
 }
 .presentFoldBack {
 	transform: rotateX(180deg);
 }
+.isSending .presentFoldFace,
+.isSending .presentFoldBack {
+	background-color: #f8ecd3;
+	background-image: repeating-linear-gradient(to bottom, transparent 0 18px, #e7d7b8 18px 19px);
+}
 .presentFoldMiddle .presentFoldFace {
-	background-position-y: calc(5px - var(--present-third-height, 0px));
+	background-position-y: calc(-1 * var(--present-third-height, 0px));
 }
 .presentFoldBottom .presentFoldFace,
 .presentFoldBottom .presentFoldBack {
 	background-position-y: calc(
-		5px - var(--present-third-height, 0px) - var(--present-third-height, 0px)
+		-1 * var(--present-third-height, 0px) - var(--present-third-height, 0px)
 	);
 }
 .presentFoldTop .presentFoldFace,
@@ -870,13 +957,25 @@
 	flex-shrink: 0;
 	width: min(680px, calc(100vw - 28px));
 	margin: 0;
-	background-image: repeating-linear-gradient(transparent 0 29px, #ebdcc1 30px 31px);
-	background-position-y: clamp(18px, 5vw, 38px);
+	background-image: repeating-linear-gradient(to bottom, transparent 0 29px, #ebdcc1 29px 30px);
 	box-shadow: 0 22px 50px #0009;
 	transform-origin: top left;
 }
 .presentWritingPaper .presentFormViewport {
 	--page-height: clamp(430px, 60vh, 530px);
+}
+.presentEnvelopeView.isRevealing .presentFoldTop strong,
+.presentEnvelopeView.isRevealing .presentFoldTop small,
+.presentEnvelopeView.isRevealing .presentFoldMiddle .presentFoldFace {
+	animation: presentInkIn 500ms 100ms ease-out both;
+}
+@keyframes presentInkIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
 }
 .presentWritingView .presentFormViewport,
 .presentWritingView .presentWritingControls {
@@ -1029,6 +1128,7 @@
 }
 .isSending .presentEnvelopeLetter {
 	background-color: transparent;
+	background-image: none;
 	animation: presentLiftAndPost 5.7s ease-in-out both;
 }
 .isSending .presentFoldBottom {
@@ -1068,7 +1168,6 @@
 	}
 	.presentWritingPaper {
 		padding: 18px;
-		background-position-y: 18px;
 	}
 	.presentWritingControls {
 		justify-content: center;

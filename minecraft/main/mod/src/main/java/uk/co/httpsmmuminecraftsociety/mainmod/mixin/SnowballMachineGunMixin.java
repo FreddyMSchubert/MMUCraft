@@ -27,7 +27,7 @@ public abstract class SnowballMachineGunMixin {
     private void mainmod$fireGun(Level level, LivingEntity user, ItemStack stack, int ticksRemaining,
                                  CallbackInfo ci) {
         if (SnowballMachineGun.isGun(stack)) {
-            SnowballMachineGun.tick(level, user, stack);
+            SnowballMachineGun.tick(level, user, stack, ticksRemaining);
             ci.cancel();
         }
     }
@@ -35,6 +35,9 @@ public abstract class SnowballMachineGunMixin {
     @Inject(method = "releaseUsing", at = @At("HEAD"), cancellable = true)
     private void mainmod$skipCrossbowLoading(ItemStack stack, Level level, LivingEntity user, int ticksRemaining,
                                               CallbackInfoReturnable<Boolean> cir) {
-        if (SnowballMachineGun.isGun(stack)) cir.setReturnValue(false);
+        if (SnowballMachineGun.isGun(stack)) {
+            SnowballMachineGun.release(stack);
+            cir.setReturnValue(false);
+        }
     }
 }

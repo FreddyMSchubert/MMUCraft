@@ -6,8 +6,8 @@
 	"maxStackSize": 1,
 	"baseItemOverride": "minecraft:crossbow",
 	"tooltips": [
-		"Snowballs: 0/64",
-		"Right-click empty to load; hold right-click to fire; sneak-right-click to reload"
+		"Snowballs: 0/128",
+		"Hold right-click to load from offhand snowballs; right-click without them to fire"
 	],
 	"craftable": {
 		"recipes": [

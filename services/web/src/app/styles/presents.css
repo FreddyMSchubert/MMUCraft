@@ -99,6 +99,17 @@
 	margin: 12px auto;
 	line-height: 1.55;
 }
+.presentReturnedNotices {
+	max-width: 660px;
+	margin: 0 auto 18px;
+	padding: 8px 18px;
+	border: 1px solid color-mix(in srgb, var(--letter-color) 60%, white);
+	border-radius: 8px;
+	background: #160e17b8;
+}
+.presentReturnedNotices p {
+	margin: 8px 0;
+}
 
 .presentsCompose {
 	max-width: 640px;
@@ -297,16 +308,19 @@
 	padding: 10px 16px;
 	border: 1px solid #d6b88d;
 	border-radius: 8px;
-	background: var(--present-green);
+	background: var(--letter-color);
 	color: white;
 	font: inherit;
 	font-weight: 700;
+}
+.presentsPage.adminSection button {
+	background: var(--present-green);
 }
 .presentsPage button:hover {
 	filter: brightness(1.12);
 }
 .presentsPage button:focus-visible {
-	outline: 3px solid #f8b84a;
+	outline: 3px solid color-mix(in srgb, var(--letter-color) 55%, white);
 	outline-offset: 3px;
 }
 .presentsPage button:disabled {
@@ -425,24 +439,6 @@
 	color: #fff;
 	font-weight: 700;
 }
-.presentSentList {
-	display: grid;
-	gap: 9px;
-}
-.presentSentList > div {
-	display: flex;
-	justify-content: space-between;
-	gap: 10px;
-	flex-wrap: wrap;
-	padding: 12px 16px;
-	background: color-mix(in srgb, var(--letter-color) 65%, #27191b);
-	border: 1px solid var(--letter-color);
-	border-radius: 7px;
-}
-.presentSentList small {
-	flex-basis: 100%;
-}
-
 .presentAdminClock,
 .presentAdminRow {
 	padding: 16px;
@@ -504,7 +500,7 @@
 .presentWriteEntry {
 	display: grid;
 	place-items: center;
-	min-height: 180px;
+	margin: 8px auto 28px;
 }
 .presentsPage .presentWriteEntry button {
 	padding: 17px 28px;
@@ -516,9 +512,6 @@
 		inset 0 1px #fff4;
 	font-family: Georgia, serif;
 	font-size: 1.35rem;
-}
-.presentWriteEntry button span {
-	margin-right: 7px;
 }
 .presentsPage:not(.adminSection) .presentsList {
 	margin: 18px 0 10px;
@@ -535,17 +528,15 @@
 	margin: 0;
 	padding: 0;
 	border: 0;
-	background: #050508d9;
+	background: #050508a6;
+	backdrop-filter: blur(4px);
+	-webkit-backdrop-filter: blur(4px);
 	color: #fff8e9;
 	overflow-y: auto;
 	overscroll-behavior: contain;
 }
 .presentComposeDialog::backdrop {
-	background: #0009;
-	backdrop-filter: blur(4px);
-}
-.presentComposeDialog.isWriting {
-	background: #020203ef;
+	background: transparent;
 }
 .presentEnvelopeView {
 	box-sizing: border-box;
@@ -555,12 +546,8 @@
 	align-items: center;
 	justify-content: center;
 	gap: 12px;
-	padding: 28px 18px 96px;
+	padding: 150px 18px 96px;
 	text-align: center;
-}
-.presentEnvelopeView > .presentsEyebrow {
-	color: #f5dcb3;
-	margin: 0 0 64px;
 }
 .presentsPage .presentEnvelopeAction {
 	display: block;
@@ -570,14 +557,28 @@
 	box-shadow: none;
 	filter: none;
 	color: inherit;
+	-webkit-appearance: none;
+	appearance: none;
+	-webkit-tap-highlight-color: transparent;
 }
 .presentsPage .presentEnvelopeAction:disabled {
 	opacity: 1;
 	cursor: default;
 }
-.presentEnvelopeAction:focus-visible {
-	outline: 3px solid #ffd879;
-	outline-offset: 12px;
+.presentsPage .presentEnvelopeAction:hover {
+	filter: none;
+}
+.presentsPage .presentEnvelopeAction:focus-visible {
+	outline: none;
+}
+.presentEnvelopeAction:focus-visible .presentEnvelopeObject {
+	filter: drop-shadow(0 0 12px color-mix(in srgb, var(--letter-color) 55%, white));
+}
+.presentEnvelopeView.isWriting .presentEnvelopeAction {
+	pointer-events: none;
+}
+.presentEnvelopeView.isWriting .presentEnvelopeLetter {
+	visibility: hidden;
 }
 .presentEnvelopeObject {
 	--envelope-shadow: color-mix(in srgb, var(--letter-color) 56%, #241320);
@@ -642,10 +643,10 @@
 	text-align: left;
 	transform-origin: center 70%;
 	transform-style: preserve-3d;
-	transition: transform 650ms cubic-bezier(0.18, 0.72, 0.27, 1.1);
+	transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .presentEnvelopeAction:not(:disabled):is(:hover, :focus-visible, :active) .presentEnvelopeLetter {
-	transform: translateY(-24%) rotate(3deg);
+	transform: translateY(-18%) rotate(2deg);
 }
 .presentFoldThird {
 	display: block;
@@ -670,7 +671,8 @@
 	inset: 0;
 	display: block;
 	padding: 10px 16px;
-	border: 1px solid #d3b889;
+	border-left: 1px solid #d3b889;
+	border-right: 1px solid #d3b889;
 	background-color: #f8ecd3;
 	background-image: repeating-linear-gradient(transparent 0 17px, #e7d7b8 18px 19px);
 	background-position-y: 5px;
@@ -682,10 +684,12 @@
 }
 .presentFoldTop .presentFoldFace,
 .presentFoldTop .presentFoldBack {
+	border-top: 1px solid #d3b889;
 	border-radius: 3px 3px 0 0;
 }
 .presentFoldBottom .presentFoldFace,
 .presentFoldBottom .presentFoldBack {
+	border-bottom: 1px solid #d3b889;
 	border-radius: 0 0 3px 3px;
 }
 .presentFoldTop strong,
@@ -750,6 +754,7 @@
 }
 .presentEnvelopeAddressFace {
 	box-sizing: border-box;
+	top: 32%;
 	transform: rotateY(180deg);
 	border: 2px solid color-mix(in srgb, var(--letter-color) 50%, #f2cda4);
 	border-radius: 6px;
@@ -804,11 +809,6 @@
 .presentAddressLine > span {
 	opacity: 0;
 }
-.presentPreviewHint {
-	margin: 0;
-	color: #e9d7bd;
-	font-size: 0.92rem;
-}
 .presentEnvelopeControls {
 	display: flex;
 	justify-content: center;
@@ -820,11 +820,6 @@
 	background: var(--letter-color);
 	box-shadow: 0 4px 0 #251016;
 }
-.presentsPage .presentSendButton[data-inactive='true'] {
-	background: #67656a;
-	box-shadow: none;
-	color: #e8e2da;
-}
 .presentComposeError {
 	max-width: 550px;
 	margin: 8px auto;
@@ -834,53 +829,45 @@
 	background: #71272be8;
 	color: #fff;
 }
-.presentSendingStatus {
-	margin: 4px;
-	color: #e7d3ae;
-	font-family: Georgia, serif;
-	font-size: 1.2rem;
-}
 .presentEnvelopeView.isSending .presentEnvelopeControls {
 	opacity: 0;
 	pointer-events: none;
 }
-.presentEnvelopeView.isSending > .presentsEyebrow {
-	opacity: 0;
-}
 
 .presentWritingView {
 	box-sizing: border-box;
+	position: absolute;
+	z-index: 8;
+	inset: 0;
 	display: flex;
 	min-height: 100dvh;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	padding: 22px 14px 116px;
-	background: #0005;
+	gap: 14px;
+	padding: 22px 14px;
+	overflow-y: auto;
 }
 .presentWritingPaper {
 	box-sizing: border-box;
+	flex-shrink: 0;
 	width: min(680px, calc(100vw - 28px));
-	margin: auto 0 12px;
+	margin: 0;
 	box-shadow: 0 22px 50px #0009;
+	transform-origin: top left;
 }
 .presentWritingPaper .presentFormViewport {
 	--page-height: clamp(430px, 60vh, 530px);
 }
 .presentWritingControls {
-	position: fixed;
-	z-index: 2;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	box-sizing: border-box;
 	display: flex;
-	width: 100%;
+	flex-shrink: 0;
+	width: min(680px, calc(100vw - 28px));
 	align-items: center;
-	justify-content: space-between;
+	justify-content: center;
+	flex-wrap: wrap;
 	gap: 12px;
-	padding: 14px clamp(14px, 5vw, 64px) max(12px, env(safe-area-inset-bottom));
-	background: #020203d9;
+	animation: presentControlsIn 300ms 900ms both;
 }
 .presentPageControls {
 	display: flex;
@@ -894,31 +881,31 @@
 .presentsPage .presentFinishWriting {
 	background: var(--letter-color);
 }
+@keyframes presentControlsIn {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
 
 @keyframes presentLiftAndPost {
 	0% {
 		transform: translateY(0);
 		z-index: 2;
 	}
-	20%,
-	70% {
-		transform: translateY(-20%) rotate(2deg);
-		z-index: 4;
-	}
-	70.1% {
-		transform: translateY(-20%) rotate(2deg);
+	18%,
+	55% {
+		transform: translateY(-18%) rotate(2deg);
 		z-index: 2;
-	}
-	89% {
-		transform: translateY(30%);
-		z-index: 2;
-		opacity: 1;
 	}
 	95%,
 	100% {
-		transform: translateY(30%);
-		z-index: 1;
-		opacity: 0;
+		transform: translateY(46%);
+		z-index: 2;
 	}
 }
 @keyframes presentFoldBottom {
@@ -1002,31 +989,43 @@
 		opacity: 0;
 	}
 }
+@keyframes presentDialogFade {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+.presentComposeDialog.isSending {
+	animation: presentDialogFade 1.5s var(--present-flight-delay) ease-in both;
+}
 .presentEnvelopeObject.isSending {
-	animation: presentFlyAway 1s 6.7s ease-in both;
+	transform-origin: 50% 66%;
+	animation: presentFlyAway 1.5s var(--present-flight-delay) ease-in both;
 }
 .isSending .presentEnvelopeLetter {
-	animation: presentLiftAndPost 3.4s ease-in-out both;
+	animation: presentLiftAndPost 5.7s ease-in-out both;
 }
 .isSending .presentFoldBottom {
 	transform-origin: 50% 0;
-	animation: presentFoldBottom 0.75s 0.75s ease-in-out both;
+	animation: presentFoldBottom 1s 1.05s ease-in-out both;
 }
 .isSending .presentFoldTop {
 	transform-origin: 50% 100%;
-	animation: presentFoldTop 0.75s 1.6s ease-in-out both;
+	animation: presentFoldTop 1s 2.15s ease-in-out both;
 }
 .isSending .presentEnvelopeFlap {
-	animation: presentCloseFlap 0.6s 3.2s ease-in-out both;
+	animation: presentCloseFlap 0.8s 5.6s ease-in-out both;
 }
 .isSending .presentWaxSeal {
-	animation: presentSealIn 0.5s 3.75s ease-out both;
+	animation: presentSealIn 0.6s 6.35s ease-out both;
 }
 .isSending .presentEnvelopeRotor {
-	animation: presentTurnOver 0.85s 4.25s ease-in-out both;
+	animation: presentTurnOver 1s 6.95s ease-in-out both;
 }
 .isSending .presentPostage {
-	animation: presentStampIn 0.5s 5.1s ease-out both;
+	animation: presentStampIn 0.6s 8s ease-out both;
 }
 .isSending .presentAddressLine > span {
 	animation: presentType 0.01s both;
@@ -1040,19 +1039,17 @@
 		width: 100%;
 	}
 	.presentWritingView {
-		justify-content: flex-start;
 		padding-top: max(18px, env(safe-area-inset-top));
+		padding-bottom: max(18px, env(safe-area-inset-bottom));
 	}
 	.presentWritingPaper {
 		padding: 18px;
 	}
 	.presentWritingControls {
-		flex-wrap: wrap;
-		justify-content: flex-end;
+		justify-content: center;
 	}
 	.presentPageControls {
-		justify-content: space-between;
-		width: 100%;
+		justify-content: center;
 	}
 	.presentPostage {
 		width: 58px;
@@ -1060,10 +1057,17 @@
 		border-width: 4px;
 	}
 }
+@media (max-height: 650px) {
+	.presentWritingView {
+		justify-content: flex-start;
+	}
+}
 @media (prefers-reduced-motion: reduce) {
 	.presentEnvelopeLetter,
-	.presentEnvelopeControls {
+	.presentEnvelopeControls,
+	.presentWritingControls {
 		transition: none;
+		animation: none;
 	}
 	.presentEnvelopeObject.isSending,
 	.isSending .presentEnvelopeLetter,
@@ -1076,5 +1080,9 @@
 	.isSending .presentAddressLine > span {
 		animation-duration: 0.01ms;
 		animation-delay: 0ms !important;
+	}
+	.presentComposeDialog.isSending {
+		animation-duration: 0.01ms;
+		animation-delay: 0ms;
 	}
 }

@@ -1,6 +1,13 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
+import {
+	useCallback,
+	useEffect,
+	useLayoutEffect,
+	useRef,
+	useState,
+	type CSSProperties,
+} from 'react';
 import { PlayerSelector } from './player-selector';
 
 const LETTER_COLORS = {
@@ -65,6 +72,10 @@ function alertError(cause: unknown, fallback: string) {
 	window.alert(cause instanceof Error ? cause.message : fallback);
 }
 
+function paperTransform(from: DOMRect, to: DOMRect) {
+	return `translate(${from.left - to.left}px, ${from.top - to.top}px) scale(${from.width / to.width}, ${from.height / to.height})`;
+}
+
 export function PresentsTab({ senderName }: { senderName: string }) {
 	const [state, setState] = useState<PresentsState | null>(null);
 	const [recipient, setRecipient] = useState('');
@@ -79,6 +90,11 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState('');
 	const dialog = useRef<HTMLDialogElement>(null);
+	const previewPaper = useRef<HTMLSpanElement>(null);
+	const writingPaper = useRef<HTMLDivElement>(null);
+	const previewRect = useRef<DOMRect | null>(null);
+	const writingAnimation = useRef<Animation | null>(null);
+	const sendingInProgress = useRef(false);
 	const draftId = useRef<string | null>(null);
 	const initialized = useRef(false);
 	const seenReturns = useRef(new Set<string>());
@@ -126,13 +142,26 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 		};
 	}, [mode]);
 
+	useLayoutEffect(() => {
+		if (mode !== 'writing' || !previewRect.current || !writingPaper.current) return;
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+		const paper = writingPaper.current;
+		writingAnimation.current = paper.animate(
+			[
+				{ transform: paperTransform(previewRect.current, paper.getBoundingClientRect()) },
+				{ transform: 'none' },
+			],
+			{ duration: 1150, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' },
+		);
+	}, [mode]);
+
 	useEffect(() => {
 		let active = true;
 		let failed = false;
 		const refresh = () =>
 			void api<PresentsState>('/api/presents')
 				.then((next) => {
-					if (active) {
+					if (active && !sendingInProgress.current) {
 						failed = false;
 						applyState(next);
 					}
@@ -218,6 +247,33 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 		setError('');
 		try {
 			applyState(await save());
+			writingAnimation.current?.finish();
+			if (
+				writingPaper.current &&
+				previewPaper.current &&
+				!window.matchMedia('(prefers-reduced-motion: reduce)').matches
+			) {
+				const paper = writingPaper.current;
+				paper.parentElement
+					?.querySelector('.presentWritingControls')
+					?.animate([{ opacity: 1 }, { opacity: 0 }], {
+						duration: 300,
+						fill: 'forwards',
+					});
+				const transition = paper.animate(
+					[
+						{ transform: 'none' },
+						{
+							transform: paperTransform(
+								previewPaper.current.getBoundingClientRect(),
+								paper.getBoundingClientRect(),
+							),
+						},
+					],
+					{ duration: 1000, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'forwards' },
+				);
+				await transition.finished;
+			}
 			setMode('envelope');
 		} catch (cause) {
 			setError(cause instanceof Error ? cause.message : 'Could not save the letter.');
@@ -240,18 +296,23 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 		setError('');
 		try {
 			await save();
+			sendingInProgress.current = true;
 			const next = await api<PresentsState>('/api/presents/draft/send', 'POST');
 			setSending(true);
 			window.setTimeout(
 				() => {
+					sendingInProgress.current = false;
 					applyState(next);
 					setSending(false);
 					setMode('list');
 					setBusy(false);
 				},
-				window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 250 : 8000,
+				window.matchMedia('(prefers-reduced-motion: reduce)').matches
+					? 250
+					: (flightDelay + 1.5) * 1000,
 			);
 		} catch (cause) {
+			sendingInProgress.current = false;
 			setError(cause instanceof Error ? cause.message : 'Could not send the letter.');
 			setBusy(false);
 		}
@@ -299,24 +360,36 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 		...(recipientPlayer?.nickname ? [recipientPlayer.nickname] : []),
 		recipientPlayer?.minecraftUsername ?? (recipient || 'A friend'),
 	];
+	const addressCharacters = addressLines.reduce((count, line) => count + line.length, 0);
+	const flightDelay = 8.3 + addressCharacters * 0.06 + 0.8;
 	const previewTitle =
 		title.trim() || (anonymous ? 'A Christmas letter' : 'Letter from ' + senderName);
 	const hasPreview = Boolean(title.trim() || body.trim() || state.draft?.itemName);
 	const previewByline = anonymous ? 'By someone' : 'By ' + senderName;
 	return (
 		<section className="presentsPage" style={letterStyle(color)}>
-			{state.clock.receiving && (
-				<header className="presentsHero">
-					<span className="presentsHeroIcon" aria-hidden="true">
-						🎁
-					</span>
-					<p className="presentsEyebrow">Christmas post · 2026</p>
-					<h1>Christmas presents are here!</h1>
-					<p>
-						Your letters have arrived. Open them to read your messages and find your
-						gifts.
-					</p>
-				</header>
+			<header className="presentsHero">
+				<span className="presentsHeroIcon" aria-hidden="true">
+					🎁
+				</span>
+				<p className="presentsEyebrow">Christmas post · 2026</p>
+				<h1>
+					{state.clock.receiving
+						? 'Christmas presents are here!'
+						: 'Send a little Christmas magic'}
+				</h1>
+				<p>
+					{state.clock.receiving
+						? 'Your letters have arrived. Open them to read your messages and find your gifts.'
+						: 'Send letters to anyone on the server. They will be delivered on Christmas Day.'}
+				</p>
+			</header>
+			{state.returned.length > 0 && (
+				<div className="presentReturnedNotices" role="status">
+					{state.returned.map((item) => (
+						<p key={item.id}>An admin returned a letter to you: {item.reason}</p>
+					))}
+				</div>
 			)}
 
 			{state.clock.sending && (
@@ -328,14 +401,19 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 							setMode('envelope');
 						}}
 					>
-						<span aria-hidden="true">✉</span> Write a letter
+						Write a letter
 					</button>
 				</div>
 			)}
 			<dialog
 				ref={dialog}
-				className={'presentComposeDialog' + (mode === 'writing' ? ' isWriting' : '')}
-				style={letterStyle(color)}
+				className={'presentComposeDialog' + (sending ? ' isSending' : '')}
+				style={
+					{
+						...letterStyle(color),
+						'--present-flight-delay': `${flightDelay}s`,
+					} as CSSProperties
+				}
 				aria-label={
 					mode === 'writing' ? 'Write your Christmas letter' : 'Your Christmas letter'
 				}
@@ -346,9 +424,9 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 					else setMode('list');
 				}}
 			>
-				{mode === 'writing' ? (
+				{mode === 'writing' && (
 					<div className="presentWritingView">
-						<div className="presentPaper presentWritingPaper">
+						<div className="presentPaper presentWritingPaper" ref={writingPaper}>
 							<div className="presentFormViewport">
 								<div
 									className="presentFormTrack"
@@ -550,89 +628,87 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 							</button>
 						</div>
 					</div>
-				) : (
-					<div className={'presentEnvelopeView' + (sending ? ' isSending' : '')}>
-						<p className="presentsEyebrow">Your Christmas letter</p>
-						<button
-							type="button"
-							className="presentEnvelopeAction"
-							disabled={busy}
-							onClick={() => {
-								setError('');
-								setPage(0);
-								setMode('writing');
-							}}
-							aria-label="Open the letter to write"
+				)}
+				<div
+					className={
+						'presentEnvelopeView' +
+						(sending ? ' isSending' : '') +
+						(mode === 'writing' ? ' isWriting' : '')
+					}
+					inert={mode === 'writing'}
+					aria-hidden={mode === 'writing'}
+				>
+					<button
+						type="button"
+						className="presentEnvelopeAction"
+						disabled={busy}
+						onClick={() => {
+							setError('');
+							previewRect.current =
+								previewPaper.current?.getBoundingClientRect() ?? null;
+							setPage(0);
+							setMode('writing');
+						}}
+						aria-label="Open the letter to write"
+					>
+						<span
+							className={'presentEnvelopeObject' + (sending ? ' isSending' : '')}
+							aria-hidden="true"
 						>
-							<span
-								className={'presentEnvelopeObject' + (sending ? ' isSending' : '')}
-								aria-hidden="true"
-							>
-								<span className="presentEnvelopeRotor">
-									<span className="presentEnvelopeReverse">
-										<span className="presentEnvelopeFlap" />
-										<span className="presentEnvelopeLining" />
-										<span className="presentEnvelopeLetter">
-											<span className="presentFoldThird presentFoldTop">
-												<span className="presentFoldFace">
-													<strong>
-														{hasPreview ? previewTitle : ''}
-													</strong>
-													{hasPreview && <small>{previewByline}</small>}
-												</span>
-												<span className="presentFoldBack" />
+							<span className="presentEnvelopeRotor">
+								<span className="presentEnvelopeReverse">
+									<span className="presentEnvelopeFlap" />
+									<span className="presentEnvelopeLining" />
+									<span className="presentEnvelopeLetter" ref={previewPaper}>
+										<span className="presentFoldThird presentFoldTop">
+											<span className="presentFoldFace">
+												<strong>{hasPreview ? previewTitle : ''}</strong>
+												{hasPreview && <small>{previewByline}</small>}
 											</span>
-											<span className="presentFoldThird presentFoldMiddle">
-												<span className="presentFoldFace">
-													{body.trim()}
-												</span>
-											</span>
-											<span className="presentFoldThird presentFoldBottom">
-												<span className="presentFoldFace" />
-												<span className="presentFoldBack" />
-											</span>
+											<span className="presentFoldBack" />
 										</span>
-										<span className="presentEnvelopePocket" />
-										<span className="presentWaxSeal">✦</span>
+										<span className="presentFoldThird presentFoldMiddle">
+											<span className="presentFoldFace">{body.trim()}</span>
+										</span>
+										<span className="presentFoldThird presentFoldBottom">
+											<span className="presentFoldFace" />
+											<span className="presentFoldBack" />
+										</span>
 									</span>
-									<span className="presentEnvelopeAddressFace">
-										<span className="presentPostage">
-											<span>✦</span>
-											<small>MMU POST</small>
-										</span>
-										<span className="presentAddress">
-											{addressLines.map((line, lineIndex) => (
-												<span
-													className="presentAddressLine"
-													key={lineIndex}
-												>
-													{Array.from(line).map((char, charIndex) => (
-														<span
-															key={charIndex}
-															style={{
-																animationDelay: `${5.4 + (lineIndex * 18 + charIndex) * 0.018}s`,
-															}}
-														>
-															{char === ' ' ? '\u00a0' : char}
-														</span>
-													))}
-												</span>
-											))}
-										</span>
+									<span className="presentEnvelopePocket" />
+									<span className="presentWaxSeal">✦</span>
+								</span>
+								<span className="presentEnvelopeAddressFace">
+									<span className="presentPostage">
+										<span>✦</span>
+										<small>MMU POST</small>
+									</span>
+									<span className="presentAddress">
+										{addressLines.map((line, lineIndex) => (
+											<span className="presentAddressLine" key={lineIndex}>
+												{Array.from(line).map((char, charIndex) => (
+													<span
+														key={charIndex}
+														style={{
+															animationDelay: `${8.3 + (addressLines.slice(0, lineIndex).reduce((count, previous) => count + previous.length, 0) + charIndex) * 0.06}s`,
+														}}
+													>
+														{char === ' ' ? '\u00a0' : char}
+													</span>
+												))}
+											</span>
+										))}
 									</span>
 								</span>
 							</span>
-						</button>
-						{!sending && (
-							<p className="presentPreviewHint">
-								Hover to peek. Click the paper to write or edit.
-							</p>
-						)}
-						{error && (
-							<p className="presentComposeError" role="alert">
-								{error}
-							</p>
-						)}
+						</span>
+					</button>
+					{error && mode !== 'writing' && (
+						<p className="presentComposeError" role="alert">
+							{error}
+						</p>
+					)}
+					{mode !== 'writing' && (
 						<div className="presentEnvelopeControls">
 							<button
 								type="button"
@@ -647,20 +723,14 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 							<button
 								className="presentSendButton"
 								type="button"
-								data-inactive={!hasContent || !validRecipient}
 								disabled={busy}
 								onClick={() => void send()}
 							>
 								Send letter
 							</button>
 						</div>
-						{sending && (
-							<p className="presentSendingStatus" role="status">
-								Sending your letter...
-							</p>
-						)}
-					</div>
-				)}
+					)}
+				</div>
 			</dialog>
 
 			{state.incoming.length > 0 && (
@@ -725,23 +795,6 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 									</div>
 								)}
 							</article>
-						))}
-					</div>
-				</section>
-			)}
-
-			{state.sent.length > 0 && (
-				<section className="presentsList">
-					<h2>Letters you sent</h2>
-					<div className="presentSentList">
-						{state.sent.map((present) => (
-							<div key={present.id} style={letterStyle(present.color)}>
-								<strong>{present.title}</strong>
-								<span>To {present.to}</span>
-								{present.adminReason && (
-									<small>Returned by an admin: {present.adminReason}</small>
-								)}
-							</div>
 						))}
 					</div>
 				</section>

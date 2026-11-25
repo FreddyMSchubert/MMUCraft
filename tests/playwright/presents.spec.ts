@@ -2,6 +2,15 @@ import { expect, test } from '@playwright/test';
 
 test('a player can compose a letter and later open a present', async ({ page }) => {
 	test.setTimeout(60_000);
+	await page.addInitScript(() => {
+		const original = window.setInterval.bind(window);
+		window.setInterval = ((handler: TimerHandler, timeout?: number, ...args: unknown[]) =>
+			original(
+				handler,
+				timeout === 30_000 ? 3_000 : timeout,
+				...args,
+			)) as typeof window.setInterval;
+	});
 	let receiving = false;
 	let draft: Record<string, unknown> | null = null;
 	let opened = false;
@@ -109,18 +118,34 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 
 	await page.setViewportSize({ width: 390, height: 844 });
 	await page.goto('/play/presents');
+	await expect(
+		page.getByRole('heading', { name: 'Send a little Christmas magic' }),
+	).toBeVisible();
 	await expect(page.getByRole('button', { name: 'Write a letter' })).toBeVisible();
 	await expect(page.getByRole('heading', { name: 'Letters you sent' })).toHaveCount(0);
+	await page.screenshot({ path: 'tests/test-results/presents-send-page.png', fullPage: true });
 	await page.getByRole('button', { name: 'Write a letter' }).click();
 	await expect(page.getByRole('button', { name: 'Open the letter to write' })).toBeVisible();
 	await page.screenshot({ path: 'tests/test-results/presents-envelope-mobile.png' });
+	await page.getByRole('button', { name: 'Open the letter to write' }).hover();
+	await expect(page.getByRole('button', { name: 'Open the letter to write' })).toHaveCSS(
+		'filter',
+		'none',
+	);
 	await page.getByRole('button', { name: 'Send letter' }).click();
 	await expect(page.locator('.presentComposeError')).toContainText(
 		'Write a message or add a gift',
 	);
 	await page.getByRole('button', { name: 'Open the letter to write' }).click();
+	await expect(page.locator('.presentEnvelopeView')).toBeVisible();
+	await page.waitForTimeout(300);
+	await page.screenshot({ path: 'tests/test-results/presents-writing-zoom.png' });
 	await page.getByPlaceholder('Choose a recipient').fill('Bob');
-	await page.getByRole('button', { name: 'Green' }).click();
+	await page.getByRole('button', { name: 'Light blue' }).click();
+	await expect(page.getByRole('button', { name: 'Next', exact: true })).toHaveCSS(
+		'background-color',
+		'rgb(90, 159, 186)',
+	);
 	await page.getByRole('button', { name: 'Next', exact: true }).click();
 	await page.getByPlaceholder('Letter from you').fill('A small surprise');
 	await page.getByPlaceholder('Write your letter here...').fill('Merry Christmas, Bob!');
@@ -129,16 +154,31 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 		path: 'tests/test-results/presents-message-mobile.png',
 		fullPage: true,
 	});
+	await page.setViewportSize({ width: 320, height: 568 });
+	await page.getByRole('button', { name: 'Finish writing' }).scrollIntoViewIfNeeded();
+	await expect(page.getByRole('button', { name: 'Finish writing' })).toBeInViewport();
+	await page.screenshot({ path: 'tests/test-results/presents-small-mobile.png' });
+	await page.setViewportSize({ width: 390, height: 844 });
 	await page.getByRole('button', { name: 'Next', exact: true }).click();
 	await page.getByRole('button', { name: 'Add gift' }).click();
 	await expect(page.getByText('Red present × 4')).toBeVisible();
 	await page.screenshot({ path: 'tests/test-results/presents-compose.png', fullPage: true });
 	await page.getByRole('button', { name: 'Finish writing' }).click();
+	await page.waitForTimeout(350);
+	await page.screenshot({ path: 'tests/test-results/presents-writing-close.png' });
 	await expect(page.locator('.presentEnvelopeLetter')).toContainText('A small surprise');
 	await page.getByRole('button', { name: 'Put down letter' }).click();
 	await page.reload();
 	await page.getByRole('button', { name: 'Write a letter' }).click();
 	await expect(page.locator('.presentEnvelopeLetter')).toContainText('A small surprise');
+	await expect(page.getByRole('button', { name: 'Put down letter' })).toHaveCSS(
+		'background-color',
+		'rgb(90, 159, 186)',
+	);
+	await expect(page.getByRole('button', { name: 'Send letter' })).toHaveCSS(
+		'background-color',
+		'rgb(90, 159, 186)',
+	);
 	await page.setViewportSize({ width: 1280, height: 800 });
 	await page.screenshot({ path: 'tests/test-results/presents-envelope-desktop.png' });
 	await page.setViewportSize({ width: 390, height: 844 });
@@ -146,17 +186,18 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 	await expect(page.locator('.presentEnvelopeObject.isSending')).toBeVisible();
 	await page.waitForTimeout(1350);
 	await page.screenshot({ path: 'tests/test-results/presents-fold-one.png' });
-	await page.waitForTimeout(650);
+	await page.waitForTimeout(1650);
 	await page.screenshot({ path: 'tests/test-results/presents-fold-two.png' });
-	await page.waitForTimeout(900);
-	await page.screenshot({ path: 'tests/test-results/presents-inserting.png' });
-	await page.waitForTimeout(1100);
-	await page.screenshot({ path: 'tests/test-results/presents-sealed.png' });
 	await page.waitForTimeout(1800);
+	await page.screenshot({ path: 'tests/test-results/presents-inserting.png' });
+	await page.waitForTimeout(1800);
+	await page.screenshot({ path: 'tests/test-results/presents-sealed.png' });
+	await page.waitForTimeout(2400);
 	await page.screenshot({ path: 'tests/test-results/presents-posting-mobile.png' });
-	await expect(page.getByRole('heading', { name: 'Letters you sent' })).toBeVisible({
-		timeout: 10000,
-	});
+	await page.waitForTimeout(1500);
+	await page.screenshot({ path: 'tests/test-results/presents-flight.png' });
+	await expect(page.locator('.presentComposeDialog')).not.toBeVisible({ timeout: 20000 });
+	await expect(page.getByRole('heading', { name: 'Letters you sent' })).toHaveCount(0);
 
 	receiving = true;
 	await page.reload();

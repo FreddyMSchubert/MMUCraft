@@ -56,7 +56,10 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 		sentTodayRecipientIds: sent ? [2] : [],
 		returned: [],
 		pendingReturns: [],
-		players: [{ id: 2, minecraftUsername: 'Bob', nickname: 'Bobby', color: '#ffffff' }],
+		players: [
+			{ id: 1, minecraftUsername: 'Alice', nickname: 'Ally', color: '#ffffff' },
+			{ id: 2, minecraftUsername: 'Bob', nickname: 'Bobby', color: '#ffffff' },
+		],
 	});
 	await page.route('**/api/**', async (route) => {
 		const url = new URL(route.request().url());
@@ -251,6 +254,9 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 	await page.getByRole('button', { name: 'Send letter' }).click();
 	await expect(page.locator('.presentEnvelopeObject.isSending')).toBeVisible();
 	const animatedStamp = (await page.locator('.presentPostage img').getAttribute('src')) ?? '';
+	const animatedAngle = await page
+		.locator('.presentPostage')
+		.evaluate((element) => element.style.getPropertyValue('--stamp-angle'));
 	await page.waitForTimeout(1350);
 	await page.screenshot({ path: 'tests/test-results/presents-fold-one.png' });
 	await page.waitForTimeout(1650);
@@ -261,13 +267,25 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 	await page.screenshot({ path: 'tests/test-results/presents-sealed.png' });
 	await page.waitForTimeout(2400);
 	await page.screenshot({ path: 'tests/test-results/presents-posting-mobile.png' });
+	await expect(page.locator('.presentAddress')).toContainText('To Bobby');
+	await expect(page.locator('.presentAddress')).toContainText('From Ally');
 	await page.waitForTimeout(1500);
 	await page.screenshot({ path: 'tests/test-results/presents-flight.png' });
 	await expect(page.locator('.presentComposeDialog')).not.toBeVisible({ timeout: 20000 });
 	await expect(page.getByRole('heading', { name: 'Letters you sent' })).toBeVisible();
-	await expect(page.getByText('To Bob')).toBeVisible();
+	await expect(page.locator('.presentSentAddress')).toContainText('To Bobby');
+	await expect(page.locator('.presentSentAddress')).toContainText('From Ally');
 	await expect(page.locator('.presentSentEnvelope .presentSentStamp')).toBeVisible();
 	await expect(page.locator('.presentSentStamp img')).toHaveAttribute('src', animatedStamp);
+	const sentAngle = await page
+		.locator('.presentSentStamp')
+		.evaluate((element) => element.style.getPropertyValue('--stamp-angle'));
+	expect(sentAngle).toBe(animatedAngle);
+	const sentEnvelopeRatio = await page.locator('.presentSentEnvelope').evaluate((element) => {
+		const { width, height } = element.getBoundingClientRect();
+		return width / height;
+	});
+	expect(sentEnvelopeRatio).toBeCloseTo(1.42 / 0.68, 2);
 	await expect(page.locator('.presentsPage')).toHaveClass(/isGlowReturning/);
 	await page.screenshot({ path: 'tests/test-results/presents-sent-page.png', fullPage: true });
 	await expect(page.locator('.presentsPage')).not.toHaveClass(/isGlowReturning/);
@@ -275,6 +293,13 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 		path: 'tests/test-results/presents-sent-page-settled.png',
 		fullPage: true,
 	});
+	await page.setViewportSize({ width: 1280, height: 800 });
+	const desktopCardWidth = await page
+		.locator('.presentSentEnvelope')
+		.evaluate((element) => element.getBoundingClientRect().width);
+	expect(desktopCardWidth).toBeLessThan(400);
+	await page.screenshot({ path: 'tests/test-results/presents-sent-desktop.png', fullPage: true });
+	await page.setViewportSize({ width: 390, height: 844 });
 	await page.getByRole('button', { name: 'Write a letter' }).click();
 	await page.getByRole('button', { name: 'Open the letter to write' }).click();
 	await page.getByPlaceholder('Choose a recipient').fill('Bob');

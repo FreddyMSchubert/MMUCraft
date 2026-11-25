@@ -56,10 +56,16 @@ const letterStyle = (color: string): CSSProperties => {
 };
 
 const STAMPS = ['heart', 'landscape', 'unicorn'] as const;
-function stampFor(id: string) {
+function stampHash(id: string) {
 	let hash = 0;
 	for (const character of id) hash = (hash * 31 + character.charCodeAt(0)) | 0;
-	return `/assets/presents/stamp-${STAMPS[(hash >>> 0) % STAMPS.length]}.png`;
+	return hash >>> 0;
+}
+function stampFor(id: string) {
+	return `/assets/presents/stamp-${STAMPS[stampHash(id) % STAMPS.length]}.png`;
+}
+function stampAngle(id: string): CSSProperties {
+	return { '--stamp-angle': `${(((stampHash(id) >>> 3) % 33) - 16) / 2}deg` } as CSSProperties;
 }
 
 export interface PresentView {
@@ -541,17 +547,26 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 				</button>
 			</section>
 		);
+	const displayName = (username: string | null) => {
+		const player = state.players.find(
+			(option) => option.minecraftUsername.toLowerCase() === username?.toLowerCase(),
+		);
+		const nickname = player?.nickname.trim();
+		if (nickname) return nickname;
+		return player?.minecraftUsername ?? username ?? 'a friend';
+	};
+	const senderDisplay = displayName(senderName);
+	const recipientDisplay = displayName(recipientPlayer?.minecraftUsername ?? null);
 	const addressLines = [
-		'For',
-		...(recipientPlayer?.nickname ? [recipientPlayer.nickname] : []),
-		recipientPlayer?.minecraftUsername ?? (recipient || 'A friend'),
+		`To ${recipientDisplay}`,
+		`From ${anonymous ? 'someone' : senderDisplay}`,
 	];
 	const addressCharacters = addressLines.reduce((count, line) => count + line.length, 0);
 	const flightDelay = 8.3 + addressCharacters * 0.06 + 0.8;
 	const previewTitle =
 		title.trim() || (anonymous ? 'A Christmas letter' : 'Letter from ' + senderName);
 	const hasPreview = Boolean(title.trim() || body.trim() || state.draft?.itemName);
-	const previewByline = anonymous ? 'By someone' : 'By ' + senderName;
+	const previewByline = anonymous ? 'By someone' : 'By ' + senderDisplay;
 	return (
 		<section
 			className={'presentsPage' + (glowReturning ? ' isGlowReturning' : '')}
@@ -889,7 +904,10 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 									<span className="presentWaxSeal" />
 								</span>
 								<span className="presentEnvelopeAddressFace">
-									<span className="presentPostage">
+									<span
+										className="presentPostage"
+										style={stampAngle(state.draft?.id ?? '')}
+									>
 										<Image
 											src={stampFor(state.draft?.id ?? '')}
 											alt=""
@@ -953,9 +971,13 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 								className="presentSentEnvelope"
 								key={present.id}
 								style={letterStyle(present.color)}
-								aria-label={`${present.title}, to ${present.to ?? 'a friend'}, ${present.status}`}
+								aria-label={`${present.title}, to ${displayName(present.to)}, from ${present.anonymous ? 'someone' : displayName(present.from)}, ${present.status}`}
 							>
-								<span className="presentSentStamp" aria-hidden="true">
+								<span
+									className="presentSentStamp"
+									style={stampAngle(present.id)}
+									aria-hidden="true"
+								>
 									<Image
 										src={stampFor(present.id)}
 										alt=""
@@ -965,7 +987,11 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 									/>
 								</span>
 								<span className="presentSentAddress">
-									To {present.to ?? 'a friend'}
+									<span>To {displayName(present.to)}</span>
+									<span>
+										From{' '}
+										{present.anonymous ? 'someone' : displayName(present.from)}
+									</span>
 								</span>
 								{['returned', 'deleted'].includes(present.status) && (
 									<span className="presentSentStatus">

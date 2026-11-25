@@ -133,8 +133,10 @@ function transitionText(item: Transition) {
 	const from = item.previous?.minecraftUsername;
 	const to = item.next?.minecraftUsername;
 	if (item.reason === 'seed') return `${to} started as the Big Boss.`;
-	if (item.reason === 'kill')
-		return `${item.detail || `${from} was killed by ${to}.`} ${to} became the Big Boss.`;
+	if (item.reason === 'kill') {
+		const death = item.detail || `${from} was killed by ${to}.`;
+		return `${death}${/[.!?]$/.test(death) ? '' : '.'} ${to} became the Big Boss.`;
+	}
 	if (item.reason === 'inactive')
 		return `${from} missed the daily 30 minutes outside claims. ${to ? `${to} was assigned at random.` : 'The title became vacant.'}`;
 	if (item.reason === 'term_limit')

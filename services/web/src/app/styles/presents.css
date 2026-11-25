@@ -382,14 +382,14 @@
 	list-style: none;
 	padding: 0;
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
 	gap: 18px;
 }
 .presentSentEnvelope {
 	position: relative;
 	box-sizing: border-box;
-	aspect-ratio: 1.42;
-	border: 2px solid color-mix(in srgb, var(--letter-color) 55%, #f2cda4);
+	aspect-ratio: 71 / 34;
+	border: 2px solid color-mix(in srgb, var(--letter-color) 50%, #f2cda4);
 	border-radius: 6px;
 	background: linear-gradient(
 		155deg,
@@ -397,18 +397,18 @@
 		var(--letter-color) 75%
 	);
 	box-shadow:
-		inset 0 0 0 9px #fff1,
+		inset 0 0 0 10px #fff1,
 		0 12px 24px #100b0baa;
 	color: #fff5db;
 }
 .presentSentStamp {
 	position: absolute;
-	top: 9%;
-	right: 7%;
-	width: 76px;
-	height: 60px;
-	filter: drop-shadow(0 4px 5px #22101866);
-	transform: rotate(-8deg);
+	top: 3%;
+	right: 3%;
+	width: 16%;
+	aspect-ratio: 19 / 15;
+	filter: drop-shadow(0 5px 6px #22101888);
+	transform: rotate(var(--stamp-angle, -8deg));
 }
 .presentSentStamp img,
 .presentPostage img {
@@ -420,10 +420,14 @@
 .presentSentAddress {
 	position: absolute;
 	left: 10%;
-	bottom: 14%;
+	bottom: 12%;
 	font-family: 'Playpen Sans', 'Segoe Print', cursive;
 	font-size: clamp(1rem, 2.5vw, 1.3rem);
+	font-weight: 500;
 	overflow-wrap: anywhere;
+}
+.presentSentAddress > span {
+	display: block;
 }
 .presentSentStatus {
 	position: absolute;
@@ -847,10 +851,10 @@
 	position: absolute;
 	top: 3%;
 	right: 3%;
-	width: 76px;
-	height: 60px;
-	filter: drop-shadow(0 4px 5px #22101866);
-	transform: rotate(-8deg) scale(0);
+	width: 16%;
+	aspect-ratio: 19 / 15;
+	filter: drop-shadow(0 5px 6px #22101888);
+	transform: rotate(var(--stamp-angle, -8deg)) scale(0);
 	opacity: 0;
 }
 .presentAddress {
@@ -1043,15 +1047,15 @@
 }
 @keyframes presentStampIn {
 	0% {
-		transform: translateY(-45px) rotate(-15deg) scale(1.5);
+		transform: translateY(-45px) rotate(calc(var(--stamp-angle, -8deg) - 7deg)) scale(1.5);
 		opacity: 0;
 	}
 	70% {
-		transform: translateY(3px) rotate(-5deg) scale(0.92);
+		transform: translateY(3px) rotate(calc(var(--stamp-angle, -8deg) + 3deg)) scale(0.92);
 		opacity: 1;
 	}
 	100% {
-		transform: translateY(0) rotate(-8deg) scale(1);
+		transform: translateY(0) rotate(var(--stamp-angle, -8deg)) scale(1);
 		opacity: 1;
 	}
 }
@@ -1137,10 +1141,6 @@
 	}
 	.presentPageControls {
 		justify-content: center;
-	}
-	.presentPostage {
-		width: 57px;
-		height: 45px;
 	}
 }
 @media (max-height: 650px) {

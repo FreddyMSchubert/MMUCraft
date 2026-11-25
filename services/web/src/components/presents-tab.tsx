@@ -55,7 +55,17 @@ const letterStyle = (color: string): CSSProperties => {
 	return { '--letter-color': option.value, '--seal-filter': option.sealFilter } as CSSProperties;
 };
 
-const STAMPS = ['heart', 'landscape', 'unicorn'] as const;
+const STAMPS = [
+	'heart',
+	'landscape',
+	'unicorn',
+	'bowarrow',
+	'flower',
+	'shrek',
+	'sparkle',
+	'shuriken',
+	'house',
+] as const;
 function stampHash(id: string) {
 	let hash = 0;
 	for (const character of id) hash = (hash * 31 + character.charCodeAt(0)) | 0;

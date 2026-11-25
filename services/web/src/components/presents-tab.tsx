@@ -11,23 +11,48 @@ import {
 import { PlayerSelector } from './player-selector';
 
 const LETTER_COLORS = {
-	red: { label: 'Red', value: '#a82f3d' },
-	green: { label: 'Green', value: '#286b51' },
-	yellow: { label: 'Yellow', value: '#d9a83b' },
-	orange: { label: 'Orange', value: '#c56c32' },
-	blue: { label: 'Blue', value: '#345b95' },
-	'light-blue': { label: 'Light blue', value: '#5a9fba' },
-	purple: { label: 'Purple', value: '#704b8b' },
-	pink: { label: 'Pink', value: '#c16b8f' },
+	red: { label: 'Red', value: '#a82f3d', sealFilter: 'hue-rotate(0deg)' },
+	green: {
+		label: 'Green',
+		value: '#286b51',
+		sealFilter: 'hue-rotate(145deg) saturate(.55) brightness(1.1)',
+	},
+	yellow: {
+		label: 'Yellow',
+		value: '#d9a83b',
+		sealFilter: 'hue-rotate(45deg) saturate(.7) brightness(1.4)',
+	},
+	orange: {
+		label: 'Orange',
+		value: '#c56c32',
+		sealFilter: 'hue-rotate(25deg) saturate(.75) brightness(1.1)',
+	},
+	blue: {
+		label: 'Blue',
+		value: '#345b95',
+		sealFilter: 'hue-rotate(215deg) saturate(.65) brightness(1.05)',
+	},
+	'light-blue': {
+		label: 'Light blue',
+		value: '#5a9fba',
+		sealFilter: 'hue-rotate(195deg) saturate(.55) brightness(1.1)',
+	},
+	purple: {
+		label: 'Purple',
+		value: '#704b8b',
+		sealFilter: 'hue-rotate(270deg) saturate(.6) brightness(1.05)',
+	},
+	pink: {
+		label: 'Pink',
+		value: '#c16b8f',
+		sealFilter: 'hue-rotate(330deg) saturate(.55) brightness(1.08)',
+	},
 } as const;
 type LetterColor = keyof typeof LETTER_COLORS;
-const letterStyle = (color: string): CSSProperties =>
-	({
-		'--letter-color':
-			color in LETTER_COLORS
-				? LETTER_COLORS[color as LetterColor].value
-				: LETTER_COLORS.red.value,
-	}) as CSSProperties;
+const letterStyle = (color: string): CSSProperties => {
+	const option = color in LETTER_COLORS ? LETTER_COLORS[color as LetterColor] : LETTER_COLORS.red;
+	return { '--letter-color': option.value, '--seal-filter': option.sealFilter } as CSSProperties;
+};
 
 export interface PresentView {
 	id: string;
@@ -846,7 +871,7 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 										</span>
 									</span>
 									<span className="presentEnvelopePocket" />
-									<span className="presentWaxSeal">✦</span>
+									<span className="presentWaxSeal" />
 								</span>
 								<span className="presentEnvelopeAddressFace">
 									<span className="presentPostage">
@@ -935,9 +960,7 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 								key={present.id}
 							>
 								<div className="presentCardPaper">
-									<span className="presentCardSeal" aria-hidden="true">
-										✦
-									</span>
+									<span className="presentCardSeal" aria-hidden="true" />
 									<h3>{present.title}</h3>
 									<p>From {present.from ?? 'a secret sender'}</p>
 									{present.opened && (

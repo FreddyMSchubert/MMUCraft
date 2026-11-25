@@ -470,7 +470,7 @@
 .presentCardPaper {
 	position: relative;
 	min-height: 155px;
-	padding: 42px 16px 16px;
+	padding: 58px 16px 16px;
 	color: var(--present-ink);
 	background: color-mix(in srgb, var(--letter-color) 12%, #f9edda);
 	border-radius: 3px;
@@ -478,15 +478,12 @@
 }
 .presentCardSeal {
 	position: absolute;
-	top: 8px;
-	left: calc(50% - 16px);
-	display: grid;
-	place-items: center;
-	width: 32px;
-	height: 32px;
-	border-radius: 50%;
-	color: #fbe7af;
-	background: var(--letter-color);
+	top: 5px;
+	left: calc(50% - 24px);
+	width: 48px;
+	height: 48px;
+	background: url('/assets/presents/wax-seal-red.png') center / contain no-repeat;
+	filter: var(--seal-filter, hue-rotate(0deg)) drop-shadow(0 3px 3px #150b11b3);
 }
 .presentCard h3 {
 	font-family: Georgia, serif;
@@ -834,18 +831,10 @@
 	z-index: 5;
 	top: 66%;
 	left: 50%;
-	display: grid;
-	place-items: center;
-	width: 54px;
-	height: 54px;
-	border: 3px double #f6cf9a;
-	border-radius: 50%;
-	background: color-mix(in srgb, var(--letter-color) 72%, #4b1527);
-	box-shadow:
-		0 5px 10px #170a1266,
-		inset 0 2px 4px #fff5;
-	color: #ffe4af;
-	font-size: 1.7rem;
+	width: 80px;
+	height: 80px;
+	background: url('/assets/presents/wax-seal-red.png') center / contain no-repeat;
+	filter: var(--seal-filter, hue-rotate(0deg)) drop-shadow(0 3px 3px #150b11b3);
 	transform: translate(-50%, -50%) scale(0);
 	opacity: 0;
 }

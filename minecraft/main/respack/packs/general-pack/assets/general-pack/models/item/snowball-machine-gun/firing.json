@@ -1,0 +1,4 @@
+{
+	"parent": "minecraft:item/crossbow_pulling_2",
+	"textures": { "layer0": "general-pack:item/snowball-machine-gun/firing" }
+}

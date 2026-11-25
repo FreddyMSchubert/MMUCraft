@@ -32,6 +32,9 @@ Good days
 - Infinity + Mending Bow
 - Golden Day: Buncha Gold, Raw Gold, Golden Apples, God Apple, Golden Carrots
 - Advent Banhammer
+- buncha fashion / magic books / knowledge books, some other bookshelves and books as well
+- tip that theres a secret present each day
+- snowball machine gun
 
 Bad days
 - Buncha christmas cookies
@@ -39,6 +42,13 @@ Bad days
 - 2 Sniffer Eggs
 - 64 bundles stacked inside each other (not next to each other, inside each other recursively), with the final one containing one beetroot and a book that says “blink and youre a noob”
 - Santa Hats
+- XP Phial (full)
+- Buncha Present Mini Blocks
+- 10 budding amethyst & a buncha amethyst in general
 
 Potentially if possible
 - Snowball Machine Gun
+
+Ideas idk
+- shulker spawn egg
+- 

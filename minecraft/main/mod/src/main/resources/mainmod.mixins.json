@@ -81,6 +81,7 @@
 		"EnderianSoulPearlUseMixin",
 		"particleTrails.ArrowParticles",
 		"particleTrails.CrossbowParticles",
+		"SnowballMachineGunMixin",
 		"particleTrails.FireworkParticles",
 		"particleTrails.PlayerParticles",
 		"particleTrails.TrailTooltip",

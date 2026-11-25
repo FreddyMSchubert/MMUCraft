@@ -1,0 +1,22 @@
+{
+	"title": "Snowball Machine Gun",
+	"id": "snowball-machine-gun",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"baseItemOverride": "minecraft:crossbow",
+	"tooltips": [
+		"Snowballs: 0/64",
+		"Right-click empty to load; hold right-click to fire; sneak-right-click to reload"
+	],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "snowball-machine-gun",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["minecraft:crossbow", "minecraft:snow_block", "minecraft:redstone"],
+				"result": { "stack": "mainmod:snowball-machine-gun", "count": 1 }
+			}
+		]
+	}
+}

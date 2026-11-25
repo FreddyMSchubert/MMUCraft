@@ -21,7 +21,7 @@
 	transform: translateX(-50%);
 	background:
 		radial-gradient(
-			circle clamp(480px, 45vw, 700px) at 50% var(--glow-small-y, 150px),
+			circle clamp(420px, 40vw, 620px) at 50% var(--glow-small-y, 150px),
 			color-mix(
 				in srgb,
 				color-mix(in srgb, var(--letter-color) 45%, #1c1117) 94%,
@@ -36,7 +36,7 @@
 			transparent 100%
 		),
 		radial-gradient(
-			circle clamp(900px, 100vw, 1300px) at 50% var(--glow-large-y, 550px),
+			circle clamp(820px, 90vw, 1180px) at 50% var(--glow-large-y, 550px),
 			color-mix(
 				in srgb,
 				color-mix(in srgb, var(--letter-color) 25%, #1c1117) 35%,
@@ -639,6 +639,7 @@
 	width: 78%;
 	height: 110%;
 	filter: drop-shadow(0 5px 7px #351c2870);
+	background-color: #f8ecd3;
 	color: #42302a;
 	text-align: left;
 	transform-origin: center 70%;
@@ -681,6 +682,15 @@
 }
 .presentFoldBack {
 	transform: rotateX(180deg);
+}
+.presentFoldMiddle .presentFoldFace {
+	background-position-y: calc(5px - var(--present-third-height, 0px));
+}
+.presentFoldBottom .presentFoldFace,
+.presentFoldBottom .presentFoldBack {
+	background-position-y: calc(
+		5px - var(--present-third-height, 0px) - var(--present-third-height, 0px)
+	);
 }
 .presentFoldTop .presentFoldFace,
 .presentFoldTop .presentFoldBack {
@@ -820,6 +830,10 @@
 	background: var(--letter-color);
 	box-shadow: 0 4px 0 #251016;
 }
+.presentsPage .presentSendButton[data-inactive='true'] {
+	background: color-mix(in srgb, var(--letter-color) 45%, #1b1119);
+	box-shadow: none;
+}
 .presentComposeError {
 	max-width: 550px;
 	margin: 8px auto;
@@ -832,6 +846,9 @@
 .presentEnvelopeView.isSending .presentEnvelopeControls {
 	opacity: 0;
 	pointer-events: none;
+}
+.presentEnvelopeView.isWriting .presentEnvelopeControls {
+	visibility: hidden;
 }
 
 .presentWritingView {
@@ -853,11 +870,29 @@
 	flex-shrink: 0;
 	width: min(680px, calc(100vw - 28px));
 	margin: 0;
+	background-image: repeating-linear-gradient(transparent 0 29px, #ebdcc1 30px 31px);
+	background-position-y: clamp(18px, 5vw, 38px);
 	box-shadow: 0 22px 50px #0009;
 	transform-origin: top left;
 }
 .presentWritingPaper .presentFormViewport {
 	--page-height: clamp(430px, 60vh, 530px);
+}
+.presentWritingView .presentFormViewport,
+.presentWritingView .presentWritingControls {
+	opacity: 0;
+	visibility: hidden;
+	transition:
+		opacity 220ms ease,
+		visibility 0s 220ms;
+	pointer-events: none;
+}
+.presentWritingView.isReady .presentFormViewport,
+.presentWritingView.isReady .presentWritingControls {
+	opacity: 1;
+	visibility: visible;
+	transition: opacity 220ms ease;
+	pointer-events: auto;
 }
 .presentWritingControls {
 	display: flex;
@@ -867,7 +902,6 @@
 	justify-content: center;
 	flex-wrap: wrap;
 	gap: 12px;
-	animation: presentControlsIn 300ms 900ms both;
 }
 .presentPageControls {
 	display: flex;
@@ -881,17 +915,6 @@
 .presentsPage .presentFinishWriting {
 	background: var(--letter-color);
 }
-@keyframes presentControlsIn {
-	from {
-		opacity: 0;
-		transform: translateY(8px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
-}
-
 @keyframes presentLiftAndPost {
 	0% {
 		transform: translateY(0);
@@ -1005,6 +1028,7 @@
 	animation: presentFlyAway 1.5s var(--present-flight-delay) ease-in both;
 }
 .isSending .presentEnvelopeLetter {
+	background-color: transparent;
 	animation: presentLiftAndPost 5.7s ease-in-out both;
 }
 .isSending .presentFoldBottom {
@@ -1044,6 +1068,7 @@
 	}
 	.presentWritingPaper {
 		padding: 18px;
+		background-position-y: 18px;
 	}
 	.presentWritingControls {
 		justify-content: center;
@@ -1065,7 +1090,8 @@
 @media (prefers-reduced-motion: reduce) {
 	.presentEnvelopeLetter,
 	.presentEnvelopeControls,
-	.presentWritingControls {
+	.presentWritingControls,
+	.presentWritingView .presentFormViewport {
 		transition: none;
 		animation: none;
 	}

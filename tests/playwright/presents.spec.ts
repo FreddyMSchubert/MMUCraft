@@ -132,15 +132,37 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 		'filter',
 		'none',
 	);
-	await page.getByRole('button', { name: 'Send letter' }).click();
-	await expect(page.locator('.presentComposeError')).toContainText(
-		'Write a message or add a gift',
+	await expect(page.getByRole('button', { name: 'Send letter' })).toHaveAttribute(
+		'data-inactive',
+		'true',
 	);
+	let validationMessage = '';
+	page.once('dialog', async (alert) => {
+		validationMessage = alert.message();
+		await alert.accept();
+	});
+	await page.getByRole('button', { name: 'Send letter' }).click();
+	expect(validationMessage).toContain('Write a message or add a gift');
+	await page.mouse.click(5, 400);
+	await expect(page.locator('.presentComposeDialog')).not.toBeVisible();
+	await page.getByRole('button', { name: 'Write a letter' }).click();
 	await page.getByRole('button', { name: 'Open the letter to write' }).click();
 	await expect(page.locator('.presentEnvelopeView')).toBeVisible();
 	await page.waitForTimeout(300);
-	await page.screenshot({ path: 'tests/test-results/presents-writing-zoom.png' });
+	await page.screenshot({ path: 'tests/test-results/presents-paper-lift.png' });
+	await expect(page.locator('.presentWritingView')).toBeVisible();
+	await page.waitForTimeout(100);
+	await expect(page.locator('.presentWritingView .presentFormViewport')).toBeHidden();
+	await page.screenshot({ path: 'tests/test-results/presents-writing-early.png' });
 	await page.getByPlaceholder('Choose a recipient').fill('Bob');
+	await expect(page.getByPlaceholder('Choose a recipient')).toHaveValue('Bob');
+	await page.keyboard.press('Escape');
+	await expect(page.locator('.presentWritingView')).not.toBeVisible();
+	expect(draft).toMatchObject({ to: 'Bob' });
+	await page.getByRole('button', { name: 'Open the letter to write' }).click();
+	await expect(page.locator('.presentWritingView')).toBeVisible();
+	await page.waitForTimeout(300);
+	await page.screenshot({ path: 'tests/test-results/presents-writing-zoom.png' });
 	await page.getByRole('button', { name: 'Light blue' }).click();
 	await expect(page.getByRole('button', { name: 'Next', exact: true })).toHaveCSS(
 		'background-color',
@@ -165,10 +187,25 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 	await page.screenshot({ path: 'tests/test-results/presents-compose.png', fullPage: true });
 	await page.getByRole('button', { name: 'Finish writing' }).click();
 	await page.waitForTimeout(350);
+	await expect(page.locator('.presentWritingView .presentFormViewport')).toBeHidden();
 	await page.screenshot({ path: 'tests/test-results/presents-writing-close.png' });
+	await page.waitForTimeout(400);
+	await page.screenshot({ path: 'tests/test-results/presents-writing-shrink.png' });
+	await expect(page.locator('.presentWritingView')).not.toBeVisible();
+	await page.waitForTimeout(250);
+	await page.screenshot({ path: 'tests/test-results/presents-writing-insert.png' });
 	await expect(page.locator('.presentEnvelopeLetter')).toContainText('A small surprise');
 	await page.getByRole('button', { name: 'Put down letter' }).click();
+	expect(draft).toMatchObject({
+		to: 'Bob',
+		title: 'A small surprise',
+		body: 'Merry Christmas, Bob!',
+		itemName: 'Red present',
+	});
 	await page.reload();
+	await page.getByRole('button', { name: 'Write a letter' }).click();
+	await page.keyboard.press('Escape');
+	await expect(page.locator('.presentComposeDialog')).not.toBeVisible();
 	await page.getByRole('button', { name: 'Write a letter' }).click();
 	await expect(page.locator('.presentEnvelopeLetter')).toContainText('A small surprise');
 	await expect(page.getByRole('button', { name: 'Put down letter' })).toHaveCSS(
@@ -182,6 +219,14 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 	await page.setViewportSize({ width: 1280, height: 800 });
 	await page.screenshot({ path: 'tests/test-results/presents-envelope-desktop.png' });
 	await page.setViewportSize({ width: 390, height: 844 });
+	await page.getByRole('button', { name: 'Open the letter to write' }).click();
+	await expect(page.locator('.presentWritingView')).toBeVisible();
+	await page.mouse.click(5, 400);
+	await expect(page.locator('.presentWritingView')).not.toBeVisible();
+	await expect(page.getByRole('button', { name: 'Send letter' })).toHaveAttribute(
+		'data-inactive',
+		'false',
+	);
 	await page.getByRole('button', { name: 'Send letter' }).click();
 	await expect(page.locator('.presentEnvelopeObject.isSending')).toBeVisible();
 	await page.waitForTimeout(1350);

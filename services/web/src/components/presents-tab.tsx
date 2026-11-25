@@ -56,6 +56,14 @@ interface PresentsState {
 	players: { id: number; minecraftUsername: string; nickname: string; color: string }[];
 }
 
+interface DraftInput {
+	recipient: string;
+	title: string;
+	body: string;
+	color: LetterColor;
+	anonymous: boolean;
+}
+
 async function api<T>(path: string, method = 'GET', body?: object): Promise<T> {
 	const response = await fetch(path, {
 		method,
@@ -73,8 +81,11 @@ function alertError(cause: unknown, fallback: string) {
 }
 
 function paperTransform(from: DOMRect, to: DOMRect) {
-	return `translate(${from.left - to.left}px, ${from.top - to.top}px) scale(${from.width / to.width}, ${from.height / to.height})`;
+	const scale = from.width / to.width;
+	return `translate(${from.left - to.left}px, ${from.top - to.top + (from.height - to.height * scale) / 2}px) scale(${scale})`;
 }
+
+const PAPER_LIFT = 0.32;
 
 export function PresentsTab({ senderName }: { senderName: string }) {
 	const [state, setState] = useState<PresentsState | null>(null);
@@ -85,6 +96,7 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 	const [anonymous, setAnonymous] = useState(false);
 	const [page, setPage] = useState(0);
 	const [mode, setMode] = useState<'list' | 'envelope' | 'writing'>('list');
+	const [writerReady, setWriterReady] = useState(false);
 	const [sending, setSending] = useState(false);
 	const [opening, setOpening] = useState('');
 	const [busy, setBusy] = useState(false);
@@ -94,10 +106,15 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 	const writingPaper = useRef<HTMLDivElement>(null);
 	const previewRect = useRef<DOMRect | null>(null);
 	const writingAnimation = useRef<Animation | null>(null);
+	const liftAnimation = useRef<Animation | null>(null);
+	const insertionAnimation = useRef<Animation | null>(null);
+	const returningPaper = useRef(false);
 	const sendingInProgress = useRef(false);
+	const saveQueue = useRef<Promise<void>>(Promise.resolve());
 	const draftId = useRef<string | null>(null);
 	const initialized = useRef(false);
 	const seenReturns = useRef(new Set<string>());
+	const loaded = state !== null;
 	const applyState = useCallback((next: PresentsState) => {
 		const nextId = next.draft?.id ?? null;
 		if (!initialized.current || (draftId.current !== null && nextId === null)) {
@@ -143,17 +160,57 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 	}, [mode]);
 
 	useLayoutEffect(() => {
-		if (mode !== 'writing' || !previewRect.current || !writingPaper.current) return;
-		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+		if (mode !== 'writing' || !writingPaper.current) return;
+		if (!previewRect.current || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+			setWriterReady(true);
+			return;
+		}
 		const paper = writingPaper.current;
-		writingAnimation.current = paper.animate(
+		const animation = paper.animate(
 			[
 				{ transform: paperTransform(previewRect.current, paper.getBoundingClientRect()) },
 				{ transform: 'none' },
 			],
-			{ duration: 1150, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' },
+			{ duration: 950, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'both' },
 		);
+		writingAnimation.current = animation;
+		animation.onfinish = () => {
+			setWriterReady(true);
+		};
+		liftAnimation.current?.cancel();
 	}, [mode]);
+
+	useLayoutEffect(() => {
+		if (mode !== 'envelope' || !returningPaper.current || !previewPaper.current) return;
+		returningPaper.current = false;
+		const animation = previewPaper.current.animate(
+			[{ transform: `translateY(-${PAPER_LIFT * 100}%)` }, { transform: 'none' }],
+			{ duration: 650, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' },
+		);
+		insertionAnimation.current = animation;
+		animation.onfinish = () => {
+			setBusy(false);
+		};
+		animation.oncancel = () => {
+			setBusy(false);
+		};
+	}, [mode]);
+
+	useEffect(() => {
+		const paper = previewPaper.current;
+		if (!paper) return;
+		const updateLines = () => {
+			const third = paper.querySelector<HTMLElement>('.presentFoldThird');
+			if (third)
+				paper.style.setProperty('--present-third-height', getComputedStyle(third).height);
+		};
+		const observer = new ResizeObserver(updateLines);
+		observer.observe(paper);
+		updateLines();
+		return () => {
+			observer.disconnect();
+		};
+	}, [loaded]);
 
 	useEffect(() => {
 		let active = true;
@@ -186,13 +243,23 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 	const hasContent = !!body.trim() || !!state?.draft?.itemName;
 	const hasDraft = !!state?.draft;
 	const draftInput = { recipient, title, body, color, anonymous };
+	const queueSave = useCallback((input: DraftInput) => {
+		const task = saveQueue.current.then(() =>
+			api<PresentsState>('/api/presents/draft', 'PATCH', input),
+		);
+		saveQueue.current = task.then(
+			() => undefined,
+			() => undefined,
+		);
+		return task;
+	}, []);
 
 	useEffect(() => {
 		if (mode !== 'writing' || !state?.clock.sending || (recipient && !validRecipient) || busy)
 			return;
 		if (!hasDraft && !recipient && !title && !body && color === 'red' && !anonymous) return;
 		const timer = window.setTimeout(() => {
-			void api<PresentsState>('/api/presents/draft', 'PATCH', {
+			void queueSave({
 				recipient,
 				title,
 				body,
@@ -219,10 +286,11 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 		busy,
 		mode,
 		applyState,
+		queueSave,
 	]);
 
 	async function save() {
-		return api<PresentsState>('/api/presents/draft', 'PATCH', draftInput);
+		return queueSave(draftInput);
 	}
 
 	async function run(action: () => Promise<PresentsState>) {
@@ -237,6 +305,51 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 		}
 	}
 
+	function putDownLetter() {
+		if (
+			sending ||
+			sendingInProgress.current ||
+			(busy &&
+				liftAnimation.current?.playState !== 'running' &&
+				insertionAnimation.current?.playState !== 'running')
+		)
+			return;
+		liftAnimation.current?.cancel();
+		insertionAnimation.current?.cancel();
+		setError('');
+		setBusy(false);
+		setMode('list');
+	}
+
+	async function startWriting() {
+		if (busy) return;
+		setError('');
+		setPage(0);
+		setWriterReady(false);
+		previewRect.current = null;
+		const paper = previewPaper.current;
+		if (!paper || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+			setMode('writing');
+			return;
+		}
+		const currentTransform = getComputedStyle(paper).transform;
+		setBusy(true);
+		const animation = paper.animate(
+			[{ transform: currentTransform }, { transform: `translateY(-${PAPER_LIFT * 100}%)` }],
+			{ duration: 550, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'forwards' },
+		);
+		liftAnimation.current = animation;
+		try {
+			await animation.finished;
+			previewRect.current = paper.getBoundingClientRect();
+			setMode('writing');
+		} catch {
+			// The letter was put down before the lift finished.
+		} finally {
+			setBusy(false);
+		}
+	}
+
 	async function finishWriting() {
 		if (busy) return;
 		if (recipient.trim() && !validRecipient) {
@@ -245,51 +358,53 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 		}
 		setBusy(true);
 		setError('');
+		let inserting = false;
 		try {
 			applyState(await save());
 			writingAnimation.current?.finish();
+			setWriterReady(false);
 			if (
 				writingPaper.current &&
 				previewPaper.current &&
 				!window.matchMedia('(prefers-reduced-motion: reduce)').matches
 			) {
+				await new Promise<void>((resolve) => window.setTimeout(resolve, 280));
 				const paper = writingPaper.current;
-				paper.parentElement
-					?.querySelector('.presentWritingControls')
-					?.animate([{ opacity: 1 }, { opacity: 0 }], {
-						duration: 300,
-						fill: 'forwards',
-					});
+				const resting = previewPaper.current.getBoundingClientRect();
+				const raised = new DOMRect(
+					resting.x,
+					resting.y - resting.height * PAPER_LIFT,
+					resting.width,
+					resting.height,
+				);
 				const transition = paper.animate(
 					[
 						{ transform: 'none' },
-						{
-							transform: paperTransform(
-								previewPaper.current.getBoundingClientRect(),
-								paper.getBoundingClientRect(),
-							),
-						},
+						{ transform: paperTransform(raised, paper.getBoundingClientRect()) },
 					],
-					{ duration: 1000, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'forwards' },
+					{ duration: 950, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'forwards' },
 				);
 				await transition.finished;
+				returningPaper.current = true;
+				inserting = true;
 			}
 			setMode('envelope');
 		} catch (cause) {
+			setWriterReady(true);
 			setError(cause instanceof Error ? cause.message : 'Could not save the letter.');
 		} finally {
-			setBusy(false);
+			if (!inserting) setBusy(false);
 		}
 	}
 
 	async function send() {
 		if (busy) return;
 		if (!hasContent) {
-			setError('Write a message or add a gift before sending your letter.');
+			window.alert('Write a message or add a gift before sending your letter.');
 			return;
 		}
 		if (!validRecipient) {
-			setError('Choose a recipient before sending your letter.');
+			window.alert('Choose a recipient before sending your letter.');
 			return;
 		}
 		setBusy(true);
@@ -313,7 +428,7 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 			);
 		} catch (cause) {
 			sendingInProgress.current = false;
-			setError(cause instanceof Error ? cause.message : 'Could not send the letter.');
+			alertError(cause, 'Could not send the letter.');
 			setBusy(false);
 		}
 	}
@@ -419,15 +534,31 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 				}
 				onCancel={(event) => {
 					event.preventDefault();
-					if (busy) return;
 					if (mode === 'writing') void finishWriting();
-					else setMode('list');
+					else putDownLetter();
+				}}
+				onKeyDownCapture={(event) => {
+					if (event.key !== 'Escape') return;
+					event.preventDefault();
+					event.stopPropagation();
+					if (mode === 'writing') void finishWriting();
+					else putDownLetter();
+				}}
+				onClick={(event) => {
+					if (event.target !== event.currentTarget) return;
+					if (mode === 'writing') void finishWriting();
+					else putDownLetter();
 				}}
 			>
 				{mode === 'writing' && (
-					<div className="presentWritingView">
+					<div
+						className={'presentWritingView' + (writerReady ? ' isReady' : '')}
+						onClick={(event) => {
+							if (event.target === event.currentTarget) void finishWriting();
+						}}
+					>
 						<div className="presentPaper presentWritingPaper" ref={writingPaper}>
-							<div className="presentFormViewport">
+							<div className="presentFormViewport" inert={!writerReady}>
 								<div
 									className="presentFormTrack"
 									style={{ transform: `translateY(-${(page * 100) / 3}%)` }}
@@ -596,7 +727,7 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 								{error}
 							</p>
 						)}
-						<div className="presentWritingControls">
+						<div className="presentWritingControls" inert={!writerReady}>
 							<div className="presentPageControls">
 								<button
 									type="button"
@@ -637,18 +768,15 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 					}
 					inert={mode === 'writing'}
 					aria-hidden={mode === 'writing'}
+					onClick={(event) => {
+						if (event.target === event.currentTarget) putDownLetter();
+					}}
 				>
 					<button
 						type="button"
 						className="presentEnvelopeAction"
 						disabled={busy}
-						onClick={() => {
-							setError('');
-							previewRect.current =
-								previewPaper.current?.getBoundingClientRect() ?? null;
-							setPage(0);
-							setMode('writing');
-						}}
+						onClick={() => void startWriting()}
 						aria-label="Open the letter to write"
 					>
 						<span
@@ -703,33 +831,24 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 							</span>
 						</span>
 					</button>
-					{error && mode !== 'writing' && (
-						<p className="presentComposeError" role="alert">
-							{error}
-						</p>
-					)}
-					{mode !== 'writing' && (
-						<div className="presentEnvelopeControls">
-							<button
-								type="button"
-								disabled={busy}
-								onClick={() => {
-									setError('');
-									setMode('list');
-								}}
-							>
-								Put down letter
-							</button>
-							<button
-								className="presentSendButton"
-								type="button"
-								disabled={busy}
-								onClick={() => void send()}
-							>
-								Send letter
-							</button>
-						</div>
-					)}
+					<div
+						className="presentEnvelopeControls"
+						inert={mode === 'writing'}
+						aria-hidden={mode === 'writing'}
+					>
+						<button type="button" disabled={busy} onClick={putDownLetter}>
+							Put down letter
+						</button>
+						<button
+							className="presentSendButton"
+							type="button"
+							data-inactive={!hasContent || !validRecipient}
+							disabled={busy}
+							onClick={() => void send()}
+						>
+							Send letter
+						</button>
+					</div>
 				</div>
 			</dialog>
 

@@ -10,7 +10,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.projectile.throwableitemprojectile.Snowball;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.CrossbowItem;
@@ -108,7 +107,7 @@ public final class SnowballMachineGun {
         }
         int current = ammo(stack);
         if (current <= 0) return;
-        Projectile.spawnProjectileFromRotation(Snowball::new, serverLevel, new ItemStack(Items.SNOWBALL),
+        Projectile.spawnProjectileFromRotation(MachineGunSnowball::new, serverLevel, new ItemStack(Items.SNOWBALL),
                 user, 0.0F, 1.5F, 1.0F);
         level.playSound(null, user.getX(), user.getY(), user.getZ(),
                 SoundEvents.SNOWBALL_THROW, SoundSource.PLAYERS, 0.2F, 1.0F);

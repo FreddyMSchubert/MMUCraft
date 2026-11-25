@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import {
 	useCallback,
 	useEffect,
@@ -54,6 +55,13 @@ const letterStyle = (color: string): CSSProperties => {
 	return { '--letter-color': option.value, '--seal-filter': option.sealFilter } as CSSProperties;
 };
 
+const STAMPS = ['heart', 'landscape', 'unicorn'] as const;
+function stampFor(id: string) {
+	let hash = 0;
+	for (const character of id) hash = (hash * 31 + character.charCodeAt(0)) | 0;
+	return `/assets/presents/stamp-${STAMPS[(hash >>> 0) % STAMPS.length]}.png`;
+}
+
 export interface PresentView {
 	id: string;
 	from: string | null;
@@ -76,6 +84,7 @@ interface PresentsState {
 	draft: PresentView | null;
 	incoming: PresentView[];
 	sent: PresentView[];
+	sentTodayRecipientIds: number[];
 	returned: { id: string; reason: string }[];
 	pendingReturns: { id: string; itemName: string | null }[];
 	players: { id: number; minecraftUsername: string; nickname: string; color: string }[];
@@ -282,9 +291,12 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 		};
 	}, [applyState]);
 
-	const validRecipient = !!state?.players.some(
+	const recipientPlayer = state?.players.find(
 		(player) => player.minecraftUsername.toLowerCase() === recipient.trim().toLowerCase(),
 	);
+	const validRecipient = !!recipientPlayer;
+	const alreadySentToday =
+		!!recipientPlayer && !!state?.sentTodayRecipientIds.includes(recipientPlayer.id);
 	const hasContent = !!body.trim() || !!state?.draft?.itemName;
 	const hasDraft = !!state?.draft;
 	const draftInput = { recipient, title, body, color, anonymous };
@@ -459,6 +471,12 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 			window.alert('Choose a recipient before sending your letter.');
 			return;
 		}
+		if (alreadySentToday) {
+			window.alert(
+				`You already sent a letter to ${recipient} today. You can send one per player per day.`,
+			);
+			return;
+		}
 		setBusy(true);
 		setError('');
 		try {
@@ -523,9 +541,6 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 				</button>
 			</section>
 		);
-	const recipientPlayer = state.players.find(
-		(player) => player.minecraftUsername.toLowerCase() === recipient.trim().toLowerCase(),
-	);
 	const addressLines = [
 		'For',
 		...(recipientPlayer?.nickname ? [recipientPlayer.nickname] : []),
@@ -875,8 +890,14 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 								</span>
 								<span className="presentEnvelopeAddressFace">
 									<span className="presentPostage">
-										<span>✦</span>
-										<small>MMU POST</small>
+										<Image
+											src={stampFor(state.draft?.id ?? '')}
+											alt=""
+											width={19}
+											height={15}
+											unoptimized
+											loading="eager"
+										/>
 									</span>
 									<span className="presentAddress">
 										{addressLines.map((line, lineIndex) => (
@@ -909,7 +930,12 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 						<button
 							className="presentSendButton"
 							type="button"
-							data-inactive={!hasContent || !validRecipient}
+							data-inactive={!hasContent || !validRecipient || alreadySentToday}
+							title={
+								alreadySentToday
+									? 'You already sent this player a letter today.'
+									: undefined
+							}
 							disabled={busy}
 							onClick={() => void send()}
 						>
@@ -930,8 +956,13 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 								aria-label={`${present.title}, to ${present.to ?? 'a friend'}, ${present.status}`}
 							>
 								<span className="presentSentStamp" aria-hidden="true">
-									<span>✦</span>
-									<small>MMU POST</small>
+									<Image
+										src={stampFor(present.id)}
+										alt=""
+										width={19}
+										height={15}
+										unoptimized
+									/>
 								</span>
 								<span className="presentSentAddress">
 									To {present.to ?? 'a friend'}

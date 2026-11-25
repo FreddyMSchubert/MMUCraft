@@ -53,6 +53,7 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 				]
 			: [],
 		sent: sent ? [letter] : [],
+		sentTodayRecipientIds: sent ? [2] : [],
 		returned: [],
 		pendingReturns: [],
 		players: [{ id: 2, minecraftUsername: 'Bob', nickname: 'Bobby', color: '#ffffff' }],
@@ -81,7 +82,7 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 		else if (path === '/api/presents/draft' && route.request().method() === 'PATCH') {
 			draft = {
 				...letter,
-				id: 'draft-1',
+				id: 'letter-1',
 				status: 'draft',
 				itemName: draft?.itemName ?? null,
 				itemCount: draft?.itemCount ?? null,
@@ -249,6 +250,7 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 	);
 	await page.getByRole('button', { name: 'Send letter' }).click();
 	await expect(page.locator('.presentEnvelopeObject.isSending')).toBeVisible();
+	const animatedStamp = (await page.locator('.presentPostage img').getAttribute('src')) ?? '';
 	await page.waitForTimeout(1350);
 	await page.screenshot({ path: 'tests/test-results/presents-fold-one.png' });
 	await page.waitForTimeout(1650);
@@ -265,6 +267,7 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 	await expect(page.getByRole('heading', { name: 'Letters you sent' })).toBeVisible();
 	await expect(page.getByText('To Bob')).toBeVisible();
 	await expect(page.locator('.presentSentEnvelope .presentSentStamp')).toBeVisible();
+	await expect(page.locator('.presentSentStamp img')).toHaveAttribute('src', animatedStamp);
 	await expect(page.locator('.presentsPage')).toHaveClass(/isGlowReturning/);
 	await page.screenshot({ path: 'tests/test-results/presents-sent-page.png', fullPage: true });
 	await expect(page.locator('.presentsPage')).not.toHaveClass(/isGlowReturning/);
@@ -272,6 +275,24 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 		path: 'tests/test-results/presents-sent-page-settled.png',
 		fullPage: true,
 	});
+	await page.getByRole('button', { name: 'Write a letter' }).click();
+	await page.getByRole('button', { name: 'Open the letter to write' }).click();
+	await page.getByPlaceholder('Choose a recipient').fill('Bob');
+	await page.getByRole('button', { name: 'Next', exact: true }).click();
+	await page.getByPlaceholder('Write your letter here...').fill('Another letter');
+	await page.getByRole('button', { name: 'Finish writing' }).click();
+	await expect(page.getByRole('button', { name: 'Send letter' })).toHaveAttribute(
+		'data-inactive',
+		'true',
+	);
+	let dailyLimitMessage = '';
+	page.once('dialog', async (alert) => {
+		dailyLimitMessage = alert.message();
+		await alert.accept();
+	});
+	await page.getByRole('button', { name: 'Send letter' }).click();
+	expect(dailyLimitMessage).toContain('already sent a letter to Bob today');
+	await page.getByRole('button', { name: 'Put down letter' }).click();
 
 	receiving = true;
 	await page.reload();

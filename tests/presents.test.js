@@ -57,8 +57,8 @@ test('Christmas letters send messages or gifts and deliver each gift once', asyn
 		},
 	});
 	try {
-		service.setClock('2026-12-01T12:00');
 		for (let i = 0; i < 4; i++) {
+			service.setClock(`2026-12-0${i + 1}T12:00`);
 			service.saveDraft(alice, {
 				recipient: 'Bob',
 				anonymous: i === 0,
@@ -105,13 +105,85 @@ test('Christmas letters send messages or gifts and deliver each gift once', asyn
 		await assert.rejects(service.adminAction(second.id, 'copy'), /already has a copy/);
 		await service.adminAction(second.id, 'delete');
 		assert.equal(service.get(bob).incoming.length, 3);
+		assert.equal(
+			service.get(alice).sent.some((present) => present.id === second.id),
+			false,
+		);
+		assert.equal(
+			service.admin().presents.find((present) => present.id === second.id).status,
+			'deleted',
+		);
 		await service.adminAction(second.id, 'undo');
 		assert.equal(service.get(bob).incoming.length, 4);
+		assert.equal(
+			service.get(alice).sent.some((present) => present.id === second.id),
+			true,
+		);
 		assert.equal(service.open(bob, incoming[3].id).present.body, 'Merry Christmas, Bob!');
 		await assert.rejects(service.claim(bob, incoming[3].id), /no gift/);
 		await service.adminAction(incoming[2].id, 'return', 'Unsafe item');
 		assert.equal(service.get(bob).incoming.length, 3);
 		assert.equal(service.get(alice).returned.at(-1).reason, 'Unsafe item');
+	} finally {
+		database.onModuleDestroy();
+	}
+});
+
+test('one letter per recipient per London day, with unlimited committee sends', async () => {
+	const database = new DatabaseService();
+	for (const [index, name] of ['Alice', 'Bob', 'Carol', 'Admin'].entries())
+		database.connection
+			.insert(users)
+			.values({
+				email: `${name.toLowerCase()}@example.test`,
+				minecraft_uuid: String(index + 1).repeat(32),
+				minecraft_username: name,
+				whitelisted_at_unix_ms: 0,
+				rules_accepted_at_unix_ms: 0,
+				created_at_unix_ms: 0,
+			})
+			.run();
+	const alice = { id: 1, minecraftUsername: 'Alice', isCommittee: false };
+	const admin = { id: 4, minecraftUsername: 'Admin', isCommittee: true };
+	const service = new PresentsService(database, { gameplay: async () => {} });
+	const draft = (user, recipient) =>
+		service.saveDraft(user, {
+			recipient,
+			anonymous: false,
+			title: '',
+			body: 'Merry Christmas',
+			color: 'red',
+		});
+	try {
+		service.setClock('2026-12-01T23:59');
+		draft(alice, 'Bob');
+		service.send(alice);
+		assert.deepEqual(service.get(alice).sentTodayRecipientIds, [2]);
+		draft(alice, 'Bob');
+		assert.throws(() => service.send(alice), /already sent a letter/);
+		draft(alice, 'Carol');
+		service.send(alice);
+		assert.deepEqual(service.get(alice).sentTodayRecipientIds.sort(), [2, 3]);
+		const first = service.get(alice).sent.find((present) => present.to === 'Bob');
+		assert.ok(first);
+		await service.adminAction(first.id, 'delete');
+		assert.equal(
+			service.get(alice).sent.some((present) => present.id === first.id),
+			false,
+		);
+		assert.deepEqual(service.get(alice).sentTodayRecipientIds.sort(), [2, 3]);
+		draft(alice, 'Bob');
+		assert.throws(() => service.send(alice), /already sent a letter/);
+		service.setClock('2026-12-02T00:00');
+		assert.deepEqual(service.get(alice).sentTodayRecipientIds, []);
+		service.send(alice);
+		assert.equal(service.get(alice).sent.length, 2);
+		draft(admin, 'Bob');
+		service.send(admin);
+		draft(admin, 'Bob');
+		service.send(admin);
+		assert.equal(service.get(admin).sent.length, 2);
+		assert.deepEqual(service.get(admin).sentTodayRecipientIds, []);
 	} finally {
 		database.onModuleDestroy();
 	}

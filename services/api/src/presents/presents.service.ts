@@ -7,7 +7,7 @@ import {
 	OnModuleDestroy,
 	OnModuleInit,
 } from '@nestjs/common';
-import { and, eq, getTableColumns, or, sql } from 'drizzle-orm';
+import { and, eq, getTableColumns, gte, lt, or, sql } from 'drizzle-orm';
 import type { AuthenticatedUser } from '../auth/auth-session.service';
 import {
 	christmasPresents,
@@ -21,6 +21,7 @@ import { MinecraftGrpcClientService } from '../grpc/minecraft-grpc-client.servic
 
 const START = Date.UTC(2026, 11, 1);
 const RELEASE = Date.UTC(2026, 11, 25, 9);
+const DAY_MS = 86_400_000;
 const LETTER_COLORS = ['red', 'green', 'yellow', 'orange', 'blue', 'light-blue', 'purple', 'pink'];
 type Present = typeof christmasPresents.$inferSelect;
 type PresentSummary = Omit<Present, 'item_data'>;
@@ -145,8 +146,31 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 			)
 			.map((row) => this.view(row, names, user.id));
 		const sent = rows
-			.filter((row) => row.sender_user_id === user.id && row.sent_at_unix_ms !== null)
+			.filter(
+				(row) =>
+					row.sender_user_id === user.id &&
+					row.sent_at_unix_ms !== null &&
+					row.status !== 'deleted',
+			)
 			.map((row) => this.view(row, names, user.id));
+		// December in London is GMT, so its day boundaries match UTC.
+		const dayStart = Math.floor(clock.now / DAY_MS) * DAY_MS;
+		const sentTodayRecipientIds = user.isCommittee
+			? []
+			: [
+					...new Set(
+						rows
+							.filter(
+								(row) =>
+									row.sender_user_id === user.id &&
+									row.sent_at_unix_ms !== null &&
+									row.sent_at_unix_ms >= dayStart &&
+									row.sent_at_unix_ms < dayStart + DAY_MS,
+							)
+							.map((row) => row.recipient_user_id)
+							.filter((id): id is number => id !== null),
+					),
+				];
 		const returned = rows
 			.filter(
 				(row) =>
@@ -175,6 +199,7 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 			draft: draft ? this.view(draft, names, user.id) : null,
 			incoming,
 			sent,
+			sentTodayRecipientIds,
 			returned,
 			pendingReturns,
 			players: this.database.connection
@@ -375,6 +400,25 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 			if (!draft?.recipient_user_id) throw new BadRequestException('Choose a recipient.');
 			if (!draft.body?.trim() && !draft.item_data)
 				throw new BadRequestException('Write a message or add a gift before sending.');
+			if (!user.isCommittee) {
+				const dayStart = Math.floor(now / DAY_MS) * DAY_MS;
+				const alreadySent = tx
+					.select({ id: christmasPresents.id })
+					.from(christmasPresents)
+					.where(
+						and(
+							eq(christmasPresents.sender_user_id, user.id),
+							eq(christmasPresents.recipient_user_id, draft.recipient_user_id),
+							gte(christmasPresents.sent_at_unix_ms, dayStart),
+							lt(christmasPresents.sent_at_unix_ms, dayStart + DAY_MS),
+						),
+					)
+					.get();
+				if (alreadySent)
+					throw new ConflictException(
+						'You already sent a letter to this player today. You can send one per player per day.',
+					);
+			}
 			tx.update(christmasPresents)
 				.set({ status: 'sent', sent_at_unix_ms: now })
 				.where(eq(christmasPresents.id, draft.id))

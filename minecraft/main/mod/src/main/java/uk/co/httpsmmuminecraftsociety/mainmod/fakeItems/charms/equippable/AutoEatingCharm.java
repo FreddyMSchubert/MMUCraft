@@ -1,6 +1,7 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.equippable;
 
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
@@ -16,8 +17,6 @@ import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import net.minecraft.world.item.consume_effects.PlaySoundConsumeEffect;
 import net.minecraft.world.item.consume_effects.RemoveStatusEffectsConsumeEffect;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.CharmItemFeature;
-import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.Charm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.def.EquippedTickCallbackCharm;
 
@@ -86,9 +85,9 @@ public final class AutoEatingCharm implements Charm, EquippedTickCallbackCharm {
     }
 
     private static boolean canAutoEat(ItemStack stack, int charmLevel) {
-        if (stack.isEmpty() || FORBIDDEN.contains(stack.getItem()) || stack.get(DataComponents.FOOD) == null) return false;
-        FakeItem fakeItem = FakeItems.getFakeItemFromStack(stack);
-        if (fakeItem != null && (fakeItem.magicEffect() != null || fakeItem.getFeature(CharmItemFeature.class) != null)) return false;
+        if (stack.isEmpty() || FORBIDDEN.contains(stack.getItem()) || stack.get(DataComponents.FOOD) == null
+                || !BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace().equals("minecraft")
+                || FakeItems.getFakeItemFromStack(stack) != null) return false;
 
         Consumable consumable = stack.get(DataComponents.CONSUMABLE);
         if (consumable == null || consumable.onConsumeEffects().stream().anyMatch(effect ->

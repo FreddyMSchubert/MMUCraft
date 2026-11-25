@@ -7,41 +7,31 @@ Advent Calendar Plan
 - 5 - christmas cookies, mince pies, gingerbread man - 3 Streak Increase
 - 6 - Saint Nicholas Day - Explanatory book & either coal or cookies
 - 7 - 2 sniffer eggs, moss and sniffer flower stuff - 2 Streak Increase
-- 8 - 
-- 9 - 2 Streak Increase
-- 10
-- 11 - 2 Streak Increase
-- 12
+- 8 - infinity + mending bow
+- 9 - 64 bundles stacked inside each other (not next to each other, inside each other recursively), with the final one containing one beetroot and a book that says “blink and youre a noob” - 2 Streak Increase
+- 10 - 
+- 11 - just a book hinting at the secret prizes you can get each day - 2 Streak Increase
+- 12 - Advent Banhammer
 - 13 - Magic Day: Magic dust, buncha lapis & some enchanted books from dnt maybe - 3 Streak Increase
-- 14
+- 14 - 
 - 15 - 2 Streak Increase
 - 16 - 10 budding amethyst & a buncha amethyst in general
 - 17 - 2 Steak Increase
-- 18
+- 18 - Luck of the sea 4 fishing rod, one of all the higher chance foods, 5 magic dust
 - 19 - 2 Streak Increase
-- 20
-- 21 - 20 Streak Increase
+- 20 - Mulled Wine, some grapes, fish and chips, 50 dabloons, shop buying day
+- 21 - 10 Streak Increase
 - 22
 - 23 - 2 Streak Increase
 - 24 - Bundle of Cookies & Milk
 
 Good days
-- Mulled Wine, some grapes, fish and chips “Shop voucher day”
 - 17 Fishing Day: Fishing Rods, one of all the higher chance foods, 5 magic dust
-- Infinity + Mending Bow
 - Golden Day: Buncha Gold, Raw Gold, Golden Apples, God Apple, Golden Carrots
-- Advent Banhammer
 - buncha fashion / magic books / knowledge books, some other bookshelves and books as well
-- tip that theres a secret present each day
 
 Bad days
-- Buncha christmas cookies
-- 64 bundles stacked inside each other (not next to each other, inside each other recursively), with the final one containing one beetroot and a book that says “blink and youre a noob”
 - XP Phial (full)
-
-Potentially if possible
-- Snowball Machine Gun
 
 Ideas idk
 - shulker spawn egg
-- 

@@ -44,7 +44,8 @@ export function isShoppingSunday(dealDate: string): boolean {
 }
 
 export function dailyDealItemIds(items: CatalogItem[], dealDate: string): Set<string> {
-	const dealCount = isShoppingSunday(dealDate) ? 16 : 8;
+	if (!isShoppingSunday(dealDate)) return new Set();
+	const dealCount = 16;
 	return new Set(
 		[...items]
 			.sort(
@@ -58,12 +59,8 @@ export function dailyDealItemIds(items: CatalogItem[], dealDate: string): Set<st
 }
 
 export function dailyDealDiscountPercent(itemId: string, dealDate: string): number {
-	const sunday = isShoppingSunday(dealDate);
-	const minimum = sunday ? 20 : 10;
-	const maximum = sunday ? 75 : 30;
-	return (
-		minimum + (deterministicRank(`${dealDate}:discount:${itemId}`) % (maximum - minimum + 1))
-	);
+	if (!isShoppingSunday(dealDate)) return 0;
+	return 20 + (deterministicRank(`${dealDate}:discount:${itemId}`) % 56);
 }
 
 export function dailyDealMessage(item: CatalogItem, dealDate: string): string {

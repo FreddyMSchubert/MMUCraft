@@ -67,6 +67,8 @@ export class VelocityService {
 	private livePlayers: LivePlayer[] = [];
 	private connectedPlayers: LivePlayer[] = [];
 	private readonly pendingQueued = new Map<string, { username: string; expiresAt: number }>();
+	// ponytail: This game effect resets if the API restarts; persist it only if restart survival matters.
+	private readonly banhammerUntil = new Map<string, number>();
 	private lastHeartbeatUnixMs: number | null = null;
 	// ponytail: Pending moves live in one API process; persist them if restart-safe delivery is needed.
 	private readonly commands = new Map<number, MoveCommand>();
@@ -86,6 +88,7 @@ export class VelocityService {
 		const username = typeof usernameInput === 'string' ? usernameInput.trim() : '';
 		if (!uuid || !isValidMinecraftUsername(username))
 			return { status: 'DENIED', websiteUrl: this.websiteUrl() };
+		const banhammerUntil = this.banhammerExpiry(uuid);
 
 		const user = this.identities.resolveAndRefresh(uuid, username);
 		const exempt = isExemptAdmin(user);
@@ -100,6 +103,8 @@ export class VelocityService {
 					websiteUrl: this.websiteUrl(),
 				};
 			}
+			if (banhammerUntil !== null)
+				return { status: 'BANHAMMER', expiresAtUnixMs: banhammerUntil };
 			return {
 				status: 'ALLOWED',
 				member: user.is_member === 1,
@@ -109,6 +114,8 @@ export class VelocityService {
 				preferredServerName: this.preferredServer(uuid),
 			};
 		}
+		if (banhammerUntil !== null)
+			return { status: 'BANHAMMER', expiresAtUnixMs: banhammerUntil };
 
 		const now = Date.now();
 		const flow = [...signupFlows.values()].find(
@@ -138,8 +145,24 @@ export class VelocityService {
 		};
 	}
 
+	useAdventBanhammer(uuidInput: unknown) {
+		const uuid = normalizeMinecraftUuid(typeof uuidInput === 'string' ? uuidInput : '');
+		if (!uuid) return { accepted: false };
+		this.banhammerUntil.set(uuid, Date.now() + 60_000);
+		return { accepted: true };
+	}
+
+	private banhammerExpiry(uuid: string): number | null {
+		const expiry = this.banhammerUntil.get(uuid);
+		if (expiry === undefined) return null;
+		if (expiry > Date.now()) return expiry;
+		this.banhammerUntil.delete(uuid);
+		return null;
+	}
+
 	synchronize(body: SyncBody | undefined) {
 		const now = Date.now();
+		for (const uuid of this.banhammerUntil.keys()) this.banhammerExpiry(uuid);
 		for (const id of parseAcknowledgedCommandIds(body?.acknowledgedCommandIds))
 			this.commands.delete(id);
 		for (const [id, command] of this.commands)
@@ -164,6 +187,15 @@ export class VelocityService {
 			if (command.routeRevision !== route.revision) this.commands.delete(id);
 
 		const disconnects = this.connectedPlayers.flatMap((player) => {
+			const banhammerUntil = this.banhammerExpiry(player.uuid);
+			if (banhammerUntil !== null)
+				return [
+					{
+						playerUuid: player.uuid,
+						status: 'BANHAMMER',
+						expiresAtUnixMs: banhammerUntil,
+					},
+				];
 			const user = this.identities.findByUuid(player.uuid);
 			if (!user || isExemptAdmin(user)) return [];
 			const ban = this.bans.resolve(user.id, now);

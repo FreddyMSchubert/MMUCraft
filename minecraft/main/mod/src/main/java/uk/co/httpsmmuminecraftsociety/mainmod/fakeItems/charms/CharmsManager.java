@@ -98,7 +98,8 @@ public class CharmsManager
             Map.entry(ThickSocksCharm.CHARM_ID, new ThickSocksCharm()),
             Map.entry(ReapingGloveCharm.CHARM_ID, new ReapingGloveCharm()),
             Map.entry(EnderianSoulCharm.CHARM_ID, new EnderianSoulCharm()),
-            Map.entry(AutoEatingCharm.CHARM_ID, new AutoEatingCharm())
+            Map.entry(AutoEatingCharm.CHARM_ID, new AutoEatingCharm()),
+            Map.entry(AdventBanhammerCharm.CHARM_ID, new AdventBanhammerCharm())
     );
     public static Charm charmFromId(int charmId) {
         return CHARMS_REGISTRY.get(charmId);

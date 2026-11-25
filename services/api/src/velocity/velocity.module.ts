@@ -20,5 +20,6 @@ import { VelocityService } from './velocity.service';
 		SurprisingSaturdayController,
 	],
 	providers: [VelocityService, SurprisingSaturdayService],
+	exports: [VelocityService],
 })
 export class VelocityModule {}

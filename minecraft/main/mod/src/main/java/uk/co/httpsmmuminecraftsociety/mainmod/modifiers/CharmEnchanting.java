@@ -13,6 +13,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.ModEnchantments;
 import uk.co.httpsmmuminecraftsociety.mainmod.enchantment.DisabledDnTEnchantments;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.AdventBanhammerCharm;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
 
 import java.util.List;
@@ -34,6 +35,7 @@ public class CharmEnchanting
 
     public static TriState onAllowEnchanting(Holder<Enchantment> enchantmentHolder, ItemStack itemStack, EnchantingContext enchantingContext)
     {
+        if (AdventBanhammerCharm.isBanhammer(itemStack)) return TriState.FALSE;
         if (DisabledDnTEnchantments.contains(enchantmentHolder)) return TriState.FALSE;
 
         for (Triple<Item, Boolean, ResourceKey<Enchantment>> ench : vanillaEnchantModifications) {

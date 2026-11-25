@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 import uk.co.httpsmmuminecraftsociety.mainmod.modifiers.anvilRework.recipes.AnvilRecipe;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.AdventBanhammerCharm;
 
 public final class AnvilLogic
 {
@@ -42,6 +43,9 @@ public final class AnvilLogic
         if (left.isEmpty()) {
             return Outcome.EMPTY;
         }
+
+        if (AdventBanhammerCharm.isBanhammer(right)
+                || (!right.isEmpty() && AdventBanhammerCharm.isBanhammer(left))) return Outcome.EMPTY;
 
         AnvilRecipe recipe = AnvilRecipe.getFirstMatching(left, right);
         if (recipe == null) return Outcome.EMPTY;

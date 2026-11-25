@@ -31,7 +31,11 @@ service GameplayEvents {
   rpc BigBossLeave(BigBossPlayerRequest) returns (BigBossStateResponse);
   rpc GetBigBossTarget(GetBigBossTargetRequest) returns (BigBossTargetResponse);
   rpc RecordBigBossKill(BigBossKillRequest) returns (BigBossKillResponse);
+  rpc UseAdventBanhammer(AdventBanhammerRequest) returns (AdventBanhammerResponse);
 }
+
+message AdventBanhammerRequest { string victim_minecraft_uuid = 1; }
+message AdventBanhammerResponse { bool accepted = 1; }
 
 service GameplayControl {
 	  rpc PreviewPresentHand(PresentPlayerRequest) returns (PresentItemResponse);

@@ -31,6 +31,7 @@ final class Messages {
                     : signupCode(decision.code());
             case "BANNED" -> banned();
             case "TIMEOUT" -> timeout(decision.expiresAtUnixMs());
+            case "BANHAMMER" -> banhammer(decision.expiresAtUnixMs());
             case "MAINTENANCE" -> maintenance();
             case "DENIED" -> denied();
             default -> authenticationUnavailable();
@@ -139,6 +140,7 @@ final class Messages {
         return switch (status) {
             case "BANNED" -> banned();
             case "TIMEOUT" -> timeout(expiresAtUnixMs);
+            case "BANHAMMER" -> banhammer(expiresAtUnixMs);
             default -> denied();
         };
     }
@@ -185,6 +187,15 @@ final class Messages {
                         "Please contact the committee immediately")
                 : restriction("You have been timed out. This lasts until " + formatDate(unixMs) + ".",
                         "If this looks wrong, contact the committee");
+    }
+
+    private static Component banhammer(Long expiresAtUnixMs) {
+        long seconds = expiresAtUnixMs == null ? 60
+                : Math.max(1, (expiresAtUnixMs - System.currentTimeMillis() + 999) / 1000);
+        return heading("Advent's Banhammer", GOLD)
+                .append(Component.text("You were bonked! You can rejoin in " + seconds
+                        + (seconds == 1 ? " second." : " seconds."), TEXT))
+                .append(Component.text("\nThis is only a short game effect. Rejoin to refresh the countdown.", MUTED));
     }
 
     private static Component restriction(String explanation, String supportIntroduction) {

@@ -59,6 +59,11 @@ final class GameplayEventsClient {
         return call(client -> client.withDeadlineAfter(5, TimeUnit.SECONDS).recordBigBossKill(request));
     }
 
+    CompletableFuture<AdventBanhammerResponse> useAdventBanhammer(String victimUuid) {
+        return call(client -> client.withDeadlineAfter(5, TimeUnit.SECONDS).useAdventBanhammer(
+                AdventBanhammerRequest.newBuilder().setVictimMinecraftUuid(victimUuid).build()));
+    }
+
     CompletableFuture<RefreshApiCachesResponse> refreshApiCaches() {
         CompletableFuture<Void> flushed = new CompletableFuture<>();
         GrpcBridge.runOnMainThread(() -> DailyTaskManager.flush().whenComplete((done, error) -> {

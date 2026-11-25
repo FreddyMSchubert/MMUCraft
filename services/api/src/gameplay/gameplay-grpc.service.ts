@@ -17,6 +17,7 @@ import { AnnouncementsService } from '../announcements/announcements.service';
 import { DucksService } from '../ducks/ducks.service';
 import { BigBossService, type BossHeartbeat, type BossKill } from '../big-boss/big-boss.service';
 import { PresentsService } from '../presents/presents.service';
+import { VelocityService } from '../velocity/velocity.service';
 import {
 	FeatureTogglesService,
 	type FeatureTogglesSnapshot,
@@ -77,6 +78,7 @@ export class GameplayGrpcService implements OnModuleInit {
 		private readonly ducks: DucksService,
 		private readonly bigBoss: BigBossService,
 		private readonly presents: PresentsService,
+		private readonly velocity: VelocityService,
 	) {}
 
 	onModuleInit() {
@@ -107,6 +109,7 @@ export class GameplayGrpcService implements OnModuleInit {
 			BigBossLeave: this.bigBossLeave.bind(this),
 			GetBigBossTarget: this.getBigBossTarget.bind(this),
 			RecordBigBossKill: this.recordBigBossKill.bind(this),
+			UseAdventBanhammer: this.useAdventBanhammer.bind(this),
 		});
 	}
 
@@ -191,6 +194,13 @@ export class GameplayGrpcService implements OnModuleInit {
 		} catch (error) {
 			callback(error as grpc.ServiceError, {} as ReturnType<BigBossService['recordKill']>);
 		}
+	}
+
+	private useAdventBanhammer(
+		call: grpc.ServerUnaryCall<{ victim_minecraft_uuid: string }, { accepted: boolean }>,
+		callback: UnaryCallback<{ accepted: boolean }>,
+	) {
+		callback(null, this.velocity.useAdventBanhammer(call.request.victim_minecraft_uuid));
 	}
 
 	private getAnnouncements(

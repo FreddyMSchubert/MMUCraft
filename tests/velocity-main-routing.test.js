@@ -8,6 +8,7 @@ test('Velocity only accepts main as a destination', () => {
 	const service = Object.create(VelocityService.prototype);
 	service.commands = new Map();
 	service.pendingQueued = new Map();
+	service.banhammerUntil = new Map();
 	service.identities = { findByUuid: () => null };
 	service.bans = { resolve: () => ({ active: false }) };
 	service.settings = () => ({ maintenance_mode: 0 });
@@ -29,6 +30,7 @@ test('Velocity only accepts main as a destination', () => {
 
 test('only the designated MMU admin account bypasses player caps', () => {
 	const service = Object.create(VelocityService.prototype);
+	service.banhammerUntil = new Map();
 	service.settings = () => ({ maintenance_mode: 0 });
 	service.bans = { resolve: () => ({ active: false }) };
 	service.preferredServer = () => 'main';
@@ -51,6 +53,7 @@ test('only the designated MMU admin account bypasses player caps', () => {
 
 test('committee can enter during maintenance but bans still apply', () => {
 	const service = Object.create(VelocityService.prototype);
+	service.banhammerUntil = new Map();
 	service.settings = () => ({ maintenance_mode: 1 });
 	let banned = false;
 	service.bans = { resolve: () => ({ active: banned, expiresAtUnixMs: null }) };
@@ -78,4 +81,53 @@ test('committee can enter during maintenance but bans still apply', () => {
 	});
 	banned = true;
 	assert.equal(service.authorizePlayer(uuid, 'Committee').status, 'BANNED');
+});
+
+test('banhammer disconnects for one minute without creating a ban', () => {
+	const service = Object.create(VelocityService.prototype);
+	service.banhammerUntil = new Map();
+	service.pendingQueued = new Map();
+	service.commands = new Map();
+	service.identities = {
+		resolveAndRefresh: () => ({ id: 1, email: 'member@example.com', is_member: 1 }),
+		findByUuid: () => ({ id: 1, email: 'member@example.com', is_member: 1 }),
+	};
+	service.bans = { resolve: () => ({ active: false }) };
+	service.settings = () => ({ maintenance_mode: 0 });
+	service.servers = () => [{ name: 'main', address: 'minecraft:25565', max_players: 42 }];
+	service.preferredServer = () => 'main';
+	service.rememberConnectedServer = () => {};
+
+	assert.deepEqual(service.useAdventBanhammer('invalid'), { accepted: false });
+	const start = Date.now();
+	assert.deepEqual(service.useAdventBanhammer(uuid), { accepted: true });
+	const access = service.authorizePlayer(uuid, 'Member');
+	assert.equal(access.status, 'BANHAMMER');
+	assert.ok(access.expiresAtUnixMs >= start + 60_000);
+	service.bans.resolve = () => ({ active: true, expiresAtUnixMs: null });
+	assert.equal(service.authorizePlayer(uuid, 'Member').status, 'BANNED');
+	service.bans.resolve = () => ({ active: false });
+	const response = service.synchronize({
+		servers: [],
+		players: [
+			{
+				uuid,
+				sessionId: '00000000-0000-4000-8000-000000000001',
+				username: 'Member',
+				serverName: 'main',
+				state: 'playing',
+				targetServerName: 'main',
+			},
+		],
+	});
+	assert.deepEqual(response.disconnects, [
+		{
+			playerUuid: uuid,
+			status: 'BANHAMMER',
+			expiresAtUnixMs: access.expiresAtUnixMs,
+		},
+	]);
+	service.banhammerUntil.set(uuid, Date.now() - 1);
+	assert.equal(service.authorizePlayer(uuid, 'Member').status, 'ALLOWED');
+	assert.equal(service.banhammerUntil.has(uuid), false);
 });

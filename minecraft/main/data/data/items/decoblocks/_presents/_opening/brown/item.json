@@ -1,0 +1,14 @@
+{
+	"title": "Present",
+	"id": "deco-opening-present-brown",
+	"modelType": "basic-3d",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Who knows what could be inside?"],
+	"decoBlock": {
+		"ground": true,
+		"wall": false,
+		"ceiling": false,
+		"lightLevel": 0
+	}
+}

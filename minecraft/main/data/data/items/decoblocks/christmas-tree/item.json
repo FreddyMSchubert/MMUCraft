@@ -24,7 +24,7 @@
 					"P": "minecraft:decorated_pot"
 				},
 				"result": {
-					"stack": "mainmod:christmas-tree",
+					"stack": "mainmod:deco-christmas-tree",
 					"count": 1
 				}
 			}

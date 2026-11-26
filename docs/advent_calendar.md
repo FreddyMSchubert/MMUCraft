@@ -24,3 +24,5 @@ Advent Calendar Plan
 - 22 - buncha fashion / magic / knowledge books, bookshelves, books, book miniblocks
 - 23 - 2 Streak Increase
 - 24 - Bundle of Cookies & Milk
+
+TODO come up with 3 more good ideas

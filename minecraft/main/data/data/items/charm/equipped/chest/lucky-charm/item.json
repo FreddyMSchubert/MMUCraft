@@ -85,7 +85,7 @@
 					"mainmod:fish-lil_guy",
 					"mainmod:fish-lil_dude",
 					"mainmod:fish-ghast_wisp",
-					"mainmod:fish-voidplate_flounder",
+					"mainmod:fish-voidplate_flounder=Cinderplate Flounder",
 					"minecraft:potion[minecraft:potion_contents=luck]=Potion of Luck"
 				]
 			}

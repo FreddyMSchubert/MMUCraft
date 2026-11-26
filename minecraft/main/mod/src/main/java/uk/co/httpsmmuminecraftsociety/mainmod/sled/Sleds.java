@@ -2,6 +2,7 @@ package uk.co.httpsmmuminecraftsociety.mainmod.sled;
 
 import com.mojang.math.Transformation;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.game.ClientboundMoveVehiclePacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,14 +12,18 @@ import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.boat.Boat;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
@@ -40,10 +45,19 @@ public final class Sleds {
     private static final String DISPLAY_CONFIGURED_TAG = "mainmod_sled_display_positioned";
     private static final String DISPLAY_OFFSET_TAG = "mainmod_sled_second_seat";
     private static final Set<Boat> BOATS = new HashSet<>();
+    private static final Set<Display.ItemDisplay> DISPLAYS = new HashSet<>();
     private static final Map<UUID, Display.ItemDisplay> DETACHED = new HashMap<>();
-    private static final Map<UUID, Vec3> LAST_POSITION = new HashMap<>();
-    private static final double FORWARD_BUMP = 0.5D;
-    private static final double MAX_SPEED = 1.2D;
+    private static final Map<Display.ItemDisplay, Integer> ORPHAN_TICKS = new HashMap<>();
+    private static final Map<UUID, MotionState> MOTION = new HashMap<>();
+    private static final double WALK_SPEED = 0.215D;
+    private static final double MAX_DOWNHILL_BONUS = 0.45D;
+    private static final int MAX_MOMENTUM_TICKS = 100;
+
+    private static final class MotionState {
+        Vec3 lastPosition;
+        int momentumTicks;
+        int stepCooldown;
+    }
 
     private Sleds() {}
 
@@ -75,10 +89,6 @@ public final class Sleds {
         if (!level.noCollision(boat, boat.getBoundingBox())) return InteractionResult.FAIL;
         boat.addTag(BOAT_TAG);
         if (!level.addFreshEntity(boat)) return InteractionResult.FAIL;
-        if (!player.startRiding(boat)) {
-            boat.discard();
-            return InteractionResult.FAIL;
-        }
         attachDisplay(level, boat);
         player.getItemInHand(hand).consume(1, player);
         return InteractionResult.SUCCESS;
@@ -99,19 +109,33 @@ public final class Sleds {
 
     public static void onEntityLoad(Entity entity, ServerLevel level) {
         if (isSled(entity)) BOATS.add((Boat) entity);
+        if (entity instanceof Display.ItemDisplay display && display.entityTags().contains(DISPLAY_TAG))
+            DISPLAYS.add(display);
     }
 
     public static void onEntityUnload(Entity entity, ServerLevel level) {
+        if (entity instanceof Display.ItemDisplay display) {
+            DISPLAYS.remove(display);
+            ORPHAN_TICKS.remove(display);
+        }
         if (!isSled(entity)) return;
         Boat boat = (Boat) entity;
         BOATS.remove(boat);
-        LAST_POSITION.remove(boat.getUUID());
+        MOTION.remove(boat.getUUID());
         if (entity.getRemovalReason() != null && entity.getRemovalReason().shouldDestroy())
             discardDisplay(boat);
         else DETACHED.remove(boat.getUUID());
     }
 
     public static void tick(ServerLevel level) {
+        for (Display.ItemDisplay display : Set.copyOf(DISPLAYS)) {
+            if (display.level() != level || display.isRemoved()) continue;
+            if (isSled(display.getVehicle()) || DETACHED.containsValue(display)) {
+                ORPHAN_TICKS.remove(display);
+            } else if (ORPHAN_TICKS.merge(display, 1, Integer::sum) >= 5) {
+                display.discard();
+            }
+        }
         for (Boat boat : BOATS) {
             if (boat.level() != level || boat.isRemoved()) continue;
             if (attachedDisplay(boat) == null) attachDisplay(level, boat);
@@ -121,26 +145,75 @@ public final class Sleds {
                 display.setYRot(boat.getYRot());
             }
 
-            Vec3 previous = LAST_POSITION.put(boat.getUUID(), boat.position());
-            if (!(boat.getControllingPassenger() instanceof ServerPlayer rider) || previous == null || !onSnow(level, boat)
-                    || !boat.getPaddleState(0) || !boat.getPaddleState(1))
-                continue;
+            MotionState state = MOTION.computeIfAbsent(boat.getUUID(), id -> new MotionState());
+            Vec3 previous = state.lastPosition;
+            state.lastPosition = boat.position();
+            if (state.stepCooldown > 0) state.stepCooldown--;
+            if (previous == null) continue;
+
+            double drop = previous.y - boat.getY();
+            if (drop > 0.04D) state.momentumTicks = Math.min(MAX_MOMENTUM_TICKS,
+                    state.momentumTicks + Math.max(1, (int) Math.ceil(drop * 35.0D)));
+            else state.momentumTicks = Math.max(0, state.momentumTicks - 1
+                    - (int) Math.ceil(Math.max(0.0D, -drop) * 35.0D));
+
+            if (!(boat.getControllingPassenger() instanceof ServerPlayer rider)
+                    || !boat.getPaddleState(0) || !boat.getPaddleState(1)) continue;
 
             Vec3 movement = boat.position().subtract(previous);
             Vec3 horizontal = new Vec3(movement.x, 0.0D, movement.z);
             double yaw = Math.toRadians(boat.getYRot());
             Vec3 forward = new Vec3(-Math.sin(yaw), 0.0D, Math.cos(yaw));
-            Vec3 boost = horizontal.add(forward.scale(FORWARD_BUMP));
-            if (boost.lengthSqr() > MAX_SPEED * MAX_SPEED) boost = boost.normalize().scale(MAX_SPEED);
-            boat.setDeltaMovement(boost.x, boat.getDeltaMovement().y, boost.z);
-            rider.connection.send(new ClientboundSetEntityMotionPacket(boat));
+            stepUp(level, boat, rider, forward, state);
+            if (!onSnow(level, boat)) continue;
+
+            double speed = WALK_SPEED + MAX_DOWNHILL_BONUS * state.momentumTicks / MAX_MOMENTUM_TICKS;
+            double friction = boat.getGroundFriction();
+            if (!Double.isFinite(friction) || friction < 0.3D) friction = 0.6D;
+            double packetSpeed = Math.min(0.9D, (speed - 0.04D) / friction);
+            Vec3 velocity = horizontal.scale(0.25D).add(forward.scale(packetSpeed * 0.75D));
+            if (Math.abs(horizontal.length() - speed) > 0.02D || horizontal.normalize().dot(forward) < 0.98D) {
+                boat.setDeltaMovement(velocity.x, boat.getDeltaMovement().y, velocity.z);
+                rider.connection.send(new ClientboundSetEntityMotionPacket(boat));
+            }
         }
     }
 
     private static boolean onSnow(ServerLevel level, Boat boat) {
-        BlockPos below = BlockPos.containing(boat.getX(), boat.getBoundingBox().minY - 0.05D, boat.getZ());
-        var state = level.getBlockState(below);
-        return state.is(Blocks.SNOW) || state.is(Blocks.SNOW_BLOCK);
+        AABB box = boat.getBoundingBox();
+        double[] xs = {boat.getX(), box.minX + 0.1D, box.maxX - 0.1D};
+        double[] zs = {boat.getZ(), box.minZ + 0.1D, box.maxZ - 0.1D};
+        for (double x : xs) for (double z : zs) {
+            BlockPos below = BlockPos.containing(x, box.minY - 0.05D, z);
+            if (snowy(level.getBlockState(below)) || snowy(level.getBlockState(below.above()))) return true;
+        }
+        return false;
+    }
+
+    private static boolean snowy(BlockState state) {
+        return state.is(BlockTags.SNOW) || state.hasProperty(BlockStateProperties.SNOWY)
+                && state.getValue(BlockStateProperties.SNOWY);
+    }
+
+    private static void stepUp(ServerLevel level, Boat boat, ServerPlayer rider, Vec3 forward, MotionState state) {
+        if (state.stepCooldown > 0) return;
+        AABB box = boat.getBoundingBox();
+        Vec3 probe = forward.scale(0.35D);
+        if (level.noBlockCollision(boat, box.move(probe))) return;
+        for (int tenth = 1; tenth <= 11; tenth++) {
+            double height = tenth / 10.0D;
+            if (!level.noCollision(boat, box.move(0.0D, height, 0.0D))
+                    || !level.noCollision(boat, box.move(probe.x, height, probe.z))) continue;
+            double oldY = boat.getY();
+            boat.move(MoverType.SELF, new Vec3(0.0D, height, 0.0D));
+            if (boat.getY() > oldY + height - 0.02D) {
+                state.lastPosition = boat.position();
+                state.momentumTicks = Math.max(0, state.momentumTicks - (int) Math.ceil(height * 35.0D));
+                state.stepCooldown = 2;
+                rider.connection.send(ClientboundMoveVehiclePacket.fromEntity(boat));
+            }
+            return;
+        }
     }
 
     private static Display.ItemDisplay attachedDisplay(Boat boat) {
@@ -159,6 +232,7 @@ public final class Sleds {
             display.setNoGravity(true);
             display.setSilent(true);
             display.setPermanentlyInvulnerable(true);
+            display.setPosRotInterpolationDuration(2);
             display.setPos(boat.position());
             ((ItemDisplayEntityAccessor) display).mainmod$setItemStack(FakeItems.createFakeItemStack(ITEM_ID, 1));
             ((ItemDisplayEntityAccessor) display).mainmod$setItemTransform(ItemDisplayContext.FIXED);
@@ -201,7 +275,9 @@ public final class Sleds {
 
     public static void clear() {
         BOATS.clear();
+        DISPLAYS.clear();
         DETACHED.clear();
-        LAST_POSITION.clear();
+        ORPHAN_TICKS.clear();
+        MOTION.clear();
     }
 }

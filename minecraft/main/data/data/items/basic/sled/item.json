@@ -1,10 +1,10 @@
 {
-	"title": "Sled",
+	"title": "Sleigh",
 	"id": "sled",
 	"modelType": "basic-3d",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"tooltips": ["Place and ride. Faster on snow. Sneak to dismount."],
+	"tooltips": ["Ride over snow. Downhill runs build speed. Sneak to dismount."],
 	"craftable": {
 		"recipes": [
 			{

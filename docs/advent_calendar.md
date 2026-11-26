@@ -1,7 +1,7 @@
 Advent Calendar Plan
 
 - 1 - buncha fashion books on the same day christmas cosmetics release, christmas cookies, 3 Streak Increase
-- 2 - christmas tree decoblock
+- 2 - christmas tree decoblock & advent wreath
 - 3 - buncha present mini blocks - 2 Streak Increase
 - 4 - Snowball Machine Gun, a buncha snowballs
 - 5 - christmas cookies, mince pies, gingerbread man - 3 Streak Increase
@@ -18,11 +18,11 @@ Advent Calendar Plan
 - 16 - 10 budding amethyst & a buncha amethyst in general
 - 17 - 3 shulker spawn eggs, 2 Steak Increase
 - 18 - Luck of the sea 4 fishing rod, one of all the higher chance foods, 5 magic dust
-- 19 - 2 Streak Increase
+- 19 - Book of Wisdom, 2 Streak Increase
 - 20 - Mulled Wine, some grapes, fish and chips, 50 dabloons, shop buying day
-- 21 - 10 Streak Increase
+- 21 - Mistletoe, a buncha sweet berries, different cookies, 10 Streak Increase
 - 22 - buncha fashion / magic / knowledge books, bookshelves, books, book miniblocks
-- 23 - 2 Streak Increase
+- 23 - Pym Disks recipe knowledge, 2 Streak Increase
 - 24 - Bundle of Cookies & Milk
 
 TODO come up with 3 more good ideas

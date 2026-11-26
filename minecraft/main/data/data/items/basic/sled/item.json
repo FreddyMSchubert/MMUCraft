@@ -1,0 +1,23 @@
+{
+	"title": "Sled",
+	"id": "sled",
+	"modelType": "basic-3d",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": ["Place and ride. Faster on snow. Sneak to dismount."],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "sled",
+				"type": "mainmod:fake_crafting_shaped",
+				"pattern": ["L L", "PPP", "I I"],
+				"key": {
+					"L": "minecraft:leather",
+					"P": "minecraft:spruce_planks",
+					"I": "minecraft:iron_ingot"
+				},
+				"result": { "stack": "mainmod:sled", "count": 1 }
+			}
+		]
+	}
+}

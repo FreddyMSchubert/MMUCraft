@@ -80,6 +80,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.metrics.MetricsServer;
 import uk.co.httpsmmuminecraftsociety.mainmod.miniblocks.MiniBlockCatalog;
 import uk.co.httpsmmuminecraftsociety.mainmod.miniblocks.MiniBlockCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.maps.SmallMaps;
+import uk.co.httpsmmuminecraftsociety.mainmod.sled.Sleds;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
 import uk.co.httpsmmuminecraftsociety.mainmod.playerpotions.PlayerDisguises;
 import uk.co.httpsmmuminecraftsociety.mainmod.playerpotions.SkinColors;
@@ -150,9 +151,12 @@ public class MainMod implements ModInitializer {
         ServerTickEvents.END_LEVEL_TICK.register(CharmsManager::onPlayerTick);
         ServerTickEvents.END_LEVEL_TICK.register(PotionOfDisplacementCharm::tickPools);
         ServerTickEvents.END_LEVEL_TICK.register(ParticleEmission::tick);
+        ServerTickEvents.END_LEVEL_TICK.register(Sleds::tick);
         ServerChunkEvents.CHUNK_UNLOAD.register(RedstoneRemoteCharm::onChunkUnload);
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> LegacyFakeItemMigration.migrateEntity(entity));
         ServerEntityEvents.ENTITY_LOAD.register(AnimalCrossingFishShadowDisplay::discardSavedShadow);
+        ServerEntityEvents.ENTITY_LOAD.register(Sleds::onEntityLoad);
+        ServerEntityEvents.ENTITY_UNLOAD.register(Sleds::onEntityUnload);
         ServerEntityEvents.ENTITY_LOAD.register(PotionOfInsomniaCharm::onEntityLoad);
         ServerEntityEvents.ENTITY_UNLOAD.register(PotionOfInsomniaCharm::onEntityUnload);
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
@@ -186,11 +190,14 @@ public class MainMod implements ModInitializer {
         ServerLivingEntityEvents.AFTER_DEATH.register(MasteryAdvancements::onDeath);
         ItemEvents.USE.register(CharmsManager::onItemUse);
         ItemEvents.USE.register(MasteryAdvancements::onItemUse);
+        ItemEvents.USE.register(Sleds::onUse);
         ItemEvents.USE_ON.register(CharmsManager::onItemUseOn);
         ItemEvents.USE_ON.register(DecoBlocksManager::onUseItemOn);
         ItemEvents.USE_ON.register(AnvilLogic::onUseItemOn);
+        ItemEvents.USE_ON.register(Sleds::onUseOn);
         UseEntityCallback.EVENT.register(CharmsManager::onUseEntity);
         UseEntityCallback.EVENT.register(PlayerDisguises::use);
+        UseEntityCallback.EVENT.register(Sleds::onUseEntity);
         UseBlockCallback.EVENT.register(DynamicBeaconRange::onUseBlock);
         UseBlockCallback.EVENT.register(DecoBlocksManager::onUseBlock);
         UseBlockCallback.EVENT.register(CosmeticsManager::onUseBlock);
@@ -228,6 +235,7 @@ public class MainMod implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register(GrpcBridge::start);
         ServerLifecycleEvents.SERVER_STARTED.register(MetricsServer::start);
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+            Sleds.clear();
             PlayerDisguises.stopping();
             RedstoneRemoteCharm.clear();
             PotionOfDisplacementCharm.clearSearches();

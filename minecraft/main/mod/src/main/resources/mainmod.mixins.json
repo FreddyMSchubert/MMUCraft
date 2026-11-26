@@ -82,6 +82,7 @@
 		"particleTrails.ArrowParticles",
 		"particleTrails.CrossbowParticles",
 		"SnowballMachineGunMixin",
+		"SledBoatDropMixin",
 		"particleTrails.FireworkParticles",
 		"particleTrails.PlayerParticles",
 		"particleTrails.TrailTooltip",

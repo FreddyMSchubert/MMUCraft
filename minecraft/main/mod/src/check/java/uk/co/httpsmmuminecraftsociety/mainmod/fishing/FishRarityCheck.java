@@ -44,18 +44,25 @@ public final class FishRarityCheck {
                 }
             }
         }
+
         int upperMask = 1 << FishRarity.LEGENDARY.ordinal() | 1 << FishRarity.MYTHICAL.ordinal();
         double[] early = FishRarity.weightsWithBoost(0, 0, upperMask);
-        assert early[FishRarity.LEGENDARY.ordinal()] > 0.019;
-        assert early[FishRarity.MYTHICAL.ordinal()] > 0.009;
+        assert close(early[FishRarity.LEGENDARY.ordinal()], 0.009881422924901186);
+        assert close(early[FishRarity.MYTHICAL.ordinal()], 0.001976284584980237);
+
         double[] lucky = FishRarity.weightsWithBoost(11, 0, upperMask);
-        assert lucky[FishRarity.LEGENDARY.ordinal()] > 0.04;
-        assert lucky[FishRarity.MYTHICAL.ordinal()] > 0.018;
+        assert close(lucky[FishRarity.LEGENDARY.ordinal()], 0.03256530180511161);
+        assert close(lucky[FishRarity.MYTHICAL.ordinal()], 0.00500463632174037);
+
         double[] all = FishRarity.weightsWithBoost(11, 500, 63);
         assert close(sum(all), 1.0);
-        assert all[FishRarity.MYTHICAL.ordinal()] > max[FishRarity.MYTHICAL.ordinal()];
-        assert all[FishRarity.LEGENDARY.ordinal()] > max[FishRarity.LEGENDARY.ordinal()];
-        assert all[FishRarity.COMMON.ordinal()] < max[FishRarity.COMMON.ordinal()];
+
+        for (FishRarity rarity : FishRarity.values()) {
+            int index = rarity.ordinal();
+            double[] without = FishRarity.weightsWithBoost(11, 500, 63 & ~(1 << index));
+            assert all[index] > without[index];
+        }
+
     }
 
     private static double sum(double[] weights) {

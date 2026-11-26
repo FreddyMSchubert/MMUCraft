@@ -47,6 +47,11 @@ export class PresentsController {
 		return this.presents.open(this.auth.requireSession(cookie), id);
 	}
 
+	@Post(':id/read')
+	read(@Headers('cookie') cookie: string | undefined, @Param('id') id: string) {
+		return this.presents.read(this.auth.requireSession(cookie), id);
+	}
+
 	@Post(':id/claim')
 	claim(@Headers('cookie') cookie: string | undefined, @Param('id') id: string) {
 		return this.presents.claim(this.auth.requireSession(cookie), id);

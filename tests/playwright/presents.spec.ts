@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test('a player can compose a letter and later open a present', async ({ page }) => {
-	test.setTimeout(75_000);
+	test.setTimeout(100_000);
 	await page.addInitScript(() => {
 		const original = window.setInterval.bind(window);
 		window.setInterval = ((handler: TimerHandler, timeout?: number, ...args: unknown[]) =>
@@ -14,6 +14,7 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 	let receiving = false;
 	let draft: Record<string, unknown> | null = null;
 	let opened = false;
+	let read = false;
 	let claimed = false;
 	let sent = false;
 	const letter = {
@@ -28,6 +29,7 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 		itemCount: 4,
 		status: 'sent',
 		opened: false,
+		read: false,
 		sentAt: Date.UTC(2026, 11, 1),
 		claimedAt: null,
 		adminReason: null,
@@ -48,6 +50,7 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 						itemName: opened ? letter.itemName : null,
 						itemCount: opened ? 4 : null,
 						opened,
+						read,
 						status: claimed ? 'claimed' : 'sent',
 					},
 				]
@@ -106,8 +109,12 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 		} else if (path === '/api/presents/preview')
 			json = { itemName: 'Red present', itemCount: 4 };
 		else if (path === '/api/presents/letter-1/open') {
+			const firstOpen = !opened;
 			opened = true;
-			json = { firstOpen: true, present: state().incoming[0] };
+			json = { firstOpen, present: state().incoming[0] };
+		} else if (path === '/api/presents/letter-1/read') {
+			read = true;
+			json = { present: state().incoming[0] };
 		} else if (path === '/api/presents/letter-1/claim') {
 			claimed = true;
 			json = state();
@@ -322,14 +329,50 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 	receiving = true;
 	await page.reload();
 	await expect(page.getByRole('heading', { name: 'Christmas presents are here!' })).toBeVisible();
+	await expect(page.locator('.presentIncomingList')).toBeVisible();
+	await expect(page.locator('.presentIncomingList .presentUnreadBadge')).toBeVisible();
+	await page.getByRole('button', { name: 'Letter from Ally, unread' }).click();
+	await expect(page.locator('.presentEnvelopeObject')).toHaveClass(/isSealed/);
+	await expect(page.getByRole('button', { name: 'Flip around' })).toBeVisible();
+	await page.getByRole('button', { name: 'Flip around' }).click();
+	await expect(page.getByRole('button', { name: 'Flip back' })).toBeVisible();
+	await page.waitForTimeout(900);
+	await page.screenshot({ path: 'tests/test-results/presents-sealed-back.png' });
 	await page.getByRole('button', { name: 'Open letter' }).click();
-	await expect(page.getByText('Merry Christmas, Bob!')).toBeVisible();
-	await expect(page.getByText('Red present × 4')).toBeVisible();
+	await expect(page.locator('.presentEnvelopeObject')).toHaveClass(/isOpening/);
+	await page.waitForTimeout(1_450);
+	await page.screenshot({ path: 'tests/test-results/presents-opening-flap.png' });
+	await page.waitForTimeout(2_300);
+	await page.screenshot({ path: 'tests/test-results/presents-opening-fold.png' });
+	await page.waitForTimeout(1_600);
+	await page.screenshot({ path: 'tests/test-results/presents-opening-unfold.png' });
+	await page.waitForTimeout(1_650);
+	await expect(page.locator('.presentEnvelopeObject')).toHaveClass(/isOpened/);
+	await page.screenshot({ path: 'tests/test-results/presents-open-envelope.png' });
+	await page.getByRole('button', { name: 'Read the letter' }).click();
+	await expect(page.locator('.presentReadContent')).toBeVisible();
+	await expect(page.locator('.presentReadContent')).toContainText('Merry Christmas, Bob!');
+	await expect(page.locator('.presentReadContent')).toContainText('Red present × 4');
+	await expect.poll(() => read).toBe(true);
+	await expect(page.locator('.presentIncomingList .presentUnreadBadge')).toHaveCount(1);
+	await page.screenshot({ path: 'tests/test-results/presents-reading.png' });
+	await page.setViewportSize({ width: 1280, height: 800 });
+	await expect(page.locator('.presentReadContent')).toBeVisible();
+	await page.screenshot({ path: 'tests/test-results/presents-reading-desktop.png' });
+	await page.setViewportSize({ width: 390, height: 844 });
 	await page.getByRole('button', { name: 'Receive gift' }).click();
 	await expect(page.getByText('Gift received in Minecraft')).toBeVisible();
+	await page.getByRole('button', { name: 'Finish reading' }).click();
+	await expect(page.locator('.presentWritingView')).not.toBeVisible();
+	await page.getByRole('button', { name: 'Put down letter' }).click();
+	await expect(page.locator('.presentIncomingList .presentUnreadBadge')).toHaveCount(0);
 	await page.screenshot({ path: 'tests/test-results/presents-received.png', fullPage: true });
 	await page.reload();
 	await expect(page.getByRole('heading', { name: 'Christmas presents are here!' })).toBeVisible();
+	await page.getByRole('button', { name: 'Letter from Ally' }).click();
+	await expect(page.getByRole('button', { name: 'Flip around' })).toHaveCount(0);
+	await expect(page.getByRole('button', { name: 'Read the letter' })).toBeVisible();
+	await page.getByRole('button', { name: 'Put down letter' }).click();
 	await expect
 		.poll(() => page.evaluate(() => document.documentElement.scrollWidth))
 		.toBeLessThanOrEqual(390);

@@ -1,0 +1,1 @@
+ALTER TABLE `christmas_presents` ADD `read_at_unix_ms` integer;

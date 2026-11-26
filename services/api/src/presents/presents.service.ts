@@ -453,6 +453,31 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 		};
 	}
 
+	read(user: AuthenticatedUser, id: string) {
+		if (!this.clock().receiving)
+			throw new BadRequestException('Letters arrive at 9am on Christmas Day.');
+		const present = this.incoming(user.id, id);
+		if (!present.opened_at_unix_ms) throw new BadRequestException('Open the letter first.');
+		const readAt = Date.now();
+		this.database.connection
+			.update(christmasPresents)
+			.set({ read_at_unix_ms: readAt })
+			.where(
+				and(
+					eq(christmasPresents.id, id),
+					sql`${christmasPresents.read_at_unix_ms} is null`,
+				),
+			)
+			.run();
+		return {
+			present: this.view(
+				{ ...present, read_at_unix_ms: present.read_at_unix_ms ?? readAt },
+				this.names(),
+				user.id,
+			),
+		};
+	}
+
 	async claim(user: AuthenticatedUser, id: string) {
 		if (!this.clock().receiving)
 			throw new BadRequestException('Letters arrive at 9am on Christmas Day.');
@@ -767,6 +792,7 @@ export class PresentsService implements OnModuleInit, OnModuleDestroy {
 			itemCount: !recipient || admin || row.opened_at_unix_ms ? row.item_count : null,
 			status: row.status,
 			opened: row.opened_at_unix_ms !== null,
+			read: row.read_at_unix_ms !== null,
 			sentAt: row.sent_at_unix_ms,
 			claimedAt: row.claimed_at_unix_ms,
 			adminCopyAt: admin ? row.admin_copy_at_unix_ms : undefined,

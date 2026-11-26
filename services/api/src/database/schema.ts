@@ -980,6 +980,7 @@ export const christmasPresents = sqliteTable(
 		created_at_unix_ms: integer('created_at_unix_ms').notNull(),
 		sent_at_unix_ms: integer('sent_at_unix_ms'),
 		opened_at_unix_ms: integer('opened_at_unix_ms'),
+		read_at_unix_ms: integer('read_at_unix_ms'),
 		claimed_at_unix_ms: integer('claimed_at_unix_ms'),
 		admin_copy_at_unix_ms: integer('admin_copy_at_unix_ms'),
 	},

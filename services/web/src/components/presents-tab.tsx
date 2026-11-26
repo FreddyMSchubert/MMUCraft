@@ -90,6 +90,7 @@ export interface PresentView {
 	itemCount: number | null;
 	status: string;
 	opened: boolean;
+	read: boolean;
 	sentAt: number | null;
 	claimedAt: number | null;
 	adminReason: string | null;
@@ -160,12 +161,16 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 	const [color, setColor] = useState<LetterColor>('red');
 	const [anonymous, setAnonymous] = useState(false);
 	const [page, setPage] = useState(0);
-	const [mode, setMode] = useState<'list' | 'envelope' | 'writing'>('list');
+	const [mode, setMode] = useState<
+		'list' | 'envelope' | 'writing' | 'received-envelope' | 'reading'
+	>('list');
 	const [writerReady, setWriterReady] = useState(false);
 	const [sending, setSending] = useState(false);
 	const [revealing, setRevealing] = useState(false);
 	const [glowReturning, setGlowReturning] = useState<LetterColor | null>(null);
 	const [opening, setOpening] = useState('');
+	const [selectedId, setSelectedId] = useState('');
+	const [flipped, setFlipped] = useState(false);
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState('');
 	const dialog = useRef<HTMLDialogElement>(null);
@@ -182,6 +187,7 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 	const draftId = useRef<string | null>(null);
 	const initialized = useRef(false);
 	const seenReturns = useRef(new Set<string>());
+	const readRequests = useRef(new Set<string>());
 	const loaded = state !== null;
 	const applyState = useCallback((next: PresentsState) => {
 		const nextId = next.draft?.id ?? null;
@@ -228,7 +234,7 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 	}, [mode]);
 
 	useLayoutEffect(() => {
-		if (mode !== 'writing' || !writingPaper.current) return;
+		if ((mode !== 'writing' && mode !== 'reading') || !writingPaper.current) return;
 		if (!previewRect.current || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 			setWriterReady(true);
 			return;
@@ -249,7 +255,12 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 	}, [mode]);
 
 	useLayoutEffect(() => {
-		if (mode !== 'envelope' || !returningPaper.current || !previewPaper.current) return;
+		if (
+			(mode !== 'envelope' && mode !== 'received-envelope') ||
+			!returningPaper.current ||
+			!previewPaper.current
+		)
+			return;
 		returningPaper.current = false;
 		const animation = previewPaper.current.animate(
 			[{ transform: `translateY(-${liftDistance.current}px)` }, { transform: 'none' }],
@@ -310,6 +321,30 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 	const recipientPlayer = state?.players.find(
 		(player) => player.minecraftUsername.toLowerCase() === recipient.trim().toLowerCase(),
 	);
+	const selectedPresent = state?.incoming.find((present) => present.id === selectedId);
+	useEffect(() => {
+		if (mode !== 'reading' || !writerReady || !selectedPresent || selectedPresent.read) return;
+		if (readRequests.current.has(selectedPresent.id)) return;
+		const id = selectedPresent.id;
+		readRequests.current.add(id);
+		void api<{ present: PresentView }>(`/api/presents/${id}/read`, 'POST')
+			.then(({ present }) => {
+				setState((current) =>
+					current
+						? {
+								...current,
+								incoming: current.incoming.map((item) =>
+									item.id === id ? present : item,
+								),
+							}
+						: current,
+				);
+			})
+			.catch((cause: unknown) => {
+				readRequests.current.delete(id);
+				alertError(cause, 'Could not mark the letter as read.');
+			});
+	}, [mode, writerReady, selectedPresent]);
 	const validRecipient = !!recipientPlayer;
 	const alreadySentToday =
 		!!recipientPlayer && !!state?.sentTodayRecipientIds.includes(recipientPlayer.id);
@@ -392,18 +427,20 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 		setError('');
 		setBusy(false);
 		setMode('list');
+		setSelectedId('');
+		setFlipped(false);
 	}
 
-	async function startWriting() {
+	async function liftPaper(nextMode: 'writing' | 'reading') {
 		if (busy) return;
 		setError('');
-		setPage(0);
+		if (nextMode === 'writing') setPage(0);
 		setRevealing(false);
 		setWriterReady(false);
 		previewRect.current = null;
 		const paper = previewPaper.current;
 		if (!paper || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-			setMode('writing');
+			setMode(nextMode);
 			return;
 		}
 		const currentTransform = getComputedStyle(paper).transform;
@@ -420,7 +457,7 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 		try {
 			await animation.finished;
 			previewRect.current = paper.getBoundingClientRect();
-			setMode('writing');
+			setMode(nextMode);
 		} catch {
 			// The letter was put down before the lift finished.
 		} finally {
@@ -428,9 +465,9 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 		}
 	}
 
-	async function finishWriting() {
+	async function finishPaper(saveDraft: boolean) {
 		if (busy) return;
-		if (recipient.trim() && !validRecipient) {
+		if (saveDraft && recipient.trim() && !validRecipient) {
 			setError('Choose a recipient from the list, or clear the field for now.');
 			return;
 		}
@@ -438,7 +475,7 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 		setError('');
 		let inserting = false;
 		try {
-			applyState(await save());
+			if (saveDraft) applyState(await save());
 			writingAnimation.current?.finish();
 			setWriterReady(false);
 			if (
@@ -468,13 +505,21 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 				inserting = true;
 				setRevealing(true);
 			}
-			setMode('envelope');
+			setMode(saveDraft ? 'envelope' : 'received-envelope');
 		} catch (cause) {
 			setWriterReady(true);
 			setError(cause instanceof Error ? cause.message : 'Could not save the letter.');
 		} finally {
 			if (!inserting) setBusy(false);
 		}
+	}
+
+	function finishWriting() {
+		return finishPaper(true);
+	}
+
+	function finishReading() {
+		return finishPaper(false);
 	}
 
 	async function send() {
@@ -524,6 +569,8 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 	}
 
 	async function open(present: PresentView) {
+		if (busy) return;
+		setBusy(true);
 		try {
 			const result = await api<{ firstOpen: boolean; present: PresentView }>(
 				`/api/presents/${present.id}/open`,
@@ -540,12 +587,18 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 						}
 					: current,
 			);
-			if (result.firstOpen)
-				window.setTimeout(() => {
-					setOpening('');
-				}, 800);
+			if (result.firstOpen) {
+				window.setTimeout(
+					() => {
+						setOpening('');
+						setBusy(false);
+					},
+					window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 50 : 6_900,
+				);
+			} else setBusy(false);
 		} catch (cause) {
 			alertError(cause, 'Could not open the letter.');
+			setBusy(false);
 		}
 	}
 
@@ -565,18 +618,33 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 		if (nickname) return nickname;
 		return player?.minecraftUsername ?? username ?? 'a friend';
 	};
+	const receivingLetter =
+		mode === 'received-envelope' || mode === 'reading' ? selectedPresent : undefined;
 	const senderDisplay = displayName(senderName);
-	const recipientDisplay = displayName(recipientPlayer?.minecraftUsername ?? null);
-	const addressLines = [
-		`To ${recipientDisplay}`,
-		`From ${anonymous ? 'someone' : senderDisplay}`,
-	];
+	const recipientDisplay = displayName(
+		receivingLetter?.to ?? recipientPlayer?.minecraftUsername ?? null,
+	);
+	const fromDisplay = receivingLetter
+		? receivingLetter.from
+			? displayName(receivingLetter.from)
+			: 'someone'
+		: anonymous
+			? 'someone'
+			: senderDisplay;
+	const addressLines = [`To ${recipientDisplay}`, `From ${fromDisplay}`];
 	const addressCharacters = addressLines.reduce((count, line) => count + line.length, 0);
 	const flightDelay = 8.3 + addressCharacters * 0.06 + 0.8;
 	const previewTitle =
-		title.trim() || (anonymous ? 'A Christmas letter' : 'Letter from ' + senderName);
-	const hasPreview = Boolean(title.trim() || body.trim() || state.draft?.itemName);
-	const previewByline = anonymous ? 'By someone' : 'By ' + senderDisplay;
+		receivingLetter?.title ??
+		(title.trim() || (anonymous ? 'A Christmas letter' : 'Letter from ' + senderName));
+	const previewBody = receivingLetter?.body ?? body;
+	const hasPreview =
+		!!receivingLetter || !!title.trim() || !!body.trim() || !!state.draft?.itemName;
+	const previewByline = `By ${fromDisplay}`;
+	const currentId = receivingLetter?.id ?? state.draft?.id ?? '';
+	const isOpening = !!receivingLetter && opening === receivingLetter.id;
+	const isSealed = !!receivingLetter && (!receivingLetter.opened || isOpening);
+	const showingPaper = mode === 'writing' || mode === 'reading';
 	return (
 		<section
 			className={'presentsPage' + (glowReturning ? ' isGlowReturning' : '')}
@@ -631,16 +699,21 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 				className={'presentComposeDialog' + (sending ? ' isSending' : '')}
 				style={
 					{
-						...letterStyle(color),
+						...letterStyle(receivingLetter?.color ?? color),
 						'--present-flight-delay': `${flightDelay}s`,
 					} as CSSProperties
 				}
 				aria-label={
-					mode === 'writing' ? 'Write your Christmas letter' : 'Your Christmas letter'
+					mode === 'writing'
+						? 'Write your Christmas letter'
+						: receivingLetter
+							? 'Read your Christmas letter'
+							: 'Your Christmas letter'
 				}
 				onCancel={(event) => {
 					event.preventDefault();
 					if (mode === 'writing') void finishWriting();
+					else if (mode === 'reading') void finishReading();
 					else putDownLetter();
 				}}
 				onKeyDownCapture={(event) => {
@@ -648,11 +721,13 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 					event.preventDefault();
 					event.stopPropagation();
 					if (mode === 'writing') void finishWriting();
+					else if (mode === 'reading') void finishReading();
 					else putDownLetter();
 				}}
 				onClick={(event) => {
 					if (event.target !== event.currentTarget) return;
 					if (mode === 'writing') void finishWriting();
+					else if (mode === 'reading') void finishReading();
 					else putDownLetter();
 				}}
 			>
@@ -866,15 +941,85 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 						</div>
 					</div>
 				)}
+				{mode === 'reading' && receivingLetter && (
+					<div
+						className={'presentWritingView' + (writerReady ? ' isReady' : '')}
+						onClick={(event) => {
+							if (event.target === event.currentTarget) void finishReading();
+						}}
+					>
+						<div
+							className="presentPaper presentWritingPaper presentReadingPaper"
+							ref={writingPaper}
+						>
+							<div className="presentReadContent" inert={!writerReady} tabIndex={0}>
+								<h2>{receivingLetter.title}</h2>
+								<p className="presentReadByline">By {fromDisplay}</p>
+								{receivingLetter.body && (
+									<p className="presentReadBody">{receivingLetter.body}</p>
+								)}
+								{receivingLetter.itemName && (
+									<section className="presentReadGift">
+										<h3>Receive your gift</h3>
+										<p>
+											{receivingLetter.itemName} × {receivingLetter.itemCount}
+										</p>
+										{receivingLetter.status === 'claimed' ? (
+											<p>Gift received in Minecraft</p>
+										) : (
+											<>
+												<p>
+													Join the Minecraft server, then receive the
+													stack here.
+												</p>
+												<button
+													type="button"
+													disabled={
+														busy ||
+														receivingLetter.status === 'claiming'
+													}
+													onClick={() =>
+														void run(() =>
+															api<PresentsState>(
+																`/api/presents/${receivingLetter.id}/claim`,
+																'POST',
+															),
+														)
+													}
+												>
+													{receivingLetter.status === 'claiming'
+														? 'Receiving gift...'
+														: 'Receive gift'}
+												</button>
+											</>
+										)}
+									</section>
+								)}
+							</div>
+						</div>
+						<div className="presentWritingControls" inert={!writerReady}>
+							<button
+								className="presentFinishWriting"
+								type="button"
+								disabled={busy}
+								onClick={() => void finishReading()}
+							>
+								Finish reading
+							</button>
+						</div>
+					</div>
+				)}
 				<div
 					className={
 						'presentEnvelopeView' +
 						(sending ? ' isSending' : '') +
-						(mode === 'writing' ? ' isWriting' : '') +
+						(showingPaper ? ' isWriting' : '') +
+						(receivingLetter ? ' isReceived' : '') +
+						(isOpening ? ' isOpening' : '') +
 						(revealing ? ' isRevealing' : '')
 					}
-					inert={mode === 'writing'}
-					aria-hidden={mode === 'writing'}
+					inert={showingPaper}
+					aria-hidden={showingPaper}
 					onClick={(event) => {
 						if (event.target === event.currentTarget) putDownLetter();
 					}}
@@ -882,12 +1027,21 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 					<button
 						type="button"
 						className="presentEnvelopeAction"
-						disabled={busy}
-						onClick={() => void startWriting()}
-						aria-label="Open the letter to write"
+						disabled={busy || isSealed}
+						onClick={() => void liftPaper(receivingLetter ? 'reading' : 'writing')}
+						aria-label={
+							receivingLetter ? 'Read the letter' : 'Open the letter to write'
+						}
 					>
 						<span
-							className={'presentEnvelopeObject' + (sending ? ' isSending' : '')}
+							className={
+								'presentEnvelopeObject' +
+								(sending ? ' isSending' : '') +
+								(receivingLetter ? ' isReceived' : '') +
+								(isSealed ? ' isSealed' : ' isOpened') +
+								(flipped ? ' isFlipped' : '') +
+								(isOpening ? ' isOpening' : '')
+							}
 							aria-hidden="true"
 						>
 							<span className="presentEnvelopeRotor">
@@ -903,7 +1057,11 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 											<span className="presentFoldBack" />
 										</span>
 										<span className="presentFoldThird presentFoldMiddle">
-											<span className="presentFoldFace">{body.trim()}</span>
+											<span className="presentFoldFace">
+												<span className="presentFoldText">
+													{previewBody.trim()}
+												</span>
+											</span>
 										</span>
 										<span className="presentFoldThird presentFoldBottom">
 											<span className="presentFoldFace" />
@@ -914,12 +1072,9 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 									<span className="presentWaxSeal" />
 								</span>
 								<span className="presentEnvelopeAddressFace">
-									<span
-										className="presentPostage"
-										style={stampAngle(state.draft?.id ?? '')}
-									>
+									<span className="presentPostage" style={stampAngle(currentId)}>
 										<Image
-											src={stampFor(state.draft?.id ?? '')}
+											src={stampFor(currentId)}
 											alt=""
 											width={19}
 											height={15}
@@ -949,29 +1104,104 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 					</button>
 					<div
 						className="presentEnvelopeControls"
-						inert={mode === 'writing'}
-						aria-hidden={mode === 'writing'}
+						inert={showingPaper}
+						aria-hidden={showingPaper}
 					>
 						<button type="button" disabled={busy} onClick={putDownLetter}>
 							Put down letter
 						</button>
-						<button
-							className="presentSendButton"
-							type="button"
-							data-inactive={!hasContent || !validRecipient || alreadySentToday}
-							title={
-								alreadySentToday
-									? 'You already sent this player a letter today.'
-									: undefined
-							}
-							disabled={busy}
-							onClick={() => void send()}
-						>
-							Send letter
-						</button>
+						{receivingLetter ? (
+							isSealed && (
+								<>
+									<button
+										type="button"
+										disabled={busy}
+										onClick={() => {
+											setFlipped((value) => !value);
+										}}
+									>
+										{flipped ? 'Flip back' : 'Flip around'}
+									</button>
+									{flipped && (
+										<button
+											type="button"
+											disabled={busy}
+											onClick={() => void open(receivingLetter)}
+										>
+											Open letter
+										</button>
+									)}
+								</>
+							)
+						) : (
+							<button
+								className="presentSendButton"
+								type="button"
+								data-inactive={!hasContent || !validRecipient || alreadySentToday}
+								title={
+									alreadySentToday
+										? 'You already sent this player a letter today.'
+										: undefined
+								}
+								disabled={busy}
+								onClick={() => void send()}
+							>
+								Send letter
+							</button>
+						)}
 					</div>
 				</div>
 			</dialog>
+			{state.incoming.length > 0 && (
+				<section className="presentsList presentIncomingList">
+					<h2>Your Christmas post</h2>
+					<ul className="presentSentGrid">
+						{state.incoming.map((present) => (
+							<li key={present.id}>
+								<button
+									type="button"
+									className="presentSentEnvelope presentIncomingEnvelope"
+									style={letterStyle(present.color)}
+									aria-label={`Letter from ${present.from ? displayName(present.from) : 'someone'}${!present.read ? ', unread' : present.itemName && present.status !== 'claimed' ? ', gift waiting' : ''}`}
+									onClick={() => {
+										setSelectedId(present.id);
+										setFlipped(false);
+										setRevealing(false);
+										setMode('received-envelope');
+									}}
+								>
+									<span
+										className="presentSentStamp"
+										style={stampAngle(present.id)}
+										aria-hidden="true"
+									>
+										<Image
+											src={stampFor(present.id)}
+											alt=""
+											width={19}
+											height={15}
+											unoptimized
+										/>
+									</span>
+									<span className="presentSentAddress">
+										<span>To {displayName(present.to)}</span>
+										<span>
+											From{' '}
+											{present.from ? displayName(present.from) : 'someone'}
+										</span>
+									</span>
+									{(!present.read ||
+										(present.itemName && present.status !== 'claimed')) && (
+										<span className="presentUnreadBadge" aria-hidden="true">
+											!
+										</span>
+									)}
+								</button>
+							</li>
+						))}
+					</ul>
+				</section>
+			)}
 			{state.sent.length > 0 && (
 				<section className="presentsList presentSentList">
 					<h2>Letters you sent</h2>
@@ -1013,71 +1243,6 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 							</li>
 						))}
 					</ul>
-				</section>
-			)}
-
-			{state.incoming.length > 0 && (
-				<section className="presentsList">
-					<h2>Your Christmas post</h2>
-					<div className="presentCards">
-						{state.incoming.map((present) => (
-							<article
-								className={`presentCard ${opening === present.id ? 'presentCardOpening' : ''}`}
-								style={letterStyle(present.color)}
-								key={present.id}
-							>
-								<div className="presentCardPaper">
-									<span className="presentCardSeal" aria-hidden="true" />
-									<h3>{present.title}</h3>
-									<p>From {present.from ?? 'a secret sender'}</p>
-									{present.opened && (
-										<>
-											{present.body && (
-												<p className="presentCardBody">{present.body}</p>
-											)}
-											{present.itemName && (
-												<p className="presentCardItem">
-													{present.itemName} × {present.itemCount}
-												</p>
-											)}
-										</>
-									)}
-								</div>
-								{(!present.opened || present.itemName) && (
-									<div className="presentCardActions">
-										{!present.opened ? (
-											<button
-												type="button"
-												onClick={() => void open(present)}
-											>
-												Open letter
-											</button>
-										) : (
-											present.itemName &&
-											(present.status === 'claimed' ? (
-												<p>Gift received in Minecraft</p>
-											) : (
-												<button
-													type="button"
-													disabled={busy}
-													onClick={() =>
-														void run(() =>
-															api<PresentsState>(
-																`/api/presents/${present.id}/claim`,
-																'POST',
-															),
-														)
-													}
-												>
-													Receive gift
-												</button>
-											))
-										)}
-									</div>
-								)}
-							</article>
-						))}
-					</div>
 				</section>
 			)}
 		</section>

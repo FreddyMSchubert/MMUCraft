@@ -378,6 +378,13 @@
 	max-width: 900px;
 	margin: 34px auto;
 }
+.presentIncomingList {
+	max-width: 900px;
+	margin: 34px auto 24px;
+}
+.presentIncomingList h2 {
+	padding-top: 18px;
+}
 .presentSentGrid {
 	list-style: none;
 	padding: 0;
@@ -407,7 +414,7 @@
 	right: 3%;
 	width: 16%;
 	aspect-ratio: 19 / 15;
-	filter: drop-shadow(0 5px 6px #22101888);
+	filter: drop-shadow(0 4px 5px #22101866);
 	transform: rotate(var(--stamp-angle, -8deg));
 }
 .presentSentStamp img,
@@ -435,80 +442,50 @@
 	bottom: 5%;
 	font-size: 0.75rem;
 }
-.presentCards {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
-	gap: 20px;
-}
-.presentCard {
-	position: relative;
-	padding: 18px;
-	min-height: 220px;
-	background: var(--letter-color);
-	border-radius: 7px;
-	box-shadow: 0 12px 28px #100b0baa;
-	transition: transform 0.4s ease;
-}
-.presentCardOpening {
-	animation: letterOpen 0.8s ease;
-}
-@keyframes letterOpen {
-	0% {
-		transform: scale(0.86) rotateY(-22deg);
-	}
-	60% {
-		transform: scale(1.05) rotateY(8deg);
-	}
-	100% {
-		transform: none;
-	}
-}
-.presentCardPaper {
-	position: relative;
-	min-height: 155px;
-	padding: 58px 16px 16px;
-	color: var(--present-ink);
-	background: color-mix(in srgb, var(--letter-color) 12%, #f9edda);
-	border-radius: 3px;
-	text-align: center;
-}
-.presentCardSeal {
-	position: absolute;
-	top: 5px;
-	left: calc(50% - 24px);
-	width: 48px;
-	height: 48px;
-	background: url('/assets/presents/wax-seal-red.png') center / contain no-repeat;
-	filter: var(--seal-filter, hue-rotate(0deg)) drop-shadow(0 3px 3px #150b11b3);
-}
-.presentCard h3 {
-	font-family: Georgia, serif;
-	font-size: 1.35rem;
-	overflow-wrap: anywhere;
-}
-.presentCardBody {
-	font-family: 'Playpen Sans', 'Segoe Print', cursive;
-	padding-top: 12px;
-	border-top: 1px solid #b99777;
-	text-align: left;
-	white-space: pre-wrap;
-	overflow-wrap: anywhere;
-}
-.presentCardItem {
-	padding: 12px;
-	background: #fff8e8;
+.presentsPage .presentIncomingEnvelope {
+	display: block;
+	width: 100%;
+	padding: 0;
+	border: 2px solid color-mix(in srgb, var(--letter-color) 50%, #f2cda4);
 	border-radius: 6px;
+	background: linear-gradient(
+		155deg,
+		color-mix(in srgb, var(--letter-color) 78%, #f6d2a1),
+		var(--letter-color) 75%
+	);
+	box-shadow:
+		inset 0 0 0 10px #fff1,
+		0 12px 24px #100b0baa;
+	color: #fff5db;
+	text-align: left;
+	transform-origin: 50% 50%;
+}
+.presentsPage .presentIncomingEnvelope:is(:hover, :focus-visible) {
+	animation: presentEnvelopeWiggle 800ms ease-in-out infinite alternate;
+}
+@keyframes presentEnvelopeWiggle {
+	from {
+		transform: scale(1.025) rotate(-1deg);
+	}
+	to {
+		transform: scale(1.04) rotate(1deg);
+	}
+}
+.presentUnreadBadge {
+	position: absolute;
+	top: 7%;
+	left: 6%;
+	display: grid;
+	place-items: center;
+	width: 30px;
+	aspect-ratio: 1;
+	border-radius: 50%;
+	background: #fff2d4;
+	box-shadow: 0 3px 8px #160d13a8;
+	color: #9a2736;
+	font-family: Georgia, serif;
+	font-size: 1.15rem;
 	font-weight: 800;
-}
-.presentCardActions {
-	display: flex;
-	justify-content: center;
-	padding-top: 15px;
-}
-.presentCardActions p {
-	margin: 0;
-	color: #fff;
-	font-weight: 700;
 }
 .presentAdminClock,
 .presentAdminRow {
@@ -556,14 +533,13 @@
 	.presentEnvelope,
 	.presentPaper,
 	.presentEnvelopeFlap,
-	.presentFormTrack,
-	.presentCard {
+	.presentFormTrack {
 		transition: none;
 		animation: none;
 	}
 }
 
-/* The writing sheet and the envelope share one modal, while the letters list stays in the dashboard. */
+/* The paper and envelope share one modal, while the letters list stays in the dashboard. */
 .presentsPage:not(.adminSection) {
 	min-height: 0;
 	padding: 12px 18px 24px;
@@ -640,6 +616,7 @@
 .presentsPage .presentEnvelopeAction:disabled {
 	opacity: 1;
 	cursor: default;
+	pointer-events: none;
 }
 .presentsPage .presentEnvelopeAction:hover {
 	filter: none;
@@ -674,6 +651,12 @@
 }
 .presentEnvelopeRotor {
 	transform-style: preserve-3d;
+}
+.presentEnvelopeObject.isReceived .presentEnvelopeRotor {
+	transition: transform 850ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.presentEnvelopeObject.isReceived.isSealed:not(.isFlipped) .presentEnvelopeRotor {
+	transform: rotateY(180deg);
 }
 .presentEnvelopeReverse,
 .presentEnvelopeAddressFace {
@@ -759,7 +742,9 @@
 	transform: rotateX(180deg);
 }
 .isSending .presentFoldFace,
-.isSending .presentFoldBack {
+.isSending .presentFoldBack,
+.isReceived.isSealed .presentFoldFace,
+.isReceived.isSealed .presentFoldBack {
 	background-color: #f8ecd3;
 	background-image: repeating-linear-gradient(to bottom, transparent 0 18px, #e7d7b8 18px 19px);
 }
@@ -789,6 +774,9 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+}
+.presentFoldTop .presentFoldFace {
+	padding-top: 28px;
 }
 .presentFoldTop strong {
 	font-family: 'Playpen Sans', 'Segoe Print', cursive;
@@ -834,6 +822,26 @@
 	transform: translate(-50%, -50%) scale(0);
 	opacity: 0;
 }
+.isReceived.isSealed .presentEnvelopeLetter {
+	transform: translateY(46%);
+	background-color: transparent;
+	background-image: none;
+	opacity: 0;
+}
+.isReceived.isSealed .presentFoldTop {
+	transform: rotateX(180deg);
+}
+.isReceived.isSealed .presentFoldBottom {
+	transform: rotateX(-180deg);
+}
+.isReceived.isSealed .presentEnvelopeFlap {
+	z-index: 4;
+	transform: scaleY(-1);
+}
+.isReceived.isSealed .presentWaxSeal {
+	transform: translate(-50%, -50%) scale(1);
+	opacity: 1;
+}
 .presentEnvelopeAddressFace {
 	box-sizing: border-box;
 	top: 32%;
@@ -853,7 +861,7 @@
 	right: 3%;
 	width: 16%;
 	aspect-ratio: 19 / 15;
-	filter: drop-shadow(0 5px 6px #22101888);
+	filter: drop-shadow(0 4px 5px #22101866);
 	transform: rotate(var(--stamp-angle, -8deg)) scale(0);
 	opacity: 0;
 }
@@ -873,12 +881,33 @@
 .presentAddressLine > span {
 	opacity: 0;
 }
+.isReceived .presentPostage {
+	transform: rotate(var(--stamp-angle, -8deg));
+	opacity: 1;
+}
+.isReceived .presentAddressLine > span {
+	opacity: 1;
+}
 .presentEnvelopeControls {
+	position: relative;
+	z-index: 6;
 	display: flex;
 	justify-content: center;
 	gap: 14px;
 	margin-top: 12px;
 	transition: opacity 250ms;
+}
+.presentEnvelopeView.isOpening .presentEnvelopeControls {
+	opacity: 0;
+	pointer-events: none;
+}
+.presentEnvelopeView.isReceived .presentEnvelopeControls {
+	gap: 8px;
+}
+.presentEnvelopeView.isReceived .presentEnvelopeControls button {
+	padding: 9px 10px;
+	font-size: 0.9rem;
+	white-space: nowrap;
 }
 .presentsPage .presentSendButton {
 	background: var(--letter-color);
@@ -931,9 +960,56 @@
 .presentWritingPaper .presentFormViewport {
 	--page-height: clamp(430px, 60vh, 530px);
 }
+.presentReadingPaper {
+	height: clamp(350px, 70dvh, 620px);
+	max-height: calc(100dvh - 108px);
+	overflow: hidden;
+}
+.presentReadContent {
+	height: 100%;
+	padding: 2px 4px;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+}
+.presentReadContent h2,
+.presentReadByline,
+.presentReadBody {
+	font-family: 'Playpen Sans', 'Segoe Print', cursive;
+}
+.presentReadContent h2 {
+	margin: 0;
+	font-size: clamp(1.5rem, 4vw, 2rem);
+	line-height: 1.35;
+}
+.presentReadByline {
+	margin: 5px 0 0;
+}
+.presentReadBody {
+	margin: 24px 0 0;
+	line-height: 1.7;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+.presentReadGift {
+	margin-top: 32px;
+	padding: 16px 18px;
+	border: 1px solid #c8a475;
+	border-radius: 6px;
+	background: #fff8e8d9;
+}
+.presentReadGift h3 {
+	margin: 0 0 8px;
+	font-family: Georgia, serif;
+}
+.presentReadGift p {
+	margin: 8px 0;
+}
+.presentReadGift button {
+	margin-top: 8px;
+}
 .presentEnvelopeView.isRevealing .presentFoldTop strong,
 .presentEnvelopeView.isRevealing .presentFoldTop small,
-.presentEnvelopeView.isRevealing .presentFoldMiddle .presentFoldFace {
+.presentEnvelopeView.isRevealing .presentFoldText {
 	animation: presentInkIn 500ms 100ms ease-out both;
 }
 @keyframes presentInkIn {
@@ -945,6 +1021,7 @@
 	}
 }
 .presentWritingView .presentFormViewport,
+.presentWritingView .presentReadContent,
 .presentWritingView .presentWritingControls {
 	opacity: 0;
 	visibility: hidden;
@@ -954,6 +1031,7 @@
 	pointer-events: none;
 }
 .presentWritingView.isReady .presentFormViewport,
+.presentWritingView.isReady .presentReadContent,
 .presentWritingView.isReady .presentWritingControls {
 	opacity: 1;
 	visibility: visible;
@@ -995,6 +1073,34 @@
 	100% {
 		transform: translateY(46%);
 		z-index: 2;
+	}
+}
+@keyframes presentReceivePaper {
+	0% {
+		transform: translateY(46%);
+		z-index: 2;
+		opacity: 0;
+	}
+	12% {
+		transform: translateY(20%);
+		z-index: 2;
+		opacity: 1;
+	}
+	40%,
+	78% {
+		transform: translateY(-25%);
+		z-index: 4;
+		opacity: 1;
+	}
+	90% {
+		transform: translateY(-10%);
+		z-index: 2;
+		opacity: 1;
+	}
+	100% {
+		transform: none;
+		z-index: 2;
+		opacity: 1;
 	}
 }
 @keyframes presentFoldBottom {
@@ -1121,6 +1227,28 @@
 .isSending .presentAddressLine > span {
 	animation: presentType 0.01s both;
 }
+.isReceived.isOpening .presentWaxSeal {
+	animation: presentSealIn 450ms ease-in both reverse;
+}
+.isReceived.isOpening .presentEnvelopeFlap {
+	animation: presentCloseFlap 800ms 450ms ease-in-out both reverse;
+}
+.isReceived.isOpening .presentEnvelopeLetter {
+	animation: presentReceivePaper 5.7s 1.15s ease-in-out both;
+}
+.isReceived.isOpening .presentFoldTop {
+	transform-origin: 50% 100%;
+	animation: presentFoldTop 1s 3.7s ease-in-out both reverse;
+}
+.isReceived.isOpening .presentFoldBottom {
+	transform-origin: 50% 0;
+	animation: presentFoldBottom 1s 4.8s ease-in-out both reverse;
+}
+.isReceived.isOpening .presentFoldTop strong,
+.isReceived.isOpening .presentFoldTop small,
+.isReceived.isOpening .presentFoldText {
+	animation: presentInkIn 500ms 5.7s ease-out both;
+}
 
 @media (max-width: 600px) {
 	.presentEnvelopeView {
@@ -1150,9 +1278,12 @@
 }
 @media (prefers-reduced-motion: reduce) {
 	.presentEnvelopeLetter,
+	.presentIncomingEnvelope,
+	.presentEnvelopeObject.isReceived .presentEnvelopeRotor,
 	.presentEnvelopeControls,
 	.presentWritingControls,
-	.presentWritingView .presentFormViewport {
+	.presentWritingView .presentFormViewport,
+	.presentWritingView .presentReadContent {
 		transition: none;
 		animation: none;
 	}
@@ -1165,6 +1296,17 @@
 	.isSending .presentEnvelopeRotor,
 	.isSending .presentPostage,
 	.isSending .presentAddressLine > span {
+		animation-duration: 0.01ms;
+		animation-delay: 0ms !important;
+	}
+	.isReceived.isOpening .presentWaxSeal,
+	.isReceived.isOpening .presentEnvelopeFlap,
+	.isReceived.isOpening .presentEnvelopeLetter,
+	.isReceived.isOpening .presentFoldTop,
+	.isReceived.isOpening .presentFoldBottom,
+	.isReceived.isOpening .presentFoldTop strong,
+	.isReceived.isOpening .presentFoldTop small,
+	.isReceived.isOpening .presentFoldText {
 		animation-duration: 0.01ms;
 		animation-delay: 0ms !important;
 	}

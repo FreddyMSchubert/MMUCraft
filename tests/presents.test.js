@@ -90,8 +90,12 @@ test('Christmas letters send messages or gifts and deliver each gift once', asyn
 		assert.equal(incoming[0].itemName, null);
 		assert.equal(incoming[3].body, null);
 		assert.equal(incoming[3].color, 'green');
+		assert.throws(() => service.read(bob, incoming[0].id), /Open the letter first/);
 		assert.equal(service.open(bob, incoming[0].id).firstOpen, true);
 		assert.equal(service.open(bob, incoming[0].id).firstOpen, false);
+		assert.equal(service.get(bob).incoming[0].read, false);
+		assert.equal(service.read(bob, incoming[0].id).present.read, true);
+		assert.equal(service.read(bob, incoming[0].id).present.read, true);
 		await service.claim(bob, incoming[0].id);
 		await assert.rejects(service.claim(bob, incoming[0].id), /already received/);
 		assert.equal(receipts.size, 2);

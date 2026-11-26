@@ -185,7 +185,7 @@
 		"instancedloot.RandomizableContainerBlockEntityMixin",
 		"instancedloot.RandomizableContainerMixin"
 	],
-	"client": ["fishing.FishingPlaqueHudMixin"],
+	"client": [],
 	"injectors": {
 		"defaultRequire": 1
 	},

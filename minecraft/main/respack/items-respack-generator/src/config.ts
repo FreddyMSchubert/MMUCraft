@@ -210,9 +210,15 @@ export const FISHING_SHADOW_VANILLA_ITEMS = [
 ] as const;
 
 export const FISHING_SHADOW_MODEL_OVERRIDES: Readonly<Record<string, string>> = {
+	amethyst_block: 'minecraft:block/amethyst_block',
 	clock: 'minecraft:item/clock_00',
+	cobblestone: 'minecraft:block/cobblestone',
 	compass: 'minecraft:item/compass_16',
+	dragon_egg: 'minecraft:block/dragon_egg',
+	netherite_block: 'minecraft:block/netherite_block',
 	piglin_head: 'general-pack:item/fishing/fish_shadow_object',
+	sculk: 'minecraft:block/sculk',
+	sculk_sensor: 'minecraft:block/sculk_sensor_inactive',
 	skeleton_skull: 'general-pack:item/fishing/fish_shadow_object',
 	wither_skeleton_skull: 'general-pack:item/fishing/fish_shadow_object',
 };

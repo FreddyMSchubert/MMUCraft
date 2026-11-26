@@ -146,7 +146,7 @@ function createBaseItemDefinition(
 export function createCommandBlockItemDefinition(
 	cases: readonly SelectorCase[],
 ): Record<string, unknown> {
-	return createBaseItemDefinition(cases, 'minecraft:item/command_block');
+	return createBaseItemDefinition(cases, 'minecraft:block/command_block');
 }
 
 export function createHeartOfTheSeaItemDefinition(

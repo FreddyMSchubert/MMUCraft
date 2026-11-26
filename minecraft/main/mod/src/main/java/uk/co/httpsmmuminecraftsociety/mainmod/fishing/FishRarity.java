@@ -77,14 +77,14 @@ public enum FishRarity {
                     case COMMON -> 2.0;
                     case UNCOMMON -> 2.5;
                     case RARE -> 3.0;
-                    case EPIC -> 4.0;
-                    case LEGENDARY -> 5.0;
-                    case MYTHICAL -> 8.0;
+                    case EPIC -> 2.20;
+                    case LEGENDARY -> 2.07;
+                    case MYTHICAL -> 2.08;
                 };
                 double minimum = switch (rarity) {
-                    case EPIC -> 0.04 + 0.04 * progress;
-                    case LEGENDARY -> 0.02 + 0.02 * progress;
-                    case MYTHICAL -> 0.01 + 0.01 * progress;
+                    case EPIC -> 0.02 + 0.02 * progress;
+                    case LEGENDARY -> 0.01 + 0.01 * progress;
+                    case MYTHICAL -> 0.002 + 0.002 * progress;
                     default -> 0.0;
                 };
                 double source = weights[index] > 0.0 ? weights[index] : unlocked[index];

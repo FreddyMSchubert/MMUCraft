@@ -19,10 +19,11 @@ public final class SnowballMachineGunCheck {
         var registries = VanillaRegistries.createWorldLookup();
         BuiltInRegistries.DATA_COMPONENT_INITIALIZERS.build(registries).forEach(components -> components.apply());
 
-        ItemStack gun = new ItemStack(Items.CROSSBOW);
+        ItemStack gun = new ItemStack(Items.TRIDENT);
         gun.set(DataComponents.CUSTOM_MODEL_DATA,
                 new CustomModelData(List.of(), List.of(false, true), List.of("snowball-machine-gun"), List.of()));
         assert SnowballMachineGun.isGun(gun);
+        assert !SnowballMachineGun.isGun(new ItemStack(Items.CROSSBOW));
         assert SnowballMachineGun.loadFromOffhand(gun, new ItemStack(Items.DIRT, 64)) == 0;
 
         ItemStack partial = new ItemStack(Items.SNOWBALL, 7);

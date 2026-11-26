@@ -29,7 +29,7 @@ public final class SnowballMachineGun {
     private SnowballMachineGun() {}
 
     public static boolean isGun(ItemStack stack) {
-        return FakeItems.isSpecificFakeItem(stack, "snowball-machine-gun");
+        return stack.is(Items.TRIDENT) && FakeItems.isSpecificFakeItem(stack, "snowball-machine-gun");
     }
 
     private static int ammo(ItemStack stack) {
@@ -65,10 +65,10 @@ public final class SnowballMachineGun {
         boolean reload = hand == InteractionHand.MAIN_HAND
                 && player.getOffhandItem().is(Items.SNOWBALL)
                 && ammo(gun) < CAPACITY;
-        if (ammo(gun) == 0 && !reload) return InteractionResult.SUCCESS;
+        if (ammo(gun) == 0 && !reload) return InteractionResult.CONSUME;
         setModelState(gun, ammo(gun) > 0, reload);
         player.startUsingItem(hand);
-        return InteractionResult.SUCCESS;
+        return InteractionResult.CONSUME;
     }
 
     private static void reload(ItemStack gun, Player player) {

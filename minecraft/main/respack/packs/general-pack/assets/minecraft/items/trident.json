@@ -60,47 +60,31 @@
 		],
 		"fallback": {
 			"type": "minecraft:select",
-			"property": "minecraft:charge_type",
+			"property": "minecraft:display_context",
 			"cases": [
 				{
-					"when": "arrow",
-					"model": { "type": "minecraft:model", "model": "minecraft:item/crossbow_arrow" }
-				},
-				{
-					"when": "rocket",
-					"model": {
-						"type": "minecraft:model",
-						"model": "minecraft:item/crossbow_firework"
-					}
+					"when": ["gui", "ground", "fixed", "on_shelf"],
+					"model": { "type": "minecraft:model", "model": "minecraft:item/trident" }
 				}
 			],
 			"fallback": {
 				"type": "minecraft:condition",
 				"property": "minecraft:using_item",
-				"on_false": { "type": "minecraft:model", "model": "minecraft:item/crossbow" },
+				"on_false": {
+					"type": "minecraft:special",
+					"base": "minecraft:item/trident_in_hand",
+					"model": { "type": "minecraft:trident" }
+				},
 				"on_true": {
-					"type": "minecraft:range_dispatch",
-					"property": "minecraft:crossbow/pull",
-					"entries": [
-						{
-							"threshold": 0.58,
-							"model": {
-								"type": "minecraft:model",
-								"model": "minecraft:item/crossbow_pulling_1"
-							}
-						},
-						{
-							"threshold": 1.0,
-							"model": {
-								"type": "minecraft:model",
-								"model": "minecraft:item/crossbow_pulling_2"
-							}
-						}
-					],
-					"fallback": {
-						"type": "minecraft:model",
-						"model": "minecraft:item/crossbow_pulling_0"
-					}
+					"type": "minecraft:special",
+					"base": "minecraft:item/trident_throwing",
+					"model": { "type": "minecraft:trident" }
+				},
+				"transformation": {
+					"left_rotation": [0.0, 0.0, 0.0, 1.0],
+					"right_rotation": [0.0, 0.0, 0.0, 1.0],
+					"scale": [1.0, -1.0, -1.0],
+					"translation": [0.0, 0.0, 0.0]
 				}
 			}
 		}

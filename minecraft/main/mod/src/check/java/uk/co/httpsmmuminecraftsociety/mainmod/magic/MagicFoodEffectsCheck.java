@@ -11,6 +11,9 @@ public final class MagicFoodEffectsCheck {
         assert !MagicFoodEffects.canReplace(MagicFoodEffects.Effect.SHOP_20, MagicFoodEffects.Effect.SHOP_20);
         assert MagicFoodEffects.canReplace(MagicFoodEffects.Effect.SHOP_20, MagicFoodEffects.Effect.SHOP_30);
         assert !MagicFoodEffects.canReplace(MagicFoodEffects.Effect.SHOP_30, MagicFoodEffects.Effect.SHOP_20);
+        assert MagicFoodEffects.Effect.byId("shop_42").strength == 42;
+        assert MagicFoodEffects.canReplace(MagicFoodEffects.Effect.SHOP_30, MagicFoodEffects.Effect.SHOP_42);
+        assert !MagicFoodEffects.canReplace(MagicFoodEffects.Effect.SHOP_42, MagicFoodEffects.Effect.SHOP_30);
         assert MagicFoodEffects.canReplace(MagicFoodEffects.Effect.SUNDAY_MONEY, MagicFoodEffects.Effect.SHOP_20);
         assert MagicFoodEffects.canReplace(MagicFoodEffects.Effect.FISH_COMMON, MagicFoodEffects.Effect.FISH_RARE);
         assert !MagicFoodEffects.Effect.FISH_LEGENDARY.category.equals(MagicFoodEffects.Effect.FISH_MYTHICAL.category);

@@ -39,6 +39,7 @@ public final class MagicFoodEffects {
         SUNDAY_MONEY("sunday_money", "money", 1),
         SHOP_20("shop_20", "shop", 20),
         SHOP_30("shop_30", "shop", 30),
+        SHOP_42("shop_42", "shop", 42),
         FASHION_BOOKS("fashion_books", "fashion_books", 1),
         CHARM_BOOKS("charm_books", "charm_books", 1),
         KNOWLEDGE_BOOKS("knowledge_books", "knowledge_books", 1),

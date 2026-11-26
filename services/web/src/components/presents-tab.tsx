@@ -77,6 +77,9 @@ function stampFor(id: string) {
 function stampAngle(id: string): CSSProperties {
 	return { '--stamp-angle': `${(((stampHash(id) >>> 3) % 33) - 16) / 2}deg` } as CSSProperties;
 }
+function sealAngle(id: string): CSSProperties {
+	return { '--seal-angle': `${((stampHash(id) >>> 8) % 25) - 12}deg` } as CSSProperties;
+}
 
 export interface PresentView {
 	id: string;
@@ -88,6 +91,7 @@ export interface PresentView {
 	anonymous: boolean;
 	itemName: string | null;
 	itemCount: number | null;
+	hasGift: boolean;
 	status: string;
 	opened: boolean;
 	read: boolean;
@@ -958,12 +962,9 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 								{receivingLetter.body && (
 									<p className="presentReadBody">{receivingLetter.body}</p>
 								)}
-								{receivingLetter.itemName && (
+								{receivingLetter.hasGift && (
 									<section className="presentReadGift">
 										<h3>Receive your gift</h3>
-										<p>
-											{receivingLetter.itemName} × {receivingLetter.itemCount}
-										</p>
 										{receivingLetter.status === 'claimed' ? (
 											<p>Gift received in Minecraft</p>
 										) : (
@@ -1069,9 +1070,13 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 										</span>
 									</span>
 									<span className="presentEnvelopePocket" />
-									<span className="presentWaxSeal" />
+									<span className="presentWaxSeal" style={sealAngle(currentId)} />
 								</span>
 								<span className="presentEnvelopeAddressFace">
+									<span
+										className="presentFrontWax"
+										style={sealAngle(currentId)}
+									/>
 									<span className="presentPostage" style={stampAngle(currentId)}>
 										<Image
 											src={stampFor(currentId)}
@@ -1112,26 +1117,15 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 						</button>
 						{receivingLetter ? (
 							isSealed && (
-								<>
-									<button
-										type="button"
-										disabled={busy}
-										onClick={() => {
-											setFlipped((value) => !value);
-										}}
-									>
-										{flipped ? 'Flip back' : 'Flip around'}
-									</button>
-									{flipped && (
-										<button
-											type="button"
-											disabled={busy}
-											onClick={() => void open(receivingLetter)}
-										>
-											Open letter
-										</button>
-									)}
-								</>
+								<button
+									type="button"
+									disabled={busy}
+									onClick={() => {
+										setFlipped((value) => !value);
+									}}
+								>
+									{flipped ? 'Flip back' : 'Flip around'}
+								</button>
 							)
 						) : (
 							<button
@@ -1150,6 +1144,23 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 							</button>
 						)}
 					</div>
+					{receivingLetter && (
+						<div
+							className="presentOpenLetterRow"
+							inert={showingPaper}
+							aria-hidden={showingPaper}
+						>
+							{isSealed && flipped && (
+								<button
+									type="button"
+									disabled={busy}
+									onClick={() => void open(receivingLetter)}
+								>
+									Open letter
+								</button>
+							)}
+						</div>
+					)}
 				</div>
 			</dialog>
 			{state.incoming.length > 0 && (
@@ -1162,7 +1173,7 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 									type="button"
 									className="presentSentEnvelope presentIncomingEnvelope"
 									style={letterStyle(present.color)}
-									aria-label={`Letter from ${present.from ? displayName(present.from) : 'someone'}${!present.read ? ', unread' : present.itemName && present.status !== 'claimed' ? ', gift waiting' : ''}`}
+									aria-label={`Letter from ${present.from ? displayName(present.from) : 'someone'}${!present.read ? ', unread' : present.hasGift && present.status !== 'claimed' ? ', gift waiting' : ''}`}
 									onClick={() => {
 										setSelectedId(present.id);
 										setFlipped(false);
@@ -1183,6 +1194,11 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 											unoptimized
 										/>
 									</span>
+									<span
+										className="presentSentWax"
+										style={sealAngle(present.id)}
+										aria-hidden="true"
+									/>
 									<span className="presentSentAddress">
 										<span>To {displayName(present.to)}</span>
 										<span>
@@ -1191,7 +1207,7 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 										</span>
 									</span>
 									{(!present.read ||
-										(present.itemName && present.status !== 'claimed')) && (
+										(present.hasGift && present.status !== 'claimed')) && (
 										<span className="presentUnreadBadge" aria-hidden="true">
 											!
 										</span>
@@ -1226,6 +1242,11 @@ export function PresentsTab({ senderName }: { senderName: string }) {
 										unoptimized
 									/>
 								</span>
+								<span
+									className="presentSentWax"
+									style={sealAngle(present.id)}
+									aria-hidden="true"
+								/>
 								<span className="presentSentAddress">
 									<span>To {displayName(present.to)}</span>
 									<span>

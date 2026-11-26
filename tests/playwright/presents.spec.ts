@@ -47,8 +47,9 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 			? [
 					{
 						...letter,
-						itemName: opened ? letter.itemName : null,
-						itemCount: opened ? 4 : null,
+						itemName: null,
+						itemCount: null,
+						hasGift: true,
 						opened,
 						read,
 						status: claimed ? 'claimed' : 'sent',
@@ -274,6 +275,11 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 	await page.screenshot({ path: 'tests/test-results/presents-sealed.png' });
 	await page.waitForTimeout(2400);
 	await page.screenshot({ path: 'tests/test-results/presents-posting-mobile.png' });
+	await expect(page.locator('.presentFrontWax')).toBeVisible();
+	await expect(page.locator('.presentPaperWax, .presentReadingWax')).toHaveCount(0);
+	const animatedWaxAngle = await page
+		.locator('.presentFrontWax')
+		.evaluate((element) => element.style.getPropertyValue('--seal-angle'));
 	await expect(page.locator('.presentAddress')).toContainText('To Bobby');
 	await expect(page.locator('.presentAddress')).toContainText('From Ally');
 	await page.waitForTimeout(1500);
@@ -283,6 +289,12 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 	await expect(page.locator('.presentSentAddress')).toContainText('To Bobby');
 	await expect(page.locator('.presentSentAddress')).toContainText('From Ally');
 	await expect(page.locator('.presentSentEnvelope .presentSentStamp')).toBeVisible();
+	await expect(page.locator('.presentSentEnvelope .presentSentWax')).toBeVisible();
+	expect(
+		await page
+			.locator('.presentSentEnvelope .presentSentWax')
+			.evaluate((element) => element.style.getPropertyValue('--seal-angle')),
+	).toBe(animatedWaxAngle);
 	await expect(page.locator('.presentSentStamp img')).toHaveAttribute('src', animatedStamp);
 	const sentAngle = await page
 		.locator('.presentSentStamp')
@@ -333,9 +345,32 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 	await expect(page.locator('.presentIncomingList .presentUnreadBadge')).toBeVisible();
 	await page.getByRole('button', { name: 'Letter from Ally, unread' }).click();
 	await expect(page.locator('.presentEnvelopeObject')).toHaveClass(/isSealed/);
+	await expect(page.locator('.presentFrontWax')).toBeVisible();
 	await expect(page.getByRole('button', { name: 'Flip around' })).toBeVisible();
+	const putDownPosition = await page
+		.getByRole('button', { name: 'Put down letter' })
+		.boundingBox();
+	const flipPosition = await page.getByRole('button', { name: 'Flip around' }).boundingBox();
 	await page.getByRole('button', { name: 'Flip around' }).click();
 	await expect(page.getByRole('button', { name: 'Flip back' })).toBeVisible();
+	const putDownAfterFlip = await page
+		.getByRole('button', { name: 'Put down letter' })
+		.boundingBox();
+	const flipBackPosition = await page.getByRole('button', { name: 'Flip back' }).boundingBox();
+	expect(putDownAfterFlip?.x).toBeCloseTo(putDownPosition?.x ?? 0, 1);
+	expect(putDownAfterFlip?.y).toBeCloseTo(putDownPosition?.y ?? 0, 1);
+	expect(flipBackPosition?.x).toBeCloseTo(flipPosition?.x ?? 0, 1);
+	expect(flipBackPosition?.y).toBeCloseTo(flipPosition?.y ?? 0, 1);
+	await page.getByRole('button', { name: 'Flip back' }).click();
+	await page.getByRole('button', { name: 'Flip around' }).click();
+	const waxAngle = await page
+		.locator('.presentWaxSeal')
+		.evaluate((element) => element.style.getPropertyValue('--seal-angle'));
+	expect(
+		await page
+			.locator('.presentFrontWax')
+			.evaluate((element) => element.style.getPropertyValue('--seal-angle')),
+	).toBe(waxAngle);
 	await page.waitForTimeout(900);
 	await page.screenshot({ path: 'tests/test-results/presents-sealed-back.png' });
 	await page.getByRole('button', { name: 'Open letter' }).click();
@@ -348,11 +383,16 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 	await page.screenshot({ path: 'tests/test-results/presents-opening-unfold.png' });
 	await page.waitForTimeout(1_650);
 	await expect(page.locator('.presentEnvelopeObject')).toHaveClass(/isOpened/);
+	await expect(page.locator('.presentEnvelopeFlap')).toHaveCSS('z-index', '1');
+	await expect(page.locator('.presentPaperWax, .presentReadingWax')).toHaveCount(0);
 	await page.screenshot({ path: 'tests/test-results/presents-open-envelope.png' });
+	await page.waitForTimeout(600);
+	await page.screenshot({ path: 'tests/test-results/presents-open-envelope-settled.png' });
 	await page.getByRole('button', { name: 'Read the letter' }).click();
 	await expect(page.locator('.presentReadContent')).toBeVisible();
 	await expect(page.locator('.presentReadContent')).toContainText('Merry Christmas, Bob!');
-	await expect(page.locator('.presentReadContent')).toContainText('Red present × 4');
+	await expect(page.locator('.presentReadContent')).toContainText('Receive your gift');
+	await expect(page.locator('.presentReadContent')).not.toContainText('Red present');
 	await expect.poll(() => read).toBe(true);
 	await expect(page.locator('.presentIncomingList .presentUnreadBadge')).toHaveCount(1);
 	await page.screenshot({ path: 'tests/test-results/presents-reading.png' });
@@ -364,6 +404,8 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 	await expect(page.getByText('Gift received in Minecraft')).toBeVisible();
 	await page.getByRole('button', { name: 'Finish reading' }).click();
 	await expect(page.locator('.presentWritingView')).not.toBeVisible();
+	await page.waitForTimeout(150);
+	await page.screenshot({ path: 'tests/test-results/presents-reading-handoff.png' });
 	await page.getByRole('button', { name: 'Put down letter' }).click();
 	await expect(page.locator('.presentIncomingList .presentUnreadBadge')).toHaveCount(0);
 	await page.screenshot({ path: 'tests/test-results/presents-received.png', fullPage: true });
@@ -372,6 +414,7 @@ test('a player can compose a letter and later open a present', async ({ page }) 
 	await page.getByRole('button', { name: 'Letter from Ally' }).click();
 	await expect(page.getByRole('button', { name: 'Flip around' })).toHaveCount(0);
 	await expect(page.getByRole('button', { name: 'Read the letter' })).toBeVisible();
+	await page.screenshot({ path: 'tests/test-results/presents-reopened-envelope.png' });
 	await page.getByRole('button', { name: 'Put down letter' }).click();
 	await expect
 		.poll(() => page.evaluate(() => document.documentElement.scrollWidth))

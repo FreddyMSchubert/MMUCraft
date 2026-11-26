@@ -41,7 +41,7 @@ public final class SnowballMachineGun {
     }
 
     public static boolean isGun(ItemStack stack) {
-        return stack.is(Items.COMMAND_BLOCK) && FakeItems.isSpecificFakeItem(stack, "snowball-machine-gun");
+        return stack.is(Items.REPEATING_COMMAND_BLOCK) && FakeItems.isSpecificFakeItem(stack, "snowball-machine-gun");
     }
 
     private static int ammo(ItemStack stack) {

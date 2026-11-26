@@ -13,6 +13,7 @@ import net.minecraft.world.item.component.ItemLore;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.hopper.HopperFilter;
 import uk.co.httpsmmuminecraftsociety.mainmod.money.MoneyHelper;
+import uk.co.httpsmmuminecraftsociety.mainmod.snowball.SnowballMachineGun;
 import uk.co.httpsmmuminecraftsociety.mainmod.magic.MagicFoodEffects;
 import uk.co.httpsmmuminecraftsociety.mainmod.utils.JsonUtils;
 
@@ -97,6 +98,7 @@ public record FakeItem(
             stack.set(DataComponents.LORE, new ItemLore(lore));
         stack.set(DataComponents.RARITY, rarity);
         stack.set(DataComponents.MAX_STACK_SIZE, maxStackSize);
+        if (id.equals("snowball-machine-gun")) SnowballMachineGun.configure(stack);
         if (fireproof) {
             stack.set(DataComponents.DAMAGE_RESISTANT, Items.NETHERITE_INGOT.components().get(DataComponents.DAMAGE_RESISTANT));
         }

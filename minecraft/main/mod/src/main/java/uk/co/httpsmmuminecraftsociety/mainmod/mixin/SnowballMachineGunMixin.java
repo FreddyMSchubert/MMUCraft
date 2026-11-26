@@ -5,6 +5,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,22 +23,19 @@ public abstract class SnowballMachineGunMixin {
             cir.setReturnValue(SnowballMachineGun.use(level, player, hand));
     }
 
-    @Inject(method = "onUseTick", at = @At("HEAD"), cancellable = true)
-    private void mainmod$fireGun(Level level, LivingEntity user, int ticksRemaining,
-                                 CallbackInfo ci) {
-        ItemStack stack = (ItemStack) (Object) this;
-        if (SnowballMachineGun.isGun(stack)) {
-            SnowballMachineGun.tick(level, user, stack, ticksRemaining);
-            ci.cancel();
-        }
+    @Inject(method = "useOn", at = @At("HEAD"), cancellable = true)
+    private void mainmod$useGunOnBlock(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir) {
+        Player player = context.getPlayer();
+        if (player != null && SnowballMachineGun.isGun((ItemStack) (Object) this))
+            cir.setReturnValue(SnowballMachineGun.use(context.getLevel(), player, context.getHand()));
     }
 
     @Inject(method = "releaseUsing", at = @At("HEAD"), cancellable = true)
-    private void mainmod$skipTridentThrow(Level level, LivingEntity user, int ticksRemaining,
+    private void mainmod$finishGunUse(Level level, LivingEntity user, int ticksRemaining,
                                           CallbackInfo ci) {
         ItemStack stack = (ItemStack) (Object) this;
         if (SnowballMachineGun.isGun(stack)) {
-            SnowballMachineGun.release(stack);
+            SnowballMachineGun.release(stack, level, user, ticksRemaining);
             ci.cancel();
         }
     }

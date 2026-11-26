@@ -81,6 +81,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.miniblocks.MiniBlockCatalog;
 import uk.co.httpsmmuminecraftsociety.mainmod.miniblocks.MiniBlockCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.maps.SmallMaps;
 import uk.co.httpsmmuminecraftsociety.mainmod.sled.Sleds;
+import uk.co.httpsmmuminecraftsociety.mainmod.snowball.SnowballMachineGun;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
 import uk.co.httpsmmuminecraftsociety.mainmod.playerpotions.PlayerDisguises;
 import uk.co.httpsmmuminecraftsociety.mainmod.playerpotions.SkinColors;
@@ -152,6 +153,7 @@ public class MainMod implements ModInitializer {
         ServerTickEvents.END_LEVEL_TICK.register(PotionOfDisplacementCharm::tickPools);
         ServerTickEvents.END_LEVEL_TICK.register(ParticleEmission::tick);
         ServerTickEvents.END_LEVEL_TICK.register(Sleds::tick);
+        ServerTickEvents.END_SERVER_TICK.register(SnowballMachineGun::tick);
         ServerChunkEvents.CHUNK_UNLOAD.register(RedstoneRemoteCharm::onChunkUnload);
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> LegacyFakeItemMigration.migrateEntity(entity));
         ServerEntityEvents.ENTITY_LOAD.register(AnimalCrossingFishShadowDisplay::discardSavedShadow);

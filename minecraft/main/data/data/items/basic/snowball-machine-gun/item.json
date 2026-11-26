@@ -4,7 +4,7 @@
 	"modelType": "basic",
 	"rarity": "uncommon",
 	"maxStackSize": 1,
-	"baseItemOverride": "minecraft:trident",
+	"baseItemOverride": "minecraft:command_block",
 	"tooltips": [
 		"Snowballs: 0/128",
 		"Hold right-click to load from offhand snowballs; right-click without them to fire"

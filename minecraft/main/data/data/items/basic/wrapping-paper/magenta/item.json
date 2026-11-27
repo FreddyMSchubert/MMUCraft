@@ -1,0 +1,21 @@
+{
+	"title": "Magenta Wrapping Paper",
+	"id": "wrapping-paper-magenta",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Craft with up to eight items to make a present."],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "wrapping-paper/magenta",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["minecraft:paper", "minecraft:magenta_dye"],
+				"result": {
+					"stack": "mainmod:wrapping-paper-magenta",
+					"count": 1
+				}
+			}
+		]
+	}
+}

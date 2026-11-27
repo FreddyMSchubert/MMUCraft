@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.DecoBlocksManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.Presents;
 
 @Mixin(ItemFrame.class)
 public class NoDecoBlockFrameItemDrops {
@@ -41,6 +42,7 @@ public class NoDecoBlockFrameItemDrops {
     private ItemEntity mainmod$restoreDecoBlockFrameItemDrop(ItemFrame frame, ServerLevel level, ItemStack stack) {
         if (frame.entityTags().contains(DecoBlocksManager.DECO_BLOCK_FRAME_TAG)) {
             DecoBlocksManager.restoreCustomNameFromFrame(stack);
+            Presents.resetForDrop(stack);
         }
 
         return frame.spawnAtLocation(level, stack);

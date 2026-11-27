@@ -1,0 +1,21 @@
+{
+	"title": "Cyan Wrapping Paper",
+	"id": "wrapping-paper-cyan",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Craft with up to eight items to make a present."],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "wrapping-paper/cyan",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["minecraft:paper", "minecraft:cyan_dye"],
+				"result": {
+					"stack": "mainmod:wrapping-paper-cyan",
+					"count": 1
+				}
+			}
+		]
+	}
+}

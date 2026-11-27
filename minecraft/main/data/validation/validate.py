@@ -49,6 +49,10 @@ def discover_item_jsons(items_root: Path) -> list[tuple[Path, Path]]:
 			continue
 
 		if not item_json.exists():
+			relative = directory.relative_to(items_root).parts
+			if relative[:3] in (("decoblocks", "_presents", "_open"),
+			                    ("decoblocks", "_presents", "_opening")):
+				continue
 			raise ItemDataError(
 				f"{directory}: every leaf folder under data/data/items must contain item.json"
 			)

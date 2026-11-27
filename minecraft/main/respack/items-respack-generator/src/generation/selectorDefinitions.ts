@@ -149,6 +149,40 @@ export function createCommandBlockItemDefinition(
 	return createBaseItemDefinition(cases, 'minecraft:block/command_block');
 }
 
+export function createRepeatingCommandBlockItemDefinition(
+	cases: readonly SelectorCase[],
+): Record<string, unknown> {
+	return {
+		model: {
+			type: 'minecraft:select',
+			property: 'minecraft:custom_model_data',
+			index: 0,
+			cases: cases.map((item) => ({
+				when: item.when,
+				model: createPresentModelReference(item.modelId),
+			})),
+			fallback: {
+				type: 'minecraft:model',
+				model: 'minecraft:block/repeating_command_block',
+			},
+		},
+	};
+}
+
+export function createPresentModelReference(modelId: string): Record<string, unknown> {
+	const model = (id: string) => ({ type: 'minecraft:model', model: id });
+	return {
+		type: 'minecraft:range_dispatch',
+		property: 'minecraft:custom_model_data',
+		index: 0,
+		fallback: model(modelId),
+		entries: [
+			{ threshold: 1, model: model(modelId.replace('/_closed/', '/_opening/')) },
+			{ threshold: 2, model: model(modelId.replace('/_closed/', '/_open/')) },
+		],
+	};
+}
+
 export function createHeartOfTheSeaItemDefinition(
 	cases: readonly SelectorCase[],
 ): Record<string, unknown> {

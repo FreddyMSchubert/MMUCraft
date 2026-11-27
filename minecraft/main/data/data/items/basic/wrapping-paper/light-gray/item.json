@@ -1,0 +1,21 @@
+{
+	"title": "Light Gray Wrapping Paper",
+	"id": "wrapping-paper-light-gray",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Craft with up to eight items to make a present."],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "wrapping-paper/light-gray",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["minecraft:paper", "minecraft:light_gray_dye"],
+				"result": {
+					"stack": "mainmod:wrapping-paper-light-gray",
+					"count": 1
+				}
+			}
+		]
+	}
+}

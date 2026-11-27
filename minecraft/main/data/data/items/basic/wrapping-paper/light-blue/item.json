@@ -1,0 +1,21 @@
+{
+	"title": "Light Blue Wrapping Paper",
+	"id": "wrapping-paper-light-blue",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Craft with up to eight items to make a present."],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "wrapping-paper/light-blue",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["minecraft:paper", "minecraft:light_blue_dye"],
+				"result": {
+					"stack": "mainmod:wrapping-paper-light-blue",
+					"count": 1
+				}
+			}
+		]
+	}
+}

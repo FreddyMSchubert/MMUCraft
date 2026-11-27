@@ -1,0 +1,21 @@
+{
+	"title": "Orange Wrapping Paper",
+	"id": "wrapping-paper-orange",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Craft with up to eight items to make a present."],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "wrapping-paper/orange",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["minecraft:paper", "minecraft:orange_dye"],
+				"result": {
+					"stack": "mainmod:wrapping-paper-orange",
+					"count": 1
+				}
+			}
+		]
+	}
+}

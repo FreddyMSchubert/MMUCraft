@@ -10,13 +10,20 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.fishing.FishingPlaques;
+import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.Presents;
 
 @Mixin(ItemFrame.class)
 public abstract class FishingPlaqueInteraction {
     @Inject(method = "interact", at = @At("HEAD"), cancellable = true)
     private void mainmod$useFishingPlaque(Player player, InteractionHand hand, Vec3 hitPosition,
                                           CallbackInfoReturnable<InteractionResult> cir) {
+        InteractionResult present = Presents.interact((ItemFrame) (Object) this, player);
+        if (present != null) {
+            cir.setReturnValue(present);
+            return;
+        }
         InteractionResult result = FishingPlaques.interact((ItemFrame) (Object) this, player, hand);
         if (result != null) cir.setReturnValue(result);
     }
+
 }

@@ -1,0 +1,21 @@
+{
+	"title": "Lime Wrapping Paper",
+	"id": "wrapping-paper-lime",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Craft with up to eight items to make a present."],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "wrapping-paper/lime",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["minecraft:paper", "minecraft:lime_dye"],
+				"result": {
+					"stack": "mainmod:wrapping-paper-lime",
+					"count": 1
+				}
+			}
+		]
+	}
+}

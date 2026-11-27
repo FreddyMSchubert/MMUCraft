@@ -1,0 +1,21 @@
+{
+	"title": "Pink Wrapping Paper",
+	"id": "wrapping-paper-pink",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Craft with up to eight items to make a present."],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "wrapping-paper/pink",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["minecraft:paper", "minecraft:pink_dye"],
+				"result": {
+					"stack": "mainmod:wrapping-paper-pink",
+					"count": 1
+				}
+			}
+		]
+	}
+}

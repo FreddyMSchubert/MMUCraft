@@ -1,0 +1,21 @@
+{
+	"title": "Yellow Wrapping Paper",
+	"id": "wrapping-paper-yellow",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Craft with up to eight items to make a present."],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "wrapping-paper/yellow",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["minecraft:paper", "minecraft:yellow_dye"],
+				"result": {
+					"stack": "mainmod:wrapping-paper-yellow",
+					"count": 1
+				}
+			}
+		]
+	}
+}

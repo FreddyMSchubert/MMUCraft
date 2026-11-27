@@ -1,10 +1,11 @@
 {
-	"title": "Present",
-	"id": "deco-closed-present-pink",
+	"title": "Pink Present",
+	"id": "present-pink",
 	"modelType": "basic-3d",
+	"baseItemOverride": "minecraft:repeating_command_block",
 	"rarity": "common",
-	"maxStackSize": 64,
-	"tooltips": ["Who knows what could be inside?"],
+	"maxStackSize": 1,
+	"tooltips": ["Right-click after placing to open."],
 	"decoBlock": {
 		"ground": true,
 		"wall": false,

@@ -37,6 +37,7 @@ import {
 	createCarvedPumpkinItemDefinition,
 	createCommandBlockItemDefinition,
 	createHeartOfTheSeaItemDefinition,
+	createRepeatingCommandBlockItemDefinition,
 } from './selectorDefinitions';
 import { buildGeneratedSingleTextureModel } from './singleTextureModel';
 
@@ -630,6 +631,7 @@ export async function generateResourcePack(
 	context.minifiedArmorAssetsAvailable = await generateMinifiedArmorAssets(context);
 
 	const commandBlockCases: SelectorCase[] = [];
+	const presentCases: SelectorCase[] = [];
 	const carvedPumpkinCases: SelectorCase[] = [];
 
 	for (const item of items) {
@@ -639,7 +641,27 @@ export async function generateResourcePack(
 					commandBlockCases.push(await generateBasicItem(item, context));
 					break;
 				case 'basic-3d':
-					commandBlockCases.push(await generateBasic3dItem(item, context));
+					if (item.id.startsWith('present-')) {
+						presentCases.push(await generateBasic3dItem(item, context));
+						for (const state of ['_opening', '_open']) {
+							const sourceDirectory = path.join(
+								path.dirname(path.dirname(item.sourceDirectory)),
+								state,
+								item.baseName,
+							);
+							const variant: Basic3dItemDefinition = {
+								...item,
+								resourcePath: item.resourcePath.replace('/_closed/', `/${state}/`),
+								modelJsonPath: path.join(sourceDirectory, 'model.json'),
+								modelTexturePngPath: path.join(sourceDirectory, 'model.png'),
+								modelTextureMcmetaPath: path.join(
+									sourceDirectory,
+									'model.png.mcmeta',
+								),
+							};
+							await generateBasic3dItem(variant, context);
+						}
+					} else commandBlockCases.push(await generateBasic3dItem(item, context));
 					break;
 				case 'cosmetic':
 					carvedPumpkinCases.push(await generateCosmetic(item, context));
@@ -701,6 +723,11 @@ export async function generateResourcePack(
 	await writeJson(
 		minecraftItemDefinitionPath(options.outputDir, 'heart_of_the_sea'),
 		createHeartOfTheSeaItemDefinition(commandBlockCases),
+		context,
+	);
+	await writeJson(
+		minecraftItemDefinitionPath(options.outputDir, 'repeating_command_block'),
+		createRepeatingCommandBlockItemDefinition(presentCases),
 		context,
 	);
 	await writeJson(

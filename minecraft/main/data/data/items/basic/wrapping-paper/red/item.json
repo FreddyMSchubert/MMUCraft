@@ -1,0 +1,21 @@
+{
+	"title": "Red Wrapping Paper",
+	"id": "wrapping-paper-red",
+	"modelType": "basic",
+	"rarity": "common",
+	"maxStackSize": 64,
+	"tooltips": ["Craft with up to eight items to make a present."],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "wrapping-paper/red",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": ["minecraft:paper", "minecraft:red_dye"],
+				"result": {
+					"stack": "mainmod:wrapping-paper-red",
+					"count": 1
+				}
+			}
+		]
+	}
+}

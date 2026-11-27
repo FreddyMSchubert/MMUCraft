@@ -208,6 +208,13 @@ tasks.register('checkFishingPlaques', JavaExec) {
     doFirst { workingDir.mkdirs() }
 }
 
+tasks.register('checkPresents', JavaExec) {
+    group = 'verification'
+    classpath = sourceSets.minecraftCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.recipe.PresentsCheck'
+    enableAssertions = true
+}
+
 tasks.register('checkTeleportCompanions', JavaExec) {
     group = 'verification'
     classpath = sourceSets.minecraftCheck.runtimeClasspath
@@ -248,7 +255,7 @@ tasks.register('checkDailyCatalog', JavaExec) {
 }
 
 tasks.named('check') {
-    dependsOn 'checkMapResize', 'checkThunderRitual', 'checkInsomniaPhantoms', 'checkFarmingBoots', 'checkSpiderPajamas', 'checkMasteryDropGates', 'checkGearEnchantments', 'checkSmithingArmor', 'checkHopperFilterIdentity', 'checkRailPowerClaims',
+    dependsOn 'checkMapResize', 'checkThunderRitual', 'checkInsomniaPhantoms', 'checkFarmingBoots', 'checkSpiderPajamas', 'checkMasteryDropGates', 'checkGearEnchantments', 'checkSmithingArmor', 'checkHopperFilterIdentity', 'checkRailPowerClaims', 'checkPresents',
             'checkDailyCatalog', 'checkFishingBounces', 'checkFishingPlaques', 'checkFishRarity', 'checkMagicFoodEffects', 'checkTeleportCompanions', 'checkTickRate', 'checkExplosiveFire', 'checkSnowballMachineGun'
 }
 

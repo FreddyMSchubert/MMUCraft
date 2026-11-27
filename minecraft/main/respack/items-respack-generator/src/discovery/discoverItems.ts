@@ -1,4 +1,6 @@
 import type { DiscoveredItem } from '../types';
+import path from 'node:path';
+import { existsSync } from 'node:fs';
 import { listSubdirectories } from '../utils/fs';
 import { isRecoverableItemAssetError, parseItemDefinition } from './parseItemDefinition';
 
@@ -49,6 +51,11 @@ export async function discoverItems(sourceRoot: string): Promise<DiscoveredItem[
 	const items: DiscoveredItem[] = [];
 
 	for (const leafDirectory of leafDirectories.sort((left, right) => left.localeCompare(right))) {
+		if (
+			leafDirectory.includes(`${path.sep}_presents${path.sep}`) &&
+			!existsSync(path.join(leafDirectory, 'item.json'))
+		)
+			continue;
 		try {
 			items.push(await parseItemDefinition(sourceRoot, leafDirectory));
 		} catch (error) {

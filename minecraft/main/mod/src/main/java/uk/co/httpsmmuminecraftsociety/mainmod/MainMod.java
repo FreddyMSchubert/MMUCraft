@@ -26,11 +26,14 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.inventory.MerchantMenu;
 import net.minecraft.world.inventory.StonecutterMenu;
 import net.minecraft.world.level.gamerules.GameRules;
@@ -219,6 +222,19 @@ public class MainMod implements ModInitializer {
         ServerLivingEntityEvents.AFTER_DAMAGE.register(TeleportPotionUtils::onLivingEntityDamage);
         EnchantmentEvents.ALLOW_ENCHANTING.register(CharmEnchanting::onAllowEnchanting);
         PlayerBlockBreakEvents.AFTER.register(CharmsManager::onAfterBlockBreak);
+        PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {
+            if (!(level instanceof ServerLevel serverLevel) || !(state.getBlock() instanceof BedBlock)) return;
+            BlockPos head = state.getValue(BedBlock.PART) == BedPart.HEAD
+                    ? pos : pos.relative(state.getValue(BedBlock.FACING));
+            for (var onlinePlayer : serverLevel.getServer().getPlayerList().getPlayers()) {
+                var respawn = onlinePlayer.getRespawnConfig();
+                if (respawn != null && !respawn.forced()
+                        && respawn.respawnData().dimension().equals(level.dimension())
+                        && respawn.respawnData().pos().equals(head)) {
+                    onlinePlayer.setRespawnPosition(null, false);
+                }
+            }
+        });
         PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, blockEntity) -> {
             if (!InstancedLootMenus.isLootChest(level, pos) || player.isShiftKeyDown()) return true;
             player.sendSystemMessage(Component.literal("Hold Shift to break this loot chest.").withStyle(ChatFormatting.RED));

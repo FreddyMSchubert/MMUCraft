@@ -55,8 +55,8 @@ public final class GameplayGrpcService extends GrpcHandler {
         return INSTANCE.eventsClient.recordBigBossKill(request);
     }
 
-    public static CompletableFuture<AdventBanhammerResponse> useAdventBanhammer(String victimUuid) {
-        return INSTANCE.eventsClient.useAdventBanhammer(victimUuid);
+    public static CompletableFuture<AdventBanhammerResponse> useAdventBanhammer(String victimUuid, String victimUsername) {
+        return INSTANCE.eventsClient.useAdventBanhammer(victimUuid, victimUsername);
     }
 
     public static CompletableFuture<UnlockNextKnowledgeResponse> unlockNextKnowledge(

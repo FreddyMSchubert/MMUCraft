@@ -88,7 +88,7 @@ export class VelocityService {
 		const username = typeof usernameInput === 'string' ? usernameInput.trim() : '';
 		if (!uuid || !isValidMinecraftUsername(username))
 			return { status: 'DENIED', websiteUrl: this.websiteUrl() };
-		const banhammerUntil = this.banhammerExpiry(uuid);
+		const banhammerUntil = isBanhammerImmune(username) ? null : this.banhammerExpiry(uuid);
 
 		const user = this.identities.resolveAndRefresh(uuid, username);
 		const exempt = isExemptAdmin(user);
@@ -145,9 +145,11 @@ export class VelocityService {
 		};
 	}
 
-	useAdventBanhammer(uuidInput: unknown) {
+	useAdventBanhammer(uuidInput: unknown, usernameInput: unknown) {
 		const uuid = normalizeMinecraftUuid(typeof uuidInput === 'string' ? uuidInput : '');
-		if (!uuid) return { accepted: false };
+		const username = typeof usernameInput === 'string' ? usernameInput : '';
+		if (!uuid || !isValidMinecraftUsername(username) || isBanhammerImmune(username))
+			return { accepted: false };
 		this.banhammerUntil.set(uuid, Date.now() + 60_000);
 		return { accepted: true };
 	}
@@ -187,7 +189,9 @@ export class VelocityService {
 			if (command.routeRevision !== route.revision) this.commands.delete(id);
 
 		const disconnects = this.connectedPlayers.flatMap((player) => {
-			const banhammerUntil = this.banhammerExpiry(player.uuid);
+			const banhammerUntil = isBanhammerImmune(player.username)
+				? null
+				: this.banhammerExpiry(player.uuid);
 			if (banhammerUntil !== null)
 				return [
 					{
@@ -539,6 +543,10 @@ export class VelocityService {
 			maxPlayers: server.max_players,
 		};
 	}
+}
+
+function isBanhammerImmune(username: string): boolean {
+	return username.toLowerCase() === 'mmu_admin';
 }
 
 function parseLiveServers(value: unknown): LiveServer[] {

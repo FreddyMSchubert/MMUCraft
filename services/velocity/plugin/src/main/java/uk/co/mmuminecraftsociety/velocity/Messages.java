@@ -195,7 +195,8 @@ final class Messages {
         return heading("Advent's Banhammer", GOLD)
                 .append(Component.text("You were bonked! You can rejoin in " + seconds
                         + (seconds == 1 ? " second." : " seconds."), TEXT))
-                .append(Component.text("\nThis is only a short game effect. Rejoin to refresh the countdown.", MUTED));
+                .append(Component.text("\nDon't worry, you didn't do anything wrong, this isn't a disciplinary action, this is just for fun."
+                        + "\nRejoin to refresh the countdown.", MUTED));
     }
 
     private static Component restriction(String explanation, String supportIntroduction) {

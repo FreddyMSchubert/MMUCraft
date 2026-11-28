@@ -23,13 +23,21 @@ import uk.co.httpsmmuminecraftsociety.mainmod.grpc.GameplayGrpcService;
 
 import java.util.Collections;
 import java.util.IdentityHashMap;
+import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 public final class AdventBanhammerCharm implements AttackBlockCallbackCharm, AttackEntityCallbackCharm,
         BaseItemChangeCallbackCharm {
     public static final int CHARM_ID = 63;
     private static final String USES_KEY = "mainmod_advent_banhammer_uses";
     private static final Set<ItemStack> PENDING = Collections.newSetFromMap(new IdentityHashMap<>());
+    private static final Map<ServerPlayer, Long> BONKED_UNTIL = new WeakHashMap<>();
+
+    public static boolean consumeBonked(ServerPlayer player) {
+        Long until = BONKED_UNTIL.remove(player);
+        return until != null && until > System.currentTimeMillis();
+    }
 
     public static boolean isBanhammer(ItemStack stack) {
         return CharmStackData.getStoredCharms(stack).stream().anyMatch(charm -> charm.charmId() == CHARM_ID);
@@ -59,10 +67,12 @@ public final class AdventBanhammerCharm implements AttackBlockCallbackCharm, Att
                                             int charmLevel) {
         if (hand != InteractionHand.MAIN_HAND || stack != player.getMainHandItem()) return InteractionResult.PASS;
         if (!(entity instanceof ServerPlayer victim) || victim == player || victim.hasDisconnected()
+                || victim.getGameProfile().name().equalsIgnoreCase("MMU_Admin")
                 || uses(stack) >= 3) return InteractionResult.FAIL;
         if (!PENDING.add(stack)) return InteractionResult.FAIL;
 
-        GameplayGrpcService.useAdventBanhammer(victim.getUUID().toString()).whenComplete((response, error) ->
+        GameplayGrpcService.useAdventBanhammer(victim.getUUID().toString(), victim.getGameProfile().name())
+                .whenComplete((response, error) ->
                 level.getServer().execute(() -> {
                     PENDING.remove(stack);
                     if (error != null || response == null || !response.getAccepted()) {
@@ -70,6 +80,7 @@ public final class AdventBanhammerCharm implements AttackBlockCallbackCharm, Att
                                 .withStyle(ChatFormatting.RED));
                         return;
                     }
+                    BONKED_UNTIL.put(victim, System.currentTimeMillis() + 15_000);
                     int used = uses(stack) + 1;
                     if (used == 3) {
                         stack.shrink(1);

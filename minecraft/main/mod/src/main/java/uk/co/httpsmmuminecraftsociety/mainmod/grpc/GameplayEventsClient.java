@@ -59,9 +59,10 @@ final class GameplayEventsClient {
         return call(client -> client.withDeadlineAfter(5, TimeUnit.SECONDS).recordBigBossKill(request));
     }
 
-    CompletableFuture<AdventBanhammerResponse> useAdventBanhammer(String victimUuid) {
+    CompletableFuture<AdventBanhammerResponse> useAdventBanhammer(String victimUuid, String victimUsername) {
         return call(client -> client.withDeadlineAfter(5, TimeUnit.SECONDS).useAdventBanhammer(
-                AdventBanhammerRequest.newBuilder().setVictimMinecraftUuid(victimUuid).build()));
+                AdventBanhammerRequest.newBuilder().setVictimMinecraftUuid(victimUuid)
+                        .setVictimMinecraftUsername(victimUsername).build()));
     }
 
     CompletableFuture<RefreshApiCachesResponse> refreshApiCaches() {

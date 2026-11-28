@@ -197,10 +197,19 @@ export class GameplayGrpcService implements OnModuleInit {
 	}
 
 	private useAdventBanhammer(
-		call: grpc.ServerUnaryCall<{ victim_minecraft_uuid: string }, { accepted: boolean }>,
+		call: grpc.ServerUnaryCall<
+			{ victim_minecraft_uuid: string; victim_minecraft_username: string },
+			{ accepted: boolean }
+		>,
 		callback: UnaryCallback<{ accepted: boolean }>,
 	) {
-		callback(null, this.velocity.useAdventBanhammer(call.request.victim_minecraft_uuid));
+		callback(
+			null,
+			this.velocity.useAdventBanhammer(
+				call.request.victim_minecraft_uuid,
+				call.request.victim_minecraft_username,
+			),
+		);
 	}
 
 	private getAnnouncements(

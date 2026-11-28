@@ -98,11 +98,14 @@ test('banhammer disconnects for one minute without creating a ban', () => {
 	service.preferredServer = () => 'main';
 	service.rememberConnectedServer = () => {};
 
-	assert.deepEqual(service.useAdventBanhammer('invalid'), { accepted: false });
+	assert.deepEqual(service.useAdventBanhammer('invalid', 'Member'), { accepted: false });
+	assert.deepEqual(service.useAdventBanhammer(uuid, 'mmu_ADMIN'), { accepted: false });
+	assert.equal(service.banhammerUntil.size, 0);
 	const start = Date.now();
-	assert.deepEqual(service.useAdventBanhammer(uuid), { accepted: true });
+	assert.deepEqual(service.useAdventBanhammer(uuid, 'Member'), { accepted: true });
 	const access = service.authorizePlayer(uuid, 'Member');
 	assert.equal(access.status, 'BANHAMMER');
+	assert.equal(service.authorizePlayer(uuid, 'MMU_Admin').status, 'ALLOWED');
 	assert.ok(access.expiresAtUnixMs >= start + 60_000);
 	service.bans.resolve = () => ({ active: true, expiresAtUnixMs: null });
 	assert.equal(service.authorizePlayer(uuid, 'Member').status, 'BANNED');
@@ -127,6 +130,20 @@ test('banhammer disconnects for one minute without creating a ban', () => {
 			expiresAtUnixMs: access.expiresAtUnixMs,
 		},
 	]);
+	const adminSync = service.synchronize({
+		servers: [],
+		players: [
+			{
+				uuid,
+				sessionId: '00000000-0000-4000-8000-000000000001',
+				username: 'MMU_Admin',
+				serverName: 'main',
+				state: 'playing',
+				targetServerName: 'main',
+			},
+		],
+	});
+	assert.deepEqual(adminSync.disconnects, []);
 	service.banhammerUntil.set(uuid, Date.now() - 1);
 	assert.equal(service.authorizePlayer(uuid, 'Member').status, 'ALLOWED');
 	assert.equal(service.banhammerUntil.has(uuid), false);

@@ -34,7 +34,10 @@ service GameplayEvents {
   rpc UseAdventBanhammer(AdventBanhammerRequest) returns (AdventBanhammerResponse);
 }
 
-message AdventBanhammerRequest { string victim_minecraft_uuid = 1; }
+message AdventBanhammerRequest {
+  string victim_minecraft_uuid = 1;
+  string victim_minecraft_username = 2;
+}
 message AdventBanhammerResponse { bool accepted = 1; }
 
 service GameplayControl {

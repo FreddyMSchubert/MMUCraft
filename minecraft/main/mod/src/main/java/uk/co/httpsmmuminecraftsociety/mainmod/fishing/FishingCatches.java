@@ -265,13 +265,6 @@ public final class FishingCatches {
         double luck = hook.getPlayerOwner() == null
                 ? 0.0
                 : hook.getPlayerOwner().getAttributeValue(Attributes.LUCK) + fishingLuckBonus;
-        if (overworld && hook.getPlayerOwner() instanceof ServerPlayer player) {
-            ItemStack unlockBook = UnlockBookLoot.rollFishingBook(player, hook.getRandom(), luck);
-            if (!unlockBook.isEmpty()) {
-                return Pair.of(unlockBook, treasurePersonality(FishRarity.COMMON, unlockBook).resolveTextureAngle(hook.getRandom()));
-            }
-        }
-
         boolean treasure = hook.getRandom().nextDouble() < itemChance;
         int catches = hook.getPlayerOwner() instanceof ServerPlayer player
                 ? player.getStats().getValue(Stats.CUSTOM.get(Stats.FISH_CAUGHT))
@@ -279,6 +272,13 @@ public final class FishingCatches {
         ServerPlayer fisher = hook.getPlayerOwner() instanceof ServerPlayer player ? player : null;
         FishRarity rarity = randomRarity(hook.getRandom(), luck, catches, !overworld && treasure,
                 fisher == null || treasure ? 0 : MagicFoodEffects.fishRarityBoostMask(fisher));
+        if (fisher != null) {
+            ItemStack unlockBook = UnlockBookLoot.rollFishingBook(fisher, hook.getRandom(), luck,
+                    completedCategory(fisher, rarity, dimension));
+            if (!unlockBook.isEmpty()) {
+                return Pair.of(unlockBook, treasurePersonality(FishRarity.COMMON, unlockBook).resolveTextureAngle(hook.getRandom()));
+            }
+        }
         List<CatchEntry> entries = entriesFor(treasure, rarity, hook);
         CatchEntry selected = selectEntry(entries, hook.getRandom(), treasure ? null : fisher);
         ItemStack stack = selected.stack().copy();
@@ -609,6 +609,30 @@ public final class FishingCatches {
         String id = fakeItemId(entry.stack());
         if (id.isEmpty()) id = BuiltInRegistries.ITEM.getKey(entry.stack().getItem()).toString();
         return !known.contains(id);
+    }
+
+    private static boolean completedCategory(ServerPlayer player, FishRarity rarity, ResourceKey<Level> dimension) {
+        Set<String> known = CAUGHT_FISH.get(player.getUUID());
+        if (known == null) {
+            refreshCaughtFish(player);
+            return false;
+        }
+        boolean hasFish = false;
+        if (dimension == Level.OVERWORLD) {
+            for (FishLoot fish : FISH_LOOT.get(rarity)) {
+                hasFish = true;
+                if (!known.contains(BuiltInRegistries.ITEM.getKey(fish.stack().getItem()).toString())) return false;
+            }
+        }
+        String dimensionName = dimension == Level.NETHER ? "nether"
+                : dimension == Level.END ? "end" : "overworld";
+        for (var entry : FakeItems.FISH.entrySet()) {
+            FishItemFeature fish = entry.getValue();
+            if (fish.personality().rarity() != rarity || !fish.dimension().equals(dimensionName)) continue;
+            hasFish = true;
+            if (!known.contains(entry.getKey().id())) return false;
+        }
+        return hasFish;
     }
 
     private static List<CatchEntry> entriesAt(boolean treasure, FishRarity rarity, FishingHook hook) {

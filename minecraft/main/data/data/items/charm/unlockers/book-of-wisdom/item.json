@@ -1,0 +1,28 @@
+{
+	"title": "Book of Wisdom",
+	"id": "charm-book-of-wisdom",
+	"modelType": "basic-3d",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": ["Right-click for a fresh dose of wisdom from Mr. Wisdom."],
+	"shopPurchasable": {
+		"membersOnly": false,
+		"priceDabloons": 5,
+		"description": "Open the same book for a different pearl of wisdom each time.",
+		"unlockWeight": 100
+	},
+	"charm": {
+		"charmId": 64,
+		"minLevel": 1,
+		"maxLevel": 1,
+		"levels": [
+			{
+				"level": 1,
+				"abilityStatusCurrent": "Read a random pearl of wisdom.",
+				"abilityStatusRelative": "",
+				"dabloons": 0,
+				"upgradeIngredients": []
+			}
+		]
+	}
+}

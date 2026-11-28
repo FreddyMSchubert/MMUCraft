@@ -26,7 +26,8 @@ import java.util.stream.Collectors;
 public final class FakeItems {
         private static final int TOOLTIP_LINE_LENGTH = 80;
         private static final Set<String> BOOKSHELF_BOOK_IDS = Set.of(
-                "charm-knowledge-book", "charm-magic-book", "charm-fashion-book", "charm-joke-book");
+                "charm-knowledge-book", "charm-magic-book", "charm-fashion-book", "charm-joke-book",
+                "charm-book-of-wisdom");
 
         private FakeItems() {}
 

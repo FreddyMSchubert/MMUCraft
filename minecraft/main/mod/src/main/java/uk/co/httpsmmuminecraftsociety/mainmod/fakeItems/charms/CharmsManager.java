@@ -79,6 +79,7 @@ public class CharmsManager
             Map.entry(40, ShopUnlockBookCharm.magicBook()),
             Map.entry(41, ShopUnlockBookCharm.fashionBook()),
             Map.entry(42, new JokeCharm()),
+            Map.entry(64, new WisdomCharm()),
             Map.entry(43, new PickaxeHeaterCharm()),
             Map.entry(BackpackCharm.Tier.LEATHER.charmId(), new BackpackCharm(BackpackCharm.Tier.LEATHER.rows())),
             Map.entry(BackpackCharm.Tier.INGOT.charmId(), new BackpackCharm(BackpackCharm.Tier.INGOT.rows())),

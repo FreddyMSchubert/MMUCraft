@@ -113,6 +113,13 @@ tasks.register('checkMapResize', JavaExec) {
     doFirst { workingDir.mkdirs() }
 }
 
+tasks.register('checkWisdomQuotes', JavaExec) {
+    group = 'verification'
+    classpath = sourceSets.minecraftCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.charms.held.WisdomCharmCheck'
+    enableAssertions = true
+}
+
 tasks.register('checkThunderRitual', JavaExec) {
     group = 'verification'
     classpath = sourceSets.minecraftCheck.runtimeClasspath
@@ -255,7 +262,7 @@ tasks.register('checkDailyCatalog', JavaExec) {
 }
 
 tasks.named('check') {
-    dependsOn 'checkMapResize', 'checkThunderRitual', 'checkInsomniaPhantoms', 'checkFarmingBoots', 'checkSpiderPajamas', 'checkMasteryDropGates', 'checkGearEnchantments', 'checkSmithingArmor', 'checkHopperFilterIdentity', 'checkRailPowerClaims', 'checkPresents',
+    dependsOn 'checkMapResize', 'checkWisdomQuotes', 'checkThunderRitual', 'checkInsomniaPhantoms', 'checkFarmingBoots', 'checkSpiderPajamas', 'checkMasteryDropGates', 'checkGearEnchantments', 'checkSmithingArmor', 'checkHopperFilterIdentity', 'checkRailPowerClaims', 'checkPresents',
             'checkDailyCatalog', 'checkFishingBounces', 'checkFishingPlaques', 'checkFishRarity', 'checkMagicFoodEffects', 'checkTeleportCompanions', 'checkTickRate', 'checkExplosiveFire', 'checkSnowballMachineGun'
 }
 

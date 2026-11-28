@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
@@ -32,7 +33,9 @@ public final class UnlockBookLoot {
     private static final long AVAILABILITY_TIMEOUT_MS = 750L;
     private static final String CHARM_BOOK_ID = "charm-magic-book";
     private static final double FISHING_KNOWLEDGE_CHANCE = 1.0D / 4.5D;
-    private static final double FISHING_JOKE_CHANCE = 0.0025D;
+    private static final double FISHING_JOKE_CHANCE = 0.01D;
+    private static final double FISHING_COMPLETED_JOKE_CHANCE = 0.10D;
+    private static final double CHEST_JOKE_CHANCE = 0.05D;
     private static final double FISHING_CHARM_MIN_CHANCE = 0.0005D;
     private static final double FISHING_CHARM_MAX_CHANCE = 0.005D;
     private static final double FISHING_COSMETIC_MIN_CHANCE = 0.0025D;
@@ -102,6 +105,9 @@ public final class UnlockBookLoot {
             addCosmeticIfAvailable(player, itemStacks);
         if (availability.hasKnowledgeToUnlock() && Math.random() < knowledgeChance)
             addKnowledgeIfAvailable(player, itemStacks);
+        if (!isManyChestsStructure && Math.random() < CHEST_JOKE_CHANCE
+                * (MagicFoodEffects.has(player, MagicFoodEffects.Effect.JOKE_BOOKS) ? 4 : 1))
+            addJokeIfAvailable(player, itemStacks);
         for (int index = previousCount; index < itemStacks.size(); index++)
             recordMagicBookFind(player, itemStacks.get(index));
     }
@@ -146,7 +152,18 @@ public final class UnlockBookLoot {
         return true;
     }
 
-    public static ItemStack rollFishingBook(ServerPlayer player, RandomSource random, double luck) {
+    public static ItemStack rollFishingBook(ServerPlayer player, RandomSource random, double luck,
+                                            boolean completedCategory) {
+        double jokeChance = completedCategory ? FISHING_COMPLETED_JOKE_CHANCE : FISHING_JOKE_CHANCE;
+        if (MagicFoodEffects.has(player, MagicFoodEffects.Effect.JOKE_BOOKS)) jokeChance *= 4;
+        double roll = random.nextDouble();
+        double jumpScareMultiplier = player.level().dimension() == Level.NETHER ? 10.0D
+                : player.level().dimension() == Level.END ? 5.0D : 1.0D;
+        double cursor = jokeChance / (1.0D - FishingJumpScares.CHANCE * jumpScareMultiplier);
+        if (roll < cursor) return JOKE_DROP_COOLDOWN.isReady(player.getUUID(), cooldown(player, MagicFoodEffects.Effect.JOKE_BOOKS, 30, 10))
+                ? createFishingBook("charm-joke-book") : ItemStack.EMPTY;
+        if (player.level().dimension() != Level.OVERWORLD) return ItemStack.EMPTY;
+
         UnlockAvailability availability = getAvailability(player);
         double progress = Math.max(0.0D, Math.min(11.0D, luck)) / 11.0D;
         double cosmeticChance = FISHING_COSMETIC_MIN_CHANCE
@@ -157,10 +174,7 @@ public final class UnlockBookLoot {
         if (MagicFoodEffects.has(player, MagicFoodEffects.Effect.CHARM_BOOKS)) charmChance *= 2;
         double knowledgeChance = MagicFoodEffects.has(player, MagicFoodEffects.Effect.KNOWLEDGE_BOOKS)
                 ? 2.0D / 3.0D : FISHING_KNOWLEDGE_CHANCE;
-        double jokeChance = MagicFoodEffects.has(player, MagicFoodEffects.Effect.JOKE_BOOKS)
-                ? FISHING_JOKE_CHANCE * 4 : FISHING_JOKE_CHANCE;
-        double roll = random.nextDouble();
-        double cursor = knowledgeChance;
+        cursor += knowledgeChance;
 
         if (roll < cursor) return availability.hasKnowledgeToUnlock() && KNOWLEDGE_DROP_COOLDOWN.isReady(player.getUUID(), cooldown(player, MagicFoodEffects.Effect.KNOWLEDGE_BOOKS, 30, 5))
                 ? createFishingBook("charm-knowledge-book") : ItemStack.EMPTY;
@@ -170,9 +184,6 @@ public final class UnlockBookLoot {
         cursor += charmChance / FISHING_DELIVERY_RATE;
         if (roll < cursor) return availability.hasCharmsToUnlock() && CHARM_DROP_COOLDOWN.isReady(player.getUUID(), cooldown(player, MagicFoodEffects.Effect.CHARM_BOOKS, 60, 30))
                 ? createFishingBook(CHARM_BOOK_ID) : ItemStack.EMPTY;
-        cursor += jokeChance / FISHING_DELIVERY_RATE;
-        if (roll < cursor) return JOKE_DROP_COOLDOWN.isReady(player.getUUID(), cooldown(player, MagicFoodEffects.Effect.JOKE_BOOKS, 30, 10))
-                ? createFishingBook("charm-joke-book") : ItemStack.EMPTY;
         return ItemStack.EMPTY;
     }
 
@@ -266,6 +277,15 @@ public final class UnlockBookLoot {
             MainMod.LOGGER.warn("Cannot add unlock-book loot drop because fake item {} is not loaded", "charm-knowledge-book");
         } else if (KNOWLEDGE_DROP_COOLDOWN.tryStart(player.getUUID(), cooldown(player, MagicFoodEffects.Effect.KNOWLEDGE_BOOKS, 30, 5))) {
             itemStacks.add(knowledgeBook.createItemStack());
+        }
+    }
+
+    private static void addJokeIfAvailable(ServerPlayer player, List<ItemStack> itemStacks) {
+        FakeItem jokeBook = FakeItems.ID_MAP.get("charm-joke-book");
+        if (jokeBook == null) {
+            MainMod.LOGGER.warn("Cannot add unlock-book loot drop because fake item {} is not loaded", "charm-joke-book");
+        } else if (JOKE_DROP_COOLDOWN.tryStart(player.getUUID(), cooldown(player, MagicFoodEffects.Effect.JOKE_BOOKS, 30, 10))) {
+            itemStacks.add(jokeBook.createItemStack());
         }
     }
 

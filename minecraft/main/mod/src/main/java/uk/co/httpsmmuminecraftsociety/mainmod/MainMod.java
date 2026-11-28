@@ -178,8 +178,7 @@ public class MainMod implements ModInitializer {
             LegacyFakeItemMigration.migratePlayer(handler.player);
             CharmsManager.refreshInventory(handler.player);
             MasteryAdvancements.onJoin(handler.player);
-            if (MagicFoodEffects.has(handler.player, MagicFoodEffects.Effect.FISH_UNCAUGHT))
-                FishingCatches.refreshCaughtFish(handler.player);
+            FishingCatches.refreshCaughtFish(handler.player);
         });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             BigBossManager.left(handler.player);

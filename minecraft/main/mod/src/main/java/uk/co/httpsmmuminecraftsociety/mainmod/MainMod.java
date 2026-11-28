@@ -85,6 +85,7 @@ import uk.co.httpsmmuminecraftsociety.mainmod.miniblocks.MiniBlockCommand;
 import uk.co.httpsmmuminecraftsociety.mainmod.maps.SmallMaps;
 import uk.co.httpsmmuminecraftsociety.mainmod.sled.Sleds;
 import uk.co.httpsmmuminecraftsociety.mainmod.snowball.SnowballMachineGun;
+import uk.co.httpsmmuminecraftsociety.mainmod.size.SizeDiscs;
 import uk.co.httpsmmuminecraftsociety.mainmod.recipe.MainModRecipes;
 import uk.co.httpsmmuminecraftsociety.mainmod.playerpotions.PlayerDisguises;
 import uk.co.httpsmmuminecraftsociety.mainmod.playerpotions.SkinColors;
@@ -144,6 +145,7 @@ public class MainMod implements ModInitializer {
         MetricsServer.init();
         DiscordBridge.init();
         ClaimsManager.init();
+        SizeDiscs.init();
         BigBossManager.init();
         DailyEvents.register();
         MainModRecipes.register();

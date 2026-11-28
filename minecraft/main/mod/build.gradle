@@ -120,6 +120,13 @@ tasks.register('checkWisdomQuotes', JavaExec) {
     enableAssertions = true
 }
 
+tasks.register('checkSizeDiscs', JavaExec) {
+    group = 'verification'
+    classpath = sourceSets.minecraftCheck.runtimeClasspath
+    mainClass = 'uk.co.httpsmmuminecraftsociety.mainmod.size.SizeDiscsCheck'
+    enableAssertions = true
+}
+
 tasks.register('checkThunderRitual', JavaExec) {
     group = 'verification'
     classpath = sourceSets.minecraftCheck.runtimeClasspath
@@ -263,7 +270,7 @@ tasks.register('checkDailyCatalog', JavaExec) {
 
 tasks.named('check') {
     dependsOn 'checkMapResize', 'checkWisdomQuotes', 'checkThunderRitual', 'checkInsomniaPhantoms', 'checkFarmingBoots', 'checkSpiderPajamas', 'checkMasteryDropGates', 'checkGearEnchantments', 'checkSmithingArmor', 'checkHopperFilterIdentity', 'checkRailPowerClaims', 'checkPresents',
-            'checkDailyCatalog', 'checkFishingBounces', 'checkFishingPlaques', 'checkFishRarity', 'checkMagicFoodEffects', 'checkTeleportCompanions', 'checkTickRate', 'checkExplosiveFire', 'checkSnowballMachineGun'
+            'checkDailyCatalog', 'checkFishingBounces', 'checkFishingPlaques', 'checkFishRarity', 'checkMagicFoodEffects', 'checkTeleportCompanions', 'checkTickRate', 'checkExplosiveFire', 'checkSnowballMachineGun', 'checkSizeDiscs'
 }
 
 def generatedResources = file("src/main/generated")

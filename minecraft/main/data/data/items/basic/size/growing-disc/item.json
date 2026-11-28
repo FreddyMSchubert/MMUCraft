@@ -1,0 +1,22 @@
+{
+	"title": "Growing Disc",
+	"id": "growing-disc",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": ["Right-click a mob to double its size, or throw the disc at one."],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "growing-disc",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"minecraft:dragon_breath",
+					"minecraft:diamond",
+					"minecraft:lapis_lazuli"
+				],
+				"result": { "stack": "mainmod:growing-disc", "count": 4 }
+			}
+		]
+	}
+}

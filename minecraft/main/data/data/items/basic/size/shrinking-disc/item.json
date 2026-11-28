@@ -1,0 +1,22 @@
+{
+	"title": "Shrinking Disc",
+	"id": "shrinking-disc",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 64,
+	"tooltips": ["Right-click a mob to halve its size, or throw the disc at one."],
+	"craftable": {
+		"recipes": [
+			{
+				"id": "shrinking-disc",
+				"type": "mainmod:fake_crafting_shapeless",
+				"ingredients": [
+					"minecraft:dragon_breath",
+					"minecraft:diamond",
+					"minecraft:redstone"
+				],
+				"result": { "stack": "mainmod:shrinking-disc", "count": 4 }
+			}
+		]
+	}
+}

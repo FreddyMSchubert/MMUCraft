@@ -57,6 +57,7 @@ import net.minecraft.world.phys.Vec3;
 import uk.co.httpsmmuminecraftsociety.mainmod.MainMod;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.ClaimData;
 import uk.co.httpsmmuminecraftsociety.mainmod.grpc.ClaimsSnapshot;
+import uk.co.httpsmmuminecraftsociety.mainmod.size.SizeDiscs;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;
@@ -483,7 +484,8 @@ public final class ClaimsManager {
         ServerPlayer player = owner instanceof ServerPlayer serverPlayer ? serverPlayer : null;
         if (!ready) return player != null && isServerAdmin(player);
         Claim claim = claimAt(level, pos);
-        return claim == null || player != null && canPerform(player, level, pos, PROJECTILES);
+        return claim == null || player != null && canPerform(player, level, pos,
+                SizeDiscs.isProjectile(projectile) ? MOB_INTERACTION : PROJECTILES);
     }
 
     private static boolean isServerAdmin(ServerPlayer player) {

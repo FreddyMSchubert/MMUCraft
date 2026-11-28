@@ -1,0 +1,11 @@
+{
+	"title": "Music Disc",
+	"id": "disc-christmas-just-a-week-away",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"disc": {
+		"songId": "mainmod:christmas_just_a_week_away"
+	}
+}

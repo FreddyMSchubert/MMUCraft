@@ -49,6 +49,21 @@ public abstract class SoundEventRedirect
             new Tuple(
                     Identifier.fromNamespaceAndPath("minecraft", "block.bamboo_wood_button.click_on"),
                     Identifier.fromNamespaceAndPath("minecraft", "block.wooden_button.click_on")
+            ),
+            // Carol of the Bells music disc
+            new Tuple(
+                    Identifier.fromNamespaceAndPath("minecraft", "entity.parrot.imitate.ender_dragon"),
+                    Identifier.fromNamespaceAndPath("minecraft", "entity.parrot.ambient")
+            ),
+            // Silent Nights music disc
+            new Tuple(
+                    Identifier.fromNamespaceAndPath("minecraft", "entity.parrot.imitate.wither"),
+                    Identifier.fromNamespaceAndPath("minecraft", "entity.parrot.ambient")
+            ),
+            // Christmas, Just a Week Away! music disc
+            new Tuple(
+                    Identifier.fromNamespaceAndPath("minecraft", "entity.parrot.imitate.ghast"),
+                    Identifier.fromNamespaceAndPath("minecraft", "entity.parrot.ambient")
             )
     );
     private static final Map<Identifier, Identifier> MAP = SWAPS.stream()

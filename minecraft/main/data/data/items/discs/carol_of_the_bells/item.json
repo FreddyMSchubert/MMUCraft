@@ -1,0 +1,11 @@
+{
+	"title": "Music Disc",
+	"id": "disc-carol-of-the-bells",
+	"modelType": "basic",
+	"rarity": "uncommon",
+	"maxStackSize": 1,
+	"tooltips": [],
+	"disc": {
+		"songId": "mainmod:carol_of_the_bells"
+	}
+}

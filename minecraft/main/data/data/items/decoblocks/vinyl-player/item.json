@@ -116,6 +116,51 @@
 				},
 				"id": "decoration/vinyl-player/vinyl-player-ricochet",
 				"gameplayToggle": "imaginative"
+			},
+			{
+				"type": "mainmod:fake_crafting_shaped",
+				"pattern": ["GGG", "GDG", "LLL"],
+				"key": {
+					"L": "#mainmod:stripped_logs",
+					"G": "minecraft:glass",
+					"D": "mainmod:disc-carol-of-the-bells"
+				},
+				"result": {
+					"stack": "mainmod:deco-vinyl-player",
+					"count": 1
+				},
+				"id": "decoration/vinyl-player/vinyl-player-carol-of-the-bells",
+				"gameplayToggle": "imaginative"
+			},
+			{
+				"type": "mainmod:fake_crafting_shaped",
+				"pattern": ["GGG", "GDG", "LLL"],
+				"key": {
+					"L": "#mainmod:stripped_logs",
+					"G": "minecraft:glass",
+					"D": "mainmod:disc-silent-nights"
+				},
+				"result": {
+					"stack": "mainmod:deco-vinyl-player",
+					"count": 1
+				},
+				"id": "decoration/vinyl-player/vinyl-player-silent-nights",
+				"gameplayToggle": "imaginative"
+			},
+			{
+				"type": "mainmod:fake_crafting_shaped",
+				"pattern": ["GGG", "GDG", "LLL"],
+				"key": {
+					"L": "#mainmod:stripped_logs",
+					"G": "minecraft:glass",
+					"D": "mainmod:disc-christmas-just-a-week-away"
+				},
+				"result": {
+					"stack": "mainmod:deco-vinyl-player",
+					"count": 1
+				},
+				"id": "decoration/vinyl-player/vinyl-player-christmas-just-a-week-away",
+				"gameplayToggle": "imaginative"
 			}
 		]
 	}

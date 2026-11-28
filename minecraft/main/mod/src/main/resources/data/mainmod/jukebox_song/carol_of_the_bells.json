@@ -1,0 +1,8 @@
+{
+	"comparator_output": 10,
+	"description": {
+		"text": "US Air Force Band - Carol of the Bells"
+	},
+	"length_in_seconds": 144.1,
+	"sound_event": "minecraft:entity.parrot.imitate.ender_dragon"
+}

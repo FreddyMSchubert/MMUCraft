@@ -57,7 +57,9 @@ public class LootTableModifiers {
     private static final DateTimeFormatter SOUL_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private static final List<String> CUSTOM_DISCS = List.of(
             "disc-9am", "disc-death", "disc-dog",
-            "disc-droopy-likes-ricochet", "disc-droopy-likes-your-face"
+            "disc-droopy-likes-ricochet", "disc-droopy-likes-your-face",
+            "disc-carol-of-the-bells", "disc-silent-nights",
+            "disc-christmas-just-a-week-away"
     );
     private record LootAddition(
             Identifier tableId,

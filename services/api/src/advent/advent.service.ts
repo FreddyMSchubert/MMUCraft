@@ -461,15 +461,24 @@ export class AdventService {
 	}
 }
 
-function londonDate() {
+export function londonDate(now = new Date()) {
 	const parts = new Intl.DateTimeFormat('en-GB', {
 		timeZone: 'Europe/London',
 		year: 'numeric',
 		month: '2-digit',
 		day: '2-digit',
-	}).formatToParts(new Date());
+		hour: '2-digit',
+		hourCycle: 'h23',
+	}).formatToParts(now);
 	const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
-	return { year: Number(values.year), month: Number(values.month), day: Number(values.day) };
+	const date = new Date(
+		Date.UTC(
+			Number(values.year),
+			Number(values.month) - 1,
+			Number(values.day) - (Number(values.hour) < 4 ? 1 : 0),
+		),
+	);
+	return { year: date.getUTCFullYear(), month: date.getUTCMonth() + 1, day: date.getUTCDate() };
 }
 
 function dayOffset(date: ReturnType<typeof londonDate>) {

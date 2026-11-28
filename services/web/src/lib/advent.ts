@@ -28,15 +28,24 @@ export interface AdventRewardPreview {
 	alternate_note: string;
 }
 
-export function londonAdventDay() {
+export function londonAdventDay(now = new Date()) {
 	const parts = new Intl.DateTimeFormat('en-GB', {
 		timeZone: 'Europe/London',
 		year: 'numeric',
 		month: '2-digit',
 		day: '2-digit',
-	}).formatToParts(new Date());
+		hour: '2-digit',
+		hourCycle: 'h23',
+	}).formatToParts(now);
 	const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
-	return Number(values.year) === 2026 && Number(values.month) === 12 ? Number(values.day) : 0;
+	const date = new Date(
+		Date.UTC(
+			Number(values.year),
+			Number(values.month) - 1,
+			Number(values.day) - (Number(values.hour) < 4 ? 1 : 0),
+		),
+	);
+	return date.getUTCFullYear() === 2026 && date.getUTCMonth() === 11 ? date.getUTCDate() : 0;
 }
 
 export function perfectStreakTotal(days: AdventDay[]) {

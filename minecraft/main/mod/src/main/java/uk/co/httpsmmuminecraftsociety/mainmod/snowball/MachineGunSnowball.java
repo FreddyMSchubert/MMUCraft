@@ -26,10 +26,8 @@ final class MachineGunSnowball extends Snowball {
 
         DamageSource source = new DamageSource(serverLevel.registryAccess()
                 .lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(DAMAGE_TYPE), this, getOwner());
-        if (random.nextInt(8) == 0)
-            target.hurtServer(serverLevel, source, 1.0F);
-        if (random.nextInt(4) == 0)
-            target.knockback(0.2D, getX() - target.getX(), getZ() - target.getZ(),
-                    source, 1.0F);
+        target.hurtServer(serverLevel, source, 0.25F);
+        target.knockback(0.22D, getX() - target.getX(), getZ() - target.getZ(),
+                source, 1.0F);
     }
 }

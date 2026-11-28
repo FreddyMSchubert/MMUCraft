@@ -28,7 +28,8 @@ import java.util.List;
 
 public final class SnowballMachineGun {
     private static final int CAPACITY = 128;
-    private static final String AMMO_KEY = "mainmod_snowball_ammo";
+    private static final int SHOTS_PER_SNOWBALL = 2;
+    private static final String SHOTS_KEY = "mainmod_snowball_shots";
 
     private SnowballMachineGun() {}
 
@@ -44,17 +45,21 @@ public final class SnowballMachineGun {
         return stack.is(Items.REPEATING_COMMAND_BLOCK) && FakeItems.isSpecificFakeItem(stack, "snowball-machine-gun");
     }
 
-    private static int ammo(ItemStack stack) {
+    private static int shots(ItemStack stack) {
         int stored = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
-                .copyTag().getIntOr(AMMO_KEY, 0);
-        return Math.max(0, Math.min(CAPACITY, stored));
+                .copyTag().getIntOr(SHOTS_KEY, 0);
+        return Math.max(0, Math.min(CAPACITY * SHOTS_PER_SNOWBALL, stored));
     }
 
-    private static void setAmmo(ItemStack stack, int amount) {
-        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putInt(AMMO_KEY, amount));
+    private static int ammo(ItemStack stack) {
+        return (shots(stack) + SHOTS_PER_SNOWBALL - 1) / SHOTS_PER_SNOWBALL;
+    }
+
+    private static void setShots(ItemStack stack, int amount) {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putInt(SHOTS_KEY, amount));
         setModelState(stack, amount > 0, isLoading(stack), isReloaded(stack));
         var lines = new ArrayList<>(stack.getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines());
-        Component count = Component.literal("Snowballs: " + amount + "/" + CAPACITY)
+        Component count = Component.literal("Snowballs: " + ammo(stack) + "/" + CAPACITY)
                 .withStyle(style -> style.withItalic(false));
         if (lines.isEmpty()) lines.add(count);
         else lines.set(0, count);
@@ -82,8 +87,8 @@ public final class SnowballMachineGun {
         boolean reload = hand == InteractionHand.MAIN_HAND
                 && player.getOffhandItem().is(Items.SNOWBALL)
                 && ammo(gun) < CAPACITY;
-        if (ammo(gun) == 0 && !reload) return InteractionResult.CONSUME;
-        setModelState(gun, ammo(gun) > 0, reload, false);
+        if (shots(gun) == 0 && !reload) return InteractionResult.CONSUME;
+        setModelState(gun, shots(gun) > 0, reload, false);
         player.startUsingItem(hand);
         return InteractionResult.CONSUME;
     }
@@ -96,12 +101,17 @@ public final class SnowballMachineGun {
     }
 
     static int loadFromOffhand(ItemStack gun, ItemStack offhand) {
-        int current = ammo(gun);
-        if (!offhand.is(Items.SNOWBALL) || current == CAPACITY) return 0;
-        int amount = Math.min(offhand.getCount(), CAPACITY - current);
+        int current = shots(gun);
+        if (!offhand.is(Items.SNOWBALL)) return 0;
+        int amount = Math.min(offhand.getCount(), (CAPACITY * SHOTS_PER_SNOWBALL - current) / SHOTS_PER_SNOWBALL);
+        if (amount == 0) return 0;
         offhand.shrink(amount);
-        setAmmo(gun, current + amount);
+        setShots(gun, current + amount * SHOTS_PER_SNOWBALL);
         return amount;
+    }
+
+    static void spendShot(ItemStack gun) {
+        if (shots(gun) > 0) setShots(gun, shots(gun) - 1);
     }
 
     public static void tick(MinecraftServer server) {
@@ -125,19 +135,20 @@ public final class SnowballMachineGun {
                         SoundEvents.CROSSBOW_LOADING_MIDDLE, SoundSource.PLAYERS, 1.0F, 1.0F);
             if (elapsed >= charge && !isReloaded(stack)) {
                 reload(stack, player);
-                setModelState(stack, ammo(stack) > 0, true, true);
+                setModelState(stack, shots(stack) > 0, true, true);
                 level.playSound(null, player.getX(), player.getY(), player.getZ(),
                         SoundEvents.CROSSBOW_LOADING_END, SoundSource.PLAYERS, 1.0F, 1.0F);
             }
             return;
         }
-        int current = ammo(stack);
+        int current = shots(stack);
         if (current <= 0) return;
         Projectile.spawnProjectileFromRotation(MachineGunSnowball::new, level, new ItemStack(Items.SNOWBALL),
-                player, 0.0F, 1.5F, 1.0F);
+                player, 0.0F, 2.0F, 1.25F);
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.SNOWBALL_THROW, SoundSource.PLAYERS, 0.2F, 1.0F);
-        setAmmo(stack, current - 1);
+        spendShot(stack);
+        player.sendOverlayMessage(Component.literal("Snowballs: " + ammo(stack) + "/" + CAPACITY));
     }
 
     public static void release(ItemStack stack, Level level, LivingEntity user, int ticksRemaining) {
@@ -146,7 +157,7 @@ public final class SnowballMachineGun {
                     && stack.getUseDuration(user) - ticksRemaining >= CrossbowItem.getChargeDuration(stack, user)) {
                 reload(stack, player);
             }
-            setModelState(stack, ammo(stack) > 0, false, false);
+            setModelState(stack, shots(stack) > 0, false, false);
         }
     }
 }

@@ -34,6 +34,13 @@ public final class SnowballMachineGunCheck {
         ItemStack partial = new ItemStack(Items.SNOWBALL, 7);
         assert SnowballMachineGun.loadFromOffhand(gun, partial) == 7;
         assert partial.isEmpty();
+        ItemStack firing = gun.copy();
+        assert firing.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
+                .copyTag().getIntOr("mainmod_snowball_shots", 0) == 14;
+        SnowballMachineGun.spendShot(firing);
+        assert firing.get(DataComponents.LORE).lines().getFirst().getString().equals("Snowballs: 7/128");
+        SnowballMachineGun.spendShot(firing);
+        assert firing.get(DataComponents.LORE).lines().getFirst().getString().equals("Snowballs: 6/128");
         for (int i = 0; i < 7; i++)
             assert SnowballMachineGun.loadFromOffhand(gun, new ItemStack(Items.SNOWBALL, 16)) == 16;
 
@@ -41,7 +48,7 @@ public final class SnowballMachineGunCheck {
         assert SnowballMachineGun.loadFromOffhand(gun, last) == 9;
         assert last.getCount() == 7;
         assert gun.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
-                .copyTag().getIntOr("mainmod_snowball_ammo", 0) == 128;
+                .copyTag().getIntOr("mainmod_snowball_shots", 0) == 256;
         assert SnowballMachineGun.loadFromOffhand(gun, last) == 0;
         assert Boolean.TRUE.equals(gun.get(DataComponents.CUSTOM_MODEL_DATA).getBoolean(1));
         SnowballMachineGun.release(gun, null, null, 0);

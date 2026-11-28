@@ -4,11 +4,14 @@ import net.minecraft.SharedConstants;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.registries.VanillaRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.CraftingInput;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.FakeItems;
 import uk.co.httpsmmuminecraftsociety.mainmod.fakeItems.fakeItemDefs.FakeItem;
@@ -45,12 +48,34 @@ public final class PresentsCheck {
         assert presentRecipe.matches(input, null);
         ItemStack gift = presentRecipe.assemble(input);
         assert FakeItems.isSpecificFakeItem(gift, present.id());
-        List<ItemStack> contents = gift.get(DataComponents.CONTAINER).itemCopies().toList();
+        assert !gift.has(DataComponents.CONTAINER);
+        List<ItemStack> contents = contents(gift);
         assert contents.size() == 8;
         assert contents.getFirst().getHoverName().getString().equals("Gift sword");
         assert contents.stream().allMatch(stack -> stack.getCount() == 1);
-        assert !presentRecipe.matches(CraftingInput.of(2, 2,
-                List.of(wrapper, named, ItemStack.EMPTY, ItemStack.EMPTY)), null);
+        CraftingInput small = CraftingInput.of(2, 2,
+                List.of(named, ItemStack.EMPTY, ItemStack.EMPTY, wrapper));
+        assert presentRecipe.matches(small, null);
+        assert contents(presentRecipe.assemble(small)).getFirst().getHoverName().getString().equals("Gift sword");
+        CraftingInput ordered = CraftingInput.of(3, 3, List.of(
+                new ItemStack(Items.APPLE), ItemStack.EMPTY, named,
+                ItemStack.EMPTY, wrapper, ItemStack.EMPTY,
+                new ItemStack(Items.DIAMOND), ItemStack.EMPTY, new ItemStack(Items.EMERALD)));
+        List<ItemStack> orderedContents = contents(presentRecipe.assemble(ordered));
+        assert orderedContents.size() == 4;
+        assert orderedContents.get(0).is(Items.APPLE);
+        assert orderedContents.get(1).getHoverName().getString().equals("Gift sword");
+        assert orderedContents.get(2).is(Items.DIAMOND);
+        assert orderedContents.get(3).is(Items.EMERALD);
         System.out.println("Present crafting and contents checks passed.");
+    }
+
+    private static List<ItemStack> contents(ItemStack present) {
+        List<ItemStack> items = new ArrayList<>();
+        CompoundTag tag = present.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        for (Tag entry : tag.getListOrEmpty("mainmod_present_contents_v1")) {
+            if (entry instanceof CompoundTag saved) saved.read("item", ItemStack.CODEC).ifPresent(items::add);
+        }
+        return items;
     }
 }

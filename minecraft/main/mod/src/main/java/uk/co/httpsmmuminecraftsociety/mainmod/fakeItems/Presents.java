@@ -1,8 +1,13 @@
 package uk.co.httpsmmuminecraftsociety.mainmod.fakeItems;
 
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.ItemFrame;
@@ -11,8 +16,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.CustomModelData;
-import net.minecraft.world.item.component.ItemContainerContents;
-import net.minecraft.core.particles.ParticleTypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +23,11 @@ import java.util.UUID;
 
 public final class Presents {
     private static final String PHASE = "mainmod_present_phase";
+    private static final String CONTENTS = "mainmod_present_contents_v1";
     private static final String START = "mainmod_present_start";
     private static final String LAST = "mainmod_present_last";
+    private static final String NEXT_DROP = "mainmod_present_next_drop";
+    private static final String EJECTED = "mainmod_present_ejected";
     private static final String DEADLINE = "mainmod_present_deadline";
 
     private Presents() {}
@@ -39,7 +45,9 @@ public final class Presents {
     public static ItemStack wrap(ItemStack paper, List<ItemStack> contents) {
         String color = FakeItems.getFakeItemFromStack(paper).id().substring("wrapping-paper-".length());
         ItemStack present = FakeItems.createFakeItemStack("present-" + color, 1);
-        present.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(contents));
+        CompoundTag tag = data(present);
+        writeContents(tag, contents);
+        present.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
         return present;
     }
 
@@ -71,20 +79,23 @@ public final class Presents {
             save(frame, present, tag, 2);
             sparkle(level, frame);
         } else if (phase == 2) {
-            List<ItemStack> contents = present.getOrDefault(DataComponents.CONTAINER,
-                    ItemContainerContents.EMPTY).itemCopies().toList();
+            List<ItemStack> contents = readContents(tag);
             if (contents.isEmpty()) {
                 finish(frame);
                 return;
             }
+            if (now < tag.getLongOr(NEXT_DROP, 0)) return;
+            Entity previous = lastDropped(level, tag);
+            if (previous instanceof ItemEntity item && !item.onGround()
+                    && now < tag.getLongOr(NEXT_DROP, 0) + 40) return;
             ItemStack next = contents.getFirst();
-            List<ItemStack> remaining = new ArrayList<>(contents.subList(1, contents.size()));
-            present.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(remaining));
+            List<ItemStack> remaining = contents.subList(1, contents.size());
+            writeContents(tag, remaining);
+            tag.putLong(NEXT_DROP, now + 8);
             if (remaining.isEmpty()) {
                 tag.putInt(PHASE, 3);
-                tag.putLong(DEADLINE, now + 20);
+                tag.putLong(DEADLINE, now + 25);
             }
-            save(frame, present, tag, 2);
             ItemEntity item = new ItemEntity(level, frame.getX(), frame.getY() + 0.55,
                     frame.getZ(), next);
             var random = level.getRandom();
@@ -92,18 +103,16 @@ public final class Presents {
                     0.48 + random.nextDouble() * 0.12,
                     (random.nextDouble() - 0.5) * 0.16);
             level.addFreshEntity(item);
-            if (remaining.isEmpty()) {
-                tag.putString(LAST, item.getUUID().toString());
-                save(frame, present, tag, 2);
-            }
+            int ejected = tag.getIntOr(EJECTED, 0);
+            float pitch = Math.min(1.35F, 0.95F + ejected * 0.05F);
+            tag.putInt(EJECTED, ejected + 1);
+            tag.putString(LAST, item.getUUID().toString());
+            save(frame, present, tag, 2);
+            level.playSound(null, frame.getX(), frame.getY(), frame.getZ(),
+                    SoundEvents.DISPENSER_DISPENSE, SoundSource.BLOCKS, 0.7F, pitch);
             sparkle(level, frame);
         } else if (phase == 3) {
-            Entity last = null;
-            try {
-                last = level.getEntity(UUID.fromString(tag.getStringOr(LAST, "")));
-            } catch (IllegalArgumentException ignored) {
-                // The deadline also handles a missing or collected final item.
-            }
+            Entity last = lastDropped(level, tag);
             if (last != null && last.getDeltaMovement().y <= 0 || now >= tag.getLongOr(DEADLINE, now)) {
                 finish(frame);
             }
@@ -116,6 +125,8 @@ public final class Presents {
         tag.remove(PHASE);
         tag.remove(START);
         tag.remove(LAST);
+        tag.remove(NEXT_DROP);
+        tag.remove(EJECTED);
         tag.remove(DEADLINE);
         present.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
         setModel(present, 0);
@@ -128,6 +139,38 @@ public final class Presents {
 
     private static CompoundTag data(ItemStack present) {
         return present.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+    }
+
+    private static List<ItemStack> readContents(CompoundTag tag) {
+        List<ItemStack> contents = new ArrayList<>();
+        for (Tag entry : tag.getListOrEmpty(CONTENTS)) {
+            if (entry instanceof CompoundTag saved) {
+                saved.read("item", ItemStack.CODEC).ifPresent(contents::add);
+            }
+        }
+        return contents;
+    }
+
+    private static void writeContents(CompoundTag tag, List<ItemStack> contents) {
+        if (contents.isEmpty()) {
+            tag.remove(CONTENTS);
+            return;
+        }
+        ListTag stored = new ListTag();
+        for (ItemStack item : contents) {
+            CompoundTag entry = new CompoundTag();
+            entry.store("item", ItemStack.CODEC, item);
+            stored.add(entry);
+        }
+        tag.put(CONTENTS, stored);
+    }
+
+    private static Entity lastDropped(ServerLevel level, CompoundTag tag) {
+        try {
+            return level.getEntity(UUID.fromString(tag.getStringOr(LAST, "")));
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
     }
 
     private static void save(ItemFrame frame, ItemStack present, CompoundTag tag, int model) {

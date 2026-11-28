@@ -445,6 +445,21 @@ def write_pack_archive(source: Path, destination: Path):
 				shutil.copyfileobj(input_file, output_file)
 
 
+def add_present_model_cases(merged_pack: Path, generated_pack: Path):
+	item_path = Path("assets/minecraft/items/repeating_command_block.json")
+	merged_file = merged_pack / item_path
+	generated_file = generated_pack / item_path
+	merged = json.loads(merged_file.read_text(encoding="utf-8"))
+	generated = json.loads(generated_file.read_text(encoding="utf-8"))
+	merged_cases = merged["model"]["cases"]
+	present_cases = generated["model"]["cases"]
+	if not present_cases or any(not case["when"].startswith("present-") for case in present_cases):
+		raise ValueError("Generated present model cases are missing or invalid")
+	existing = {case["when"] for case in merged_cases}
+	merged_cases.extend(case for case in present_cases if case["when"] not in existing)
+	merged_file.write_text(json.dumps(merged, indent=2) + "\n", encoding="utf-8")
+
+
 def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--force", action="store_true", help="Rebuild the resource pack even when inputs are unchanged.")
@@ -479,6 +494,7 @@ def main():
 			print(" -", p)
 		run("java", "-Djava.awt.headless=true", "-jar", str(jar), *map(str, inputs), str(MERGED))
 
+	add_present_model_cases(MERGED, GENERATED)
 	remove_pack_metadata()
 	shutil.copy2(GENERATED / "pack.mcmeta", MERGED / "pack.mcmeta")
 	print("==> Creating zip archive")

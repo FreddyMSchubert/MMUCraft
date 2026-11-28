@@ -13,7 +13,7 @@ import java.util.List;
 public final class PresentRecipe extends CustomRecipe {
     @Override
     public boolean matches(CraftingInput input, Level level) {
-        if (input.width() != 3 || input.height() != 3 || input.ingredientCount() < 2) return false;
+        if (input.ingredientCount() < 2) return false;
         return input.items().stream().anyMatch(Presents::isPaper);
     }
 

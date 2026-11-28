@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.size.SizeDiscs;
 
 import java.util.function.Predicate;
 
@@ -34,7 +35,12 @@ abstract class ProjectileClaimMixin {
         if (level.isClientSide() || !(entity instanceof Projectile projectile)) return;
         BlockHitResult deniedEntry = ClaimsManager.deniedProjectileEntry(projectile, start, movement);
         HitResult vanilla = cir.getReturnValue();
-        if (deniedEntry != null && (vanilla == null
+        boolean allowedWallImpact = deniedEntry != null && SizeDiscs.isProjectile(projectile)
+                && vanilla instanceof BlockHitResult blockHit
+                && blockHit.getType() == HitResult.Type.BLOCK
+                && blockHit.getBlockPos().equals(deniedEntry.getBlockPos())
+                && ClaimsManager.allowProjectileAt(projectile, SizeDiscs.targetBlock(blockHit));
+        if (deniedEntry != null && !allowedWallImpact && (vanilla == null
                 || deniedEntry.getLocation().distanceToSqr(start) <= vanilla.getLocation().distanceToSqr(start))) {
             ClaimsManager.rejectProjectile(projectile);
             cir.setReturnValue(BlockHitResult.miss(start,

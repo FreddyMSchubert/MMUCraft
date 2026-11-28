@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import uk.co.httpsmmuminecraftsociety.mainmod.claims.ClaimsManager;
+import uk.co.httpsmmuminecraftsociety.mainmod.size.SizeDiscs;
 
 @Mixin(Projectile.class)
 abstract class ProjectileImpactMixin {
@@ -18,7 +19,8 @@ abstract class ProjectileImpactMixin {
         Projectile projectile = (Projectile) (Object) this;
         if (projectile.level().isClientSide() || hit.getType() == HitResult.Type.MISS) return;
         BlockPos pos = hit instanceof BlockHitResult blockHit
-                ? blockHit.getBlockPos() : BlockPos.containing(hit.getLocation());
+                ? SizeDiscs.isProjectile(projectile) ? SizeDiscs.targetBlock(blockHit) : blockHit.getBlockPos()
+                : BlockPos.containing(hit.getLocation());
         if (!ClaimsManager.allowProjectileAt(projectile, pos)) {
             ClaimsManager.rejectProjectile(projectile);
             cir.setReturnValue(ProjectileDeflection.NONE);

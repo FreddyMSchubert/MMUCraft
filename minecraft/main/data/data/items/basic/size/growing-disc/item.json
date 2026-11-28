@@ -4,7 +4,7 @@
 	"modelType": "basic",
 	"rarity": "uncommon",
 	"maxStackSize": 64,
-	"tooltips": ["Right-click a mob to double its size, or throw the disc at one."],
+	"tooltips": ["Throw at a mob to double its size. A wall hit can catch a mob beside it."],
 	"craftable": {
 		"recipes": [
 			{

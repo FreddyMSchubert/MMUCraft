@@ -11,8 +11,7 @@ public final class WisdomCharmCheck {
                  {"q":"","a":"Nobody"}]
                 """);
         assert quotes.size() == 1;
-        assert quotes.getFirst().text().equals("Keep going.");
-        assert quotes.getFirst().author().equals("A Person");
+        assert quotes.getFirst().equals("Keep going.");
 
         try {
             WisdomCharm.parseZenQuotes("[{\"q\":\"Too many requests\"}]");

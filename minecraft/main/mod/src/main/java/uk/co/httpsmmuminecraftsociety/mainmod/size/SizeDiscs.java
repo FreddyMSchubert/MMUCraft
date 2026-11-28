@@ -97,8 +97,9 @@ public final class SizeDiscs {
         if (scale == null) return false;
         double current = scale.getValue();
         if (current <= 0.0D) return false;
+        double width = mob.getBbWidth() / current;
         double height = mob.getBbHeight() / current;
-        double next = nextScale(current, height, grow);
+        double next = nextScale(current, width, height, grow);
         if (Math.abs(next - current) < 0.0001D) return false;
         scale.setBaseValue(scale.getBaseValue() * next / current);
         mob.refreshDimensions();
@@ -112,9 +113,9 @@ public final class SizeDiscs {
         return entity instanceof Mob mob ? mob : null;
     }
 
-    public static double nextScale(double current, double height, boolean grow) {
-        // Already tiny mobs can still reach half their normal height.
-        double minimum = Math.min(0.5D, 0.2D / height);
+    public static double nextScale(double current, double width, double height, boolean grow) {
+        // Mobs narrower or shorter than 0.4 blocks can still reach half their normal size.
+        double minimum = Math.min(0.5D, 0.2D / Math.min(width, height));
         double maximum = 12.0D / height;
         // The uncapped sizes are powers of two. Snap back to that ladder after a capped step.
         double lower = Math.scalb(1.0D, Math.getExponent(current));
